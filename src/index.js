@@ -1,5 +1,5 @@
-import utils from "./utils";
+ import client from "./client/client";
 
-
-utils.extend({a: 1}, {b: 2})
-console.log(123123)
+ export default {
+  ...client
+ }

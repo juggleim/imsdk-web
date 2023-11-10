@@ -1,5 +1,6 @@
 import babel from 'rollup-plugin-babel';
 import minify from 'rollup-plugin-babel-minify';
+import json from '@rollup/plugin-json';
 import utils from '../src/utils';
 
 const {version} = require('../package.json');
@@ -24,8 +25,12 @@ const genConfig = function(type){
       file: getTarget(type),
       format: 'umd',
       name: 'Juggle',
+      globals: {
+        "$protobuf": "protobufjs/minimal"
+      }
     },
-    plugins: [ 
+    plugins: [
+      json(),
       babel({
         exclude: 'node_modules/**'
       })

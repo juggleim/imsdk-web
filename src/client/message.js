@@ -1,3 +1,1 @@
-export default {
-  send: () => {}
-}
+export default function(io){}

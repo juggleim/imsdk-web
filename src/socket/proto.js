@@ -250,6 +250,114 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 18
           }
         }
+      },
+      ChannelType: {
+        values: {
+          Private: 0,
+          Group: 1,
+          Chatroom: 2,
+          System: 3
+        }
+      },
+      PushData: {
+        fields: {
+          title: {
+            type: "string",
+            id: 1
+          },
+          pushId: {
+            type: "string",
+            id: 2
+          },
+          pushText: {
+            type: "string",
+            id: 3
+          },
+          pushExtraData: {
+            type: "string",
+            id: 4
+          }
+        }
+      },
+      UpMsg: {
+        fields: {
+          msgType: {
+            type: "string",
+            id: 1
+          },
+          msgContent: {
+            type: "bytes",
+            id: 2
+          },
+          flags: {
+            type: "int32",
+            id: 3
+          },
+          clientUid: {
+            type: "string",
+            id: 4
+          },
+          pushData: {
+            type: "PushData",
+            id: 5
+          }
+        }
+      },
+      DownMsg: {
+        fields: {
+          fromId: {
+            type: "string",
+            id: 1
+          },
+          type: {
+            type: "ChannelType",
+            id: 2
+          },
+          msgType: {
+            type: "string",
+            id: 3
+          },
+          groupId: {
+            type: "string",
+            id: 4
+          },
+          msgId: {
+            type: "string",
+            id: 5
+          },
+          msgIndex: {
+            type: "int64",
+            id: 6
+          },
+          msgContent: {
+            type: "bytes",
+            id: 7
+          },
+          msgTime: {
+            type: "int64",
+            id: 8
+          },
+          flags: {
+            type: "int32",
+            id: 9
+          },
+          isSend: {
+            type: "bool",
+            id: 10
+          },
+          platform: {
+            type: "string",
+            id: 11
+          },
+          clientUid: {
+            type: "string",
+            id: 12
+          },
+          pushData: {
+            type: "PushData",
+            id: 13
+          }
+        }
       }
     }
   }

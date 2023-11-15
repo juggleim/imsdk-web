@@ -9,3 +9,10 @@
 
 ### 浏览器兼容性
 
+
+
+### 其他
+
+`npx pbjs -t json-module -w es6 -o proto.js connect.proto`
+
+`import $protobuf from "../3rd/protobuf";`

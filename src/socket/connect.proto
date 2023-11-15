@@ -82,3 +82,41 @@ message ImWebsocketMsg {
         QueryConfirmMsgBody qryConfirmMsgBody = 18;
     }
 }
+
+enum ChannelType {
+    Private = 0;  //单聊
+    Group = 1;    //群聊
+    Chatroom = 2; // 聊天室
+    System = 3;   // 系统消息
+}
+
+message PushData{
+    string title = 1;
+    string pushId = 2;
+    string pushText = 3;
+    string pushExtraData = 4;
+}
+
+message UpMsg {
+    string msgType = 1;   //消息类型定义
+    bytes msgContent= 2;  // 消息实体数据
+    int32 flags = 3;      // 标识 
+    string clientUid=4;   //客户端指定的消息唯一ID
+    PushData pushData = 5; // 推送设置
+}
+
+message DownMsg{
+    string fromId = 1;
+    ChannelType type = 2;
+    string msgType = 3;
+    string groupId = 4;
+    string msgId = 5;
+    int64 msgIndex = 6;
+    bytes msgContent = 7;
+    int64 msgTime = 8;
+    int32 flags = 9;
+    bool isSend = 10;
+    string platform = 11;
+    string clientUid = 12;
+    PushData pushData = 13;
+}

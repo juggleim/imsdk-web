@@ -1,42 +1,20 @@
 import Emitter from "../common/emmit";
 import utils from "../utils";
-import Proto from "./proto"
-import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD} from "../enum";
+import Storage from "../common/storage";
+import Proto from "./proto";
+import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS} from "../enum";
 export default function IO(config){
   let emitter = Emitter();
-  
+  let { appkey, nav } = config;
+  nav = nav || 'http://120.48.178.248:8083';
   let ws = {};
-  let connectState = CONNECT_STATE.DISCONNECTED;
+  
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
 
-  // 转换事件名称，防止其他数字事件名造成 Event 覆盖
-  let eventMap = {};
-  let events = [
-      [SIGNAL_CMD.CONNECT_ACK, SIGNAL_NAME.S_CONNECT_ACK],
-      [SIGNAL_CMD.QUERY_ACK, SIGNAL_NAME.S_QUERY_ACK],
-      [SIGNAL_CMD.PUBLISH_ACK, SIGNAL_NAME.S_PUBLICH_ACK],
-      [SIGNAL_CMD.PONG, SIGNAL_NAME.S_PONG]
-    ]
-  utils.forEach(events, (event)=>{
-    let [name, value] = event;
-    eventMap[name] = value;
-  });
-
-  let connect = (auth) => {
+  let connect = ({ token }) => {
     ws = new WebSocket("ws://120.48.178.248:9002/im");
-    let payload = {
-      version: 1,
-      cmd: 0,
-      qos: 0,
-      connectMsgBody: {
-        appkey: 'appkey',
-        token: 'CgZhcHBrZXkaIDAr072n8uOcw5YBeKCcQ+QCw4m6YWhgt99U787/dEJS'
-      }
-    };
-    let message = imsocket.create(payload)
-    let buffer = imsocket.encode(message).finish();
     ws.addEventListener("open", () => {
-      ws.send(buffer)
+      sendCommand(SIGNAL_CMD.CONNECT, { appkey, token });
     });
     ws.addEventListener("close", (e) => {
       console.log('close', e);
@@ -47,9 +25,7 @@ export default function IO(config){
     ws.addEventListener("message", ({ data }) => {
       let reader = new FileReader();
       reader.onload = function() {
-        let msg = imsocket.decode(new Uint8Array(this.result));
-        let name = eventMap[msg.cmd];
-        emitter.emit(name, msg);
+        decodeBuffer(this.result);
       }
       reader.readAsArrayBuffer(data);
     });
@@ -60,13 +36,107 @@ export default function IO(config){
     emitter.emit(SIGNAL_NAME.CONN_CHANGED, CONNECT_STATE.DISCONNECTED);
   };
 
-  let isConnected = () => {
-    return utils.isEqual(connectState, CONNECT_STATE.CONNECTED);
-  }
+  let getNav = (token) => {
+    return utils.request(nav, {
+      headers: {
+        appkey, token
+      }
+    }).then((result) => {
+      console.log(result)
+    })
+  };
+
+  let orderNum = 0;
+  let getNum = () => {
+    orderNum += 1;
+    if(orderNum > 65535){
+      orderNum = 1;
+    }
+    return orderNum;
+  };
+
+  let commandStroage = {};
+  let sendCommand = (cmd, data, callback) => {
+    callback = callback || utils.noop;
+    let index = getNum();
+    utils.extend(data, { index });
+    commandStroage[index] = {
+      callback,
+      data
+    };
+    
+    let buffer = encodeBuffer(cmd, data);
+    ws.send(buffer);
+  };
+  
+  let encodeBuffer = (cmd, data) => {
+    let payload = { 
+      version: 1, 
+      cmd: cmd,
+      qos: QOS.YES
+    };
+    let topics = {
+      0: 'p_msg',
+      1: 'g_msg'
+    };
+    switch(cmd){
+      case SIGNAL_CMD.CONNECT:
+        let { appkey, token } = data;
+        utils.extend(payload, {
+          connectMsgBody: { appkey, token }
+        });
+        break;
+      case SIGNAL_CMD.PUBLISH:
+        let { conversationId: targetId, conversationType, name, content, index   } = data;
+        let upmsg = Proto.lookup('codec.UpMsg');
+        let topic = topics[conversationType];        
+        utils.extend(payload, {
+          publishMsgBody: {
+            index,
+            targetId,
+            topic,
+            data: {
+              msgType: name,
+              msgContent: content,
+              pushData: ''
+            }
+          }
+        });
+        break;
+      case SIGNAL_CMD.QUERY:
+        break;
+      case SIGNAL_CMD.PING:
+        break;
+    }
+    let message = imsocket.create(payload);
+    let buffer = imsocket.encode(message).finish();
+    return buffer;
+  };
+  
+  let decodeBuffer = (buffer) => {
+    let msg = imsocket.decode(new Uint8Array(buffer));
+    let { cmd } = msg;
+    switch(cmd){
+      case SIGNAL_CMD.CONNECT_ACK:
+        emitter.emit(SIGNAL_NAME.S_CONNECT_ACK, msg);
+        break;
+      case SIGNAL_CMD.PUBLISH_ACK:
+        let { pubAckMsgBody: { index, msgId: messageId, timestamp: sentTime } } = msg;
+        let { callback, data } = commandStroage[index];
+        utils.extend(data, { messageId, sentTime });
+        callback(data);
+        break;
+      case SIGNAL_CMD.QUERY_ACK:
+        break;
+      case SIGNAL_CMD.PONG:
+        break;
+    }
+  };
+
   let io = {
     connect,
     disconnect,
-    isConnected,
+    sendCommand,
     ...emitter
   };
   return io;

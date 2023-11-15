@@ -26,8 +26,12 @@ export let SIGNAL_CMD = {
   PING: 8,
   PONG: 9
 };
+export let QOS = {
+  YES: 1,
+  NO: 0
+};
 
-// 对外暴露事件
+// 以下是对外暴露枚举
 export let EVENT = {
   STATE_CHANGED: 'state_changed',
   MESSAGE_RECEIVED: 'message_received'
@@ -35,5 +39,13 @@ export let EVENT = {
 export let CONNECT_STATE = {
   CONNECTED: 0,
   CONNECTING: 1,
-  DISCONNECTED: 2
+  DISCONNECTED: 2,
+  CONNECTION_EXISTS: 10001
 };
+
+ export let CONVERATION_TYPE = {
+  PRIVATE: 0,
+  GROUP: 1,
+  CHATROOM: 2,
+  SYSTEM: 3
+ };

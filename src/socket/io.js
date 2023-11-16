@@ -3,6 +3,9 @@ import utils from "../utils";
 import Storage from "../common/storage";
 import Proto from "./proto";
 import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS} from "../enum";
+import BufferEncoder from "./encoder";
+import BufferDecoder from "./decoder";
+
 export default function IO(config){
   let emitter = Emitter();
   let { appkey, nav } = config;
@@ -10,6 +13,7 @@ export default function IO(config){
   let ws = {};
   
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
+  let decoder = BufferDecoder();
 
   let connect = ({ token }) => {
     ws = new WebSocket("ws://120.48.178.248:9002/im");
@@ -25,7 +29,7 @@ export default function IO(config){
     ws.addEventListener("message", ({ data }) => {
       let reader = new FileReader();
       reader.onload = function() {
-        decodeBuffer(this.result);
+        bufferHandler(this.result);
       }
       reader.readAsArrayBuffer(data);
     });
@@ -55,6 +59,7 @@ export default function IO(config){
     return orderNum;
   };
 
+  let encoder = BufferEncoder();
   let commandStroage = {};
   let sendCommand = (cmd, data, callback) => {
     callback = callback || utils.noop;
@@ -65,96 +70,21 @@ export default function IO(config){
       data
     };
     
-    let buffer = encodeBuffer(cmd, data);
+    let buffer = encoder.encode(cmd, data);
     ws.send(buffer);
   };
   
-  let encodeBuffer = (cmd, data) => {
-    let payload = { 
-      version: 1, 
-      cmd: cmd,
-      qos: QOS.YES
-    };
-    let topics = {
-      1: 'p_msg',
-      2: 'g_msg'
-    };
-    switch(cmd){
-      case SIGNAL_CMD.CONNECT:
-        let { appkey, token } = data;
-        utils.extend(payload, {
-          connectMsgBody: { appkey, token }
-        });
-        break;
-      case SIGNAL_CMD.PUBLISH:
-        let { conversationId: targetId, conversationType, name, content, index   } = data;
+  let bufferHandler = (buffer) => {
+    let { cmd, result, name } = decoder.decode(buffer);
 
-        let upMsgCodec = Proto.lookup('codec.UpMsg');
-        let upMessage = upMsgCodec.create({
-          msgType: name,
-          msgContent: new TextEncoder().encode(content)
-        });
-        let upMsgBuffer = upMsgCodec.encode(upMessage).finish();
-        // upMsgBuffer = new Uint8Array(upMsgBuffer)
-        let topic = topics[conversationType];        
-        utils.extend(payload, {
-          publishMsgBody: {
-            index,
-            targetId,
-            topic,
-            data: upMsgBuffer
-          }
-        });
-        break;
-      case SIGNAL_CMD.QUERY:
-        break;
-      case SIGNAL_CMD.PING:
-        break;
+    if(utils.isEqual(cmd, SIGNAL_CMD.PUBLISH_ACK)){
+      let { index } = result;
+      let { callback, data } = commandStroage[index];
+      utils.extend(data, result);
+      return callback(data);
     }
-    let message = imsocket.create(payload);
-    let buffer = imsocket.encode(message).finish();
-    return buffer;
-  };
-  
-  let decodeBuffer = (buffer) => {
-    let msg = imsocket.decode(new Uint8Array(buffer));
-    let { cmd } = msg;
-    switch(cmd){
-      case SIGNAL_CMD.CONNECT_ACK:
-        emitter.emit(SIGNAL_NAME.S_CONNECT_ACK, msg);
-        break;
-      case SIGNAL_CMD.PUBLISH_ACK:
-        let { pubAckMsgBody: { index, msgId: messageId, timestamp: sentTime } } = msg;
-        let { callback, data } = commandStroage[index];
-        utils.extend(data, { messageId, sentTime });
-        callback(data);
-        break;
-      case SIGNAL_CMD.PUBLISH:
-        let { 
-          publishMsgBody: { 
-            targetId: conversationId,
-            data: publistData 
-          }
-        } = msg;
-        let message = Proto.lookup('codec.DownMsg');
-        let $msg = message.decode(publistData);
-        let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType } = $msg;
-        emitter.emit(SIGNAL_NAME.CMD_RECEIVED, { 
-          conversationId,
-          conversationType,
-          senderUserId: fromId, 
-          messageId: msgId, 
-          sentTime: msgTime,
-          name: msgType,
-          content: new TextDecoder().decode(msgContent)
-        });
-        break;
-      case SIGNAL_CMD.QUERY_ACK:
-        break;
-      case SIGNAL_CMD.PONG:
-        break;
-    }
-  };
+    emitter.emit(name, result);
+  }
 
   let io = {
     connect,

@@ -9,10 +9,6 @@ export default function(io, emitter){
     emitter.emit(EVENT.STATE_CHANGED, { state });
   });
 
-  io.on(SIGNAL_NAME.CMD_RECEIVED, (data) => {
-    console.log('onmessage', data);
-  });
-
   io.on(SIGNAL_NAME.S_CONNECT_ACK, (data) => {
     let { ConnectAckMsgBody: { userId: id } } = data;
     let state =  CONNECT_STATE.CONNECTED;

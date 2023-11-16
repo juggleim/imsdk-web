@@ -151,43 +151,48 @@ const Cache = (cache) => {
 };
 const request = (url, option) => {
   return deferred((resolve, reject) => {
-    option = option || {};
-    let xhr = new XMLHttpRequest();
-    let method = option.method || 'GET';
-    xhr.open(method, url, true);
-    let headers = option.headers || {};
-    forEach(headers, (header, name) => {
-      xhr.setRequestHeader(name, header);
+    requestNormal(url, option, {
+      success: resolve,
+      fail: reject
     });
-    let body = option.body || {};
-    let isSuccess = () => {
-      return /^(200|202)$/.test(xhr.status);
-    };
-    let timeout = option.timeout;
-    if (timeout) {
-      xhr.timeout = timeout;
-    }
-    xhr.onreadystatechange = function () {
-      if (isEqual(xhr.readyState, 4)) {
-        let { responseText } = xhr;
-        responseText = responseText || '{}';
-        let result = JSON.parse(responseText);
-        if (isSuccess()) {
-          resolve(result);
-        } else {
-          let { status } = xhr;
-          extend(result, {
-            status
-          });
-          reject(result);
-        }
-      }
-    };
-    xhr.onerror = (error) => {
-      reject(error);
-    }
-    xhr.send(body);
   });
+};
+const requestNormal = (url, option, callback) => {
+  option = option || {};
+  let xhr = new XMLHttpRequest();
+  let method = option.method || 'GET';
+  xhr.open(method, url, true);
+  let headers = option.headers || {};
+  forEach(headers, (header, name) => {
+    xhr.setRequestHeader(name, header);
+  });
+  let body = option.body || {};
+  let isSuccess = () => {
+    return /^(200|202)$/.test(xhr.status);
+  };
+  let timeout = option.timeout;
+  if (timeout) {
+    xhr.timeout = timeout;
+  }
+  xhr.onreadystatechange = function () {
+    if (isEqual(xhr.readyState, 4)) {
+      let { responseText } = xhr;
+      responseText = responseText || '{}';
+      let result = JSON.parse(responseText);
+      if (isSuccess()) {
+        callback.success(result);
+      } else {
+        let { status } = xhr;
+        let error = { status };
+        callback.fail(error)
+      }
+    }
+  };
+  xhr.onerror = (error) => {
+    callback.fail(error)
+  }
+  xhr.send(body);
+  return xhr;
 };
 const map = (arrs, callback) => {
   return arrs.map(callback);
@@ -344,5 +349,6 @@ export default {
   toArray,
   Index,
   getBrowser,
-  getUUID
+  getUUID,
+  requestNormal
 }

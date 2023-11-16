@@ -88,18 +88,21 @@ export default function IO(config){
         break;
       case SIGNAL_CMD.PUBLISH:
         let { conversationId: targetId, conversationType, name, content, index   } = data;
-        let upmsg = Proto.lookup('codec.UpMsg');
+
+        let upMsgCodec = Proto.lookup('codec.UpMsg');
+        let upMessage = upMsgCodec.create({
+          msgType: name,
+          msgContent: new TextEncoder().encode(content)
+        });
+        let upMsgBuffer = upMsgCodec.encode(upMessage).finish();
+        // upMsgBuffer = new Uint8Array(upMsgBuffer)
         let topic = topics[conversationType];        
         utils.extend(payload, {
           publishMsgBody: {
             index,
             targetId,
             topic,
-            data: {
-              msgType: name,
-              msgContent: content,
-              pushData: ''
-            }
+            data: upMsgBuffer
           }
         });
         break;
@@ -125,6 +128,25 @@ export default function IO(config){
         let { callback, data } = commandStroage[index];
         utils.extend(data, { messageId, sentTime });
         callback(data);
+        break;
+      case SIGNAL_CMD.PUBLISH:
+        let { 
+          publishMsgBody: { 
+            targetId: conversationId
+            data: publistData 
+          }
+        } = msg;
+        let message = Proto.lookup('codec.DownMsg');
+        let $msg = message.decode(publistData);
+        let { fromId, msgId, msgTime, msgType, msgContent } = $msg;
+        emitter.emit(SIGNAL_NAME.CMD_RECEIVED, { 
+          conversationId,
+          senderUserId: fromId, 
+          messageId: msgId, 
+          sentTime: msgTime,
+          name: msgType,
+          content: new TextDecoder().decode(msgContent)
+        });
         break;
       case SIGNAL_CMD.QUERY_ACK:
         break;

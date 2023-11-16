@@ -253,10 +253,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
       },
       ChannelType: {
         values: {
-          Private: 0,
-          Group: 1,
-          Chatroom: 2,
-          System: 3
+          Private: 1,
+          Group: 2,
+          Chatroom: 3,
+          System: 4
         }
       },
       PushData: {

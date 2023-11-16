@@ -84,10 +84,10 @@ message ImWebsocketMsg {
 }
 
 enum ChannelType {
-    Private = 0;  //单聊
-    Group = 1;    //群聊
-    Chatroom = 2; // 聊天室
-    System = 3;   // 系统消息
+    Private = 1;  //单聊
+    Group = 2;    //群聊
+    Chatroom = 3; // 聊天室
+    System = 4;   // 系统消息
 }
 
 message PushData{

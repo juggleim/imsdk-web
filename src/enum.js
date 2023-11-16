@@ -44,8 +44,8 @@ export let CONNECT_STATE = {
 };
 
  export let CONVERATION_TYPE = {
-  PRIVATE: 0,
-  GROUP: 1,
-  CHATROOM: 2,
-  SYSTEM: 3
+  PRIVATE: 1,
+  GROUP: 2,
+  CHATROOM: 3,
+  SYSTEM: 4
  };

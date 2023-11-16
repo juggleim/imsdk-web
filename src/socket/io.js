@@ -76,8 +76,8 @@ export default function IO(config){
       qos: QOS.YES
     };
     let topics = {
-      0: 'p_msg',
-      1: 'g_msg'
+      1: 'p_msg',
+      2: 'g_msg'
     };
     switch(cmd){
       case SIGNAL_CMD.CONNECT:
@@ -132,15 +132,16 @@ export default function IO(config){
       case SIGNAL_CMD.PUBLISH:
         let { 
           publishMsgBody: { 
-            targetId: conversationId
+            targetId: conversationId,
             data: publistData 
           }
         } = msg;
         let message = Proto.lookup('codec.DownMsg');
         let $msg = message.decode(publistData);
-        let { fromId, msgId, msgTime, msgType, msgContent } = $msg;
+        let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType } = $msg;
         emitter.emit(SIGNAL_NAME.CMD_RECEIVED, { 
           conversationId,
+          conversationType,
           senderUserId: fromId, 
           messageId: msgId, 
           sentTime: msgTime,

@@ -32,7 +32,13 @@ export let QOS = {
 };
 export let FUNC_PARAM_CHECKER = {
   SENDMSG: ['conversationType', 'conversationId', 'name', 'content'],
-  GETMSGS: ['conversationType', 'conversationId', 'time', 'count']
+  GETMSGS: ['conversationType', 'conversationId', 'time', 'count'],
+  REMOVEMSG: ['conversationType', 'conversationId', 'messageId'],
+  RECALLMSG: ['conversationType', 'conversationId', 'messageId'],
+  
+  GETCONVERSATIONS: ['limit'],
+  GETCONVERSATION: ['conversationType', 'conversationId'],
+  CLEARUNREADCOUNT: ['conversationType', 'conversationId'],
 };
 
 // 以下是对外暴露枚举

@@ -29,8 +29,32 @@ export default function(io, emitter){
       });
     });
   };
+  let removeMessage = (message) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.REMOVEMSG);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      io.sendCommand(SIGNAL_CMD.PUBLISH, message, (msg) => {
+        resolve(msg);
+      });
+    });
+  };
+  let recallMessage = (message) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.RECALLMSG);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      io.sendCommand(SIGNAL_CMD.PUBLISH, message, (msg) => {
+        resolve(msg);
+      });
+    });
+  };
   return {
     sendMessage,
-    getMessages
+    getMessages,
+    removeMessage,
+    recallMessage
   };
 }

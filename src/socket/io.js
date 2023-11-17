@@ -15,7 +15,10 @@ export default function IO(config){
   
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
   let decoder = BufferDecoder();
-
+  let connectionState =  CONNECT_STATE.DISCONNECTED;
+  let updateState = (state) => {
+    connectionState = state;
+  }
   let connect = ({ token }) => {
     // return Network.getNavi(nav, { appkey, token });
     // return Network.detect(['120.48.178.248:9002']);
@@ -69,20 +72,27 @@ export default function IO(config){
   
   let bufferHandler = (buffer) => {
     let { cmd, result, name } = decoder.decode(buffer);
-
     if(utils.isEqual(cmd, SIGNAL_CMD.PUBLISH_ACK)){
       let { index } = result;
       let { callback, data } = commandStroage[index];
       utils.extend(data, result);
       return callback(data);
     }
+    if(utils.isEqual(cmd, SIGNAL_CMD.CONNECT_ACK)){
+      updateState(result.state);
+    }
     emitter.emit(name, result);
+  }
+
+  let isConnected = () => {
+    return utils.isEqual(connectionState, CONNECT_STATE.CONNECTED)
   }
 
   let io = {
     connect,
     disconnect,
     sendCommand,
+    isConnected,
     ...emitter
   };
   return io;

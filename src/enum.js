@@ -30,6 +30,9 @@ export let QOS = {
   YES: 1,
   NO: 0
 };
+export let FUNC_PARAM_CHECKER = {
+  SENDMSG: ['conversationType', 'conversationId', 'name', 'content']
+};
 
 // 以下是对外暴露枚举
 export let EVENT = {
@@ -48,4 +51,19 @@ export let CONNECT_STATE = {
   GROUP: 2,
   CHATROOM: 3,
   SYSTEM: 4
+ };
+
+ export let ErrorType = {
+  ILLEGAL_PARAMS: {
+    code: 20000,
+    msg: '参数缺失，请检查传入参数' 
+  },
+  CONNECTION_EXISTS: {
+    code: 21000,
+    msg: '连接已存在'
+  },
+  CONNECTION_NOT_READY: {
+    code: 21001,
+    msg: '连接不存在，请优先调用 connect 连接'
+  }
  };

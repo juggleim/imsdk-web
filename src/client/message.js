@@ -18,7 +18,19 @@ export default function(io, emitter){
     });
   };
 
+  let getMessages = (conversation) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.SENDMSG);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      io.sendCommand(SIGNAL_CMD.QUERY, conversation, (msg) => {
+        resolve(msg);
+      });
+    });
+  };
   return {
-    sendMessage
+    sendMessage,
+    getMessages
   };
 }

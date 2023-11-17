@@ -28,6 +28,7 @@ export default function Encoder(){
         body = getPublishBody(data);
         break;
       case SIGNAL_CMD.QUERY:
+        body = getQueryBody(data);
         break;
       case SIGNAL_CMD.PING:
         break;
@@ -64,6 +65,18 @@ export default function Encoder(){
     };
   }
 
+  function getQueryBody(data){
+    let { conversationId: targetId, conversationType, time, count, direction, index  } = data;
+    return {
+      qryMsgBody: {
+        index,
+        topic: '',
+        targetId,
+        timestamp: time,
+        data: ''
+      }
+    }
+  }
   return { 
     encode
   };

@@ -31,7 +31,8 @@ export let QOS = {
   NO: 0
 };
 export let FUNC_PARAM_CHECKER = {
-  SENDMSG: ['conversationType', 'conversationId', 'name', 'content']
+  SENDMSG: ['conversationType', 'conversationId', 'name', 'content'],
+  GETMSGS: ['conversationType', 'conversationId', 'time', 'count']
 };
 
 // 以下是对外暴露枚举

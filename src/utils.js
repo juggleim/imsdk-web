@@ -314,6 +314,14 @@ const getUUID = () => {
   });
 };
 
+const getProtocol = () => {
+  let protocol = location.protocol;
+  if(isEqual(protocol, 'file:')){
+    protocol = 'http:';
+  }
+  return protocol;
+};
+
 export default {
   Prosumer,
   Observer,
@@ -350,5 +358,6 @@ export default {
   Index,
   getBrowser,
   getUUID,
-  requestNormal
+  requestNormal,
+  getProtocol
 }

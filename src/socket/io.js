@@ -5,6 +5,7 @@ import Proto from "./proto";
 import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS} from "../enum";
 import BufferEncoder from "./encoder";
 import BufferDecoder from "./decoder";
+import Network from "../common/network";
 
 export default function IO(config){
   let emitter = Emitter();
@@ -16,6 +17,8 @@ export default function IO(config){
   let decoder = BufferDecoder();
 
   let connect = ({ token }) => {
+    // return Network.getNavi(nav, { appkey, token });
+    // return Network.detect(['120.48.178.248:9002']);
     ws = new WebSocket("ws://120.48.178.248:9002/im");
     ws.addEventListener("open", () => {
       sendCommand(SIGNAL_CMD.CONNECT, { appkey, token });
@@ -38,16 +41,6 @@ export default function IO(config){
   let disconnect = () => {
     ws && ws.close();
     emitter.emit(SIGNAL_NAME.CONN_CHANGED, CONNECT_STATE.DISCONNECTED);
-  };
-
-  let getNav = (token) => {
-    return utils.request(nav, {
-      headers: {
-        appkey, token
-      }
-    }).then((result) => {
-      console.log(result)
-    })
   };
 
   let orderNum = 0;

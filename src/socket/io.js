@@ -6,6 +6,7 @@ import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS} from "../enum";
 import BufferEncoder from "./encoder";
 import BufferDecoder from "./decoder";
 import Network from "../common/network";
+import Cache from "../common/cache";
 
 export default function IO(config){
   let emitter = Emitter();
@@ -14,7 +15,11 @@ export default function IO(config){
   let ws = {};
   
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
-  let decoder = BufferDecoder();
+
+  let cache = Cache();
+  let decoder = BufferDecoder(cache);
+  let encoder = BufferEncoder(cache);
+
   let connectionState =  CONNECT_STATE.DISCONNECTED;
   let updateState = (state) => {
     connectionState = state;
@@ -66,34 +71,30 @@ export default function IO(config){
     return orderNum;
   };
 
-  let encoder = BufferEncoder();
-  let commandStroage = {};
   let sendCommand = (cmd, data, callback) => {
     callback = callback || utils.noop;
     let index = getNum();
-    utils.extend(data, { index });
-    commandStroage[index] = {
-      callback,
-      data
-    };
-    
-    let buffer = encoder.encode(cmd, data);
+    let buffer = encoder.encode(cmd, { callback, data, index });
     ws.send(buffer);
   };
   
   let bufferHandler = (buffer) => {
     let { cmd, result, name } = decoder.decode(buffer);
-    if(utils.isEqual(cmd, SIGNAL_CMD.PUBLISH_ACK) || utils.isEqual(cmd, SIGNAL_CMD.QUERY_ACK)){
-      let { index } = result;
-      let { callback, data } = commandStroage[index];
+    let { index } = result;
+    let { callback, data } = cache.get(index);
+    
+    if(utils.isEqual(cmd, SIGNAL_CMD.PUBLISH_ACK)){
       utils.extend(data, result);
-      delete commandStroage[index];
       return callback(data);
+    }
+    if(utils.isEqual(cmd, SIGNAL_CMD.QUERY_ACK)){
+      return callback(result);
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.CONNECT_ACK)){
       updateState(result.state);
     }
     emitter.emit(name, result);
+    cache.remove(index);
   }
 
   let isConnected = () => {

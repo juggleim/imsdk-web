@@ -1,15 +1,15 @@
-import { FUNC_PARAM_CHECKER, SIGNAL_CMD } from "../enum";
+import { FUNC_PARAM_CHECKER, SIGNAL_CMD, COMMAND_TOPICS } from "../enum";
 import utils from "../utils";
 import common from "../common/common";
 
 export default function(io){
   let getConversations = (params) => {
     return utils.deferred((resolve, reject) => {
-      let error = common.check(io, params, FUNC_PARAM_CHECKER.GETCONVERSATIONS);
-      if(!utils.isEmpty(error)){
-        return reject(error);
-      }
-      io.sendCommand(SIGNAL_CMD.QUERY, params, (result) => {
+      params = params || {};
+      let { count, direction, time } = params;
+      let _params = { topic: COMMAND_TOPICS.CONVERSATIONS, time: 0, count: 50, direction: 0 };
+      utils.extend(_params, params);
+      io.sendCommand(SIGNAL_CMD.QUERY, _params, (result) => {
         resolve(result);
       });
     });

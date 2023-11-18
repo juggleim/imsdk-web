@@ -1,7 +1,7 @@
 import utils from "../utils";
 import Proto from "./proto";
-import { SIGNAL_CMD, QOS, CONVERATION_TYPE } from "../enum";
-export default function Encoder(){
+import { SIGNAL_CMD, QOS, CONVERATION_TYPE, COMMAND_TOPICS} from "../enum";
+export default function Encoder(cache){
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
   
   let maps = [
@@ -39,22 +39,25 @@ export default function Encoder(){
     return buffer;
   };
   
-  function getConnectBody(data){
+  function getConnectBody({ data }){
     let { appkey, token } = data;
     return {
       connectMsgBody: { appkey, token }
     };
   }
 
-  function getPublishBody(data){
-    let { conversationId: targetId, conversationType, name, content, index   } = data;
+  function getPublishBody({ data, callback, index }){
+    let { conversationId: targetId, conversationType, name, content   } = data;
     let upMsgCodec = Proto.lookup('codec.UpMsg');
     let upMessage = upMsgCodec.create({
       msgType: name,
       msgContent: new TextEncoder().encode(content)
     });
     let upMsgBuffer = upMsgCodec.encode(upMessage).finish();
-    let topic = topics[conversationType];   
+    let topic = topics[conversationType];
+
+    cache.set(index, { callback, data });
+
     return {
       publishMsgBody: {
         index,
@@ -65,21 +68,39 @@ export default function Encoder(){
     };
   }
 
-  function getQueryBody(data){
-    let { conversationId: targetId, userId, conversationType, time, count, direction, index, topic  } = data;
+  function getQueryBody({ data, callback, index }){
+    let { targetId, userId, topic  } = data;
+    let buffer = [];
 
-    if(utils.isEqual(CONVERATION_TYPE.PRIVATE, conversationType)){
-      targetId = `${userId}:${targetId}`
+    cache.set(index, { callback, index, topic });
+    
+    if(utils.isEqual(topic, COMMAND_TOPICS.HISTORY_MESSAGES)){
+      let { conversationType, time, count, direction } = data;
+      if(utils.isEqual(CONVERATION_TYPE.PRIVATE, conversationType)){
+        targetId = `${userId}:${targetId}`;
+      }
+      let codec = Proto.lookup('codec.QryHisMsgsReq');
+      let message = codec.create({
+        converId: targetId,
+        type: conversationType,
+        startTime: time,
+        count: count,
+        order: direction
+      });
+      buffer = codec.encode(message).finish();
     }
-    let codec = Proto.lookup('codec.QryHisMsgsReq');
-    let message = codec.create({
-      converId: targetId,
-      type: conversationType,
-      startTime: time,
-      count: count,
-      order: direction
-    });
-    let buffer = codec.encode(message).finish();
+
+    if(utils.isEqual(topic, COMMAND_TOPICS.CONVERSATIONS)){
+      let { count, time, direction } = data;
+      targetId = userId;
+      let codec = Proto.lookup('codec.QryConversationsReq');
+      let message = codec.create({
+        startTime: time,
+        count: count,
+        order: direction
+      });
+      buffer = codec.encode(message).finish();
+    }
 
     return {
       qryMsgBody: {
@@ -90,6 +111,8 @@ export default function Encoder(){
       }
     }
   }
+
+
   return { 
     encode
   };

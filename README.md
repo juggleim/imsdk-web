@@ -13,6 +13,6 @@
 
 ### 其他
 
-`npx pbjs -t json-module -w es6 -o proto.js connect.proto`
+`npx pbjs -t json-module -w es6 -o ./src/socket/proto.js ./src/socket/connect.proto`
 
 `import $protobuf from "../3rd/protobuf";`

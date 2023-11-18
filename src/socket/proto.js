@@ -1,4 +1,3 @@
-/*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
 import $protobuf from "../3rd/protobuf";
 
 const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $protobuf.Root()))
@@ -279,6 +278,47 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           }
         }
       },
+      QryHisMsgsReq: {
+        fields: {
+          converId: {
+            type: "string",
+            id: 1
+          },
+          type: {
+            type: "ChannelType",
+            id: 2
+          },
+          startTime: {
+            type: "int64",
+            id: 3
+          },
+          count: {
+            type: "int32",
+            id: 4
+          },
+          order: {
+            type: "int32",
+            id: 5
+          }
+        }
+      },
+      DownMsgSet: {
+        fields: {
+          msgs: {
+            rule: "repeated",
+            type: "DownMsg",
+            id: 1
+          },
+          syncTime: {
+            type: "int64",
+            id: 2
+          },
+          isFinished: {
+            type: "bool",
+            id: 3
+          }
+        }
+      },
       UpMsg: {
         fields: {
           msgType: {
@@ -356,6 +396,71 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           pushData: {
             type: "PushData",
             id: 13
+          }
+        }
+      },
+      SyncConversationsReq: {
+        fields: {
+          startTime: {
+            type: "int64",
+            id: 1
+          },
+          count: {
+            type: "int32",
+            id: 2
+          }
+        }
+      },
+      QryConversationsReq: {
+        fields: {
+          startTime: {
+            type: "int64",
+            id: 1
+          },
+          count: {
+            type: "int32",
+            id: 2
+          },
+          order: {
+            type: "int32",
+            id: 3
+          }
+        }
+      },
+      QryConversationsResp: {
+        fields: {
+          conversations: {
+            rule: "repeated",
+            type: "Conversation",
+            id: 1
+          }
+        }
+      },
+      Conversation: {
+        fields: {
+          converId: {
+            type: "string",
+            id: 1
+          },
+          targetId: {
+            type: "string",
+            id: 2
+          },
+          type: {
+            type: "ChannelType",
+            id: 3
+          },
+          updateTime: {
+            type: "int64",
+            id: 4
+          },
+          unreadCount: {
+            type: "int32",
+            id: 5
+          },
+          msg: {
+            type: "DownMsg",
+            id: 6
           }
         }
       }

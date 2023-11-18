@@ -18,28 +18,12 @@ export default function Decoder(){
         result = { messageId, sentTime, index };
         break;
       case SIGNAL_CMD.PUBLISH:
-        let { 
-          publishMsgBody: { 
-            targetId: conversationId,
-            data: publistData 
-          }
-        } = msg;
-        let message = Proto.lookup('codec.DownMsg');
-        let payload = message.decode(publistData);
-        let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType } = payload;
-        
-        result = { 
-          conversationId,
-          conversationType,
-          senderUserId: fromId, 
-          messageId: msgId, 
-          sentTime: msgTime,
-          name: msgType,
-          content: new TextDecoder().decode(msgContent)
-        };
+        result = publishHandler(msg);
         name = SIGNAL_NAME.CMD_RECEIVED;
         break;
       case SIGNAL_CMD.QUERY_ACK:
+        result = queryAckHandler(msg);
+        name = SIGNAL_NAME.S_QUERY_ACK;
         break;
       case SIGNAL_CMD.PONG:
         break;
@@ -49,6 +33,42 @@ export default function Decoder(){
     };
   };
  
+  function publishHandler(msg){
+    let { 
+      publishMsgBody: { 
+        targetId: conversationId,
+        data: data 
+      }
+    } = msg;
+    let payload = Proto.lookup('codec.DownMsg');
+    let message = payload.decode(data);
+    let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType } = message;
+    let _msg = msgFormat(message);
+    utils.extend(_msg, { conversationId });
+    return _msg;
+  }
+  function queryAckHandler(msg){
+    let { qryAckMsgBody: { index, data } } = msg;
+    let payload = Proto.lookup('codec.DownMsgSet');
+    let result = payload.decode(data);
+    
+    let { isFinished, msgs } = result;
+    let messages = utils.map(msgs, (msg) => {
+      return msgFormat(msg);
+    });
+    return { isFinished, messages, index };
+  }
+  function msgFormat(msg){
+    let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType } = msg;
+    return {
+      conversationType,
+      senderUserId: fromId, 
+      messageId: msgId, 
+      sentTime: msgTime,
+      name: msgType,
+      content: new TextDecoder().decode(msgContent)
+    }
+  }
   return { 
     decode
   };

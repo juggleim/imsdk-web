@@ -66,14 +66,27 @@ export default function Encoder(){
   }
 
   function getQueryBody(data){
-    let { conversationId: targetId, conversationType, time, count, direction, index  } = data;
+    let { conversationId: targetId, userId, conversationType, time, count, direction, index  } = data;
+
+    if(utils.isEqual(CONVERATION_TYPE.PRIVATE, conversationType)){
+      targetId = `${userId}:${targetId}`
+    }
+    let codec = Proto.lookup('codec.QryHisMsgsReq');
+    let message = codec.create({
+      converId: targetId,
+      type: conversationType,
+      startTime: time,
+      count: count,
+      order: direction
+    });
+    let buffer = codec.encode(message).finish();
+
     return {
       qryMsgBody: {
         index,
-        topic: '',
+        topic: 'qry_hismsgs',
         targetId,
-        timestamp: time,
-        data: ''
+        data: buffer
       }
     }
   }

@@ -97,6 +97,20 @@ message PushData{
     string pushExtraData = 4;
 }
 
+message QryHisMsgsReq{
+    string converId = 1;
+    ChannelType type = 2;
+    int64 startTime = 3;
+    int32 count = 4;
+    int32 order = 5;
+}
+
+message DownMsgSet{
+    repeated DownMsg msgs = 1;
+    int64 syncTime = 2;
+    bool isFinished = 3;
+}
+
 message UpMsg {
     string msgType = 1;   //消息类型定义
     bytes msgContent= 2;  // 消息实体数据
@@ -119,4 +133,28 @@ message DownMsg{
     string platform = 11;
     string clientUid = 12;
     PushData pushData = 13;
+}
+
+message SyncConversationsReq{
+    int64 startTime = 1;
+    int32 count = 2;
+}
+
+message QryConversationsReq{
+    int64 startTime = 1;
+    int32 count = 2;
+    int32 order = 3;
+}
+
+message QryConversationsResp{
+    repeated Conversation conversations = 1;
+}
+
+message Conversation{
+    string converId = 1;
+    string targetId = 2;
+    ChannelType type = 3;
+    int64 updateTime = 4;
+    int32 unreadCount = 5;
+    DownMsg msg = 6;
 }

@@ -19,9 +19,15 @@ export default function IO(config){
   let updateState = (state) => {
     connectionState = state;
   }
+  let currentUserId = '';
+  let setCurrentUserId = (id) => {
+    currentUserId = id;
+  };
   let connect = ({ token }) => {
     return Network.getNavi(nav, { appkey, token }).then((result) => {
-      let { servers } = result;
+      let { servers, userId } = result;
+      setCurrentUserId(userId);
+
       Network.detect(servers, (domain) => {
         let { ws: protocol } = utils.getProtocol();
         let url = `${protocol}//${domain}/im`;
@@ -77,10 +83,11 @@ export default function IO(config){
   
   let bufferHandler = (buffer) => {
     let { cmd, result, name } = decoder.decode(buffer);
-    if(utils.isEqual(cmd, SIGNAL_CMD.PUBLISH_ACK)){
+    if(utils.isEqual(cmd, SIGNAL_CMD.PUBLISH_ACK) || utils.isEqual(cmd, SIGNAL_CMD.QUERY_ACK)){
       let { index } = result;
       let { callback, data } = commandStroage[index];
       utils.extend(data, result);
+      delete commandStroage[index];
       return callback(data);
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.CONNECT_ACK)){
@@ -91,13 +98,17 @@ export default function IO(config){
 
   let isConnected = () => {
     return utils.isEqual(connectionState, CONNECT_STATE.CONNECTED)
-  }
+  };
+  let getCurrentUser = () => {
+    return { id: currentUserId };
+  };
 
   let io = {
     connect,
     disconnect,
     sendCommand,
     isConnected,
+    getCurrentUser,
     ...emitter
   };
   return io;

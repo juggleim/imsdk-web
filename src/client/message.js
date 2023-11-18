@@ -1,4 +1,4 @@
-import { SIGNAL_CMD, EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER } from "../enum";
+import { SIGNAL_CMD, EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_DIRECTION } from "../enum";
 import utils from "../utils";
 import common from "../common/common";
 export default function(io, emitter){
@@ -20,11 +20,20 @@ export default function(io, emitter){
 
   let getMessages = (conversation) => {
     return utils.deferred((resolve, reject) => {
-      let error = common.check(io, message, FUNC_PARAM_CHECKER.SENDMSG);
+      let error = common.check(io, conversation, FUNC_PARAM_CHECKER.GETMSGS);
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-      io.sendCommand(SIGNAL_CMD.QUERY, conversation, (msg) => {
+      let { conversationId } = conversation;
+      let { id: userId } = io.getCurrentUser();
+      let params = {
+        time: 0,
+        direction: MESSAGE_DIRECTION.UP,
+        count: 20,
+        userId: userId
+      };
+      params = utils.extend(params, conversation);
+      io.sendCommand(SIGNAL_CMD.QUERY, params, (msg) => {
         resolve(msg);
       });
     });

@@ -33,7 +33,7 @@ export let QOS = {
 };
 export let FUNC_PARAM_CHECKER = {
   SENDMSG: ['conversationType', 'conversationId', 'name', 'content'],
-  GETMSGS: ['conversationType', 'conversationId', 'time', 'count'],
+  GETMSGS: ['conversationType', 'conversationId'],
   REMOVEMSG: ['conversationType', 'conversationId', 'messageId'],
   RECALLMSG: ['conversationType', 'conversationId', 'messageId'],
   
@@ -59,6 +59,11 @@ export let CONNECT_STATE = {
   GROUP: 2,
   CHATROOM: 3,
   SYSTEM: 4
+ };
+
+ export let MESSAGE_DIRECTION = {
+  UP: 0,
+  DOWN: 1
  };
 
  export let ErrorType = {

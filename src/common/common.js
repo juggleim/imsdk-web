@@ -1,5 +1,5 @@
 import utils from "../utils";
-import { ErrorType } from "../enum";
+import { ErrorType, STORAGE } from "../enum";
 
 let check = (io, message, props) => {
   let error = {};
@@ -19,6 +19,16 @@ let check = (io, message, props) => {
   return error;
 };
 
+let getTokenUUId = (token) => {
+  let uuid = token.slice(16, 40);
+  return uuid;
+};
+
+let getNaviStorageKey = (appkey, token) => {
+  let uid = getTokenUUId(token);
+  return `${STORAGE.NAVI}_${appkey}_${uid}`;
+};
 export default {
-  check
+  check,
+  getNaviStorageKey
 }

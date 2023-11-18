@@ -180,7 +180,7 @@ const requestNormal = (url, option, callback) => {
       responseText = responseText || '{}';
       let result = JSON.parse(responseText);
       if (isSuccess()) {
-        callback.success(result);
+        callback.success(result, xhr);
       } else {
         let { status } = xhr;
         let error = { status };
@@ -315,11 +315,16 @@ const getUUID = () => {
 };
 
 const getProtocol = () => {
-  let protocol = location.protocol;
-  if(isEqual(protocol, 'file:')){
-    protocol = 'http:';
+  let http = location.protocol;
+  if(isEqual(http, 'file:')){
+    http = 'http:';
   }
-  return protocol;
+  let wsMap = {
+    'http:': 'ws:',
+    'https:': 'wss:'
+  };
+  let ws = wsMap[http];
+  return { http, ws }
 };
 
 export default {

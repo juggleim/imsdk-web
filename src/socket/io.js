@@ -20,24 +20,29 @@ export default function IO(config){
     connectionState = state;
   }
   let connect = ({ token }) => {
-    // return Network.getNavi(nav, { appkey, token });
-    // return Network.detect(['120.48.178.248:9002']);
-    ws = new WebSocket("ws://120.48.178.248:9002/im");
-    ws.addEventListener("open", () => {
-      sendCommand(SIGNAL_CMD.CONNECT, { appkey, token });
-    });
-    ws.addEventListener("close", (e) => {
-      console.log('close', e);
-    });
-    ws.addEventListener("error", (e) => {
-      console.log('error', e);
-    });
-    ws.addEventListener("message", ({ data }) => {
-      let reader = new FileReader();
-      reader.onload = function() {
-        bufferHandler(this.result);
-      }
-      reader.readAsArrayBuffer(data);
+    return Network.getNavi(nav, { appkey, token }).then((result) => {
+      let { servers } = result;
+      Network.detect(servers, (domain) => {
+        let { ws: protocol } = utils.getProtocol();
+        let url = `${protocol}//${domain}/im`;
+        ws = new WebSocket(url);
+        ws.addEventListener("open", () => {
+          sendCommand(SIGNAL_CMD.CONNECT, { appkey, token });
+        });
+        ws.addEventListener("close", (e) => {
+          console.log('close', e);
+        });
+        ws.addEventListener("error", (e) => {
+          console.log('error', e);
+        });
+        ws.addEventListener("message", ({ data }) => {
+          let reader = new FileReader();
+          reader.onload = function() {
+            bufferHandler(this.result);
+          }
+          reader.readAsArrayBuffer(data);
+        });
+      });
     });
   };
 

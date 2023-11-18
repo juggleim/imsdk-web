@@ -14,7 +14,7 @@ let set = (key, value) => {
 let get = (key) => {
   let _key = getKey(key);
   let storage = localStorage.getItem(_key);
-  storage = utils.parse(storage);
+  storage = utils.parse(storage) || { data: {}};
   let value = storage.data;
   return value;
 }

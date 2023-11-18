@@ -1,5 +1,6 @@
 export let STORAGE = {
   PREFIX: 'suprjuggle_im',
+  NAVI: 'navi'
 };
 
 export let SIGNAL_NAME = {

@@ -66,7 +66,7 @@ export default function Encoder(){
   }
 
   function getQueryBody(data){
-    let { conversationId: targetId, userId, conversationType, time, count, direction, index  } = data;
+    let { conversationId: targetId, userId, conversationType, time, count, direction, index, topic  } = data;
 
     if(utils.isEqual(CONVERATION_TYPE.PRIVATE, conversationType)){
       targetId = `${userId}:${targetId}`
@@ -84,7 +84,7 @@ export default function Encoder(){
     return {
       qryMsgBody: {
         index,
-        topic: 'qry_hismsgs',
+        topic,
         targetId,
         data: buffer
       }

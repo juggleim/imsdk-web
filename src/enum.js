@@ -41,7 +41,10 @@ export let FUNC_PARAM_CHECKER = {
   GETCONVERSATION: ['conversationType', 'conversationId'],
   CLEARUNREADCOUNT: ['conversationType', 'conversationId'],
 };
-
+export let QUERY_TOPICS = {
+  HISTORY_MESSAGES: 'qry_hismsgs',
+  CONVERSATIONS: 'qry_convers'
+};
 // 以下是对外暴露枚举
 export let EVENT = {
   STATE_CHANGED: 'state_changed',

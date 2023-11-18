@@ -1,4 +1,4 @@
-import { SIGNAL_CMD, EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_DIRECTION } from "../enum";
+import { SIGNAL_CMD, EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_DIRECTION, QUERY_TOPICS } from "../enum";
 import utils from "../utils";
 import common from "../common/common";
 export default function(io, emitter){
@@ -30,7 +30,8 @@ export default function(io, emitter){
         time: 0,
         direction: MESSAGE_DIRECTION.UP,
         count: 20,
-        userId: userId
+        userId: userId,
+        topic: QUERY_TOPICS.HISTORY_MESSAGES
       };
       params = utils.extend(params, conversation);
       io.sendCommand(SIGNAL_CMD.QUERY, params, (msg) => {

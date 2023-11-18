@@ -5,6 +5,11 @@ import common from "../common/common";
 export default function(io){
   let getConversations = (params) => {
     return utils.deferred((resolve, reject) => {
+      let error = common.check(io, params, []);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+
       params = params || {};
       let { count, direction, time } = params;
       let _params = { topic: COMMAND_TOPICS.CONVERSATIONS, time: 0, count: 50, direction: 0 };

@@ -1,14 +1,14 @@
 import utils from "../utils";
 import { ErrorType, STORAGE } from "../enum";
 
-let check = (io, message, props) => {
+let check = (io, params, props) => {
   let error = {};
   if(!io.isConnected()){
     error = ErrorType.CONNECTION_NOT_READY;
   }
   let { msg, code } = ErrorType.ILLEGAL_PARAMS;
   utils.forEach(props, (prop) => {
-    let val = message[prop];
+    let val = params[prop];
     if(utils.isUndefined(val)){
       error = {
         code,

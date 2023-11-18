@@ -14,8 +14,6 @@ export default function IO(config){
   nav = nav || 'http://120.48.178.248:8083';
   let ws = {};
   
-  let imsocket = Proto.lookup('codec.ImWebsocketMsg');
-
   let cache = Cache();
   let decoder = BufferDecoder(cache);
   let encoder = BufferEncoder(cache);

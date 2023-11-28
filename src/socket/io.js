@@ -2,7 +2,7 @@ import Emitter from "../common/emmit";
 import utils from "../utils";
 import Storage from "../common/storage";
 import Proto from "./proto";
-import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS} from "../enum";
+import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE} from "../enum";
 import BufferEncoder from "./encoder";
 import BufferDecoder from "./decoder";
 import Network from "../common/network";
@@ -95,6 +95,11 @@ export default function IO(config){
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.CONNECT_ACK)){
       updateState(result.state);
+      syncer.exec({
+        msg: { type: NOTIFY_TYPE.MSG },
+        name: SIGNAL_NAME.S_NTF,
+        user: { id: currentUserId }
+      });
       emitter.emit(name, result);
     }
     cache.remove(index);

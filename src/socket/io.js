@@ -7,6 +7,8 @@ import BufferEncoder from "./encoder";
 import BufferDecoder from "./decoder";
 import Network from "../common/network";
 import Cache from "../common/cache";
+import common from "../common/common";
+import Syncer from "./sync";
 
 export default function IO(config){
   let emitter = Emitter();
@@ -18,7 +20,7 @@ export default function IO(config){
   let decoder = BufferDecoder(cache);
   let encoder = BufferEncoder(cache);
 
-  let connectionState =  CONNECT_STATE.DISCONNECTED;
+  let connectionState = CONNECT_STATE.DISCONNECTED;
   let updateState = (state) => {
     connectionState = state;
   }
@@ -31,6 +33,11 @@ export default function IO(config){
       let { servers, userId } = result;
       setCurrentUserId(userId);
 
+      let onDisconnect = () => {
+        let state = CONNECT_STATE.DISCONNECTED;
+        updateState(state);
+        emitter.emit(SIGNAL_NAME.CONN_CHANGED, { state })
+      };
       Network.detect(servers, (domain) => {
         let { ws: protocol } = utils.getProtocol();
         let url = `${protocol}//${domain}/im`;
@@ -38,12 +45,8 @@ export default function IO(config){
         ws.addEventListener("open", () => {
           sendCommand(SIGNAL_CMD.CONNECT, { appkey, token });
         });
-        ws.addEventListener("close", (e) => {
-          console.log('close', e);
-        });
-        ws.addEventListener("error", (e) => {
-          console.log('error', e);
-        });
+        ws.addEventListener("close", onDisconnect);
+        ws.addEventListener("error", onDisconnect);
         ws.addEventListener("message", ({ data }) => {
           let reader = new FileReader();
           reader.onload = function() {
@@ -60,45 +63,47 @@ export default function IO(config){
     emitter.emit(SIGNAL_NAME.CONN_CHANGED, CONNECT_STATE.DISCONNECTED);
   };
 
-  let orderNum = 0;
-  let getNum = () => {
-    orderNum += 1;
-    if(orderNum > 65535){
-      orderNum = 1;
-    }
-    return orderNum;
-  };
-
+  
   let sendCommand = (cmd, data, callback) => {
     callback = callback || utils.noop;
-    let index = getNum();
+    let index = common.getNum();
     let buffer = encoder.encode(cmd, { callback, data, index });
     ws.send(buffer);
   };
   
+  let syncer = Syncer(sendCommand, emitter);
+
   let bufferHandler = (buffer) => {
     let { cmd, result, name } = decoder.decode(buffer);
     let { index } = result;
     let { callback, data } = cache.get(index);
     
+    if(utils.isEqual(name, SIGNAL_NAME.S_NTF) || utils.isEqual(name, SIGNAL_NAME.CMD_RECEIVED) ){
+      syncer.exec({
+        msg: result,
+        name: name,
+        user: { id: currentUserId }
+      });
+    }
     if(utils.isEqual(cmd, SIGNAL_CMD.PUBLISH_ACK)){
       utils.extend(data, result);
-      return callback(data);
+      common.updateSyncTime(data);
+      callback(data);
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.QUERY_ACK)){
-      return callback(result);
+      callback(result);
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.CONNECT_ACK)){
       updateState(result.state);
+      emitter.emit(name, result);
     }
-    emitter.emit(name, result);
     cache.remove(index);
   }
 
   let isConnected = () => {
     return utils.isEqual(connectionState, CONNECT_STATE.CONNECTED)
   };
-  let getCurrentUser = () => {
+  function getCurrentUser(){
     return { id: currentUserId };
   };
 

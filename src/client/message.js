@@ -1,4 +1,4 @@
-import { SIGNAL_CMD, EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_DIRECTION, COMMAND_TOPICS } from "../enum";
+import { SIGNAL_CMD, EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_ORDER, COMMAND_TOPICS } from "../enum";
 import utils from "../utils";
 import common from "../common/common";
 export default function(io, emitter){
@@ -28,7 +28,7 @@ export default function(io, emitter){
       let { id: userId } = io.getCurrentUser();
       let params = {
         time: 0,
-        direction: MESSAGE_DIRECTION.UP,
+        direction: MESSAGE_ORDER.FORWARD,
         count: 20,
         userId: userId,
         topic: COMMAND_TOPICS.HISTORY_MESSAGES,

@@ -1,5 +1,6 @@
 import utils from "../utils";
 import { ErrorType, STORAGE } from "../enum";
+import Storage from "./storage";
 
 let check = (io, params, props) => {
   let error = {};
@@ -28,7 +29,30 @@ let getNaviStorageKey = (appkey, token) => {
   let uid = getTokenUUId(token);
   return `${STORAGE.NAVI}_${appkey}_${uid}`;
 };
+let orderNum = 0;
+let getNum = () => {
+  orderNum += 1;
+  if(orderNum > 65535){
+    orderNum = 1;
+  }
+  return orderNum;
+};
+function updateSyncTime(message){
+  let { isSender, sentTime } = message;
+  let key =  STORAGE.SYNC_RECEIVED_MSG_TIME;
+  if(isSender){
+    key =  STORAGE.SYNC_SENT_MSG_TIME;
+  }
+  let time = Storage.get(key).time || 0;
+  let isNewMsg = sentTime > time;
+  if(isNewMsg){
+    Storage.set(key, { time: sentTime });
+  }
+  return isNewMsg;
+}
 export default {
   check,
-  getNaviStorageKey
+  getNum,
+  getNaviStorageKey,
+  updateSyncTime
 }

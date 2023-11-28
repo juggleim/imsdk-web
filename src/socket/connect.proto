@@ -158,3 +158,18 @@ message Conversation{
     int32 unreadCount = 5;
     DownMsg msg = 6;
 }
+
+message SyncMsgReq{
+    int64 syncTime = 1;//收件箱同步时间
+    bool containsSendBox = 2;//是否包含发件箱消息
+    int64 sendBoxSyncTime = 3;//发件箱同步时间
+}
+
+message Notify{
+    NotifyType type = 1;
+    int64 syncTime = 2;
+}
+enum NotifyType {
+    Default = 0;
+    Msg = 1;
+}

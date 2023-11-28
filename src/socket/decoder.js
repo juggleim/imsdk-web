@@ -15,11 +15,12 @@ export default function Decoder(cache){
         break;
       case SIGNAL_CMD.PUBLISH_ACK:
         let { pubAckMsgBody: { index, msgId: messageId, timestamp: sentTime } } = msg;
-        result = { messageId, sentTime, index };
+        result = { messageId, sentTime, index, isSender: true };
         break;
       case SIGNAL_CMD.PUBLISH:
-        result = publishHandler(msg);
-        name = SIGNAL_NAME.CMD_RECEIVED;
+        let {_msg, _name } = publishHandler(msg);
+        name = _name;
+        result = _msg;
         break;
       case SIGNAL_CMD.QUERY_ACK:
         result = queryAckHandler(msg);
@@ -37,15 +38,29 @@ export default function Decoder(cache){
     let { 
       publishMsgBody: { 
         targetId: conversationId,
-        data: data 
+        data,
+        topic,
+        timestamp
       }
     } = msg;
-    let payload = Proto.lookup('codec.DownMsg');
-    let message = payload.decode(data);
-    let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType } = message;
-    let _msg = msgFormat(message);
-    utils.extend(_msg, { conversationId });
-    return _msg;
+    let _msg = {};
+    let _name = SIGNAL_NAME.CMD_RECEIVED;
+
+    // 收到 NTF 直接返回，通过 sync_msgs 同步消息
+    if(utils.isEqual(topic, COMMAND_TOPICS.NTF)){
+      let payload = Proto.lookup('codec.Notify');
+      let message = payload.decode(data);
+      let { syncTime: receiveTime, type } = message;
+      _msg = { topic, receiveTime, type};
+      _name = SIGNAL_NAME.S_NTF;
+    }else {
+      let payload = Proto.lookup('codec.DownMsg');
+      let message = payload.decode(data);
+      let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType } = message;
+      _msg = msgFormat(message);
+      utils.extend(_msg, { conversationId });
+    }
+    return { _msg, _name };
   }
   function queryAckHandler(msg){
 
@@ -53,7 +68,7 @@ export default function Decoder(cache){
     let { topic } = cache.get(index);
 
     let result = { index };
-    if(utils.isEqual(topic, COMMAND_TOPICS.HISTORY_MESSAGES)){
+    if(utils.isEqual(topic, COMMAND_TOPICS.HISTORY_MESSAGES)||utils.isEqual(topic, COMMAND_TOPICS.SYNC_MESSAGES)){
       result = getMessagesHandler(index, data);
     }
 
@@ -89,13 +104,14 @@ export default function Decoder(cache){
     return { isFinished, messages, index };
   }
   function msgFormat(msg){
-    let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType } = msg;
+    let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType, isSend } = msg;
     return {
       conversationType,
       senderUserId: fromId, 
       messageId: msgId, 
       sentTime: msgTime,
       name: msgType,
+      isSnder: !!isSend,
       content: new TextDecoder().decode(msgContent)
     }
   }

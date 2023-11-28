@@ -464,6 +464,40 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 6
           }
         }
+      },
+      SyncMsgReq: {
+        fields: {
+          syncTime: {
+            type: "int64",
+            id: 1
+          },
+          containsSendBox: {
+            type: "bool",
+            id: 2
+          },
+          sendBoxSyncTime: {
+            type: "int64",
+            id: 3
+          }
+        }
+      },
+      Notify: {
+        fields: {
+          type: {
+            type: "NotifyType",
+            id: 1
+          },
+          syncTime: {
+            type: "int64",
+            id: 2
+          }
+        }
+      },
+      NotifyType: {
+        values: {
+          Default: 0,
+          Msg: 1
+        }
       }
     }
   }

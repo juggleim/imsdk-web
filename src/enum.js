@@ -1,6 +1,8 @@
 export let STORAGE = {
   PREFIX: 'suprjuggle_im',
-  NAVI: 'navi'
+  NAVI: 'navi',
+  SYNC_RECEIVED_MSG_TIME: 'sync_received_msg_time',
+  SYNC_SENT_MSG_TIME: 'sync_sent_msg_time'
 };
 
 export let SIGNAL_NAME = {
@@ -12,6 +14,7 @@ export let SIGNAL_NAME = {
   S_DISCONNECT: 's_disconnect',
   S_PUBLICH_ACK: 's_publish_ack',
   S_QUERY_ACK: 's_query_ack',
+  S_NTF: 's_ntf',
   S_PONG: 's_pong'
 };
 
@@ -43,8 +46,16 @@ export let FUNC_PARAM_CHECKER = {
 };
 export let COMMAND_TOPICS = {
   HISTORY_MESSAGES: 'qry_hismsgs',
-  CONVERSATIONS: 'qry_convers'
+  CONVERSATIONS: 'qry_convers',
+  SYNC_MESSAGES: 'sync_msgs',
+  NTF: 'ntf'
 };
+export let NOTIFY_TYPE = {
+  DEFAULT: 0,
+  MSG: 1
+};
+
+
 // 以下是对外暴露枚举
 export let EVENT = {
   STATE_CHANGED: 'state_changed',
@@ -64,9 +75,9 @@ export let CONNECT_STATE = {
   SYSTEM: 4
  };
 
- export let MESSAGE_DIRECTION = {
-  UP: 0,
-  DOWN: 1
+ export let MESSAGE_ORDER = {
+  FORWARD: 0,
+  BACKWARD: 1
  };
 
  export let ErrorType = {

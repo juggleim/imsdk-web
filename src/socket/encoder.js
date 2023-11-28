@@ -71,8 +71,6 @@ export default function Encoder(cache){
   function getQueryBody({ data, callback, index }){
     let { targetId, userId, topic  } = data;
     let buffer = [];
-
-    cache.set(index, { callback, index, topic });
     
     if(utils.isEqual(topic, COMMAND_TOPICS.HISTORY_MESSAGES)){
       let { conversationType, time, count, direction } = data;
@@ -101,6 +99,20 @@ export default function Encoder(cache){
       });
       buffer = codec.encode(message).finish();
     }
+
+    if(utils.isEqual(topic, COMMAND_TOPICS.SYNC_MESSAGES)){
+      let { syncTime, containsSendBox, sendBoxSyncTime } = data;
+      targetId = userId;
+      let codec = Proto.lookup('codec.SyncMsgReq');
+      let message = codec.create({
+        syncTime,
+        containsSendBox,
+        sendBoxSyncTime
+      });
+      buffer = codec.encode(message).finish();
+    }
+    
+    cache.set(index, { callback, index, topic });
 
     return {
       qryMsgBody: {

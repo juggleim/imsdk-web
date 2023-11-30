@@ -24,6 +24,9 @@ export default function Syncer(send, emitter){
       let { msg } = item;
       let isNewMsg = common.updateSyncTime(msg);
       if(isNewMsg){
+        let { msgIndex } = msg;
+        let data = { msgIndex };
+        send(SIGNAL_CMD.PUBLISH_ACK, data);
         emitter.emit(SIGNAL_NAME.CMD_RECEIVED, msg);
       }
       next();

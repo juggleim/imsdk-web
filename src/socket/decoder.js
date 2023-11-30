@@ -56,7 +56,6 @@ export default function Decoder(cache){
     }else {
       let payload = Proto.lookup('codec.DownMsg');
       let message = payload.decode(data);
-      let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType } = message;
       _msg = msgFormat(message);
       utils.extend(_msg, { conversationId });
     }
@@ -104,7 +103,7 @@ export default function Decoder(cache){
     return { isFinished, messages, index };
   }
   function msgFormat(msg){
-    let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType, isSend } = msg;
+    let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType, isSend, msgIndex } = msg;
     return {
       conversationType,
       senderUserId: fromId, 
@@ -112,6 +111,7 @@ export default function Decoder(cache){
       sentTime: msgTime,
       name: msgType,
       isSnder: !!isSend,
+      msgIndex,
       content: new TextDecoder().decode(msgContent)
     }
   }

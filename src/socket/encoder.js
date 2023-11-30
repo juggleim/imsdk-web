@@ -27,6 +27,9 @@ export default function Encoder(cache){
       case SIGNAL_CMD.PUBLISH:
         body = getPublishBody(data);
         break;
+      case SIGNAL_CMD.PUBLISH_ACK:
+        body = getPublishAckBody(data);
+        break;
       case SIGNAL_CMD.QUERY:
         body = getQueryBody(data);
         break;
@@ -43,6 +46,16 @@ export default function Encoder(cache){
     let { appkey, token } = data;
     return {
       connectMsgBody: { appkey, token }
+    };
+  }
+
+  function getPublishAckBody({data, callback, index}){
+    let { msgIndex   } = data;
+    cache.set(index, { callback, data });
+    return {
+      pubAckMsgBody: {
+        index: msgIndex
+      }
     };
   }
 

@@ -341,7 +341,31 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           pushData: {
             type: "PushData",
             id: 5
+          },
+          mentionInfo: {
+            type: "MentionInfo",
+            id: 6
           }
+        }
+      },
+      MentionInfo: {
+        fields: {
+          mentionType: {
+            type: "MentionType",
+            id: 1
+          },
+          targetIds: {
+            rule: "repeated",
+            type: "string",
+            id: 2
+          }
+        }
+      },
+      MentionType: {
+        values: {
+          MentionDefault: 0,
+          MentionAll: 1,
+          MentionSomeone: 2
         }
       },
       DownMsg: {
@@ -397,6 +421,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           pushData: {
             type: "PushData",
             id: 13
+          },
+          mentionInfo: {
+            type: "MentionInfo",
+            id: 14
           }
         }
       },

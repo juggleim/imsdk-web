@@ -117,8 +117,17 @@ message UpMsg {
     int32 flags = 3;      // 标识 
     string clientUid=4;   //客户端指定的消息唯一ID
     PushData pushData = 5; // 推送设置
+    MentionInfo mentionInfo = 6; //@ 消息
 }
-
+message MentionInfo {
+    MentionType mentionType = 1;
+    repeated string targetIds = 2;  //被@ 人列表
+}
+enum MentionType{
+    MentionDefault = 0;
+    MentionAll = 1;    //@ 所有人
+    MentionSomeone = 2; //@ 指定人
+}
 message DownMsg{
     string fromId = 1;
     ChannelType type = 2;
@@ -133,6 +142,7 @@ message DownMsg{
     string platform = 11;
     string clientUid = 12;
     PushData pushData = 13;
+    MentionInfo mentionInfo = 14;
 }
 
 message SyncConversationsReq{

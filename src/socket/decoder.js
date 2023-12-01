@@ -103,7 +103,7 @@ export default function Decoder(cache){
     return { isFinished, messages, index };
   }
   function msgFormat(msg){
-    let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType, isSend, msgIndex } = msg;
+    let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType, mentionInfo, isSend, msgIndex } = msg;
     return {
       conversationType,
       senderUserId: fromId, 
@@ -112,7 +112,8 @@ export default function Decoder(cache){
       name: msgType,
       isSnder: !!isSend,
       msgIndex,
-      content: new TextDecoder().decode(msgContent)
+      content: new TextDecoder().decode(msgContent),
+      mentionInfo
     }
   }
   return { 

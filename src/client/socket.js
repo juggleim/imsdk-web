@@ -11,7 +11,7 @@ export default function(io, emitter){
   let connect = (auth) =>{
     return utils.deferred((resolve) => {
       if(io.isConnected()){
-        return reject(ErrorType.CONNECTION_EXISTS);
+        return resolve({ error: ErrorType.CONNECTION_EXISTS });
       }
       io.connect(auth, (result) => {
         resolve(result);

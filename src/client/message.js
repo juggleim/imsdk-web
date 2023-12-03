@@ -13,9 +13,12 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-      let { message } = params;
-      let data = common.getMsgConfig(message.name);
-      utils.extend(data, params)
+
+      let data = utils.clone(params);
+      let { message } = data;
+      let config = common.getMsgConfig(message.name);
+      utils.extend(data.message, config);
+      
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messageId, sentTime }) => {
         utils.extend(params.message, { sentTime, messageId })
         resolve(params);

@@ -2,7 +2,7 @@ import Emitter from "../common/emmit";
 import utils from "../utils";
 import Storage from "../common/storage";
 import Proto from "./proto";
-import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE} from "../enum";
+import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType } from "../enum";
 import BufferEncoder from "./encoder";
 import BufferDecoder from "./decoder";
 import Network from "../common/network";
@@ -12,7 +12,7 @@ import Syncer from "./sync";
 
 export default function IO(config){
   let emitter = Emitter();
-  let { appkey, nav } = config;
+  let { appkey, nav, isSync } = config;
   nav = nav || 'http://120.48.178.248:8083';
   let ws = {};
   
@@ -21,22 +21,25 @@ export default function IO(config){
   let encoder = BufferEncoder(cache);
 
   let connectionState = CONNECT_STATE.DISCONNECTED;
-  let updateState = (state) => {
+  let updateState = (state, user) => {
     connectionState = state;
+    emitter.emit(SIGNAL_NAME.CONN_CHANGED, { state, user });
   }
   let currentUserId = '';
   let setCurrentUserId = (id) => {
     currentUserId = id;
   };
-  let connect = ({ token }) => {
+  let connect = ({ token }, callback) => {
+    updateState(CONNECT_STATE.CONNECTING);
     return Network.getNavi(nav, { appkey, token }).then((result) => {
       let { servers, userId } = result;
       setCurrentUserId(userId);
 
+      cache.set(SIGNAL_NAME.S_CONNECT_ACK, callback);
+
       let onDisconnect = () => {
         let state = CONNECT_STATE.DISCONNECTED;
         updateState(state);
-        emitter.emit(SIGNAL_NAME.CONN_CHANGED, { state })
       };
       Network.detect(servers, (domain) => {
         let { ws: protocol } = utils.getProtocol();
@@ -60,10 +63,10 @@ export default function IO(config){
 
   let disconnect = () => {
     ws && ws.close();
-    emitter.emit(SIGNAL_NAME.CONN_CHANGED, CONNECT_STATE.DISCONNECTED);
+    let state = CONNECT_STATE.DISCONNECTED;
+    updateState(state);
   };
 
-  
   let sendCommand = (cmd, data, callback) => {
     callback = callback || utils.noop;
     let index = common.getNum();
@@ -94,13 +97,26 @@ export default function IO(config){
       callback(result);
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.CONNECT_ACK)){
-      updateState(result.state);
-      syncer.exec({
-        msg: { type: NOTIFY_TYPE.MSG },
-        name: SIGNAL_NAME.S_NTF,
-        user: { id: currentUserId }
-      });
-      emitter.emit(name, result);
+      let { ack: { code, userId } } = result;
+      // Protobuf 中会把 false、0 的属性隐藏，0 表示成功，此处做兼容处理
+      code = code || ErrorType.CONNECT_SUCCESS;
+      let user = { };
+      let state = CONNECT_STATE.CONNECT_FAILED;
+      let error = common.getError(code);
+      if(utils.isEqual(code, ErrorType.CONNECT_SUCCESS)){
+        state = CONNECT_STATE.CONNECTED;
+        utils.extend(user, { id: userId });
+        if(isSync){
+          syncer.exec({
+            msg: { type: NOTIFY_TYPE.MSG },
+            name: SIGNAL_NAME.S_NTF,
+            user: { id: currentUserId }
+          });
+        }
+      }
+      updateState(state, user);
+      let callback = cache.get(SIGNAL_NAME.S_CONNECT_ACK) || utils.noop;
+      callback({ user, error });
     }
     cache.remove(index);
   }

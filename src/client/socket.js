@@ -4,24 +4,21 @@ import utils from "../utils";
 export default function(io, emitter){
   let connectState = CONNECT_STATE.DISCONNECTED;
   
-  io.on(SIGNAL_NAME.CONN_CHANGED, (state) => {
-    emitter.emit(EVENT.STATE_CHANGED, { state });
+  io.on(SIGNAL_NAME.CONN_CHANGED, (data) => {
+    emitter.emit(EVENT.STATE_CHANGED, data);
   });
 
-  io.on(SIGNAL_NAME.S_CONNECT_ACK, (data) => {
-    let { ConnectAckMsgBody: { userId: id }, state } = data;
-    let result = { user: { id }, state};
-    emitter.emit(EVENT.STATE_CHANGED, result);
-  });
- 
   let connect = (auth) =>{
-    if(io.isConnected()){
-      return emitter.emit(EVENT.STATE_CHANGED, { state: ErrorType.CONNECTION_EXISTS.code });
-    }
-    emitter.emit(EVENT.STATE_CHANGED, { state: CONNECT_STATE.CONNECTING });
-    io.connect(auth);
+    return utils.deferred((resolve) => {
+      if(io.isConnected()){
+        return reject(ErrorType.CONNECTION_EXISTS);
+      }
+      io.connect(auth, (result) => {
+        resolve(result);
+      });
+    });
   };
-  
+
   let disconnect = () => {
     io.disconnect();
   };

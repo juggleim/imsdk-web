@@ -10,7 +10,7 @@ export default function Decoder(cache){
     let { cmd } = msg;
     switch(cmd){
       case SIGNAL_CMD.CONNECT_ACK:
-        result = utils.extend(msg, { state: CONNECT_STATE.CONNECTED });
+        result = utils.extend(result, { ack: msg.ConnectAckMsgBody });
         name = SIGNAL_NAME.S_CONNECT_ACK;
         break;
       case SIGNAL_CMD.PUBLISH_ACK:

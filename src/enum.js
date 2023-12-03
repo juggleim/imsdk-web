@@ -1,3 +1,4 @@
+import utils from "./utils";
 export let STORAGE = {
   PREFIX: 'suprjuggle_im',
   NAVI: 'navi',
@@ -65,7 +66,7 @@ export let CONNECT_STATE = {
   CONNECTED: 0,
   CONNECTING: 1,
   DISCONNECTED: 2,
-  CONNECTION_EXISTS: 10001
+  CONNECT_FAILED: 3
 };
 
  export let CONVERATION_TYPE = {
@@ -80,17 +81,36 @@ export let CONNECT_STATE = {
   BACKWARD: 1
  };
 
- export let ErrorType = {
-  ILLEGAL_PARAMS: {
-    code: 20000,
-    msg: '参数缺失，请检查传入参数' 
-  },
-  CONNECTION_EXISTS: {
-    code: 21000,
-    msg: '连接已存在'
-  },
-  CONNECTION_NOT_READY: {
-    code: 21001,
-    msg: '连接不存在，请优先调用 connect 连接'
-  }
- };
+
+export let ErrorMessages = [
+  { code: 0, msg: '链接成功', name: 'CONNECT_SUCCESS' },
+  { code: 11000, msg: '默认错误', name: 'CONNECT_ERROR' },
+  { code: 11001, msg: '未传 Appkey', name: 'CONNECT_APPKEY_IS_REQUIRE' },
+  { code: 11002, msg: '未传 Token', name: 'CONNECT_TOKEN_NOT_EXISTS' },
+  { code: 11003, msg: 'Appkey 不存在', name: 'CONNECT_APPKEY_NOT_EXISTS' },
+  { code: 11004, msg: 'Token 不合法', name: 'CONNECT_TOKEN_ILLEGAL' },
+  { code: 11005, msg: 'Token 未授权', name: 'CONNECT_TOKEN_UNAUTHORIZED' },
+  { code: 11006, msg: 'Token 已过期', name: 'CONNECT_TOKEN_EXPIRE' },
+  { code: 11007, msg: '需要重定向', name: 'CONNECT_REDIRECT' },
+  { code: 11008, msg: '不支持的平台类型', name: 'CONNECT_UNSUPPORT_PLATFORM' },
+  { code: 11009, msg: 'App已封禁', name: 'CONNECT_APP_BLOCKED' },
+  { code: 11010, msg: '用户已封禁', name: 'CONNECT_USER_BLOCKED' },
+  { code: 11011, msg: '被踢下线', name: 'CONNECT_USER_KICKED' },
+  { code: 11012, msg: '注销下线', name: 'CONNECT_USER_LOGOUT' },
+  { code: 11100, msg: '入参pb解析失败', name: 'PB_ERROR' },
+
+  { code: 25000, msg: '参数错误，请检查传入参数', name: 'ILLEGAL_PARAMS' },
+  { code: 25001, msg: '连接已存在', name: 'CONNECTION_EXISTS' },
+  { code: 25002, msg: '连接不存在', name: 'CONNECTION_NOT_READY' },
+];
+
+
+function getErrorType(){
+  let errors = {};
+  utils.forEach(ErrorMessages, (error) => {
+    let { name, code, msg } = error;
+    errors[name] = { code, msg };
+  });
+  return errors;
+}
+ export let ErrorType = getErrorType();

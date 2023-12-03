@@ -1,5 +1,5 @@
 import utils from "../utils";
-import { ErrorType, STORAGE } from "../enum";
+import { ErrorType, STORAGE, ErrorMessages } from "../enum";
 import Storage from "./storage";
 
 let check = (io, params, props) => {
@@ -50,9 +50,14 @@ function updateSyncTime(message){
   }
   return isNewMsg;
 }
+function getError(code) {
+  let error = ErrorMessages.find(error => error.code === code);
+  return error || { code };
+}
 export default {
   check,
   getNum,
   getNaviStorageKey,
-  updateSyncTime
+  updateSyncTime,
+  getError
 }

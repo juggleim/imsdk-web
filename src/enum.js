@@ -86,6 +86,7 @@ export let MESSAGE_FLAG = {
   COUNT: 2,
   STATE: 4,
   STORAGE: 8,
+  COUNT_STORAGE: 10,
 };
 
 export let ErrorMessages = [
@@ -120,3 +121,11 @@ function getErrorType(){
   return errors;
 }
  export let ErrorType = getErrorType();
+
+ export let MESSAGE_TYPE = {
+  TEXT: 'jg:text',
+  IMAGE: 'jg:img',
+  VOICE: 'jg:voice',
+  VIDEO: 'jg:video',
+  FILE: 'jg:file',
+ }

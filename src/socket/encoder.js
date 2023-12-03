@@ -60,11 +60,12 @@ export default function Encoder(cache){
   }
 
   function getPublishBody({ data, callback, index }){
-    let { conversationId: targetId, conversationType, name, content, mentionInfo   } = data;
+    let { conversationId: targetId, conversationType, message: { name, content, mentionInfo, flag } } = data;
     let upMsgCodec = Proto.lookup('codec.UpMsg');
     let upMessage = upMsgCodec.create({
       msgType: name,
       mentionInfo,
+      flags: flag,
       msgContent: new TextEncoder().encode(content)
     });
     let upMsgBuffer = upMsgCodec.encode(upMessage).finish();

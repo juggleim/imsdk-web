@@ -1,5 +1,5 @@
 import utils from "../utils";
-import { ErrorType, STORAGE, ErrorMessages } from "../enum";
+import { ErrorType, STORAGE, ErrorMessages, MESSAGE_TYPE, MESSAGE_FLAG } from "../enum";
 import Storage from "./storage";
 
 let check = (io, params, props) => {
@@ -66,13 +66,26 @@ function updateSyncTime(message){
   return isNewMsg;
 }
 function getError(code) {
-  let error = ErrorMessages.find(error => error.code === code);
+  let error = ErrorMessages.find(error => error.code == code);
   return error || { code };
+}
+
+function getMsgConfig(name){
+  let configs = [
+    {name: MESSAGE_TYPE.TEXT, option: { flag: MESSAGE_FLAG.COUNT_STORAGE }},
+    {name: MESSAGE_TYPE.FILE, option: { flag: MESSAGE_FLAG.COUNT_STORAGE }},
+    {name: MESSAGE_TYPE.IMAGE, option: { flag: MESSAGE_FLAG.COUNT_STORAGE }},
+    {name: MESSAGE_TYPE.VOICE, option: { flag: MESSAGE_FLAG.COUNT_STORAGE }},
+    {name: MESSAGE_TYPE.VIDEO, option: { flag: MESSAGE_FLAG.COUNT_STORAGE }},
+  ];
+  let config = configs.find(cfg => cfg.name == name ) || {};
+  return config.option || {};
 }
 export default {
   check,
   getNum,
   getNaviStorageKey,
   updateSyncTime,
-  getError
+  getError,
+  getMsgConfig
 }

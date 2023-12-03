@@ -3,7 +3,7 @@ import Conversation from "./conversation";
 import Message from "./message";
 import Socket from "./socket";
 import Emitter from "../common/emmit";
-import { EVENT, CONNECT_STATE, CONVERATION_TYPE } from "../enum";
+import { EVENT, CONNECT_STATE, CONVERATION_TYPE, MESSAGE_TYPE } from "../enum";
 
 let init = (config) => {
   let emitter = Emitter();
@@ -18,7 +18,8 @@ let init = (config) => {
     ...emitter,
     Event: EVENT,
     State: CONNECT_STATE,
-    ConversationType: CONVERATION_TYPE
+    ConversationType: CONVERATION_TYPE,
+    MessageType: MESSAGE_TYPE
   }
 }
 export default {

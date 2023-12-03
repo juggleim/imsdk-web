@@ -6,14 +6,19 @@ export default function(io, emitter){
     emitter.emit(EVENT.MESSAGE_RECEIVED, message)
   });
 
-  let sendMessage = (message) => {
+
+  let sendMessage = (params) => {
     return utils.deferred((resolve, reject) => {
-      let error = common.check(io, message, FUNC_PARAM_CHECKER.SENDMSG);
+      let error = common.check(io, params, FUNC_PARAM_CHECKER.SENDMSG);
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-      io.sendCommand(SIGNAL_CMD.PUBLISH, message, (msg) => {
-        resolve(msg);
+      let { message } = params;
+      let data = common.getMsgConfig(message.name);
+      utils.extend(data, params)
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messageId, sentTime }) => {
+        utils.extend(params.message, { sentTime, messageId })
+        resolve(params);
       });
     });
   };

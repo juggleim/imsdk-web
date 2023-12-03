@@ -89,9 +89,6 @@ export default function Encoder(cache){
     
     if(utils.isEqual(topic, COMMAND_TOPICS.HISTORY_MESSAGES)){
       let { conversationType, time, count, direction } = data;
-      if(utils.isEqual(CONVERATION_TYPE.PRIVATE, conversationType)){
-        targetId = `${userId}:${targetId}`;
-      }
       let codec = Proto.lookup('codec.QryHisMsgsReq');
       let message = codec.create({
         converId: targetId,

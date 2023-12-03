@@ -36,7 +36,7 @@ export let QOS = {
   NO: 0
 };
 export let FUNC_PARAM_CHECKER = {
-  SENDMSG: ['conversationType', 'conversationId', 'name', 'content'],
+  SENDMSG: ['conversationType', 'conversationId', 'message', 'message.content', 'message.name'],
   GETMSGS: ['conversationType', 'conversationId'],
   REMOVEMSG: ['conversationType', 'conversationId', 'messageId'],
   RECALLMSG: ['conversationType', 'conversationId', 'messageId'],
@@ -81,6 +81,12 @@ export let CONNECT_STATE = {
   BACKWARD: 1
  };
 
+export let MESSAGE_FLAG = {
+  COMMAND: 1,
+  COUNT: 2,
+  STATE: 4,
+  STORAGE: 8,
+};
 
 export let ErrorMessages = [
   { code: 0, msg: '链接成功', name: 'CONNECT_SUCCESS' },

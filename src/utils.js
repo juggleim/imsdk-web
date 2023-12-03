@@ -38,7 +38,7 @@ const forEach = (obj, callback) => {
   };
   var loopArr = () => {
     for (var i = 0, len = obj.length; i < len; i++) {
-      callback(obj[i], i);
+      callback(obj[i], i, obj);
     }
   };
   if (isObject(obj)) {

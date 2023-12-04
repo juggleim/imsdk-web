@@ -9,12 +9,16 @@ export default function(io, emitter){
   });
 
   let connect = (auth) =>{
-    return utils.deferred((resolve) => {
+    return utils.deferred((resolve, reject) => {
       if(io.isConnected()){
-        return resolve({ error: ErrorType.CONNECTION_EXISTS });
+        return reject({ error: ErrorType.CONNECTION_EXISTS });
       }
-      io.connect(auth, (result) => {
-        resolve(result);
+      io.connect(auth, ({ error, user }) => {
+        let { code, msg } = error;
+        if(utils.isEqual(code, ErrorType.CONNECT_SUCCESS)){
+          return resolve(user);
+        }
+        reject({ code, msg });
       });
     });
   };

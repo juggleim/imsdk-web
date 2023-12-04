@@ -88,26 +88,26 @@ export default function Encoder(cache){
     let buffer = [];
     
     if(utils.isEqual(topic, COMMAND_TOPICS.HISTORY_MESSAGES)){
-      let { conversationType, time, count, direction } = data;
+      let { conversationType, time, count, order } = data;
       let codec = Proto.lookup('codec.QryHisMsgsReq');
       let message = codec.create({
         converId: targetId,
         type: conversationType,
         startTime: time,
         count: count,
-        order: direction
+        order: order
       });
       buffer = codec.encode(message).finish();
     }
 
     if(utils.isEqual(topic, COMMAND_TOPICS.CONVERSATIONS)){
-      let { count, time, direction } = data;
+      let { count, time, order } = data;
       targetId = userId;
       let codec = Proto.lookup('codec.QryConversationsReq');
       let message = codec.create({
         startTime: time,
         count: count,
-        order: direction
+        order: order
       });
       buffer = codec.encode(message).finish();
     }
@@ -124,7 +124,7 @@ export default function Encoder(cache){
       buffer = codec.encode(message).finish();
     }
     
-    cache.set(index, { callback, index, topic });
+    cache.set(index, { callback, index, topic, targetId });
 
     return {
       qryMsgBody: {

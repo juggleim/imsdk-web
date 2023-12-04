@@ -3,9 +3,9 @@ import utils from "../utils";
 import common from "../common/common";
 export default function(io, emitter){
   io.on(SIGNAL_NAME.CMD_RECEIVED, (message) => {
+    io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);
     emitter.emit(EVENT.MESSAGE_RECEIVED, message)
   });
-
 
   let sendMessage = (params) => {
     return utils.deferred((resolve, reject) => {
@@ -20,7 +20,13 @@ export default function(io, emitter){
       utils.extend(data.message, config);
       
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messageId, sentTime }) => {
-        utils.extend(params.message, { sentTime, messageId })
+        utils.extend(params.message, { sentTime, messageId });
+
+        let msg = utils.clone(params.message);
+        let { conversationId, conversationType } = params;
+        utils.extend(msg, { conversationId, conversationType });
+        io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
+
         resolve(params);
       });
     });
@@ -36,7 +42,7 @@ export default function(io, emitter){
       let { id: userId } = io.getCurrentUser();
       let params = {
         time: 0,
-        direction: MESSAGE_ORDER.FORWARD,
+        order: MESSAGE_ORDER.FORWARD,
         count: 20,
         userId: userId,
         topic: COMMAND_TOPICS.HISTORY_MESSAGES,

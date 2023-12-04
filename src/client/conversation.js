@@ -1,8 +1,21 @@
-import { FUNC_PARAM_CHECKER, SIGNAL_CMD, COMMAND_TOPICS } from "../enum";
+import { FUNC_PARAM_CHECKER, SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME, EVENT, MESSAGE_ORDER } from "../enum";
 import utils from "../utils";
 import common from "../common/common";
 
-export default function(io){
+export default function(io, emitter){
+  io.on(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, (message) => {
+    let conversation = createConversation(message);
+    conversationUtils.update(conversation);
+
+    let conversations = conversationUtils.get();
+    emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations });
+  });
+  /*  
+  1、内存中缓存最近 200 个会话，并按 message.sentTime 倒序排序
+  2、startTime 是 0 时，优先返回内存中会话，内存数量小于 count 数，从服务端获取
+  3、startTime 非 0 是，直接从服务端获取，并更新到内存中
+  */
+  let conversationUtils = ConversationUtils();
   let getConversations = (params) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, params, []);
@@ -11,11 +24,19 @@ export default function(io){
       }
 
       params = params || {};
-      let { count, direction, time } = params;
-      let _params = { topic: COMMAND_TOPICS.CONVERSATIONS, time: 0, count: 50, direction: 0 };
+      let { count = 50, order = MESSAGE_ORDER.FORWARD, time = 0 } = params;
+
+      let conversations = conversationUtils.get();
+      let isSynced = conversationUtils.isSync();
+      if(isSynced && utils.isEqual(time, 0)){
+        return resolve({ conversations });
+      }
+      let _params = { topic: COMMAND_TOPICS.CONVERSATIONS, time: 0, count, order };
       utils.extend(_params, params);
       io.sendCommand(SIGNAL_CMD.QUERY, _params, (result) => {
-        resolve(result);
+        let { conversations } = result;
+        conversationUtils.add(conversations);
+        resolve({ conversations });
       });
     });
   };
@@ -66,6 +87,82 @@ export default function(io){
       });
     });
   };
+
+  function createConversation(message){
+    let { conversationId, conversationType } = message;
+    return {
+      conversationId,
+      conversationType,
+      latestMessage: message,
+      unreadCount: 1,
+      latestReadTime: 0
+    };
+  }
+  function ConversationUtils(){
+    let conversations = [];
+    let isSynced = false;
+    let update = (list) => {
+      list = utils.isArray(list) ? list : [list];
+      utils.forEach(list, (item) => {
+        let index = utils.find(conversations, ({ conversationType, conversationId }) => {
+          return utils.isEqual(item.conversationType, conversationType) && utils.isEqual(item.conversationId, conversationId);
+        });
+        let isNew = utils.isEqual(index, -1);
+        if(!isNew){
+          let conversation = conversations.splice(index, 1)[0]; 
+          let { unreadCount } = conversation;
+          utils.extend(conversation, { 
+            unreadCount: unreadCount + 1,
+            latestMessage: item.latestMessage
+          });
+          return conversations.push(conversation);
+        }
+        conversations.push(item);
+      });
+  
+      let tops = [];
+      utils.forEach(conversations, ({ isTop }, index) => {
+        if(isTop){
+          let conversation =  conversations.splice(index, 1)[0];
+          tops.push(conversation);
+        }
+      });
+      utils.sort(conversations, (a, b) => {
+        return a.latestMessage.sentTime > b.latestMessage.sentTime;
+      });
+      conversations = tops.concat(conversations);
+    };
+    let add = (list) => {
+      isSynced = true;
+      update(list);
+    };
+    let remove = (item) => {
+      let index = utils.find(conversations, ({ conversationType, conversationId }) => {
+        return utils.isEqual(item.conversationType, conversationType) && utils.isEqual(item.conversationId, conversationId);
+      });
+      if(!utils.isEqual(index, -1)){
+        conversations.splice(index, 1);
+      }
+    };
+    let clear = () => {
+      isSynced = false;
+      conversations.length = 0;
+    };
+    let get = () => {
+      return conversations;
+    };
+    let isSync = () => {
+      return isSynced;
+    };
+    return {
+      remove,
+      update,
+      clear,
+      get,
+      isSync,
+      add
+    };
+  }
 
   return {
     getConversations,

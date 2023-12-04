@@ -327,6 +327,32 @@ const getProtocol = () => {
   return { http, ws }
 };
 
+const sort = (arrs, callback) => {
+  const len = arrs.length
+	if(len < 2){
+    return arrs;
+  }
+	for (let i = 0; i < len - 1; i++) {
+		for (let j = i + 1; j < len; j++) {
+			if (callback(arrs[j], arrs[i])) {
+				[arrs[i], arrs[j]] = [arrs[j], arrs[i]]
+			}
+		}
+	}
+	return arrs
+};
+const find = (arrs, callback) => {
+  let len = arrs.length;
+  let index = -1;
+  for(let i = 0; i < len; i++){
+    let item = arrs[i];
+    if(callback(item)){
+      index = i;
+      break;
+    }
+  }
+  return index;
+};
 export default {
   Prosumer,
   Observer,
@@ -364,5 +390,7 @@ export default {
   getBrowser,
   getUUID,
   requestNormal,
-  getProtocol
+  getProtocol,
+  sort,
+  find
 }

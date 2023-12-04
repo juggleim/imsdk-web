@@ -8,6 +8,7 @@ export let STORAGE = {
 
 export let SIGNAL_NAME = {
   CMD_RECEIVED: 'cmd_inner_receive',
+  CMD_CONVERSATION_CHANGED: 'cmd_inner_conversation_changed',
   CONN_CHANGED: 'conn_inner_changed',
   
   // 与下行信令进行匹配，在 io.js 中进行派发
@@ -60,7 +61,8 @@ export let NOTIFY_TYPE = {
 // 以下是对外暴露枚举
 export let EVENT = {
   STATE_CHANGED: 'state_changed',
-  MESSAGE_RECEIVED: 'message_received'
+  MESSAGE_RECEIVED: 'message_received',
+  CONVERSATION_CHANGED: 'conversation_changed'
 };
 export let CONNECT_STATE = {
   CONNECTED: 0,

@@ -9,7 +9,7 @@ let init = (config) => {
   let emitter = Emitter();
   let io = IO(config);
   let socket = Socket(io, emitter);
-  let conversation = Conversation(io);
+  let conversation = Conversation(io, emitter);
   let message = Message(io, emitter);
   return  {
     ...socket,

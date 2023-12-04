@@ -35,14 +35,7 @@ export default function Decoder(cache){
   };
  
   function publishHandler(msg){
-    let { 
-      publishMsgBody: { 
-        targetId: conversationId,
-        data,
-        topic,
-        timestamp
-      }
-    } = msg;
+    let {  publishMsgBody: { targetId, data, topic, timestamp } } = msg;
     let _msg = {};
     let _name = SIGNAL_NAME.CMD_RECEIVED;
 
@@ -56,19 +49,19 @@ export default function Decoder(cache){
     }else {
       let payload = Proto.lookup('codec.DownMsg');
       let message = payload.decode(data);
+      utils.extend(message, { targetId });
       _msg = msgFormat(message);
-      utils.extend(_msg, { conversationId });
     }
     return { _msg, _name };
   }
   function queryAckHandler(msg){
 
     let { qryAckMsgBody: { index, data } } = msg;
-    let { topic } = cache.get(index);
+    let { topic, targetId } = cache.get(index);
 
     let result = { index };
     if(utils.isEqual(topic, COMMAND_TOPICS.HISTORY_MESSAGES)||utils.isEqual(topic, COMMAND_TOPICS.SYNC_MESSAGES)){
-      result = getMessagesHandler(index, data);
+      result = getMessagesHandler(index, data, targetId);
     }
 
     if(utils.isEqual(topic, COMMAND_TOPICS.CONVERSATIONS)){
@@ -80,11 +73,12 @@ export default function Decoder(cache){
     let payload = Proto.lookup('codec.QryConversationsResp');
     let { conversations } = payload.decode(data);
     conversations = conversations.map((conversation) => {
-      let { msg, type: conversationType, targetId: conversationId, unreadCount, updateTime: latestReadTime } = conversation;
+      let { msg, type: conversationType, targetId, unreadCount, updateTime: latestReadTime } = conversation;
+      utils.extend(msg, { targetId });
       let latestMessage = msgFormat(msg);
       return {
         conversationType,
-        conversationId,
+        conversationId: targetId,
         unreadCount,
         latestReadTime,
         latestMessage
@@ -92,20 +86,22 @@ export default function Decoder(cache){
     });
     return { conversations, index };
   }
-  function getMessagesHandler(index, data){
+  function getMessagesHandler(index, data, targetId){
     let payload = Proto.lookup('codec.DownMsgSet');
     let result = payload.decode(data);
     
     let { isFinished, msgs } = result;
     let messages = utils.map(msgs, (msg) => {
+      utils.extend(msg, { targetId });
       return msgFormat(msg);
     });
     return { isFinished, messages, index };
   }
   function msgFormat(msg){
-    let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType, mentionInfo, isSend, msgIndex } = msg;
+    let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex } = msg;
     return {
       conversationType,
+      conversationId,
       senderUserId: fromId, 
       messageId: msgId, 
       sentTime: msgTime,

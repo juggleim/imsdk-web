@@ -183,3 +183,11 @@ enum NotifyType {
     Default = 0;
     Msg = 1;
 }
+message RecallMsgReq{
+    string targetId = 1;   //单聊是为对方userid，群聊时为groupid
+    ChannelType channelType = 2;
+    string msgId = 3;  //待撤回消息的msg_id
+    int64 msgTime = 4; //待撤回消息的发送时间
+    string msgType = 5;  //撤回命令消息的消息类型
+    bytes msgContent =6; //撤回命令消息的内容
+}

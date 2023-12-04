@@ -83,12 +83,15 @@ const rename = (origin, newNames) => {
   return isObject ? origin[0] : origin;
 };
 const extend = (destination, sources) => {
-  for (let key in sources) {
-    let value = sources[key];
-    if (!isUndefined(value)) {
-      destination[key] = value;
+  sources = isArray(sources) ? sources : [sources];
+  forEach(sources, (source) => {
+    for (let key in source) {
+      let value = source[key];
+      if (!isUndefined(value)) {
+        destination[key] = value;
+      }
     }
-  }
+  });
   return destination;
 };
 const Defer = Promise;

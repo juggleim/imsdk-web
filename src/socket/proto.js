@@ -526,6 +526,34 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           Default: 0,
           Msg: 1
         }
+      },
+      RecallMsgReq: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 2
+          },
+          msgId: {
+            type: "string",
+            id: 3
+          },
+          msgTime: {
+            type: "int64",
+            id: 4
+          },
+          msgType: {
+            type: "string",
+            id: 5
+          },
+          msgContent: {
+            type: "bytes",
+            id: 6
+          }
+        }
       }
     }
   }

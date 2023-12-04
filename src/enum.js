@@ -40,7 +40,7 @@ export let FUNC_PARAM_CHECKER = {
   SENDMSG: ['conversationType', 'conversationId', 'message', 'message.content', 'message.name'],
   GETMSGS: ['conversationType', 'conversationId'],
   REMOVEMSG: ['conversationType', 'conversationId', 'messageId'],
-  RECALLMSG: ['conversationType', 'conversationId', 'messageId'],
+  RECALLMSG: ['conversationType', 'conversationId', 'messageId', 'sentTime'],
   
   GETCONVERSATIONS: ['limit'],
   GETCONVERSATION: ['conversationType', 'conversationId'],
@@ -50,7 +50,10 @@ export let COMMAND_TOPICS = {
   HISTORY_MESSAGES: 'qry_hismsgs',
   CONVERSATIONS: 'qry_convers',
   SYNC_MESSAGES: 'sync_msgs',
-  NTF: 'ntf'
+  RECALL: 'recall_msg',
+  NTF: 'ntf',
+  SEND_GROUP: 'g_msg',
+  SEND_PRIVATE: 'p_msg',
 };
 export let NOTIFY_TYPE = {
   DEFAULT: 0,
@@ -108,9 +111,13 @@ export let ErrorMessages = [
   { code: 11012, msg: '注销下线', name: 'CONNECT_USER_LOGOUT' },
   { code: 11100, msg: '入参pb解析失败', name: 'PB_ERROR' },
 
+  { code: 13001, msg: '群组不存在', name: 'GROUP_NOT_EXISTS' },
+
   { code: 25000, msg: '参数错误，请检查传入参数', name: 'ILLEGAL_PARAMS' },
   { code: 25001, msg: '连接已存在', name: 'CONNECTION_EXISTS' },
   { code: 25002, msg: '连接不存在', name: 'CONNECTION_NOT_READY' },
+  
+  { code: 21200, msg: '消息撤回成功', name: 'MESSAGE_RECALL_SUCCESS' },
 ];
 
 
@@ -130,4 +137,5 @@ function getErrorType(){
   VOICE: 'jg:voice',
   VIDEO: 'jg:video',
   FILE: 'jg:file',
+  RECALL: 'jg:recall'
  }

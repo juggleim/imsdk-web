@@ -1,10 +1,19 @@
-import { SIGNAL_CMD, EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_ORDER, COMMAND_TOPICS } from "../enum";
+import { SIGNAL_CMD, EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_ORDER, COMMAND_TOPICS, CONVERATION_TYPE, ErrorType } from "../enum";
 import utils from "../utils";
 import common from "../common/common";
 export default function(io, emitter){
   io.on(SIGNAL_NAME.CMD_RECEIVED, (message) => {
     io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);
     emitter.emit(EVENT.MESSAGE_RECEIVED, message)
+  });
+
+  let maps = [
+    [CONVERATION_TYPE.PRIVATE, 'p_msg'],
+    [CONVERATION_TYPE.GROUP, 'g_msg'],
+  ];
+  let topics = {};
+  utils.forEach(maps, (map) => {
+    topics[map[0]] = map[1];
   });
 
   let sendMessage = (params) => {
@@ -15,18 +24,18 @@ export default function(io, emitter){
       }
 
       let data = utils.clone(params);
-      let { message } = data;
+      let { message, conversationType, conversationId } = data;
       let config = common.getMsgConfig(message.name);
       utils.extend(data.message, config);
-      
+
+      let topic = topics[conversationType];
+      utils.extend(data, { topic })
+
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messageId, sentTime }) => {
         utils.extend(params.message, { sentTime, messageId });
-
         let msg = utils.clone(params.message);
-        let { conversationId, conversationType } = params;
         utils.extend(msg, { conversationId, conversationType });
         io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
-
         resolve(params);
       });
     });
@@ -65,14 +74,24 @@ export default function(io, emitter){
       });
     });
   };
+  /* 
+    let message = {conversationType, conversationId, sentTime, messageId}
+  */
   let recallMessage = (message) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, message, FUNC_PARAM_CHECKER.RECALLMSG);
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-      io.sendCommand(SIGNAL_CMD.PUBLISH, message, (msg) => {
-        resolve(msg);
+      let data = { topic:  COMMAND_TOPICS.RECALL };
+      utils.extend(data, message);
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, (result) => {
+        let { code } = result;
+        if(utils.isEqual(code, ErrorType.MESSAGE_RECALL_SUCCESS.code)){
+          return resolve();
+        }
+        let { msg } = common.getError(code);
+        reject({ code, msg });
       });
     });
   };

@@ -4,15 +4,6 @@ import { SIGNAL_CMD, QOS, CONVERATION_TYPE, COMMAND_TOPICS} from "../enum";
 export default function Encoder(cache){
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
   
-  let maps = [
-    [CONVERATION_TYPE.PRIVATE, 'p_msg'],
-    [CONVERATION_TYPE.GROUP, 'g_msg'],
-  ];
-  let topics = {};
-  utils.forEach(maps, (map) => {
-    topics[map[0]] = map[1];
-  });
-
   let encode = (cmd, data) => {
     let body = {};
     let payload = {
@@ -60,16 +51,32 @@ export default function Encoder(cache){
   }
 
   function getPublishBody({ data, callback, index }){
-    let { conversationId: targetId, conversationType, message: { name, content, mentionInfo, flag } } = data;
-    let upMsgCodec = Proto.lookup('codec.UpMsg');
-    let upMessage = upMsgCodec.create({
-      msgType: name,
-      mentionInfo,
-      flags: flag,
-      msgContent: new TextEncoder().encode(content)
-    });
-    let upMsgBuffer = upMsgCodec.encode(upMessage).finish();
-    let topic = topics[conversationType];
+    let { conversationId: targetId, conversationType, topic } = data;
+    let buffer = [];
+
+    if(utils.isInclude([COMMAND_TOPICS.SEND_GROUP, COMMAND_TOPICS.SEND_PRIVATE], topic)){
+      let { message: { name, content, mentionInfo, flag } } = data;
+      let codec = Proto.lookup('codec.UpMsg');
+      let message = codec.create({
+        msgType: name,
+        mentionInfo,
+        flags: flag,
+        msgContent: new TextEncoder().encode(content)
+      });
+      buffer = codec.encode(message).finish();
+    }
+   
+    if(utils.isEqual(COMMAND_TOPICS.RECALL, topic)){
+      let { messageId, sentTime } = data;
+      let codec = Proto.lookup('codec.RecallMsgReq');
+      let message = codec.create({
+        targetId,
+        channelType: conversationType,
+        msgId: messageId,
+        msgTime: sentTime
+      });
+      buffer = codec.encode(message).finish();
+    }
 
     cache.set(index, { callback, data });
 
@@ -78,7 +85,7 @@ export default function Encoder(cache){
         index,
         targetId,
         topic,
-        data: upMsgBuffer
+        data: buffer
       }
     };
   }

@@ -66,8 +66,9 @@ function updateSyncTime(message){
   return isNewMsg;
 }
 function getError(code) {
-  let error = ErrorMessages.find(error => error.code == code);
-  return error || { code };
+  let error = ErrorMessages.find(error => error.code == code) || { code, msg: '' };
+  let { msg } = error;
+  return { code, msg };
 }
 
 function getMsgConfig(name){

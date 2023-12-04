@@ -1,7 +1,7 @@
 import Emitter from "../common/emmit";
 import utils from "../utils";
 import Proto from "./proto";
-import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS } from "../enum";
+import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType } from "../enum";
 export default function Decoder(cache){
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
   let decode = (buffer) => {
@@ -14,8 +14,9 @@ export default function Decoder(cache){
         name = SIGNAL_NAME.S_CONNECT_ACK;
         break;
       case SIGNAL_CMD.PUBLISH_ACK:
-        let { pubAckMsgBody: { index, msgId: messageId, timestamp: sentTime } } = msg;
-        result = { messageId, sentTime, index, isSender: true };
+        let { pubAckMsgBody: { index, msgId: messageId, timestamp: sentTime, code } } = msg;
+        code = code || ErrorType.MESSAGE_RECALL_SUCCESS.code;
+        result = { messageId, sentTime, index, isSender: true, code };
         break;
       case SIGNAL_CMD.PUBLISH:
         let {_msg, _name } = publishHandler(msg);
@@ -60,7 +61,7 @@ export default function Decoder(cache){
     let { topic, targetId } = cache.get(index);
 
     let result = { index };
-    if(utils.isEqual(topic, COMMAND_TOPICS.HISTORY_MESSAGES)||utils.isEqual(topic, COMMAND_TOPICS.SYNC_MESSAGES)){
+    if(utils.isInclude([COMMAND_TOPICS.HISTORY_MESSAGES, COMMAND_TOPICS.SYNC_MESSAGES], topic)){
       result = getMessagesHandler(index, data, targetId);
     }
 
@@ -99,7 +100,8 @@ export default function Decoder(cache){
   }
   function msgFormat(msg){
     let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex } = msg;
-    return {
+    let content = new TextDecoder().decode(msgContent);
+    let _message = {
       conversationType,
       conversationId,
       senderUserId: fromId, 
@@ -108,9 +110,22 @@ export default function Decoder(cache){
       name: msgType,
       isSnder: !!isSend,
       msgIndex,
-      content: new TextDecoder().decode(msgContent),
+      content: content,
       mentionInfo
+    };
+
+    if(utils.isEqual(MESSAGE_TYPE.RECALL, msgType)){
+      content = utils.parse(content);
+      content = utils.rename(content, { 
+        msg_id: 'messageId',
+        msg_time: 'sentTime',
+        channel_type: 'conversationType',
+        sender_id: 'senderUserId',
+        receiver_id: 'targetId'
+      });
+      utils.extend(_message, { content })
     }
+    return _message;
   }
   return { 
     decode

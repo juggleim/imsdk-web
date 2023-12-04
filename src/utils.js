@@ -186,7 +186,7 @@ const requestNormal = (url, option, callback) => {
         callback.success(result, xhr);
       } else {
         let { status } = xhr;
-        let error = { status };
+        let error = { status, result };
         callback.fail(error)
       }
     }

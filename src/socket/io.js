@@ -58,6 +58,9 @@ export default function IO(config){
           reader.readAsArrayBuffer(data);
         });
       });
+    }, ({ result: { code } }) => {
+      let error = common.getError(code);
+      callback({ error });
     });
   };
 

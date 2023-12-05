@@ -9,29 +9,56 @@ let check = (io, params, props) => {
   }
   let { msg, code } = ErrorType.ILLEGAL_PARAMS;
   let len = props.length;
-  for(let i = 0; i < len; i++){
-    let prop = props[i];
-    if(utils.isInclude(prop, '.')){
-      let childs = prop.split('.');
-      let val = params[childs[0]][childs[1]];
-      error = invoke(val, prop);
-    }else{
-      error = invoke(params[prop], prop);
-    }
-    if(!utils.isEmpty(error)){
-      return error;
+
+  //约定：如果参数是数组，会校验每个元素是否包含 conversatonType 和 conversationId
+  if(utils.isArray(params)){
+    for(let n = 0; n < params.length; n++){
+      let item = params[n];
+      for(let i = 0; i < len; i++){
+        let name = props[i];
+        error = next(name, item, n)
+        if(!utils.isEmpty(error)){
+          return error;
+        }
+      }
     }
   }
-  function invoke(val, prop){
-    let result = {};
-    if(utils.isUndefined(val)){
-      result = {
-        code,
-        msg: `${prop} ${msg}`
+
+  //约定：检查数据有二级对象，例如 message.content, 必须优先设置 message
+  if(utils.isObject(params)){
+    for(let i = 0; i < len; i++){
+      let name = props[i];
+      error = next(name, params)
+      if(!utils.isEmpty(error)){
+        break;
       }
+    }
+  }
+ 
+  function next(name, origin, index){
+    let _error = {};
+    if(utils.isInclude(name, '.')){
+      let childs = name.split('.');
+      let val = origin[childs[0]][childs[1]];
+      _error = invoke(val, name, index);
+    }else{
+      _error = invoke(origin[name], name, index);
+    }
+    return _error;
+  }
+
+  function invoke(val, name, index){
+    let result = {};
+    let _msg = `${name} ${msg}`;
+    if(utils.isNumber(index)){
+      _msg = `数组下标 ${index} ${_msg}`;
+    }
+    if(utils.isUndefined(val)){
+      result = { code, msg: _msg };
     }
     return result;
   }
+
   return error;
 };
 
@@ -133,8 +160,22 @@ function ConversationUtils(){
     isSynced = false;
     conversations.length = 0;
   };
+  let modify = (conversation) => {
+    let index = utils.find(conversations, ({ conversationType, conversationId }) => {
+      return utils.isEqual(conversation.conversationType, conversationType) && utils.isEqual(conversation.conversationId, conversationId);
+    });
+    if(!utils.isEqual(index, -1)){
+      utils.extend(conversations[index], conversation);
+    }
+  };
   let get = () => {
     return conversations;
+  };
+  let getPer = (conversation) => {
+    let index = utils.find(conversations, ({ conversationType, conversationId }) => {
+      return utils.isEqual(conversation.conversationType, conversationType) && utils.isEqual(conversation.conversationId, conversationId);
+    });
+    return conversations[index] || {};
   };
   let isSync = () => {
     return isSynced;
@@ -145,7 +186,9 @@ function ConversationUtils(){
     clear,
     get,
     isSync,
-    add
+    add,
+    modify,
+    getPer
   };
 }
 

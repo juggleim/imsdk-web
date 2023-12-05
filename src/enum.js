@@ -37,6 +37,7 @@ export let QOS = {
   NO: 0
 };
 export let FUNC_PARAM_CHECKER = {
+  
   SENDMSG: ['conversationType', 'conversationId', 'message', 'message.content', 'message.name'],
   GETMSGS: ['conversationType', 'conversationId'],
   REMOVEMSG: ['conversationType', 'conversationId', 'messageId'],
@@ -44,6 +45,7 @@ export let FUNC_PARAM_CHECKER = {
   
   GETCONVERSATIONS: ['limit'],
   GETCONVERSATION: ['conversationType', 'conversationId'],
+  
   CLEARUNREADCOUNT: ['conversationType', 'conversationId'],
 };
 export let COMMAND_TOPICS = {
@@ -54,6 +56,8 @@ export let COMMAND_TOPICS = {
   NTF: 'ntf',
   SEND_GROUP: 'g_msg',
   SEND_PRIVATE: 'p_msg',
+  CLEAR_UNREAD: 'clear_unread',
+  REMOVE_CONVERSATION: 'del_convers',
 };
 export let NOTIFY_TYPE = {
   DEFAULT: 0,

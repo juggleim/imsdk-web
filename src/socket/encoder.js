@@ -78,6 +78,34 @@ export default function Encoder(cache){
       buffer = codec.encode(message).finish();
     }
 
+    if(utils.isEqual(COMMAND_TOPICS.CLEAR_UNREAD, topic)){
+      let { conversations } = data;
+      conversations = utils.isArray(conversations) ? conversations : [conversations];
+      let codec = Proto.lookup('codec.ClearUnreadReq');
+      let list = utils.map(conversations, ({ conversationType, conversationId }) => {
+        return { 
+          type: conversationType,
+          targetId: conversationId 
+        };
+      });
+      let message = codec.create({
+        conversations: list
+      });
+      buffer = codec.encode(message).finish();
+    }
+
+    if(utils.isEqual(COMMAND_TOPICS.REMOVE_CONVERSATION, topic)){
+      let { conversationId, conversationType } = data;
+      let codec = Proto.lookup('codec.DelConversationReq');
+      let message = codec.create({
+        conversations: [{
+          type: conversationType,
+          targetId: conversationId
+        }]
+      });
+      buffer = codec.encode(message).finish();
+    }
+
     cache.set(index, { callback, data });
 
     return {

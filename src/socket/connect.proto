@@ -159,6 +159,12 @@ message QryConversationsReq{
 message QryConversationsResp{
     repeated Conversation conversations = 1;
 }
+message ClearUnreadReq{
+    repeated Conversation conversations = 1;
+}
+message DelConversationReq{
+    repeated Conversation conversations = 1;
+}
 
 message Conversation{
     string converId = 1;

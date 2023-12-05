@@ -50,6 +50,7 @@ export default function Decoder(cache){
     }else {
       let payload = Proto.lookup('codec.DownMsg');
       let message = payload.decode(data);
+      //TODO: 判断 tragetId 是 fromUserid 还是 targetId
       utils.extend(message, { targetId });
       _msg = msgFormat(message);
     }

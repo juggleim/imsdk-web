@@ -554,6 +554,24 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 6
           }
         }
+      },
+      ClearUnreadReq: {
+        fields: {
+          conversations: {
+            rule: "repeated",
+            type: "Conversation",
+            id: 1
+          }
+        }
+      },
+      DelConversationReq: {
+        fields: {
+          conversations: {
+            rule: "repeated",
+            type: "Conversation",
+            id: 1
+          }
+        }
       }
     }
   }

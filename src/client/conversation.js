@@ -62,17 +62,25 @@ export default function(io, emitter){
       });
     });
   };
-  let clearUnreadcount = (conversation) => {
+  let clearUnreadcount = ( conversations ) => {
     return utils.deferred((resolve, reject) => {
-      let error = common.check(io, conversation, FUNC_PARAM_CHECKER.CLEARUNREADCOUNT);
+      let error = common.check(io, conversations, FUNC_PARAM_CHECKER.CLEARUNREADCOUNT);
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-      io.sendCommand(SIGNAL_CMD.PUBLISH, conversation, () => {
+      let data = { topic: COMMAND_TOPICS.CLEAR_UNREAD };
+      utils.extend(data, { conversations });
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
+        let list = utils.isArray(conversations) ? conversations : [conversations];
+        utils.forEach(list, (conversation) => {
+          utils.extend(conversation, { unreadCount: 0 });
+          conversationUtils.modify(conversation);
+        });
         resolve();
       });
     });
   };
+
   let getTotalUnreadcount = () => {
     return utils.deferred((resolve, reject) => {
       io.sendCommand(SIGNAL_CMD.PUBLISH, {type: 'get'}, () => {

@@ -95,13 +95,17 @@ export default function Encoder(cache){
     }
 
     if(utils.isEqual(COMMAND_TOPICS.REMOVE_CONVERSATION, topic)){
-      let { conversationId, conversationType } = data;
+      let { conversations } = data;
+      conversations = utils.isArray(conversations) ? conversations : [conversations];
+      let list = utils.map(conversations, ({ conversationType, conversationId }) => {
+        return { 
+          type: conversationType,
+          targetId: conversationId 
+        };
+      });
       let codec = Proto.lookup('codec.DelConversationReq');
       let message = codec.create({
-        conversations: [{
-          type: conversationType,
-          targetId: conversationId
-        }]
+        conversations: list
       });
       buffer = codec.encode(message).finish();
     }

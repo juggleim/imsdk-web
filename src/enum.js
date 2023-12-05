@@ -47,6 +47,7 @@ export let FUNC_PARAM_CHECKER = {
   GETCONVERSATION: ['conversationType', 'conversationId'],
   
   CLEARUNREADCOUNT: ['conversationType', 'conversationId'],
+  REMOVECONVERSATION: ['conversationType', 'conversationId'],
 };
 export let COMMAND_TOPICS = {
   HISTORY_MESSAGES: 'qry_hismsgs',

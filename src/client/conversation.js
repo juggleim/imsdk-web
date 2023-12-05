@@ -15,7 +15,7 @@ export default function(io, emitter){
   2、startTime 是 0 时，优先返回内存中会话，内存数量小于 count 数，从服务端获取
   3、startTime 非 0 是，直接从服务端获取，并更新到内存中
   */
-  let conversationUtils = ConversationUtils();
+  let conversationUtils = common.ConversationUtils();
   let getConversations = (params) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, params, []);
@@ -96,71 +96,6 @@ export default function(io, emitter){
       latestMessage: message,
       unreadCount: 1,
       latestReadTime: 0
-    };
-  }
-  function ConversationUtils(){
-    let conversations = [];
-    let isSynced = false;
-    let update = (list) => {
-      list = utils.isArray(list) ? list : [list];
-      utils.forEach(list, (item) => {
-        let index = utils.find(conversations, ({ conversationType, conversationId }) => {
-          return utils.isEqual(item.conversationType, conversationType) && utils.isEqual(item.conversationId, conversationId);
-        });
-        let isNew = utils.isEqual(index, -1);
-        if(!isNew){
-          let conversation = conversations.splice(index, 1)[0]; 
-          let { unreadCount } = conversation;
-          utils.extend(conversation, { 
-            unreadCount: unreadCount + 1,
-            latestMessage: item.latestMessage
-          });
-          return conversations.push(conversation);
-        }
-        conversations.push(item);
-      });
-  
-      let tops = [];
-      utils.forEach(conversations, ({ isTop }, index) => {
-        if(isTop){
-          let conversation =  conversations.splice(index, 1)[0];
-          tops.push(conversation);
-        }
-      });
-      utils.sort(conversations, (a, b) => {
-        return a.latestMessage.sentTime > b.latestMessage.sentTime;
-      });
-      conversations = tops.concat(conversations);
-    };
-    let add = (list) => {
-      isSynced = true;
-      update(list);
-    };
-    let remove = (item) => {
-      let index = utils.find(conversations, ({ conversationType, conversationId }) => {
-        return utils.isEqual(item.conversationType, conversationType) && utils.isEqual(item.conversationId, conversationId);
-      });
-      if(!utils.isEqual(index, -1)){
-        conversations.splice(index, 1);
-      }
-    };
-    let clear = () => {
-      isSynced = false;
-      conversations.length = 0;
-    };
-    let get = () => {
-      return conversations;
-    };
-    let isSync = () => {
-      return isSynced;
-    };
-    return {
-      remove,
-      update,
-      clear,
-      get,
-      isSync,
-      add
     };
   }
 

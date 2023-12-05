@@ -82,11 +82,79 @@ function getMsgConfig(name){
   let config = configs.find(cfg => cfg.name == name ) || {};
   return config.option || {};
 }
+
+function ConversationUtils(){
+  let conversations = [];
+  let isSynced = false;
+  let update = (list) => {
+    list = utils.isArray(list) ? list : [list];
+    utils.forEach(list, (item) => {
+      let index = utils.find(conversations, ({ conversationType, conversationId }) => {
+        return utils.isEqual(item.conversationType, conversationType) && utils.isEqual(item.conversationId, conversationId);
+      });
+      let isNew = utils.isEqual(index, -1);
+      if(!isNew){
+        let conversation = conversations.splice(index, 1)[0]; 
+        let { unreadCount } = conversation;
+        utils.extend(conversation, { 
+          unreadCount: unreadCount + 1,
+          latestMessage: item.latestMessage
+        });
+        return conversations.push(conversation);
+      }
+      conversations.push(item);
+    });
+
+    let tops = [];
+    utils.forEach(conversations, ({ isTop }, index) => {
+      if(isTop){
+        let conversation =  conversations.splice(index, 1)[0];
+        tops.push(conversation);
+      }
+    });
+    utils.sort(conversations, (a, b) => {
+      return a.latestMessage.sentTime > b.latestMessage.sentTime;
+    });
+    conversations = tops.concat(conversations);
+  };
+  let add = (list) => {
+    isSynced = true;
+    update(list);
+  };
+  let remove = (item) => {
+    let index = utils.find(conversations, ({ conversationType, conversationId }) => {
+      return utils.isEqual(item.conversationType, conversationType) && utils.isEqual(item.conversationId, conversationId);
+    });
+    if(!utils.isEqual(index, -1)){
+      conversations.splice(index, 1);
+    }
+  };
+  let clear = () => {
+    isSynced = false;
+    conversations.length = 0;
+  };
+  let get = () => {
+    return conversations;
+  };
+  let isSync = () => {
+    return isSynced;
+  };
+  return {
+    remove,
+    update,
+    clear,
+    get,
+    isSync,
+    add
+  };
+}
+
 export default {
   check,
   getNum,
   getNaviStorageKey,
   updateSyncTime,
   getError,
-  getMsgConfig
+  getMsgConfig,
+  ConversationUtils
 }

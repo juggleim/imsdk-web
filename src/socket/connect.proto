@@ -129,10 +129,10 @@ enum MentionType{
     MentionSomeone = 2; //@ 指定人
 }
 message DownMsg{
-    string fromId = 1;
+    string targetId = 1;
     ChannelType type = 2;
     string msgType = 3;
-    string groupId = 4;
+    string senderId = 4;
     string msgId = 5;
     int64 msgIndex = 6;
     bytes msgContent = 7;

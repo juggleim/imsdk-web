@@ -50,8 +50,6 @@ export default function Decoder(cache){
     }else {
       let payload = Proto.lookup('codec.DownMsg');
       let message = payload.decode(data);
-      //TODO: 判断 tragetId 是 fromUserid 还是 targetId
-      utils.extend(message, { targetId });
       _msg = msgFormat(message);
     }
     return { _msg, _name };
@@ -63,7 +61,7 @@ export default function Decoder(cache){
 
     let result = { index };
     if(utils.isInclude([COMMAND_TOPICS.HISTORY_MESSAGES, COMMAND_TOPICS.SYNC_MESSAGES], topic)){
-      result = getMessagesHandler(index, data, targetId);
+      result = getMessagesHandler(index, data);
     }
 
     if(utils.isEqual(topic, COMMAND_TOPICS.CONVERSATIONS)){
@@ -88,24 +86,23 @@ export default function Decoder(cache){
     });
     return { conversations, index };
   }
-  function getMessagesHandler(index, data, targetId){
+  function getMessagesHandler(index, data){
     let payload = Proto.lookup('codec.DownMsgSet');
     let result = payload.decode(data);
     
     let { isFinished, msgs } = result;
     let messages = utils.map(msgs, (msg) => {
-      utils.extend(msg, { targetId });
       return msgFormat(msg);
     });
     return { isFinished, messages, index };
   }
   function msgFormat(msg){
-    let { fromId, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex } = msg;
+    let { senderId, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex } = msg;
     let content = new TextDecoder().decode(msgContent);
     let _message = {
       conversationType,
       conversationId,
-      senderUserId: fromId, 
+      senderUserId: senderId, 
       messageId: msgId, 
       sentTime: msgTime,
       name: msgType,

@@ -370,7 +370,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
       },
       DownMsg: {
         fields: {
-          fromId: {
+          targetId: {
             type: "string",
             id: 1
           },
@@ -382,7 +382,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "string",
             id: 3
           },
-          groupId: {
+          senderId: {
             type: "string",
             id: 4
           },
@@ -457,6 +457,24 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
         }
       },
       QryConversationsResp: {
+        fields: {
+          conversations: {
+            rule: "repeated",
+            type: "Conversation",
+            id: 1
+          }
+        }
+      },
+      ClearUnreadReq: {
+        fields: {
+          conversations: {
+            rule: "repeated",
+            type: "Conversation",
+            id: 1
+          }
+        }
+      },
+      DelConversationReq: {
         fields: {
           conversations: {
             rule: "repeated",
@@ -552,24 +570,6 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           msgContent: {
             type: "bytes",
             id: 6
-          }
-        }
-      },
-      ClearUnreadReq: {
-        fields: {
-          conversations: {
-            rule: "repeated",
-            type: "Conversation",
-            id: 1
-          }
-        }
-      },
-      DelConversationReq: {
-        fields: {
-          conversations: {
-            rule: "repeated",
-            type: "Conversation",
-            id: 1
           }
         }
       }

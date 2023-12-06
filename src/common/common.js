@@ -139,7 +139,7 @@ function ConversationUtils(){
         tops.push(conversation);
       }
     });
-    utils.sort(conversations, (a, b) => {
+    conversations = utils.quickSort(conversations, (a, b) => {
       return a.latestMessage.sentTime > b.latestMessage.sentTime;
     });
     conversations = tops.concat(conversations);

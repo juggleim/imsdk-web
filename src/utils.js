@@ -344,6 +344,22 @@ const sort = (arrs, callback) => {
 	}
 	return arrs
 };
+const quickSort = (arr, callback) => {
+  if (arr.length < 2) {
+      return arr;
+  }
+  let pivot = arr[0];
+  let left = [];
+  let right = [];
+  for (let i = 1; i < arr.length; i++) {
+      if (callback(arr[i], pivot)) {
+        left.push(arr[i]);
+      } else {
+        right.push(arr[i]);
+      }
+  }
+  return [...quickSort(left, callback), pivot, ...quickSort(right, callback)];
+};
 const find = (arrs, callback) => {
   let len = arrs.length;
   let index = -1;
@@ -395,5 +411,6 @@ export default {
   requestNormal,
   getProtocol,
   sort,
-  find
+  find,
+  quickSort
 }

@@ -45,7 +45,8 @@ export default function Encoder(cache){
     cache.set(index, { callback, data });
     return {
       pubAckMsgBody: {
-        index: msgIndex
+        index: msgIndex,
+        code: 0
       }
     };
   }

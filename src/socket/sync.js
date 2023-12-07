@@ -39,7 +39,7 @@ export default function Syncer(send, emitter){
       let syncReceiveTime = Storage.get(STORAGE.SYNC_RECEIVED_MSG_TIME).time || 1700927161470;
       let syncSentTime =  Storage.get(STORAGE.SYNC_SENT_MSG_TIME).time || 1700927161470;
 
-      // 如果本地记录时间戳大于 ntf 中的接收时间，认为消息已被当前断接收过，不再执行拉取动作
+      // 如果本地记录时间戳大于 ntf 中的接收时间，认为消息已被当前端接收过，不再执行拉取动作
       if(syncReceiveTime >= msg.receiveTime){
         return;
       }

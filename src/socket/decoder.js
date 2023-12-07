@@ -108,7 +108,6 @@ export default function Decoder(cache){
       name: msgType,
       isSnder: !!isSend,
       msgIndex,
-      content: content,
       mentionInfo,
       isReaded: !!isReaded
     };
@@ -120,10 +119,25 @@ export default function Decoder(cache){
         msg_time: 'sentTime',
         channel_type: 'conversationType',
         sender_id: 'senderUserId',
-        receiver_id: 'targetId'
+        receiver_id: 'conversationId'
       });
-      utils.extend(_message, { content })
     }
+
+    if(utils.isEqual(MESSAGE_TYPE.READ_MSG, msgType)){
+      content = utils.parse(content);
+      content = utils.rename(content, {
+        target_id: 'conversationId',
+        channel_type: 'conversationType'
+      });
+      delete content.index_scopes;
+      let { msgs } = content;
+      msgs = utils.map(msgs, ({ msg_id: messageId }) => {
+        return { messageId };
+      });
+      utils.extend(content, { msgs });
+    }
+
+    utils.extend(_message, { content })
     return _message;
   }
   return { 

@@ -56,17 +56,6 @@ export default function(io, emitter){
       });
     });
   };
-  let getConversation = (params) => {
-    return utils.deferred((resolve, reject) => {
-      let error = common.check(io, params, FUNC_PARAM_CHECKER.GETCONVERSATION);
-      if(!utils.isEmpty(error)){
-        return reject(error);
-      }
-      io.sendCommand(SIGNAL_CMD.QUERY, params, (conversation) => {
-        resolve(conversation);
-      });
-    });
-  };
   let clearUnreadcount = ( conversations ) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, conversations, FUNC_PARAM_CHECKER.CLEARUNREADCOUNT);
@@ -85,7 +74,6 @@ export default function(io, emitter){
       });
     });
   };
-
   let getTotalUnreadcount = () => {
     return utils.deferred((resolve, reject) => {
       io.sendCommand(SIGNAL_CMD.PUBLISH, {type: 'get'}, () => {
@@ -115,7 +103,6 @@ export default function(io, emitter){
   return {
     getConversations,
     removeConversation,
-    getConversation,
     clearUnreadcount,
     getTotalUnreadcount,
     clearTotalUnreadcount

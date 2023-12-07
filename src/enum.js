@@ -144,5 +144,6 @@ function getErrorType(){
   VOICE: 'jg:voice',
   VIDEO: 'jg:video',
   FILE: 'jg:file',
-  RECALL: 'jg:recall'
+  RECALL: 'jg:recall',
+  READ_MSG: 'jg:readedmsg'
  }

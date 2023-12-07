@@ -106,7 +106,7 @@ export default function Decoder(cache){
       messageId: msgId, 
       sentTime: msgTime,
       name: msgType,
-      isSnder: !!isSend,
+      isSender: !!isSend,
       msgIndex,
       mentionInfo,
       isReaded: !!isReaded
@@ -136,7 +136,7 @@ export default function Decoder(cache){
     utils.extend(_message, { content })
     return _message;
   }
-  return { 
+  return {
     decode
   };
 }

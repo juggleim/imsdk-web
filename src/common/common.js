@@ -2,10 +2,12 @@ import utils from "../utils";
 import { ErrorType, STORAGE, ErrorMessages, MESSAGE_TYPE, MESSAGE_FLAG } from "../enum";
 import Storage from "./storage";
 
-let check = (io, params, props) => {
+let check = (io, params, props, isStatic) => {
   let error = {};
-  if(!io.isConnected()){
-    return ErrorType.CONNECTION_NOT_READY;
+  if(!isStatic){
+    if(!io.isConnected()){
+      return ErrorType.CONNECTION_NOT_READY;
+    }
   }
   let { msg, code } = ErrorType.ILLEGAL_PARAMS;
   let len = props.length;
@@ -67,9 +69,8 @@ let getTokenUUId = (token) => {
   return uuid;
 };
 
-let getNaviStorageKey = (appkey, token) => {
-  let uid = getTokenUUId(token);
-  return `${STORAGE.NAVI}_${appkey}_${uid}`;
+let getNaviStorageKey = () => {
+  return `${STORAGE.NAVI}`;
 };
 let orderNum = 0;
 let getNum = () => {

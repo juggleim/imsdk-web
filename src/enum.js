@@ -37,7 +37,8 @@ export let QOS = {
   NO: 0
 };
 export let FUNC_PARAM_CHECKER = {
-  
+  CONNECT: ['token', 'userId'],
+
   SENDMSG: ['conversationType', 'conversationId', 'message', 'message.content', 'message.name'],
   GETMSGS: ['conversationType', 'conversationId'],
   REMOVEMSG: ['conversationType', 'conversationId', 'messageId'],

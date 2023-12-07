@@ -1,5 +1,7 @@
-import { SIGNAL_NAME, EVENT, CONNECT_STATE, ErrorType } from "../enum";
+import { SIGNAL_NAME, EVENT, CONNECT_STATE, ErrorType, FUNC_PARAM_CHECKER } from "../enum";
 import utils from "../utils";
+import Storage from "../common/storage";
+import common from "../common/common";
 
 export default function(io, emitter){
   let connectState = CONNECT_STATE.DISCONNECTED;
@@ -8,12 +10,19 @@ export default function(io, emitter){
     emitter.emit(EVENT.STATE_CHANGED, data);
   });
 
-  let connect = (auth) =>{
+  let connect = (user) =>{
     return utils.deferred((resolve, reject) => {
-      if(io.isConnected()){
-        return reject({ error: ErrorType.CONNECTION_EXISTS });
+      let error = common.check(io, user, FUNC_PARAM_CHECKER.CONNECT, true);
+      if(!utils.isEmpty(error)){
+        return reject(error);
       }
-      io.connect(auth, ({ error, user }) => {
+      // 通过 appkye_userid 隔离本地存储 Key
+      let config = io.getConfig();
+      let { appkey } = config;
+      let { userId } = user;
+      Storage.setPrefix(`${appkey}_${userId}`);
+
+      io.connect(user, ({ error, user }) => {
         let { code, msg } = error;
         if(utils.isEqual(code, ErrorType.CONNECT_SUCCESS)){
           return resolve(user);

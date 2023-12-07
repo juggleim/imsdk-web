@@ -35,8 +35,8 @@ let getNavi = (url, option) => {
   url = url.replaceAll(/http:\/\/|https:\/\/|file:\/\//g, '')
   let { http } = utils.getProtocol();
   url = `${http}//${url}/navigator/general`
-  let { appkey, token } = option;
-  let key = common.getNaviStorageKey(appkey, token);
+  let { appkey, token, userId } = option;
+  let key = common.getNaviStorageKey(appkey, userId);
   let navi = Storage.get(key);
   if(!utils.isEmpty(navi)){
     return utils.Defer.resolve(navi);

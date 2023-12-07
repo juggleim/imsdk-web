@@ -1,8 +1,10 @@
 import { STORAGE } from "../enum";
 import utils from "../utils";
 
+// 动态设置 storage key 前缀，例如 _appkey_userid_
+let _storage_private_prefix_ = '';
 let getKey = (key) => {
-  return `${STORAGE.PREFIX}_${key}`;
+  return `${STORAGE.PREFIX}_${_storage_private_prefix_}_${key}`;
 };
 
 let set = (key, value) => {
@@ -24,8 +26,12 @@ let remove = (key) => {
   localStorage.removeItem(_key);
 }
 
+let setPrefix = (str) => {
+  _storage_private_prefix_ = str;
+};
 export default {
   get,
   set,
-  remove
+  remove,
+  setPrefix
 }

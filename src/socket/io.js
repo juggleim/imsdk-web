@@ -29,11 +29,11 @@ export default function IO(config){
   let setCurrentUserId = (id) => {
     currentUserId = id;
   };
-  let connect = ({ token }, callback) => {
+  let connect = ({ token, userId }, callback) => {
     updateState(CONNECT_STATE.CONNECTING);
-    return Network.getNavi(nav, { appkey, token }).then((result) => {
-      let { servers, userId } = result;
-      setCurrentUserId(userId);
+    return Network.getNavi(nav, { appkey, token, userId }).then((result) => {
+      let { servers, userId: id } = result;
+      setCurrentUserId(id);
 
       cache.set(SIGNAL_NAME.S_CONNECT_ACK, callback);
 
@@ -131,7 +131,11 @@ export default function IO(config){
     return { id: currentUserId };
   };
 
+  function getConfig(){
+    return config;
+  };
   let io = {
+    getConfig,
     connect,
     disconnect,
     sendCommand,

@@ -95,10 +95,26 @@ export default function(io, emitter){
       });
     });
   };
+  let readMessage = (messages) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, messages, FUNC_PARAM_CHECKER.READMESSAGE);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let data = {
+        topic: COMMAND_TOPICS.READ_MESSAGE,
+        messages
+      };
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
+        resolve();
+      });
+    });
+  };
   return {
     sendMessage,
     getMessages,
     removeMessage,
-    recallMessage
+    recallMessage,
+    readMessage
   };
 }

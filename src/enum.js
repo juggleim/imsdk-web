@@ -42,6 +42,7 @@ export let FUNC_PARAM_CHECKER = {
   GETMSGS: ['conversationType', 'conversationId'],
   REMOVEMSG: ['conversationType', 'conversationId', 'messageId'],
   RECALLMSG: ['conversationType', 'conversationId', 'messageId', 'sentTime'],
+  READMESSAGE: ['conversationType', 'conversationId', 'sentTime', 'messageId'],
   
   GETCONVERSATIONS: ['limit'],
   GETCONVERSATION: ['conversationType', 'conversationId'],
@@ -59,6 +60,7 @@ export let COMMAND_TOPICS = {
   SEND_PRIVATE: 'p_msg',
   CLEAR_UNREAD: 'clear_unread',
   REMOVE_CONVERSATION: 'del_convers',
+  READ_MESSAGE: 'mark_read',
 };
 export let NOTIFY_TYPE = {
   DEFAULT: 0,

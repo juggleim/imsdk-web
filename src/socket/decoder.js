@@ -97,7 +97,7 @@ export default function Decoder(cache){
     return { isFinished, messages, index };
   }
   function msgFormat(msg){
-    let { senderId, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex } = msg;
+    let { senderId, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isReaded } = msg;
     let content = new TextDecoder().decode(msgContent);
     let _message = {
       conversationType,
@@ -109,7 +109,8 @@ export default function Decoder(cache){
       isSnder: !!isSend,
       msgIndex,
       content: content,
-      mentionInfo
+      mentionInfo,
+      isReaded: !!isReaded
     };
 
     if(utils.isEqual(MESSAGE_TYPE.RECALL, msgType)){

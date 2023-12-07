@@ -425,6 +425,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           mentionInfo: {
             type: "MentionInfo",
             id: 14
+          },
+          isReaded: {
+            type: "bool",
+            id: 15
           }
         }
       },
@@ -570,6 +574,56 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           msgContent: {
             type: "bytes",
             id: 6
+          }
+        }
+      },
+      MarkReadReq: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 2
+          },
+          msgs: {
+            rule: "repeated",
+            type: "SimpleMsg",
+            id: 3
+          },
+          indexScopes: {
+            rule: "repeated",
+            type: "IndexScope",
+            id: 4
+          }
+        }
+      },
+      SimpleMsg: {
+        fields: {
+          msgId: {
+            type: "string",
+            id: 1
+          },
+          msgTime: {
+            type: "int64",
+            id: 2
+          },
+          msgIndex: {
+            type: "int64",
+            id: 3
+          }
+        }
+      },
+      IndexScope: {
+        fields: {
+          startIndex: {
+            type: "int64",
+            id: 1
+          },
+          endIndex: {
+            type: "int64",
+            id: 2
           }
         }
       }

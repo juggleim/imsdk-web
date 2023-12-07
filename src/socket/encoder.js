@@ -110,6 +110,31 @@ export default function Encoder(cache){
       buffer = codec.encode(message).finish();
     }
 
+    if(utils.isEqual(COMMAND_TOPICS.READ_MESSAGE, topic)){
+      let { messages } = data;
+      messages = utils.isArray(messages) ? messages : [messages];
+      let channelType = CONVERATION_TYPE.PRIVATE;
+      let targetId = '';
+
+      let msgs = utils.map(messages, (item) => {
+        let { conversationType, conversationId, sentTime, messageId } = item;
+        channelType = conversationType;
+        targetId = conversationId;
+        return { 
+          msgId: messageId,
+          msgTime: sentTime
+        };
+      });
+
+      let codec = Proto.lookup('codec.MarkReadReq');
+      let message = codec.create({
+        channelType,
+        targetId,
+        msgs
+      });
+      buffer = codec.encode(message).finish();
+    }
+
     cache.set(index, { callback, data });
 
     return {

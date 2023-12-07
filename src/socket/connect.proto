@@ -143,6 +143,7 @@ message DownMsg{
     string clientUid = 12;
     PushData pushData = 13;
     MentionInfo mentionInfo = 14;
+    bool isReaded = 15;
 }
 
 message SyncConversationsReq{
@@ -196,4 +197,21 @@ message RecallMsgReq{
     int64 msgTime = 4; //待撤回消息的发送时间
     string msgType = 5;  //撤回命令消息的消息类型
     bytes msgContent =6; //撤回命令消息的内容
+}
+message MarkReadReq{
+    string targetId = 1;
+    ChannelType channelType = 2;
+    repeated SimpleMsg msgs = 3;  //批量标记消息的已读状态
+    repeated IndexScope indexScopes = 4;
+}
+
+message SimpleMsg{
+    string msgId = 1;
+    int64 msgTime = 2;
+    int64 msgIndex = 3;
+}
+
+message IndexScope{
+    int64 startIndex = 1;
+    int64 endIndex = 2;
 }

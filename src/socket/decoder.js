@@ -125,10 +125,6 @@ export default function Decoder(cache){
 
     if(utils.isEqual(MESSAGE_TYPE.READ_MSG, msgType)){
       content = utils.parse(content);
-      content = utils.rename(content, {
-        target_id: 'conversationId',
-        channel_type: 'conversationType'
-      });
       delete content.index_scopes;
       let { msgs } = content;
       msgs = utils.map(msgs, ({ msg_id: messageId }) => {

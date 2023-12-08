@@ -8,8 +8,8 @@ const fullYear = new Date().getFullYear();
 
 const banner = [
   '/*', 
-  `* Juggle.js v${version}`, 
-  `* (c) 2022-${fullYear} Juggle`,
+  `* JuggleChat.js v${version}`, 
+  `* (c) 2022-${fullYear} JuggleChat`,
   '* Released under the MIT License.',
   '*/'].join('\n');
 
@@ -24,7 +24,7 @@ const genConfig = function(type){
     output: {
       file: getTarget(type),
       format: 'umd',
-      name: 'Juggle',
+      name: 'JuggleChat',
       globals: {
         "$protobuf": "protobufjs/minimal"
       }

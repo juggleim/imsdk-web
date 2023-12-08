@@ -6,6 +6,8 @@ export let STORAGE = {
   SYNC_SENT_MSG_TIME: 'sync_sent_msg_time'
 };
 
+export let HEART_TIMEOUT = 1 * 60 * 1000;
+
 export let SIGNAL_NAME = {
   CMD_RECEIVED: 'cmd_inner_receive',
   CMD_CONVERSATION_CHANGED: 'cmd_inner_conversation_changed',

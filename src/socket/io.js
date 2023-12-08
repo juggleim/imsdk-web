@@ -2,13 +2,14 @@ import Emitter from "../common/emmit";
 import utils from "../utils";
 import Storage from "../common/storage";
 import Proto from "./proto";
-import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType } from "../enum";
+import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT } from "../enum";
 import BufferEncoder from "./encoder";
 import BufferDecoder from "./decoder";
 import Network from "../common/network";
 import Cache from "../common/cache";
 import common from "../common/common";
 import Syncer from "./sync";
+import Timer from "../common/timer";
 
 export default function IO(config){
   let emitter = Emitter();
@@ -19,6 +20,8 @@ export default function IO(config){
   let cache = Cache();
   let decoder = BufferDecoder(cache);
   let encoder = BufferEncoder(cache);
+
+  let timer = Timer({ timeout: HEART_TIMEOUT });
 
   let connectionState = CONNECT_STATE.DISCONNECTED;
   let updateState = (state, user) => {
@@ -40,6 +43,7 @@ export default function IO(config){
       let onDisconnect = () => {
         let state = CONNECT_STATE.DISCONNECTED;
         updateState(state);
+        timer.pause();
       };
       Network.detect(servers, (domain) => {
         let { ws: protocol } = utils.getProtocol();
@@ -68,6 +72,7 @@ export default function IO(config){
     ws && ws.close();
     let state = CONNECT_STATE.DISCONNECTED;
     updateState(state);
+    timer.pause();
   };
 
   let sendCommand = (cmd, data, callback) => {
@@ -116,6 +121,9 @@ export default function IO(config){
             user: { id: currentUserId }
           });
         }
+        timer.resume(() => {
+          sendCommand(SIGNAL_CMD.PING, {});
+        });
       }
       updateState(state, user);
       let callback = cache.get(SIGNAL_NAME.S_CONNECT_ACK) || utils.noop;

@@ -16,8 +16,8 @@ let init = (config) => {
     ...conversation,
     ...message,
     ...emitter,
-    Event: EVENT,
-    State: CONNECT_STATE,
+    JuggleEvent: EVENT,
+    JuggleState: CONNECT_STATE,
     ConversationType: CONVERATION_TYPE,
     MessageType: MESSAGE_TYPE
   }

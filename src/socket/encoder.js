@@ -57,7 +57,7 @@ export default function Encoder(cache){
     let buffer = [];
 
     if(utils.isInclude([COMMAND_TOPICS.SEND_GROUP, COMMAND_TOPICS.SEND_PRIVATE], topic)){
-      let { message: { name, content, mentionInfo, flag } } = data;
+      let { name, content, mentionInfo, flag } = data;
       let codec = Proto.lookup('codec.UpMsg');
       let message = codec.create({
         msgType: name,
@@ -127,12 +127,24 @@ export default function Encoder(cache){
           msgTime: sentTime
         };
       });
-
       let codec = Proto.lookup('codec.MarkReadReq');
       let message = codec.create({
         channelType,
         targetId,
         msgs
+      });
+      buffer = codec.encode(message).finish();
+    }
+
+    if(utils.isEqual(COMMAND_TOPICS.UPDATE_MESSAGE, topic)){
+      let { conversationId: targetId, conversationType: channelType, messageId: msgId, content, sentTime: msgTime } = data;
+      let codec = Proto.lookup('codec.ModifyMsgReq');
+      let message = codec.create({
+        channelType,
+        targetId,
+        msgId,
+        msgTime,
+        msgContent: new TextEncoder().encode(content)
       });
       buffer = codec.encode(message).finish();
     }

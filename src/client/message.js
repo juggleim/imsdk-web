@@ -16,27 +16,25 @@ export default function(io, emitter){
     topics[map[0]] = map[1];
   });
 
-  let sendMessage = (params) => {
+  let sendMessage = (message) => {
     return utils.deferred((resolve, reject) => {
-      let error = common.check(io, params, FUNC_PARAM_CHECKER.SENDMSG);
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.SENDMSG);
       if(!utils.isEmpty(error)){
         return reject(error);
       }
 
-      let data = utils.clone(params);
-      let { message, conversationType, conversationId } = data;
-      let config = common.getMsgConfig(message.name);
-      utils.extend(data.message, config);
+      let data = utils.clone(message);
+      let { name, conversationType, conversationId } = data;
+      let config = common.getMsgConfig(name);
+      utils.extend(data, config);
 
       let topic = topics[conversationType];
       utils.extend(data, { topic })
 
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messageId, sentTime }) => {
-        utils.extend(params.message, { sentTime, messageId });
-        let msg = utils.clone(params.message);
-        utils.extend(msg, { conversationId, conversationType });
-        io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
-        resolve(params);
+        utils.extend(message, { sentTime, messageId });
+        io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);
+        resolve(message);
       });
     });
   };
@@ -110,11 +108,27 @@ export default function(io, emitter){
       });
     });
   };
+  let updateMessage = (message) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.UPDATEMESSAGE);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let data = {
+        topic: COMMAND_TOPICS.UPDATE_MESSAGE,
+        ...message
+      };
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, (result) => {
+        resolve(result);
+      });
+    });
+  };
   return {
     sendMessage,
     getMessages,
     removeMessage,
     recallMessage,
-    readMessage
+    readMessage,
+    updateMessage
   };
 }

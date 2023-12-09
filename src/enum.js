@@ -41,11 +41,13 @@ export let QOS = {
 export let FUNC_PARAM_CHECKER = {
   CONNECT: ['token', 'userId'],
 
-  SENDMSG: ['conversationType', 'conversationId', 'message', 'message.content', 'message.name'],
+  // SENDMSG: ['conversationType', 'conversationId', 'message', 'message.content', 'message.name'],
+  SENDMSG: ['conversationType', 'conversationId', 'content', 'name'],
   GETMSGS: ['conversationType', 'conversationId'],
   REMOVEMSG: ['conversationType', 'conversationId', 'messageId'],
   RECALLMSG: ['conversationType', 'conversationId', 'messageId', 'sentTime'],
   READMESSAGE: ['conversationType', 'conversationId', 'sentTime', 'messageId'],
+  UPDATEMESSAGE: ['conversationType', 'conversationId', 'messageId', 'content'],
   
   GETCONVERSATIONS: ['limit'],
   GETCONVERSATION: ['conversationType', 'conversationId'],
@@ -64,6 +66,7 @@ export let COMMAND_TOPICS = {
   CLEAR_UNREAD: 'clear_unread',
   REMOVE_CONVERSATION: 'del_convers',
   READ_MESSAGE: 'mark_read',
+  UPDATE_MESSAGE: 'modify_msg',
 };
 export let NOTIFY_TYPE = {
   DEFAULT: 0,
@@ -102,6 +105,7 @@ export let MESSAGE_FLAG = {
   STATE: 4,
   STORAGE: 8,
   COUNT_STORAGE: 10,
+  IS_UPDATED: 16,
 };
 
 export let ErrorMessages = [

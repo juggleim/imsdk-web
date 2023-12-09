@@ -1,7 +1,7 @@
 import Emitter from "../common/emmit";
 import utils from "../utils";
 import Proto from "./proto";
-import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType } from "../enum";
+import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, MESSAGE_FLAG } from "../enum";
 export default function Decoder(cache){
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
   let decode = (buffer) => {
@@ -97,8 +97,9 @@ export default function Decoder(cache){
     return { isFinished, messages, index };
   }
   function msgFormat(msg){
-    let { senderId, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isReaded } = msg;
+    let { senderId, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isReaded, flags } = msg;
     let content = new TextDecoder().decode(msgContent);
+    let isUpdated = utils.isEqual(flags, MESSAGE_FLAG.IS_UPDATED);
     let _message = {
       conversationType,
       conversationId,
@@ -109,7 +110,8 @@ export default function Decoder(cache){
       isSender: !!isSend,
       msgIndex,
       mentionInfo,
-      isReaded: !!isReaded
+      isReaded: !!isReaded,
+      isUpdated
     };
 
     if(utils.isEqual(MESSAGE_TYPE.RECALL, msgType)){

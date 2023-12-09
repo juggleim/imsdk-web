@@ -215,3 +215,11 @@ message IndexScope{
     int64 startIndex = 1;
     int64 endIndex = 2;
 }
+message ModifyMsgReq{
+    string targetId = 1;
+    ChannelType channelType = 2;
+    string msgId = 3;  //必填
+    int64 msgTime = 4; //可选
+    int64 msgIndex = 5; //可选
+    bytes msgContent = 6; //修改后的消息内容
+}

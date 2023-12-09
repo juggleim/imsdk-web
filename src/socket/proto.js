@@ -626,6 +626,34 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 2
           }
         }
+      },
+      ModifyMsgReq: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 2
+          },
+          msgId: {
+            type: "string",
+            id: 3
+          },
+          msgTime: {
+            type: "int64",
+            id: 4
+          },
+          msgIndex: {
+            type: "int64",
+            id: 5
+          },
+          msgContent: {
+            type: "bytes",
+            id: 6
+          }
+        }
       }
     }
   }

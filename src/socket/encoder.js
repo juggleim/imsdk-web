@@ -149,6 +149,17 @@ export default function Encoder(cache){
       buffer = codec.encode(message).finish();
     }
 
+    if(utils.isEqual(COMMAND_TOPICS.CLEAR_MESSAGE, topic)){
+      let { conversationId: targetId, conversationType: channelType, time: cleanMsgTime } = data;
+      let codec = Proto.lookup('codec.CleanHisMsgReq');
+      let message = codec.create({
+        channelType,
+        targetId,
+        cleanMsgTime,
+      });
+      buffer = codec.encode(message).finish();
+    }
+
     cache.set(index, { callback, data });
 
     return {

@@ -61,14 +61,20 @@ export default function(io, emitter){
       });
     });
   };
-  let removeMessage = (message) => {
+  let clearMessage = (params) => {
     return utils.deferred((resolve, reject) => {
-      let error = common.check(io, message, FUNC_PARAM_CHECKER.REMOVEMSG);
+      let error = common.check(io, params, FUNC_PARAM_CHECKER.CLEARMSG);
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-      io.sendCommand(SIGNAL_CMD.PUBLISH, message, (msg) => {
-        resolve(msg);
+      let data = {
+        topic: COMMAND_TOPICS.CLEAR_MESSAGE,
+        time: 0
+      };
+      utils.extend(data, params);
+
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
+        resolve();
       });
     });
   };
@@ -126,7 +132,7 @@ export default function(io, emitter){
   return {
     sendMessage,
     getMessages,
-    removeMessage,
+    clearMessage,
     recallMessage,
     readMessage,
     updateMessage

@@ -223,3 +223,8 @@ message ModifyMsgReq{
     int64 msgIndex = 5; //可选
     bytes msgContent = 6; //修改后的消息内容
 }
+message CleanHisMsgReq{
+    string targetId = 1;
+    ChannelType channelType = 2;
+    int64 cleanMsgTime = 3;
+}

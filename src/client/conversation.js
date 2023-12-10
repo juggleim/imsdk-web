@@ -8,7 +8,7 @@ export default function(io, emitter){
     conversationUtils.update(conversation);
 
     let conversations = conversationUtils.get();
-    emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations });
+    emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations, conversation });
   });
   /*  
   1、内存中缓存最近 200 个会话，并按 message.sentTime 倒序排序

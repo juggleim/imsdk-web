@@ -45,6 +45,7 @@ export let FUNC_PARAM_CHECKER = {
   SENDMSG: ['conversationType', 'conversationId', 'content', 'name'],
   GETMSGS: ['conversationType', 'conversationId'],
   REMOVEMSG: ['conversationType', 'conversationId', 'messageId'],
+  CLEARMSG: ['conversationType', 'conversationId'],
   RECALLMSG: ['conversationType', 'conversationId', 'messageId', 'sentTime'],
   READMESSAGE: ['conversationType', 'conversationId', 'sentTime', 'messageId'],
   UPDATEMESSAGE: ['conversationType', 'conversationId', 'messageId', 'content'],
@@ -67,6 +68,7 @@ export let COMMAND_TOPICS = {
   REMOVE_CONVERSATION: 'del_convers',
   READ_MESSAGE: 'mark_read',
   UPDATE_MESSAGE: 'modify_msg',
+  CLEAR_MESSAGE: 'clean_hismsg',
 };
 export let NOTIFY_TYPE = {
   DEFAULT: 0,
@@ -95,6 +97,11 @@ export let CONNECT_STATE = {
  };
 
  export let MESSAGE_ORDER = {
+  FORWARD: 0,
+  BACKWARD: 1
+ };
+
+ export let CONVERSATION_ORDER = {
   FORWARD: 0,
   BACKWARD: 1
  };
@@ -152,5 +159,12 @@ function getErrorType(){
   VIDEO: 'jg:video',
   FILE: 'jg:file',
   RECALL: 'jg:recall',
-  READ_MSG: 'jg:readedmsg'
+  READ_MSG: 'jg:readedmsg',
+  CLEAR_MSG: 'jg:cleanmsg'
  }
+
+ export let MENTION_TYPE = {
+  ALL: 1,
+  SOMEONE: 2,
+  ALL_SOMEONE: 3
+ };

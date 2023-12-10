@@ -654,6 +654,22 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 6
           }
         }
+      },
+      CleanHisMsgReq: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 2
+          },
+          cleanMsgTime: {
+            type: "int64",
+            id: 3
+          }
+        }
       }
     }
   }

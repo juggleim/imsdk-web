@@ -45,7 +45,7 @@ export let FUNC_PARAM_CHECKER = {
   SENDMSG: ['conversationType', 'conversationId', 'content', 'name'],
   GETMSGS: ['conversationType', 'conversationId'],
   REMOVEMSG: ['conversationType', 'conversationId', 'messageId'],
-  CLEARMSG: ['conversationType', 'conversationId'],
+  CLEARMSG: ['conversationType', 'conversationId', 'time'],
   RECALLMSG: ['conversationType', 'conversationId', 'messageId', 'sentTime'],
   READMESSAGE: ['conversationType', 'conversationId', 'sentTime', 'messageId'],
   UPDATEMESSAGE: ['conversationType', 'conversationId', 'messageId', 'content'],

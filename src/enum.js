@@ -44,6 +44,7 @@ export let FUNC_PARAM_CHECKER = {
   // SENDMSG: ['conversationType', 'conversationId', 'message', 'message.content', 'message.name'],
   SENDMSG: ['conversationType', 'conversationId', 'content', 'name'],
   GETMSGS: ['conversationType', 'conversationId'],
+  GETMSG: ['conversationType', 'conversationId', 'messageIds'],
   REMOVEMSG: ['conversationType', 'conversationId', 'messageId'],
   CLEARMSG: ['conversationType', 'conversationId', 'time'],
   RECALLMSG: ['conversationType', 'conversationId', 'messageId', 'sentTime'],
@@ -69,6 +70,7 @@ export let COMMAND_TOPICS = {
   READ_MESSAGE: 'mark_read',
   UPDATE_MESSAGE: 'modify_msg',
   CLEAR_MESSAGE: 'clean_hismsg',
+  GET_MSG_BY_IDS: 'qry_hismsg_by_ids',
 };
 export let NOTIFY_TYPE = {
   DEFAULT: 0,

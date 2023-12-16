@@ -228,3 +228,8 @@ message CleanHisMsgReq{
     ChannelType channelType = 2;
     int64 cleanMsgTime = 3;
 }
+message QryHisMsgByIdsReq{
+    string targetId = 1;
+    ChannelType channelType = 2;
+    repeated string msgIds = 3;
+}

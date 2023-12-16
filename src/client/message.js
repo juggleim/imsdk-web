@@ -61,6 +61,21 @@ export default function(io, emitter){
       });
     });
   };
+  let getMessagesByIds = (params) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, params, FUNC_PARAM_CHECKER.GETMSG);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let data = {
+        topic: COMMAND_TOPICS.GET_MSG_BY_IDS
+      };
+      data = utils.extend(data, params);
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messages }) => {
+        resolve({ messages });
+      });
+    });
+  };
   let clearMessage = (params) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, params, FUNC_PARAM_CHECKER.CLEARMSG);
@@ -132,6 +147,7 @@ export default function(io, emitter){
   return {
     sendMessage,
     getMessages,
+    getMessagesByIds,
     clearMessage,
     recallMessage,
     readMessage,

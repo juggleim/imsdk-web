@@ -670,6 +670,23 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 3
           }
         }
+      },
+      QryHisMsgByIdsReq: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 2
+          },
+          msgIds: {
+            rule: "repeated",
+            type: "string",
+            id: 3
+          }
+        }
       }
     }
   }

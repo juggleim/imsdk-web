@@ -99,6 +99,8 @@ export default function Decoder(cache){
   function msgFormat(msg){
     let { senderId, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isReaded, flags } = msg;
     let content = new TextDecoder().decode(msgContent);
+    content = utils.parse(content);
+
     let isUpdated = utils.isEqual(flags, MESSAGE_FLAG.IS_UPDATED);
     let _message = {
       conversationType,
@@ -115,7 +117,6 @@ export default function Decoder(cache){
     };
 
     if(utils.isEqual(MESSAGE_TYPE.RECALL, msgType)){
-      content = utils.parse(content);
       content = utils.rename(content, { 
         msg_id: 'messageId',
         msg_time: 'sentTime',
@@ -126,7 +127,6 @@ export default function Decoder(cache){
     }
 
     if(utils.isEqual(MESSAGE_TYPE.READ_MSG, msgType)){
-      content = utils.parse(content);
       delete content.index_scopes;
       let { msgs } = content;
       msgs = utils.map(msgs, ({ msg_id: messageId }) => {

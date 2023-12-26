@@ -1,6 +1,6 @@
 import utils from "../utils";
 import Proto from "./proto";
-import { SIGNAL_CMD, QOS, CONVERATION_TYPE, COMMAND_TOPICS} from "../enum";
+import { SIGNAL_CMD, QOS, CONVERATION_TYPE, COMMAND_TOPICS, PLATFORM} from "../enum";
 export default function Encoder(cache){
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
   
@@ -37,7 +37,7 @@ export default function Encoder(cache){
   function getConnectBody({ data }){
     let { appkey, token } = data;
     return {
-      connectMsgBody: { appkey, token }
+      connectMsgBody: { appkey, token, platform: PLATFORM.WEB }
     };
   }
 
@@ -58,6 +58,7 @@ export default function Encoder(cache){
 
     if(utils.isInclude([COMMAND_TOPICS.SEND_GROUP, COMMAND_TOPICS.SEND_PRIVATE], topic)){
       let { name, content, mentionInfo, flag } = data;
+      content  = utils.toJSON(content);
       let codec = Proto.lookup('codec.UpMsg');
       let message = codec.create({
         msgType: name,

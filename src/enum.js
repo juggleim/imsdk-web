@@ -22,6 +22,10 @@ export let SIGNAL_NAME = {
   S_PONG: 's_pong'
 };
 
+export let PLATFORM = {
+  WEB: 'Web'
+}
+
 export let SIGNAL_CMD = {
   CONNECT: 0,
   CONNECT_ACK: 1,

@@ -12,7 +12,7 @@ export let SIGNAL_NAME = {
   CMD_RECEIVED: 'cmd_inner_receive',
   CMD_CONVERSATION_CHANGED: 'cmd_inner_conversation_changed',
   CONN_CHANGED: 'conn_inner_changed',
-  
+
   // 与下行信令进行匹配，在 io.js 中进行派发
   S_CONNECT_ACK: 's_connect_ack',
   S_DISCONNECT: 's_disconnect',
@@ -43,23 +43,22 @@ export let QOS = {
   NO: 0
 };
 export let FUNC_PARAM_CHECKER = {
-  CONNECT: ['token', 'userId'],
+  CONNECT: [{ name: 'token' }, { name: 'userId' }],
 
-  // SENDMSG: ['conversationType', 'conversationId', 'message', 'message.content', 'message.name'],
-  SENDMSG: ['conversationType', 'conversationId', 'content', 'name'],
-  GETMSGS: ['conversationType', 'conversationId'],
-  GETMSG: ['conversationType', 'conversationId', 'messageIds'],
-  REMOVEMSG: ['conversationType', 'conversationId', 'messageId'],
-  CLEARMSG: ['conversationType', 'conversationId', 'time'],
-  RECALLMSG: ['conversationType', 'conversationId', 'messageId', 'sentTime'],
-  READMESSAGE: ['conversationType', 'conversationId', 'sentTime', 'messageId'],
-  UPDATEMESSAGE: ['conversationType', 'conversationId', 'messageId', 'content'],
-  
-  GETCONVERSATIONS: ['limit'],
-  GETCONVERSATION: ['conversationType', 'conversationId'],
-  
-  CLEARUNREADCOUNT: ['conversationType', 'conversationId'],
-  REMOVECONVERSATION: ['conversationType', 'conversationId'],
+  SENDMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'content', type: 'Object' }, { name: 'name' }],
+  GETMSGS: [{ name: 'conversationType' }, { name: 'conversationId' }],
+  GETMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageIds', type: 'Array' }],
+  REMOVEMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }],
+  CLEARMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'time', type: 'Number' }],
+  RECALLMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'sentTime' }],
+  READMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'sentTime', type: 'Number' }, { name: 'messageId' }],
+  UPDATEMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'content', type: 'Object' }],
+
+  GETCONVERSATIONS: [{ name: 'limit' }],
+  GETCONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
+
+  CLEARUNREADCOUNT: [{ name: 'conversationType' }, { name: 'conversationId' }],
+  REMOVECONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
 };
 export let COMMAND_TOPICS = {
   HISTORY_MESSAGES: 'qry_hismsgs',
@@ -95,22 +94,22 @@ export let CONNECT_STATE = {
   CONNECT_FAILED: 3
 };
 
- export let CONVERATION_TYPE = {
+export let CONVERATION_TYPE = {
   PRIVATE: 1,
   GROUP: 2,
   CHATROOM: 3,
   SYSTEM: 4
- };
+};
 
- export let MESSAGE_ORDER = {
+export let MESSAGE_ORDER = {
   FORWARD: 0,
   BACKWARD: 1
- };
+};
 
- export let CONVERSATION_ORDER = {
+export let CONVERSATION_ORDER = {
   FORWARD: 0,
   BACKWARD: 1
- };
+};
 
 export let MESSAGE_FLAG = {
   COMMAND: 1,
@@ -140,15 +139,16 @@ export let ErrorMessages = [
 
   { code: 13001, msg: '群组不存在', name: 'GROUP_NOT_EXISTS' },
 
-  { code: 25000, msg: '参数错误，请检查传入参数', name: 'ILLEGAL_PARAMS' },
+  { code: 25000, msg: '参数缺失，请检查传入参数', name: 'ILLEGAL_PARAMS' },
   { code: 25001, msg: '连接已存在', name: 'CONNECTION_EXISTS' },
   { code: 25002, msg: '连接不存在', name: 'CONNECTION_NOT_READY' },
-  
+  { code: 25003, msg: '参数类型不正确', name: 'ILLEGAL_TYPE_PARAMS' },
+
   { code: 21200, msg: '消息撤回成功', name: 'MESSAGE_RECALL_SUCCESS' },
 ];
 
 
-function getErrorType(){
+function getErrorType() {
   let errors = {};
   utils.forEach(ErrorMessages, (error) => {
     let { name, code, msg } = error;
@@ -156,9 +156,9 @@ function getErrorType(){
   });
   return errors;
 }
- export let ErrorType = getErrorType();
+export let ErrorType = getErrorType();
 
- export let MESSAGE_TYPE = {
+export let MESSAGE_TYPE = {
   TEXT: 'jg:text',
   IMAGE: 'jg:img',
   VOICE: 'jg:voice',
@@ -167,10 +167,10 @@ function getErrorType(){
   RECALL: 'jg:recall',
   READ_MSG: 'jg:readedmsg',
   CLEAR_MSG: 'jg:cleanmsg'
- }
+}
 
- export let MENTION_TYPE = {
+export let MENTION_TYPE = {
   ALL: 1,
   SOMEONE: 2,
   ALL_SOMEONE: 3
- };
+};

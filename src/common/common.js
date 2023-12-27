@@ -1,7 +1,7 @@
 import utils from "../utils";
 import { ErrorType, STORAGE, ErrorMessages, MESSAGE_TYPE, MESSAGE_FLAG } from "../enum";
 import Storage from "./storage";
-
+/* 
 let check = (io, params, props, isStatic) => {
   let error = {};
   if(!isStatic){
@@ -63,6 +63,74 @@ let check = (io, params, props, isStatic) => {
 
   return error;
 };
+*/
+
+/* 
+
+let params = { content: 123 }
+let params = { content: { name: 123 } }
+let params = [{ content: 123 }]
+let props = [
+  {
+    name: 'content',
+    type: 'Object',
+  }
+]
+*/
+let check = (io, params, props, isStatic) => {
+  if(!isStatic){
+    if(!io.isConnected()){
+      return ErrorType.CONNECTION_NOT_READY;
+    }
+  }
+  let checkType = (val, type, name) => {
+    let error = null;
+    let { msg, code } = ErrorType.ILLEGAL_TYPE_PARAMS;
+    let _type = Object.prototype.toString.call(val);
+    _type = _type.slice(8, _type.length - 1);
+    if(!utils.isEqual(_type, type)){
+      msg = `${name} ${msg}, 传入 ${_type}, 应传: ${type}`;
+      error = { msg, code };
+    }
+    return error;
+  };
+  let checkRequire = (val, name) => {
+    let error = null;
+    let { msg, code } = ErrorType.ILLEGAL_PARAMS;
+    if(utils.isUndefined(val)){
+      msg = `${name} ${msg}`;
+      error = { msg, code };
+    }
+    return error;
+  };
+
+  let _check = (prop, param) => {
+    let { name, type } = prop;
+    let val = param[name];
+    let error = null;
+    error = checkRequire(val, name);
+    if(error){
+      return error;
+    }
+
+    if(type){
+      error = checkType(val, type, name);
+    }
+    return error;
+  };
+
+  params = utils.isArray(params) ? params : [params];
+  for(let i = 0; i < props.length; i++){
+    let prop = props[i];
+    for(let j = 0; j < params.length; j++){
+      let param = params[j];
+      let error = _check(prop, param);
+      if(error){
+        return error;
+      }
+    }
+  }
+}
 
 let getTokenUUId = (token) => {
   let uuid = token.slice(16, 40);

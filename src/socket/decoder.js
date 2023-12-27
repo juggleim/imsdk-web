@@ -15,7 +15,6 @@ export default function Decoder(cache){
         break;
       case SIGNAL_CMD.PUBLISH_ACK:
         let { pubAckMsgBody: { index, msgId: messageId, timestamp: sentTime, code } } = msg;
-        code = code || ErrorType.MESSAGE_RECALL_SUCCESS.code;
         result = { messageId, sentTime, index, isSender: true, code };
         break;
       case SIGNAL_CMD.PUBLISH:

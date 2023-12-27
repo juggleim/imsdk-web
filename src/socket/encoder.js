@@ -25,7 +25,7 @@ export default function Encoder(cache){
         body = getQueryBody(data);
         break;
       case SIGNAL_CMD.PING:
-        body = getPingBody();
+        body = getPingBody(data);
         break;
     }
     utils.extend(payload, body);

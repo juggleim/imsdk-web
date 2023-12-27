@@ -1,7 +1,7 @@
 import Emitter from "../common/emmit";
 import utils from "../utils";
 import Proto from "./proto";
-import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, MESSAGE_FLAG } from "../enum";
+import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, MESSAGE_FLAG, CONNECT_ACK_INDEX } from "../enum";
 export default function Decoder(cache){
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
   let decode = (buffer) => {
@@ -10,7 +10,7 @@ export default function Decoder(cache){
     let { cmd } = msg;
     switch(cmd){
       case SIGNAL_CMD.CONNECT_ACK:
-        result = utils.extend(result, { ack: msg.ConnectAckMsgBody });
+        result = utils.extend(result, { ack: msg.ConnectAckMsgBody, index: CONNECT_ACK_INDEX });
         name = SIGNAL_NAME.S_CONNECT_ACK;
         break;
       case SIGNAL_CMD.PUBLISH_ACK:

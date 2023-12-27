@@ -34,16 +34,17 @@ export default function Encoder(cache){
     return buffer;
   };
   
-  function getConnectBody({ data }){
+  function getConnectBody({ data, index, counter }){
     let { appkey, token } = data;
+    cache.set(index, { counter });
     return {
       connectMsgBody: { appkey, token, platform: PLATFORM.WEB }
     };
   }
 
-  function getPublishAckBody({data, callback, index}){
+  function getPublishAckBody({data, callback, index, counter}){
     let { msgIndex   } = data;
-    cache.set(index, { callback, data });
+    cache.set(index, { callback, data, counter });
     return {
       pubAckMsgBody: {
         index: msgIndex,
@@ -52,7 +53,7 @@ export default function Encoder(cache){
     };
   }
 
-  function getPublishBody({ data, callback, index }){
+  function getPublishBody({ data, callback, index, counter }){
     let { conversationId: targetId, conversationType, topic } = data;
     let buffer = [];
 
@@ -172,7 +173,7 @@ export default function Encoder(cache){
       buffer = codec.encode(message).finish();
     }
 
-    cache.set(index, { callback, data });
+    cache.set(index, { callback, data, counter });
 
     return {
       publishMsgBody: {
@@ -184,7 +185,7 @@ export default function Encoder(cache){
     };
   }
 
-  function getQueryBody({ data, callback, index }){
+  function getQueryBody({ data, callback, index, counter }){
     let { targetId, userId, topic  } = data;
     let buffer = [];
     
@@ -225,7 +226,7 @@ export default function Encoder(cache){
       buffer = codec.encode(message).finish();
     }
     
-    cache.set(index, { callback, index, topic, targetId });
+    cache.set(index, { callback, index, topic, targetId, counter });
 
     return {
       qryMsgBody: {
@@ -237,7 +238,8 @@ export default function Encoder(cache){
     }
   }
 
-  function getPingBody(){
+  function getPingBody({ index, counter }){
+    cache.set(index, { counter });
     return {};
   }
   return { 

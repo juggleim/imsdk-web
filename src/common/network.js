@@ -4,7 +4,7 @@ import { STORAGE } from "../enum";
 import common from "./common";
 
 let detect = (urls, callback) => {
-  let requests = [], superior = ''; 
+  let requests = [], superior = '', errors = []; 
   let { http } = utils.getProtocol();
   utils.forEach(urls, (domain) => {
     let url = `${http}//${domain}/health`;
@@ -18,7 +18,12 @@ let detect = (urls, callback) => {
           abortAll();
         }
       },
-      fail: function(){}
+      fail: function(error){
+        errors.push(error);
+        if(utils.isEqual(errors.length, urls.length)){
+          callback(superior, error);
+        }
+      }
     });
     requests.push(xhr);
   });

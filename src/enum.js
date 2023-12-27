@@ -7,7 +7,7 @@ export let STORAGE = {
 };
 
 export let HEART_TIMEOUT = 1 * 60 * 1000;
-
+export let CONNECT_ACK_INDEX = 'c_conn_ack_index';
 export let SIGNAL_NAME = {
   CMD_RECEIVED: 'cmd_inner_receive',
   CMD_CONVERSATION_CHANGED: 'cmd_inner_conversation_changed',
@@ -91,7 +91,8 @@ export let CONNECT_STATE = {
   CONNECTED: 0,
   CONNECTING: 1,
   DISCONNECTED: 2,
-  CONNECT_FAILED: 3
+  CONNECT_FAILED: 3,
+  CONNECTION_SICK: 1000
 };
 
 export let CONVERATION_TYPE = {
@@ -143,6 +144,7 @@ export let ErrorMessages = [
   { code: 25001, msg: '连接已存在', name: 'CONNECTION_EXISTS' },
   { code: 25002, msg: '连接不存在', name: 'CONNECTION_NOT_READY' },
   { code: 25003, msg: '参数类型不正确', name: 'ILLEGAL_TYPE_PARAMS' },
+  { code: 25004, msg: '发送超时，连接异常', name: 'COMMAND_FAILED' },
 
   { code: 21200, msg: '消息撤回成功', name: 'MESSAGE_RECALL_SUCCESS' },
 ];

@@ -179,7 +179,8 @@ message Conversation{
 message SyncMsgReq{
     int64 syncTime = 1;//收件箱同步时间
     bool containsSendBox = 2;//是否包含发件箱消息
-    int64 sendBoxSyncTime = 3;//发件箱同步时间
+    int64 sendBoxSyncTime = 3;//发件箱同步时间,
+    string chatroomId = 4;
 }
 
 message SyncChatroomMsgReq{
@@ -190,6 +191,7 @@ message SyncChatroomMsgReq{
 message Notify{
     NotifyType type = 1;
     int64 syncTime = 2;
+    string chatroomId = 3;
 }
 enum NotifyType {
     Default = 0;

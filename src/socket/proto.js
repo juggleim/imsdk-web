@@ -528,6 +528,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           sendBoxSyncTime: {
             type: "int64",
             id: 3
+          },
+          chatroomId: {
+            type: "string",
+            id: 4
           }
         }
       },
@@ -552,6 +556,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           syncTime: {
             type: "int64",
             id: 2
+          },
+          chatroomId: {
+            type: "string",
+            id: 3
           }
         }
       },

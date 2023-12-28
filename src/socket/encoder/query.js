@@ -43,6 +43,17 @@ export default function getQueryBody({ data, callback, index }){
     buffer = codec.encode(message).finish();
   }
 
+  if(utils.isEqual(topic, COMMAND_TOPICS.SYNC_CHATROOM_MESSAGES)){
+    let { syncTime, chatroomId } = data;
+    targetId = userId;
+    let codec = Proto.lookup('codec.SyncMsgReq');
+    let message = codec.create({
+      syncTime,
+      chatroomId
+    });
+    buffer = codec.encode(message).finish();
+  }
+
   if(utils.isEqual(COMMAND_TOPICS.GET_MSG_BY_IDS, topic)){
     let { conversationId: targetId, conversationType: channelType, messageIds: msgIds } = data;
     let codec = Proto.lookup('codec.QryHisMsgByIdsReq');

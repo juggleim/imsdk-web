@@ -48,7 +48,7 @@ export default function Syncer(send, emitter){
       if(syncTime >= msg.receiveTime){
         return;
       }
-      //TODO: 和服务端联调 chatroomId
+      
       let data = {
         syncTime: syncTime,
         chatroomId: msg.targetId,

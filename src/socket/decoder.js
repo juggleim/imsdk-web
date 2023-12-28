@@ -45,8 +45,8 @@ export default function Decoder(cache){
     if(utils.isEqual(topic, COMMAND_TOPICS.NTF)){
       let payload = Proto.lookup('codec.Notify');
       let message = payload.decode(data);
-      let { syncTime: receiveTime, type } = message;
-      _msg = { topic, receiveTime, type, targetId};
+      let { syncTime: receiveTime, type, chatroomId } = message;
+      _msg = { topic, receiveTime, type, targetId: chatroomId};
       _name = SIGNAL_NAME.S_NTF;
     }else {
       let payload = Proto.lookup('codec.DownMsg');
@@ -61,7 +61,7 @@ export default function Decoder(cache){
     let { topic, targetId } = cache.get(index);
 
     let result = { index };
-    if(utils.isInclude([COMMAND_TOPICS.HISTORY_MESSAGES, COMMAND_TOPICS.SYNC_MESSAGES, COMMAND_TOPICS.GET_MSG_BY_IDS], topic)){
+    if(utils.isInclude([COMMAND_TOPICS.HISTORY_MESSAGES, COMMAND_TOPICS.SYNC_MESSAGES, COMMAND_TOPICS.SYNC_CHATROOM_MESSAGES, COMMAND_TOPICS.GET_MSG_BY_IDS], topic)){
       result = getMessagesHandler(index, data);
     }
 

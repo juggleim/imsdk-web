@@ -7,7 +7,7 @@ export default function (_config = {}) {
   
   let start = (callback) => {
     num = setTimeout(() => {
-      callback();
+      callback(config);
     }, timeout);
   };
   let clear = () => {

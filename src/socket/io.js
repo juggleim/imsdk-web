@@ -43,7 +43,9 @@ export default function IO(config){
 
       let onDisconnect = () => {
         let state = CONNECT_STATE.DISCONNECTED;
-        updateState(state);
+        if(!utils.isEqual(connectionState, CONNECT_STATE.CONNECTION_SICK)){
+          updateState(state);
+        }
         timer.pause();
       };
       Network.detect(servers, (domain, error) => {
@@ -71,6 +73,8 @@ export default function IO(config){
       callback({ error });
     });
   };
+  
+  let PingTimeouts = [];
 
   let disconnect = (_state) => {
     if(ws){
@@ -79,6 +83,7 @@ export default function IO(config){
     let state = _state || CONNECT_STATE.DISCONNECTED;
     updateState(state);
     timer.pause();
+    PingTimeouts.length = 0;
   };
 
   let sendCommand = (cmd, data, callback) => {
@@ -90,11 +95,15 @@ export default function IO(config){
     if(utils.isEqual(cmd, SIGNAL_CMD.PING)){
       index = PONG_INDEX;
     }
-    let counter = Counter();
+    let counter = Counter({ cmd });
     let buffer = encoder.encode(cmd, { callback, data, index, counter });
     ws.send(buffer);
-    // 请求发出后开始计时，10s 中未响应认为连接异常，断开连接，counter 定时器在收到 ack 后清除
-    counter.start(() => {
+    // 请求发出后开始计时，一定时间内中未响应认为连接异常，断开连接，counter 定时器在收到 ack 后清除
+    counter.start(({ cmd: _cmd }) => {
+      // PING 三次未响应后认为网络异常，向业务层抛出网络异常状态，PingTimeouts 在收到 PONG 后进行 reset
+      if(utils.isEqual(_cmd, SIGNAL_CMD.PING) && PingTimeouts.length < 3){
+        return PingTimeouts.push({ cmd: _cmd });
+      }
       callback(ErrorType.COMMAND_FAILED);
       disconnect(CONNECT_STATE.CONNECTION_SICK);
     });
@@ -109,6 +118,7 @@ export default function IO(config){
     // 清空计时器，与 counter.start 对应
     if(counter){
       counter.clear();
+      PingTimeouts.length = 0;
     }
     if(utils.isEqual(name, SIGNAL_NAME.S_NTF) || utils.isEqual(name, SIGNAL_NAME.CMD_RECEIVED) ){
       syncer.exec({

@@ -156,6 +156,8 @@ export let ErrorMessages = [
   { code: 25004, msg: '发送超时，连接异常', name: 'COMMAND_FAILED' },
 
   { code: 21200, msg: '消息撤回成功', name: 'MESSAGE_RECALL_SUCCESS' },
+  
+  { code: 0, msg: '内部业务调用成功', name: 'COMMAND_SUCCESS' },
 ];
 
 

@@ -110,7 +110,7 @@ export default function(io, emitter){
       utils.extend(data, message);
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, (result) => {
         let { code } = result;
-        if(utils.isEqual(code, ErrorType.MESSAGE_RECALL_SUCCESS.code)){
+        if(utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
           return resolve();
         }
         let { msg } = common.getError(code);

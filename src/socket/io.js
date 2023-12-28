@@ -3,7 +3,7 @@ import utils from "../utils";
 import Storage from "../common/storage";
 import Proto from "./proto";
 import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX } from "../enum";
-import BufferEncoder from "./encoder";
+import BufferEncoder from "./encoder/encoder";
 import BufferDecoder from "./decoder";
 import Network from "../common/network";
 import Cache from "../common/cache";

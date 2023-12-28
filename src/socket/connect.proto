@@ -233,3 +233,6 @@ message QryHisMsgByIdsReq{
     ChannelType channelType = 2;
     repeated string msgIds = 3;
 }
+message ChatRoomReq{
+    string chatId = 1;
+}

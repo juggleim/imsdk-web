@@ -11,9 +11,11 @@ export default function(io){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      let { id } = chatroom;
       let data = {
         topic: COMMAND_TOPICS.JOIN_CHATROOM,
-        chatroom
+        chatroom,
+        conversationId: id
       };
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
         resolve();

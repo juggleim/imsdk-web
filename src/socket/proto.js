@@ -687,6 +687,14 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 3
           }
         }
+      },
+      ChatRoomReq: {
+        fields: {
+          chatId: {
+            type: "string",
+            id: 1
+          }
+        }
       }
     }
   }

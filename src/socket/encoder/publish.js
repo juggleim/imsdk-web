@@ -111,6 +111,20 @@ export default function({ data, callback, index }){
     buffer = codec.encode(message).finish();
   }
 
+  if(utils.isEqual(COMMAND_TOPICS.JOIN_CHATROOM, topic)){
+    let { chatroom: { id: chatId  } } = data;
+    let codec = Proto.lookup('codec.ChatRoomReq');
+    let message = codec.create({ chatId });
+    buffer = codec.encode(message).finish();
+  }
+
+  if(utils.isEqual(COMMAND_TOPICS.QUIT_CHATROOM, topic)){
+    let { chatroom: { id: chatId  } } = data;
+    let codec = Proto.lookup('codec.ChatRoomReq');
+    let message = codec.create({ chatId });
+    buffer = codec.encode(message).finish();
+  }
+
   return {
     publishMsgBody: {
       index,

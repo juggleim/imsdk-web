@@ -8,6 +8,8 @@ export let STORAGE = {
 
 export let HEART_TIMEOUT = 1 * 60 * 1000;
 export let CONNECT_ACK_INDEX = 'c_conn_ack_index';
+export let PONG_INDEX = 'c_pong_index';
+
 export let SIGNAL_NAME = {
   CMD_RECEIVED: 'cmd_inner_receive',
   CMD_CONVERSATION_CHANGED: 'cmd_inner_conversation_changed',

@@ -2,7 +2,7 @@ import Emitter from "../common/emmit";
 import utils from "../utils";
 import Storage from "../common/storage";
 import Proto from "./proto";
-import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX } from "../enum";
+import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX } from "../enum";
 import BufferEncoder from "./encoder/encoder";
 import BufferDecoder from "./decoder";
 import Network from "../common/network";
@@ -86,6 +86,9 @@ export default function IO(config){
     let index = common.getNum();
     if(utils.isEqual(cmd, SIGNAL_CMD.CONNECT)){
       index = CONNECT_ACK_INDEX;
+    }
+    if(utils.isEqual(cmd, SIGNAL_CMD.PING)){
+      index = PONG_INDEX;
     }
     let counter = Counter();
     let buffer = encoder.encode(cmd, { callback, data, index, counter });

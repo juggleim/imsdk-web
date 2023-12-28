@@ -59,21 +59,30 @@ export let FUNC_PARAM_CHECKER = {
 
   CLEARUNREADCOUNT: [{ name: 'conversationType' }, { name: 'conversationId' }],
   REMOVECONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
+
+  JOINCHATROOM: [{ name: 'id', type: 'String' }],
+  QUITCHATROOM: [{ name: 'id', type: 'String' }],
 };
 export let COMMAND_TOPICS = {
   HISTORY_MESSAGES: 'qry_hismsgs',
   CONVERSATIONS: 'qry_convers',
   SYNC_MESSAGES: 'sync_msgs',
   RECALL: 'recall_msg',
+  
   NTF: 'ntf',
   SEND_GROUP: 'g_msg',
   SEND_PRIVATE: 'p_msg',
+  SEND_CHATROOM: 'c_msg',
+
   CLEAR_UNREAD: 'clear_unread',
   REMOVE_CONVERSATION: 'del_convers',
   READ_MESSAGE: 'mark_read',
   UPDATE_MESSAGE: 'modify_msg',
   CLEAR_MESSAGE: 'clean_hismsg',
   GET_MSG_BY_IDS: 'qry_hismsg_by_ids',
+
+  JOIN_CHATROOM: 'c_join',
+  QUIT_CHATROOM: 'c_quit',
 };
 export let NOTIFY_TYPE = {
   DEFAULT: 0,

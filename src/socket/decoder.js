@@ -59,7 +59,7 @@ export default function Decoder(cache){
     let { topic, targetId } = cache.get(index);
 
     let result = { index };
-    if(utils.isInclude([COMMAND_TOPICS.HISTORY_MESSAGES, COMMAND_TOPICS.SYNC_MESSAGES], topic)){
+    if(utils.isInclude([COMMAND_TOPICS.HISTORY_MESSAGES, COMMAND_TOPICS.SYNC_MESSAGES, COMMAND_TOPICS.GET_MSG_BY_IDS], topic)){
       result = getMessagesHandler(index, data);
     }
 

@@ -75,7 +75,7 @@ export default function(io, emitter){
         topic: COMMAND_TOPICS.GET_MSG_BY_IDS
       };
       data = utils.extend(data, params);
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messages }) => {
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ messages }) => {
         resolve({ messages });
       });
     });

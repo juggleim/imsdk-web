@@ -162,17 +162,6 @@ export default function Encoder(cache){
       buffer = codec.encode(message).finish();
     }
 
-    if(utils.isEqual(COMMAND_TOPICS.GET_MSG_BY_IDS, topic)){
-      let { conversationId: targetId, conversationType: channelType, messageIds: msgIds } = data;
-      let codec = Proto.lookup('codec.QryHisMsgByIdsReq');
-      let message = codec.create({
-        channelType,
-        targetId,
-        msgIds,
-      });
-      buffer = codec.encode(message).finish();
-    }
-
     cache.set(index, { callback, data, counter });
 
     return {
@@ -222,6 +211,17 @@ export default function Encoder(cache){
         syncTime,
         containsSendBox,
         sendBoxSyncTime
+      });
+      buffer = codec.encode(message).finish();
+    }
+
+    if(utils.isEqual(COMMAND_TOPICS.GET_MSG_BY_IDS, topic)){
+      let { conversationId: targetId, conversationType: channelType, messageIds: msgIds } = data;
+      let codec = Proto.lookup('codec.QryHisMsgByIdsReq');
+      let message = codec.create({
+        channelType,
+        targetId,
+        msgIds,
       });
       buffer = codec.encode(message).finish();
     }

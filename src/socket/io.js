@@ -2,7 +2,7 @@ import Emitter from "../common/emmit";
 import utils from "../utils";
 import Storage from "../common/storage";
 import Proto from "./proto";
-import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX } from "../enum";
+import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX, COMMAND_TOPICS, CONVERATION_TYPE } from "../enum";
 import BufferEncoder from "./encoder/encoder";
 import BufferDecoder from "./decoder";
 import Network from "../common/network";
@@ -129,7 +129,11 @@ export default function IO(config){
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.PUBLISH_ACK)){
       utils.extend(data, result);
-      common.updateSyncTime(data);
+      let { conversationType } = data;
+      // 单群聊和聊天室通知和拉取消息时间戳分开计算，只有发送单群聊消息更新发件箱
+      if(!utils.isEqual(conversationType, CONVERATION_TYPE.CHATROOM)){
+        common.updateSyncTime(data);
+      }
       callback(data);
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.QUERY_ACK)){

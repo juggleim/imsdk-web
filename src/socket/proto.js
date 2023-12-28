@@ -531,6 +531,18 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           }
         }
       },
+      SyncChatroomMsgReq: {
+        fields: {
+          syncTime: {
+            type: "int64",
+            id: 1
+          },
+          chatroomId: {
+            type: "string",
+            id: 4
+          }
+        }
+      },
       Notify: {
         fields: {
           type: {

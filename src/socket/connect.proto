@@ -182,6 +182,11 @@ message SyncMsgReq{
     int64 sendBoxSyncTime = 3;//发件箱同步时间
 }
 
+message SyncChatroomMsgReq{
+    int64 syncTime = 1;//收件箱同步时间
+    string chatroomId = 4;
+}
+
 message Notify{
     NotifyType type = 1;
     int64 syncTime = 2;

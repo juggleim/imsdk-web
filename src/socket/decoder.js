@@ -46,7 +46,7 @@ export default function Decoder(cache){
       let payload = Proto.lookup('codec.Notify');
       let message = payload.decode(data);
       let { syncTime: receiveTime, type } = message;
-      _msg = { topic, receiveTime, type};
+      _msg = { topic, receiveTime, type, targetId};
       _name = SIGNAL_NAME.S_NTF;
     }else {
       let payload = Proto.lookup('codec.DownMsg');

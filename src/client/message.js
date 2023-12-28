@@ -10,6 +10,7 @@ export default function(io, emitter){
   let maps = [
     [CONVERATION_TYPE.PRIVATE, 'p_msg'],
     [CONVERATION_TYPE.GROUP, 'g_msg'],
+    [CONVERATION_TYPE.CHATROOM, 'c_msg'],
   ];
   let topics = {};
   utils.forEach(maps, (map) => {

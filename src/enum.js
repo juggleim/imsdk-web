@@ -3,7 +3,8 @@ export let STORAGE = {
   PREFIX: 'suprjuggle_im',
   NAVI: 'navi',
   SYNC_RECEIVED_MSG_TIME: 'sync_received_msg_time',
-  SYNC_SENT_MSG_TIME: 'sync_sent_msg_time'
+  SYNC_SENT_MSG_TIME: 'sync_sent_msg_time',
+  SYNC_CHATROOM_RECEIVED_MSG_TIME: 'sync_chatroom_received_msg_time',
 };
 
 export let HEART_TIMEOUT = 1 * 30 * 1000;
@@ -85,10 +86,12 @@ export let COMMAND_TOPICS = {
 
   JOIN_CHATROOM: 'c_join',
   QUIT_CHATROOM: 'c_quit',
+  SYNC_CHATROOM_MESSAGES: 'c_sync_msgs',
 };
 export let NOTIFY_TYPE = {
   DEFAULT: 0,
-  MSG: 1
+  MSG: 1,
+  CHATROOM: 2,
 };
 
 

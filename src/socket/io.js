@@ -98,15 +98,18 @@ export default function IO(config){
     let counter = Counter({ cmd });
     let buffer = encoder.encode(cmd, { callback, data, index, counter });
     ws.send(buffer);
-    // 请求发出后开始计时，一定时间内中未响应认为连接异常，断开连接，counter 定时器在收到 ack 后清除
-    counter.start(({ cmd: _cmd }) => {
-      // PING 三次未响应后认为网络异常，向业务层抛出网络异常状态，PingTimeouts 在收到 PONG 后进行 reset
-      if(utils.isEqual(_cmd, SIGNAL_CMD.PING) && PingTimeouts.length < 3){
-        return PingTimeouts.push({ cmd: _cmd });
-      }
-      callback(ErrorType.COMMAND_FAILED);
-      disconnect(CONNECT_STATE.CONNECTION_SICK);
-    });
+    
+    if(!utils.isEqual(SIGNAL_CMD.PUBLISH_ACK, cmd)){
+      // 请求发出后开始计时，一定时间内中未响应认为连接异常，断开连接，counter 定时器在收到 ack 后清除
+      counter.start(({ cmd: _cmd }) => {
+        // PING 三次未响应后认为网络异常，向业务层抛出网络异常状态，PingTimeouts 在收到 PONG 后进行 reset
+        if(utils.isEqual(_cmd, SIGNAL_CMD.PING) && PingTimeouts.length < 3){
+          return PingTimeouts.push({ cmd: _cmd });
+        }
+        callback(ErrorType.COMMAND_FAILED);
+        disconnect(CONNECT_STATE.CONNECTION_SICK);
+      });
+    }
   };
   
   let syncer = Syncer(sendCommand, emitter);

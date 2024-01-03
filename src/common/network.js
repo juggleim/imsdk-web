@@ -52,7 +52,7 @@ let getNavi = (url, option) => {
       'x-token': token
     }
   }).then(({data}) => {
-    let { data: { servers, user_id: userId  } } = data;
+    let { servers, user_id: userId } = data;
     let result = { servers, userId };
     Storage.set(key, result);
     return result;

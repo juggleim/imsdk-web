@@ -77,7 +77,7 @@ let props = [
   }
 ]
 */
-let check = (io, params, props, isStatic) => {
+let check = (io, _params, props, isStatic) => {
   if(!isStatic){
     if(!io.isConnected()){
       return ErrorType.CONNECTION_NOT_READY;
@@ -94,21 +94,24 @@ let check = (io, params, props, isStatic) => {
     }
     return error;
   };
-  let checkRequire = (val, name) => {
+  let checkRequire = (val, name, index) => {
     let error = null;
     let { msg, code } = ErrorType.ILLEGAL_PARAMS;
     if(utils.isUndefined(val)){
       msg = `${name} ${msg}`;
+      if(utils.isArray(_params)){
+        msg = `Array index ${index} : ${msg}`;
+      }
       error = { msg, code };
     }
     return error;
   };
 
-  let _check = (prop, param) => {
+  let _check = (prop, param, index) => {
     let { name, type } = prop;
     let val = param[name];
     let error = null;
-    error = checkRequire(val, name);
+    error = checkRequire(val, name, index);
     if(error){
       return error;
     }
@@ -119,12 +122,12 @@ let check = (io, params, props, isStatic) => {
     return error;
   };
 
-  params = utils.isArray(params) ? params : [params];
+  let params = utils.isArray(_params) ? _params : [_params];
   for(let i = 0; i < props.length; i++){
     let prop = props[i];
     for(let j = 0; j < params.length; j++){
       let param = params[j];
-      let error = _check(prop, param);
+      let error = _check(prop, param, j);
       if(error){
         return error;
       }

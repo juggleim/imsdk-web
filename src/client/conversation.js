@@ -95,7 +95,7 @@ export default function(io, emitter){
       conversationId,
       conversationType,
       latestMessage: message,
-      unreadCount: 1,
+      unreadCount: 0,
       latestReadTime: 0
     };
   }
@@ -105,6 +105,6 @@ export default function(io, emitter){
     removeConversation,
     clearUnreadcount,
     getTotalUnreadcount,
-    clearTotalUnreadcount
+    clearTotalUnreadcount,
   };
 }

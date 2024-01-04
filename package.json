@@ -6,6 +6,7 @@
   "scripts": {
     "release": "npm run release:dev && npm run release:min && npm run release:es",
     "release:dev": "rollup -c ./scripts/rollup.config.js --environment TAG:dev",
+    "release:jet:dev": "rollup -c ./scripts/rollup.jet.config.js --environment TAG:dev",
     "release:min": "rollup -c ./scripts/rollup.config.js --environment TAG:min",
     "release:es": "rollup -c ./scripts/rollup.config.js --environment TAG:es",
     "build:pb": "npx pbjs -t json-module -w es6 -o ./src/socket/proto.js ./src/socket/connect.proto && node ./scripts/repair-pb.js"

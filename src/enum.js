@@ -1,6 +1,6 @@
 import utils from "./utils";
 export let STORAGE = {
-  PREFIX: 'suprjuggle_im',
+  PREFIX: 'suprjj_im',
   NAVI: 'navi',
   SYNC_RECEIVED_MSG_TIME: 'sync_received_msg_time',
   SYNC_SENT_MSG_TIME: 'sync_sent_msg_time',

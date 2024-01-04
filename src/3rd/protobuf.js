@@ -1,4 +1,4 @@
-let JuggleProtobuf = (
+let JProtobuf = (
   function prelude(modules, cache, entries) {
 
     // This is the prelude used to bundle protobuf.js for the browser. Wraps up the CommonJS
@@ -7393,4 +7393,4 @@ let JuggleProtobuf = (
     }, { "35": 35, "38": 38 }]
   }, {}, [16])
 
-export default { ...JuggleProtobuf }
+export default { ...JProtobuf }

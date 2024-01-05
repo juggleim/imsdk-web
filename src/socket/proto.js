@@ -726,6 +726,67 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 1
           }
         }
+      },
+      QryMentionMsgsReq: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 2
+          },
+          startIndex: {
+            type: "int64",
+            id: 3
+          },
+          count: {
+            type: "int32",
+            id: 4
+          },
+          order: {
+            type: "int32",
+            id: 5
+          }
+        }
+      },
+      QryMentionMsgsResp: {
+        fields: {
+          mentionMsgs: {
+            rule: "repeated",
+            type: "MentionMsg",
+            id: 1
+          },
+          isFinished: {
+            type: "bool",
+            id: 2
+          }
+        }
+      },
+      MentionMsg: {
+        fields: {
+          mentionType: {
+            type: "MentionType",
+            id: 1
+          },
+          senderId: {
+            type: "string",
+            id: 2
+          },
+          msgId: {
+            type: "string",
+            id: 3
+          },
+          msgIndex: {
+            type: "int64",
+            id: 4
+          },
+          msgTime: {
+            type: "int64",
+            id: 5
+          }
+        }
       }
     }
   }

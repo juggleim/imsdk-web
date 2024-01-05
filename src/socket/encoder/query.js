@@ -78,6 +78,19 @@ export default function getQueryBody({ data, callback, index }){
     let message = codec.create({});
     buffer = codec.encode(message).finish();
   }
+
+  if(utils.isEqual(COMMAND_TOPICS.GET_MENTION_MSGS, topic)){
+    let { conversationId: targetId, conversationType: channelType, count, order, messageIndex: startIndex } = data;
+    let codec = Proto.lookup('codec.QryMentionMsgsReq');
+    let message = codec.create({
+      targetId,
+      channelType,
+      count,
+      order,
+      startIndex
+    });
+    buffer = codec.encode(message).finish();
+  }
   
   return {
     qryMsgBody: {

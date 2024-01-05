@@ -83,6 +83,7 @@ let check = (io, _params, props, isStatic) => {
       return ErrorType.CONNECTION_NOT_READY;
     }
   }
+  _params = _params || {};
   let checkType = (val, type, name) => {
     let error = null;
     let { msg, code } = ErrorType.ILLEGAL_TYPE_PARAMS;

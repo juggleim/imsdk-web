@@ -248,3 +248,21 @@ message QryTotalUnreadCountReq{
 message QryTotalUnreadCountResp{
     int64 totalCount = 1;
 }
+message QryMentionMsgsReq{
+    string targetId = 1;
+    ChannelType channelType = 2;
+    int64 startIndex = 3;
+    int32 count = 4;
+    int32 order = 5;  //0：倒序；1：正序
+}
+message QryMentionMsgsResp{
+    repeated MentionMsg mentionMsgs = 1;
+    bool isFinished = 2;
+}
+message MentionMsg{
+    MentionType mentionType = 1;
+    string senderId = 2;
+    string msgId = 3;
+    int64 msgIndex = 4;
+    int64 msgTime = 5;
+}

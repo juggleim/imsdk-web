@@ -1,4 +1,4 @@
-import { SIGNAL_CMD, EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_ORDER, COMMAND_TOPICS, CONVERATION_TYPE, ErrorType } from "../enum";
+import { SIGNAL_CMD, EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_ORDER, COMMAND_TOPICS, CONVERATION_TYPE, ErrorType, MENTION_ORDER } from "../enum";
 import utils from "../utils";
 import common from "../common/common";
 export default function(io, emitter){
@@ -149,6 +149,27 @@ export default function(io, emitter){
       });
     });
   };
+  let getMentionMessages = (conversation) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, conversation, FUNC_PARAM_CHECKER.GET_MENTIOIN_MESSAGES);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let params = {
+        count: 20,
+        order: MENTION_ORDER.BACKWARD,
+        messageIndex: 0
+      };
+      utils.extend(params, conversation);
+      let data = {
+        topic: COMMAND_TOPICS.GET_MENTION_MSGS,
+        ...params
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ isFinished, msgs }) => {
+        resolve({ isFinished, msgs });
+      });
+    });
+  };
   return {
     sendMessage,
     getMessages,
@@ -156,6 +177,7 @@ export default function(io, emitter){
     clearMessage,
     recallMessage,
     readMessage,
-    updateMessage
+    updateMessage,
+    getMentionMessages
   };
 }

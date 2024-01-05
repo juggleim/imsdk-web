@@ -56,6 +56,7 @@ export let FUNC_PARAM_CHECKER = {
   RECALLMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'sentTime' }],
   READMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'sentTime', type: 'Number' }, { name: 'messageId' }],
   UPDATEMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'content', type: 'Object' }],
+  GET_MENTIOIN_MESSAGES: [{ name: 'conversationType' }, { name: 'conversationId' }],
 
   GETCONVERSATIONS: [{ name: 'limit' }],
   GETCONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
@@ -71,6 +72,7 @@ export let COMMAND_TOPICS = {
   CONVERSATIONS: 'qry_convers',
   SYNC_MESSAGES: 'sync_msgs',
   RECALL: 'recall_msg',
+  GET_MENTION_MSGS: 'qry_mention_msgs',
   
   NTF: 'ntf',
   SEND_GROUP: 'g_msg',
@@ -125,6 +127,11 @@ export let MESSAGE_ORDER = {
 };
 
 export let CONVERSATION_ORDER = {
+  FORWARD: 0,
+  BACKWARD: 1
+};
+
+export let MENTION_ORDER = {
   FORWARD: 0,
   BACKWARD: 1
 };

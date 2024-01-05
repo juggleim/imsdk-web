@@ -72,8 +72,25 @@ export default function Decoder(cache){
     if(utils.isEqual(topic, COMMAND_TOPICS.GET_UNREAD_TOTLAL_CONVERSATION)){
       result = getTotalUnread(index, data);
     }
+
+    if(utils.isEqual(topic, COMMAND_TOPICS.GET_MENTION_MSGS)){
+      result = getMentionMessages(index, data);
+    }
     return result;
   }
+
+  function getMentionMessages(index, data){
+    let payload = Proto.lookup('codec.QryMentionMsgsResp');
+    let { mentionMsgs, isFinished } = payload.decode(data);
+    let msgs = utils.map(mentionMsgs, (msg) => {
+      let { mentionType, senderId: senderUserId, msgId: messageId, msgTime: sentTime, msgIndex: messageIndex } = msg;
+      return { mentionType, senderUserId, messageId, sentTime, messageIndex };
+    });
+    return {
+      index, msgs, isFinished
+    };
+  }
+
   function getTotalUnread(index, data){
     let payload = Proto.lookup('codec.QryTotalUnreadCountResp');
     let { totalCount: count } = payload.decode(data);

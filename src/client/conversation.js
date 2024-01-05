@@ -65,11 +65,7 @@ export default function(io, emitter){
       let data = { topic: COMMAND_TOPICS.CLEAR_UNREAD };
       utils.extend(data, { conversations });
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
-        let list = utils.isArray(conversations) ? conversations : [conversations];
-        utils.forEach(list, (conversation) => {
-          utils.extend(conversation, { unreadCount: 0 });
-          conversationUtils.modify(conversation);
-        });
+        conversationUtils.read(conversations);
         resolve();
       });
     });
@@ -97,6 +93,8 @@ export default function(io, emitter){
       let { id: userId } = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.CLEAR_UNREAD_TOTLAL_CONVERSATION, userId };
       io.sendCommand(SIGNAL_CMD.QUERY, data, () => {
+        let conversations = conversationUtils.get();
+        conversationUtils.read(conversations);
         resolve();
       });
     });

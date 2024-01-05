@@ -261,6 +261,17 @@ function ConversationUtils(){
   let isSync = () => {
     return isSynced;
   };
+  let read = (list) => {
+    list = utils.isArray(list) ? list : [list];
+    utils.forEach(list, (item) => {
+      let index = utils.find(conversations, ({ conversationType, conversationId }) => {
+        return utils.isEqual(item.conversationType, conversationType) && utils.isEqual(item.conversationId, conversationId);
+      });
+      if(index > -1){
+        conversations[index].unreadCount = 0;
+      }
+    });
+  };
   return {
     remove,
     update,
@@ -269,7 +280,8 @@ function ConversationUtils(){
     isSync,
     add,
     modify,
-    getPer
+    getPer,
+    read
   };
 }
 

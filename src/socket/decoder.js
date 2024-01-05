@@ -68,8 +68,20 @@ export default function Decoder(cache){
     if(utils.isEqual(topic, COMMAND_TOPICS.CONVERSATIONS)){
       result = getConversationsHandler(index, data);
     }
+
+    if(utils.isEqual(topic, COMMAND_TOPICS.GET_UNREAD_TOTLAL_CONVERSATION)){
+      result = getTotalUnread(index, data);
+    }
     return result;
   }
+  function getTotalUnread(index, data){
+    let payload = Proto.lookup('codec.QryTotalUnreadCountResp');
+    let { totalCount: count } = payload.decode(data);
+    return {
+      index, count
+    };
+  }
+  
   function getConversationsHandler(index, data){
     let payload = Proto.lookup('codec.QryConversationsResp');
     let { conversations } = payload.decode(data);

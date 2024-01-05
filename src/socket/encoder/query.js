@@ -64,6 +64,20 @@ export default function getQueryBody({ data, callback, index }){
     });
     buffer = codec.encode(message).finish();
   }
+
+  if(utils.isEqual(COMMAND_TOPICS.GET_UNREAD_TOTLAL_CONVERSATION, topic)){
+    targetId = userId;
+    let codec = Proto.lookup('codec.QryTotalUnreadCountReq');
+    let message = codec.create({});
+    buffer = codec.encode(message).finish();
+  }
+
+  if(utils.isEqual(COMMAND_TOPICS.CLEAR_UNREAD_TOTLAL_CONVERSATION, topic)){
+    targetId = userId;
+    let codec = Proto.lookup('codec.QryTotalUnreadCountReq');
+    let message = codec.create({});
+    buffer = codec.encode(message).finish();
+  }
   
   return {
     qryMsgBody: {

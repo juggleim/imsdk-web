@@ -243,3 +243,8 @@ message QryHisMsgByIdsReq{
 message ChatRoomReq{
     string chatId = 1;
 }
+message QryTotalUnreadCountReq{
+}
+message QryTotalUnreadCountResp{
+    int64 totalCount = 1;
+}

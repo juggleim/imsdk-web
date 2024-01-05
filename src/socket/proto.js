@@ -715,6 +715,17 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 1
           }
         }
+      },
+      QryTotalUnreadCountReq: {
+        fields: {}
+      },
+      QryTotalUnreadCountResp: {
+        fields: {
+          totalCount: {
+            type: "int64",
+            id: 1
+          }
+        }
       }
     }
   }

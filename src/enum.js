@@ -79,6 +79,9 @@ export let COMMAND_TOPICS = {
 
   CLEAR_UNREAD: 'clear_unread',
   REMOVE_CONVERSATION: 'del_convers',
+  GET_UNREAD_TOTLAL_CONVERSATION: 'qry_total_unread_count',
+  CLEAR_UNREAD_TOTLAL_CONVERSATION: 'clear_total_unread',
+
   READ_MESSAGE: 'mark_read',
   UPDATE_MESSAGE: 'modify_msg',
   CLEAR_MESSAGE: 'clean_hismsg',

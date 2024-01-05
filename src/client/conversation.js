@@ -76,14 +76,27 @@ export default function(io, emitter){
   };
   let getTotalUnreadcount = () => {
     return utils.deferred((resolve, reject) => {
-      io.sendCommand(SIGNAL_CMD.PUBLISH, {type: 'get'}, () => {
-        resolve();
+      let error = common.check(io, {}, {});
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+
+      let { id: userId } = io.getCurrentUser();
+      let data = { topic: COMMAND_TOPICS.GET_UNREAD_TOTLAL_CONVERSATION, userId };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ count }) => {
+        resolve({ count });
       });
     });
   };
   let clearTotalUnreadcount = () => {
     return utils.deferred((resolve, reject) => {
-      io.sendCommand(SIGNAL_CMD.PUBLISH, {type: 'clear'}, () => {
+      let error = common.check(io, {}, {});
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { id: userId } = io.getCurrentUser();
+      let data = { topic: COMMAND_TOPICS.CLEAR_UNREAD_TOTLAL_CONVERSATION, userId };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, () => {
         resolve();
       });
     });

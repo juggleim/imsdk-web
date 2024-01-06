@@ -57,6 +57,7 @@ export let FUNC_PARAM_CHECKER = {
   READMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'sentTime', type: 'Number' }, { name: 'messageId' }],
   UPDATEMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'content', type: 'Object' }],
   GET_MENTIOIN_MESSAGES: [{ name: 'conversationType' }, { name: 'conversationId' }],
+  GET_FILE_TOKEN: [{ name: 'type' }],
 
   GETCONVERSATIONS: [{ name: 'limit' }],
   GETCONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
@@ -88,6 +89,7 @@ export let COMMAND_TOPICS = {
   UPDATE_MESSAGE: 'modify_msg',
   CLEAR_MESSAGE: 'clean_hismsg',
   GET_MSG_BY_IDS: 'qry_hismsg_by_ids',
+  GET_FILE_TOKEN: 'file_cred',
 
   JOIN_CHATROOM: 'c_join',
   QUIT_CHATROOM: 'c_quit',
@@ -143,6 +145,10 @@ export let MESSAGE_FLAG = {
   STORAGE: 8,
   COUNT_STORAGE: 10,
   IS_UPDATED: 16,
+};
+
+export let UPLOAD_TYPE = {
+  QINIU: 1
 };
 
 export let ErrorMessages = [
@@ -201,4 +207,11 @@ export let MENTION_TYPE = {
   ALL: 1,
   SOMEONE: 2,
   ALL_SOMEONE: 3
+};
+
+export let FILE_TYPE = {
+  IMAGE: 1,
+  AUDIO: 2,
+  VIDEO: 3,
+  FILE: 4,
 };

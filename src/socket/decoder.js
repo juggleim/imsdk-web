@@ -1,7 +1,7 @@
 import Emitter from "../common/emmit";
 import utils from "../utils";
 import Proto from "./proto";
-import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, MESSAGE_FLAG, CONNECT_ACK_INDEX, PONG_INDEX } from "../enum";
+import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, MESSAGE_FLAG, CONNECT_ACK_INDEX, PONG_INDEX, UPLOAD_TYPE } from "../enum";
 export default function Decoder(cache){
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
   let decode = (buffer) => {
@@ -76,6 +76,10 @@ export default function Decoder(cache){
     if(utils.isEqual(topic, COMMAND_TOPICS.GET_MENTION_MSGS)){
       result = getMentionMessages(index, data);
     }
+
+    if(utils.isEqual(topic, COMMAND_TOPICS.GET_FILE_TOKEN)){
+      result = getFileToken(index, data);
+    }
     return result;
   }
 
@@ -88,6 +92,20 @@ export default function Decoder(cache){
     });
     return {
       index, msgs, isFinished
+    };
+  }
+
+  function getFileToken(index, data){
+    let payload = Proto.lookup('codec.QryUploadTokenResp');
+    let result = payload.decode(data);
+    let { ossType } = result;
+    let cred = { type: ossType };
+    if(utils.isEqual(ossType, UPLOAD_TYPE.QINIU)){
+      let { qiniuCred } = result;
+      utils.extend(cred, qiniuCred);
+    }
+    return {
+      index, cred
     };
   }
 

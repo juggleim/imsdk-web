@@ -170,6 +170,23 @@ export default function(io, emitter){
       });
     });
   };
+  let getFileToken = (params) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, params, FUNC_PARAM_CHECKER.GET_FILE_TOKEN);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { id: userId } = io.getCurrentUser();
+      let data = {
+        topic: COMMAND_TOPICS.GET_FILE_TOKEN,
+        ...params,
+        userId
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ cred: { token, domain, type } }) => {
+        resolve({ token, domain, type });
+      });
+    });
+  };
   return {
     sendMessage,
     getMessages,
@@ -178,6 +195,7 @@ export default function(io, emitter){
     recallMessage,
     readMessage,
     updateMessage,
-    getMentionMessages
+    getMentionMessages,
+    getFileToken
   };
 }

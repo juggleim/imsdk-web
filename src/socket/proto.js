@@ -787,6 +787,60 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 5
           }
         }
+      },
+      QryUploadTokenResp: {
+        oneofs: {
+          ossOf: {
+            oneof: [
+              "qiniuCred"
+            ]
+          }
+        },
+        fields: {
+          ossType: {
+            type: "OssType",
+            id: 1
+          },
+          qiniuCred: {
+            type: "QiniuCredResp",
+            id: 11
+          }
+        }
+      },
+      OssType: {
+        values: {
+          DefaultOss: 0,
+          Qiniu: 1
+        }
+      },
+      QiniuCredResp: {
+        fields: {
+          domain: {
+            type: "string",
+            id: 1
+          },
+          token: {
+            type: "string",
+            id: 2
+          }
+        }
+      },
+      QryUploadTokenReq: {
+        fields: {
+          fileType: {
+            type: "FileType",
+            id: 1
+          }
+        }
+      },
+      FileType: {
+        values: {
+          DefaultFileType: 0,
+          Image: 1,
+          Audio: 2,
+          Video: 3,
+          File: 4
+        }
       }
     }
   }

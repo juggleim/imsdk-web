@@ -5,6 +5,7 @@ export default function (uploader, { type }) {
     let { token, domain } = option;
     let { file, name } = content;
     let key = `${utils.getUUID()}.${getSuffix(file.name)}`;
+    name = name || key;
     let putExtra = {
       fname: name
     };

@@ -188,14 +188,8 @@ export default function(io, emitter){
       });
     });
   };
-  /* 
-    message = {
-      conversationType,
-      conversationId,
-      content: { file, name, type, intro }
-    }
-  */
-  let sendFileMessage = (message, callbacks = {}) => {
+  /* options: fileType */
+  let sendFile = (options, message, callbacks = {}) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, message, FUNC_PARAM_CHECKER.SEND_FILE_MESSAGE);
       
@@ -212,7 +206,8 @@ export default function(io, emitter){
       };
       utils.extend(_callbacks, callbacks);
 
-      getFileToken({ type: FILE_TYPE.FILE }).then(({ token, domain, type }) => {
+      let { fileType } = options;
+      getFileToken({ type: fileType }).then(({ token, domain, type }) => {
         if(!utils.isEqual(type, uploadType)){
           return reject(ErrorType.UPLOAD_PLUGIN_NOTMATCH);
         }
@@ -223,16 +218,43 @@ export default function(io, emitter){
         let cbs = {
           onprogress: _callbacks.onprogress,
           oncompleted: ({ url }) => {
-            let { name, type, intro = '' } = content;
-            let size = file.size / 1000
-            let _content = {  name,  type,  intro, url, size };
-            utils.extend(message, { content: _content, name: MESSAGE_TYPE.FILE });
+            message = common.formatMediaMessage(message, url);
             sendMessage(message).then(resolve, reject);
           }
         };
         Uploder(upload, option).exec(content, opts, cbs);
       });
     });
+  };
+  /* 
+    message = {
+      conversationType,
+      conversationId,
+      content: { file, name, type, intro }
+    }
+  */
+  let sendFileMessage = (message, callbacks = {}) => {
+    utils.extend(message, { name: MESSAGE_TYPE.FILE });
+    let option = { fileType: FILE_TYPE.FILE };
+    return sendFile(option, message, callbacks)
+  };
+
+  let sendImageMessage = (message, callbacks = {}) => {
+    utils.extend(message, { name: MESSAGE_TYPE.IMAGE });
+    let option = { fileType: FILE_TYPE.IMAGE };
+    return sendFile(option, message, callbacks)
+  };
+
+  let sendVoiceMessage = (message, callbacks = {}) => {
+    utils.extend(message, { name: MESSAGE_TYPE.VOICE });
+    let option = { fileType: FILE_TYPE.AUDIO };
+    return sendFile(option, message, callbacks)
+  };
+
+  let sendVideoMessage = (message, callbacks = {}) => {
+    utils.extend(message, { name: MESSAGE_TYPE.VIDEO });
+    let option = { fileType: FILE_TYPE.VIDEO };
+    return sendFile(option, message, callbacks)
   };
   return {
     sendMessage,
@@ -244,6 +266,9 @@ export default function(io, emitter){
     updateMessage,
     getMentionMessages,
     getFileToken,
-    sendFileMessage
+    sendFileMessage,
+    sendImageMessage,
+    sendVoiceMessage,
+    sendVideoMessage
   };
 }

@@ -295,6 +295,35 @@ function checkUploadType(upload){
   return type;
 }
 
+function formatMediaMessage(message, url){
+  let { name, content } = message;
+  
+  let _content = {};
+  if(utils.isEqual(name, MESSAGE_TYPE.FILE)){
+    let { file } = content;
+    let size = file.size / 1000
+    _content = { size, url };
+    utils.extend(message.content, { size, url });
+  }
+
+  if(utils.isEqual(name, MESSAGE_TYPE.IMAGE)){
+    let { height, width } = content;
+    let direction = 'h';
+    if(width > height){
+      direction = 'w';
+    }
+    let thumbnail = `${url}&imageView2/2/${direction}/100`;
+    _content = { thumbnail, url };
+    utils.extend(message.content, { url, thumbnail });
+  }
+
+  if(utils.isInclude([MESSAGE_TYPE.VIDEO, MESSAGE_TYPE.VOICE], name)){
+    utils.extend(message.content, { url });
+  }
+
+  return message;
+}
+
 export default {
   check,
   getNum,
@@ -304,5 +333,6 @@ export default {
   getError,
   getMsgConfig,
   ConversationUtils,
-  checkUploadType
+  checkUploadType,
+  formatMediaMessage
 }

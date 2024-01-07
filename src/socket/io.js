@@ -12,6 +12,9 @@ import Syncer from "./sync";
 import Timer from "../common/timer";
 import Counter from "../common/counter";
 
+/* 
+  config = { appkey, nav, isSync, upload, uploadType }
+*/
 export default function IO(config){
   let emitter = Emitter();
   let { appkey, nav, isSync } = config;

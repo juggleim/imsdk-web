@@ -4,10 +4,17 @@ import Message from "./message";
 import Socket from "./socket";
 import Chatroom from "./chatroom";
 import Emitter from "../common/emmit";
+import common from "../common/common";
 import { EVENT, CONNECT_STATE, CONVERATION_TYPE, MESSAGE_TYPE, ErrorType, CONVERSATION_ORDER, MESSAGE_ORDER, MENTION_TYPE, FILE_TYPE } from "../enum";
+import utils from "../utils";
 
 let init = (config) => {
   let emitter = Emitter();
+  
+  let { upload } = config;
+  let uploadType = common.checkUploadType(upload);
+  utils.extend(config, { uploadType });
+
   let io = IO(config);
   let socket = Socket(io, emitter);
   let conversation = Conversation(io, emitter);

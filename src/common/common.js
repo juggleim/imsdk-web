@@ -1,5 +1,5 @@
 import utils from "../utils";
-import { ErrorType, STORAGE, ErrorMessages, MESSAGE_TYPE, MESSAGE_FLAG } from "../enum";
+import { ErrorType, STORAGE, ErrorMessages, MESSAGE_TYPE, MESSAGE_FLAG, UPLOAD_TYPE } from "../enum";
 import Storage from "./storage";
 /* 
 let check = (io, params, props, isStatic) => {
@@ -286,6 +286,15 @@ function ConversationUtils(){
   };
 }
 
+function checkUploadType(upload){
+  upload = upload || {};
+  let type = UPLOAD_TYPE.NONE;
+  if(upload.QiniuError){
+    type = UPLOAD_TYPE.QINIU
+  }
+  return type;
+}
+
 export default {
   check,
   getNum,
@@ -294,5 +303,6 @@ export default {
   updateChatroomSyncTime,
   getError,
   getMsgConfig,
-  ConversationUtils
+  ConversationUtils,
+  checkUploadType
 }

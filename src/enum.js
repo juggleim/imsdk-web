@@ -58,6 +58,8 @@ export let FUNC_PARAM_CHECKER = {
   UPDATEMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'content', type: 'Object' }],
   GET_MENTIOIN_MESSAGES: [{ name: 'conversationType' }, { name: 'conversationId' }],
   GET_FILE_TOKEN: [{ name: 'type' }],
+  
+  SEND_FILE_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'content', type: 'Object' }],
 
   GETCONVERSATIONS: [{ name: 'limit' }],
   GETCONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
@@ -148,6 +150,7 @@ export let MESSAGE_FLAG = {
 };
 
 export let UPLOAD_TYPE = {
+  NONE: 0,
   QINIU: 1
 };
 
@@ -175,6 +178,8 @@ export let ErrorMessages = [
   { code: 25002, msg: '连接不存在', name: 'CONNECTION_NOT_READY' },
   { code: 25003, msg: '参数类型不正确', name: 'ILLEGAL_TYPE_PARAMS' },
   { code: 25004, msg: '发送超时，连接异常', name: 'COMMAND_FAILED' },
+  { code: 25005, msg: '上传文件组件为空', name: 'UPLOAD_PLUGIN_ERROR' },
+  { code: 25006, msg: '上传文件组件与 OSS 存储不一致', name: 'UPLOAD_PLUGIN_NOTMATCH' },
 
   { code: 21200, msg: '消息撤回成功', name: 'MESSAGE_RECALL_SUCCESS' },
   

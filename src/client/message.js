@@ -1,6 +1,7 @@
-import { SIGNAL_CMD, EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_ORDER, COMMAND_TOPICS, CONVERATION_TYPE, ErrorType, MENTION_ORDER } from "../enum";
+import { SIGNAL_CMD, EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_ORDER, COMMAND_TOPICS, CONVERATION_TYPE, ErrorType, MENTION_ORDER, UPLOAD_TYPE, FILE_TYPE, MESSAGE_TYPE } from "../enum";
 import utils from "../utils";
 import common from "../common/common";
+import Uploder from "../common/uploader";
 export default function(io, emitter){
   io.on(SIGNAL_NAME.CMD_RECEIVED, (message) => {
     io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);
@@ -187,6 +188,52 @@ export default function(io, emitter){
       });
     });
   };
+  /* 
+    message = {
+      conversationType,
+      conversationId,
+      content: { file, name, type, intro }
+    }
+  */
+  let sendFileMessage = (message, callbacks = {}) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.SEND_FILE_MESSAGE);
+      
+      let { uploadType, upload } = io.getConfig();
+      if(utils.isEqual(uploadType, UPLOAD_TYPE.NONE)){
+        error = ErrorType.UPLOAD_PLUGIN_ERROR;
+      }
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+
+      let _callbacks = {
+        onprogress: () => {}
+      };
+      utils.extend(_callbacks, callbacks);
+
+      getFileToken({ type: FILE_TYPE.FILE }).then(({ token, domain, type }) => {
+        if(!utils.isEqual(type, uploadType)){
+          return reject(ErrorType.UPLOAD_PLUGIN_NOTMATCH);
+        }
+        let option = { type };
+        let { content } = message;
+        let { file } = content;
+        let opts = { token, domain};
+        let cbs = {
+          onprogress: _callbacks.onprogress,
+          oncompleted: ({ url }) => {
+            let { name, type, intro = '' } = content;
+            let size = file.size / 1000
+            let _content = {  name,  type,  intro, url, size };
+            utils.extend(message, { content: _content, name: MESSAGE_TYPE.FILE });
+            sendMessage(message).then(resolve, reject);
+          }
+        };
+        Uploder(upload, option).exec(content, opts, cbs);
+      });
+    });
+  };
   return {
     sendMessage,
     getMessages,
@@ -196,6 +243,7 @@ export default function(io, emitter){
     readMessage,
     updateMessage,
     getMentionMessages,
-    getFileToken
+    getFileToken,
+    sendFileMessage
   };
 }

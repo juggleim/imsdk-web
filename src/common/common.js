@@ -2,72 +2,8 @@ import utils from "../utils";
 import { ErrorType, STORAGE, ErrorMessages, MESSAGE_TYPE, MESSAGE_FLAG, UPLOAD_TYPE } from "../enum";
 import Storage from "./storage";
 import Uploader from "./uploader";
-/* 
-let check = (io, params, props, isStatic) => {
-  let error = {};
-  if(!isStatic){
-    if(!io.isConnected()){
-      return ErrorType.CONNECTION_NOT_READY;
-    }
-  }
-  let { msg, code } = ErrorType.ILLEGAL_PARAMS;
-  let len = props.length;
-
-  //约定：如果参数是数组，会校验每个元素是否包含 conversatonType 和 conversationId
-  if(utils.isArray(params)){
-    for(let n = 0; n < params.length; n++){
-      let item = params[n];
-      for(let i = 0; i < len; i++){
-        let name = props[i];
-        error = next(name, item, n)
-        if(!utils.isEmpty(error)){
-          return error;
-        }
-      }
-    }
-  }
-
-  //约定：检查数据有二级对象，例如 message.content, 必须优先设置 message
-  if(utils.isObject(params)){
-    for(let i = 0; i < len; i++){
-      let name = props[i];
-      error = next(name, params)
-      if(!utils.isEmpty(error)){
-        break;
-      }
-    }
-  }
- 
-  function next(name, origin, index){
-    let _error = {};
-    if(utils.isInclude(name, '.')){
-      let childs = name.split('.');
-      let val = origin[childs[0]][childs[1]];
-      _error = invoke(val, name, index);
-    }else{
-      _error = invoke(origin[name], name, index);
-    }
-    return _error;
-  }
-
-  function invoke(val, name, index){
-    let result = {};
-    let _msg = `${name} ${msg}`;
-    if(utils.isNumber(index)){
-      _msg = `数组下标 ${index} ${_msg}`;
-    }
-    if(utils.isUndefined(val)){
-      result = { code, msg: _msg };
-    }
-    return result;
-  }
-
-  return error;
-};
-*/
 
 /* 
-
 let params = { content: 123 }
 let params = { content: { name: 123 } }
 let params = [{ content: 123 }]

@@ -249,7 +249,9 @@ export default function(io, emitter){
       function uploadFile(option, message){
         let { content } = message;
         let cbs = {
-          onprogress: _callbacks.onprogress,
+          onprogress: ({ percent }) => {
+            _callbacks.onprogress({ percent, message });
+          },
           oncompleted: ({ url }) => {
             utils.extend(message.content, { url });
             delete message.content.file;

@@ -188,12 +188,12 @@ export default function(io, emitter){
       });
     });
   };
-  /* options: fileType */
+/* options: fileType, Video and Image: scale: 0 ~ 1 */
   let sendFile = (options, message, callbacks = {}) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, message, FUNC_PARAM_CHECKER.SEND_FILE_MESSAGE);
       
-      let { uploadType, upload } = io.getConfig();
+      let { uploadType, upload, fileCompressLimit } = io.getConfig();
       if(utils.isEqual(uploadType, UPLOAD_TYPE.NONE)){
         error = ErrorType.UPLOAD_PLUGIN_ERROR;
       }
@@ -202,28 +202,65 @@ export default function(io, emitter){
       }
 
       let _callbacks = {
-        onprogress: () => {}
+        onprogress: () => { },
+        onerror: () => { }
       };
       utils.extend(_callbacks, callbacks);
 
-      let { fileType } = options;
-      getFileToken({ type: fileType }).then(({ token, domain, type }) => {
+      let { fileType, scale } = options;
+      let uploader = Uploder(upload, { type: uploadType });
+      getFileToken({ type: fileType }).then((auth) => {
+        let { type } = auth;
         if(!utils.isEqual(type, uploadType)){
           return reject(ErrorType.UPLOAD_PLUGIN_NOTMATCH);
         }
-        let option = { type };
+        let { name, content } = message;
+        let params = utils.extend(auth, { file: content.file, scale, fileCompressLimit });
+
+        if(utils.isEqual(name, MESSAGE_TYPE.IMAGE)){
+          // 业务层设置缩略图，传入优先，不再执行生成缩略图逻辑
+          let { thumbnail } = content;
+          if(thumbnail){
+            return uploadFile(auth, message);
+          }
+          common.uploadThumbnail(upload, params, (error, thumbnail) => {
+            utils.extend(message.content, { thumbnail });
+            uploadFile(auth, message);  
+          });
+        }
+        
+        if(utils.isEqual(name, MESSAGE_TYPE.VIDEO)){
+          // 业务层设置封面，传入优先，不再执行生成缩略图逻辑
+          let { poster } = content;
+          if(poster){
+            return uploadFile(auth, message);
+          }
+          common.uploadFrame(upload, params, (error, poster) => {
+            utils.extend(message.content, { poster });
+            uploadFile(auth, message);
+          });
+        }
+
+        if(utils.isInclude([MESSAGE_TYPE.FILE, MESSAGE_TYPE.VOICE], name)){
+          uploadFile(auth, message);
+        }
+      });
+
+      function uploadFile(option, message){
         let { content } = message;
-        let { file } = content;
-        let opts = { token, domain};
         let cbs = {
           onprogress: _callbacks.onprogress,
           oncompleted: ({ url }) => {
-            message = common.formatMediaMessage(message, url);
+            utils.extend(message.content, { url });
+            delete message.content.file;
             sendMessage(message).then(resolve, reject);
+          },
+          onerror: (error) => {
+            _callbacks.onerror(ErrorType.UPLOADING_FILE_ERROR, error);
           }
         };
-        Uploder(upload, option).exec(content, opts, cbs);
-      });
+        uploader.exec(content, option, cbs);
+      }
     });
   };
   /* 
@@ -241,7 +278,7 @@ export default function(io, emitter){
 
   let sendImageMessage = (message, callbacks = {}) => {
     utils.extend(message, { name: MESSAGE_TYPE.IMAGE });
-    let option = { fileType: FILE_TYPE.IMAGE };
+    let option = { fileType: FILE_TYPE.IMAGE, scale: message.scale };
     return sendFile(option, message, callbacks)
   };
 
@@ -253,7 +290,7 @@ export default function(io, emitter){
 
   let sendVideoMessage = (message, callbacks = {}) => {
     utils.extend(message, { name: MESSAGE_TYPE.VIDEO });
-    let option = { fileType: FILE_TYPE.VIDEO };
+    let option = { fileType: FILE_TYPE.VIDEO, scale: message.scale };
     return sendFile(option, message, callbacks)
   };
   return {

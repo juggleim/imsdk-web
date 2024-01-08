@@ -1,6 +1,7 @@
 import utils from "../utils";
 import { ErrorType, STORAGE, ErrorMessages, MESSAGE_TYPE, MESSAGE_FLAG, UPLOAD_TYPE } from "../enum";
 import Storage from "./storage";
+import Uploader from "./uploader";
 /* 
 let check = (io, params, props, isStatic) => {
   let error = {};
@@ -324,6 +325,46 @@ function formatMediaMessage(message, url){
   return message;
 }
 
+function uploadThumbnail(upload, option, callback){
+  let { type, token, domain, file } = option;
+  let uploader = Uploader(upload, { type });
+  uploader.compress(file, (tbFile) => {
+    let content = { file: tbFile };
+    let opts = { token, domain };
+    let callbacks = {
+      onprogress: utils.noop,
+      oncompleted: ({ url }) => {
+        let error = null;
+        callback(error, url);
+      },
+      onerror: (error) => {
+        callback(error);
+      }
+    };
+    uploader.exec(content, opts, callbacks);
+  }, option);
+}
+
+function uploadFrame(upload, option, callback){
+  let { type, token, domain, file } = option;
+  let uploader = Uploader(upload, { type });
+  uploader.capture(file, (frameFile) => {
+    let content = { file: frameFile };
+    let opts = { token, domain };
+    let callbacks = {
+      onprogress: utils.noop,
+      oncompleted: ({ url }) => {
+        let error = null;
+        callback(error, url);
+      },
+      onerror: (error) => {
+        callback(error);
+      }
+    };
+    uploader.exec(content, opts, callbacks);
+  }, option);
+}
+
 export default {
   check,
   getNum,
@@ -334,5 +375,7 @@ export default {
   getMsgConfig,
   ConversationUtils,
   checkUploadType,
-  formatMediaMessage
+  formatMediaMessage,
+  uploadThumbnail,
+  uploadFrame
 }

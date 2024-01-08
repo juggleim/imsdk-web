@@ -13,7 +13,8 @@ import Timer from "../common/timer";
 import Counter from "../common/counter";
 
 /* 
-  config = { appkey, nav, isSync, upload, uploadType }
+  fileCompressLimit: 图片缩略图压缩限制，小于设置数值将不执行压缩，单位 KB
+  config = { appkey, nav, isSync, upload, uploadType, fileCompressLimit }
 */
 export default function IO(config){
   let emitter = Emitter();

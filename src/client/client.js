@@ -5,7 +5,7 @@ import Socket from "./socket";
 import Chatroom from "./chatroom";
 import Emitter from "../common/emmit";
 import common from "../common/common";
-import { EVENT, CONNECT_STATE, CONVERATION_TYPE, MESSAGE_TYPE, ErrorType, CONVERSATION_ORDER, MESSAGE_ORDER, MENTION_TYPE, FILE_TYPE } from "../enum";
+import { EVENT, CONNECT_STATE, CONVERATION_TYPE, MESSAGE_TYPE, ErrorType, CONVERSATION_ORDER, MESSAGE_ORDER, MENTION_TYPE, FILE_TYPE, MENTION_ORDER } from "../enum";
 import utils from "../utils";
 
 let init = (config) => {
@@ -34,6 +34,7 @@ let init = (config) => {
     ErrorType,
     MentionType: MENTION_TYPE,
     MessageOrder: MESSAGE_ORDER,
+    MentionOrder: MENTION_ORDER,
     FileType: FILE_TYPE
   }
 }

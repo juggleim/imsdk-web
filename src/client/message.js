@@ -38,7 +38,7 @@ export default function(io, emitter){
           utils.extend(message, { error: { code, msg } });
           return reject(message)
         }
-        utils.extend(message, { sentTime, messageId });
+        utils.extend(message, { sentTime, messageId, isSender: true });
         io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);
         resolve(message);
       });

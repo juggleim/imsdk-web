@@ -317,10 +317,13 @@ const getUUID = () => {
   });
 };
 
-const getProtocol = () => {
+const getProtocol = (url = '') => {
   let http = location.protocol;
   if(isEqual(http, 'file:')){
     http = 'http:';
+  }
+  if(isInclude(url, 'https://')){
+    http = 'https:';
   }
   let wsMap = {
     'http:': 'ws:',

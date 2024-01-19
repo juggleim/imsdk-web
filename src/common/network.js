@@ -5,8 +5,9 @@ import common from "./common";
 
 let detect = (urls, callback) => {
   let requests = [], superior = '', errors = []; 
-  let { http } = utils.getProtocol();
+  
   utils.forEach(urls, (domain) => {
+    let { http } = utils.getProtocol(domain);
     let url = `${http}//${domain}/health`;
     let options = {};
     let xhr = utils.requestNormal(url, options, {
@@ -36,9 +37,9 @@ let detect = (urls, callback) => {
   }
 };
 
-let getNavi = (url, option) => {
-  url = url.replaceAll(/http:\/\/|https:\/\/|file:\/\//g, '')
-  let { http } = utils.getProtocol();
+let getNavi = (nav, option) => {
+  let url = nav.replaceAll(/http:\/\/|https:\/\/|file:\/\//g, '')
+  let { http } = utils.getProtocol(nav);
   url = `${http}//${url}/navigator/general`
   let { appkey, token, userId } = option;
   let key = common.getNaviStorageKey(appkey, userId);

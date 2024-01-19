@@ -18,7 +18,7 @@ import Counter from "../common/counter";
 */
 export default function IO(config){
   let emitter = Emitter();
-  let { appkey, nav, isSync } = config;
+  let { appkey, nav, isSync = true } = config;
   nav = nav || 'http://120.48.178.248:8083';
   let ws = {};
   

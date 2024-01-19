@@ -134,6 +134,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           timestamp: {
             type: "int64",
             id: 4
+          },
+          msgIndex: {
+            type: "int64",
+            id: 5
           }
         }
       },

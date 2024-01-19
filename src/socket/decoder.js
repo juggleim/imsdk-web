@@ -37,7 +37,7 @@ export default function Decoder(cache){
   };
  
   function publishHandler(msg){
-    let {  publishMsgBody: { targetId, data, topic, timestamp } } = msg;
+    let {  publishMsgBody: { targetId, data, topic, timestamp, index } } = msg;
     let _msg = {};
     let _name = SIGNAL_NAME.CMD_RECEIVED;
 
@@ -53,6 +53,7 @@ export default function Decoder(cache){
       let message = payload.decode(data);
       _msg = msgFormat(message);
     }
+    utils.extend(_msg, { ackIndex: index });
     return { _msg, _name };
   }
   function queryAckHandler(msg){

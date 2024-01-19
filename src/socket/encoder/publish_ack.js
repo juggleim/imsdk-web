@@ -1,8 +1,9 @@
 export default  function({ data }){
-  let { msgIndex } = data;
+  let { msgIndex, ackIndex } = data;
   return {
     pubAckMsgBody: {
-      index: msgIndex,
+      index: ackIndex,
+      msgIndex,
       code: 0
     }
   };

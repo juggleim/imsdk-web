@@ -2,13 +2,22 @@ import { SIGNAL_CMD, EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_ORDER, COMM
 import utils from "../utils";
 import common from "../common/common";
 import Uploder from "../common/uploader";
+import MessageCacher from "../common/msg-cacher";
+
 export default function(io, emitter){
+  let messageCacher = MessageCacher();
+
   io.on(SIGNAL_NAME.CMD_RECEIVED, (message) => {
+    // 收到消息一定要更新会话列表
     io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);
+
     if(utils.isEqual(message.name, MESSAGE_TYPE.RECALL)){
-      emitter.emit(EVENT.MESSAGE_RECALLED, message);
-    }else{
+      return emitter.emit(EVENT.MESSAGE_RECALLED, message);
+    }
+    if(!messageCacher.isInclude(message)){
       emitter.emit(EVENT.MESSAGE_RECEIVED, message);
+      let { conversationId, conversationType } = message;
+      messageCacher.add({ conversationId, conversationType }, message);
     }
   });
 
@@ -66,8 +75,10 @@ export default function(io, emitter){
         targetId: conversationId
       };
       params = utils.extend(params, conversation);
-      io.sendCommand(SIGNAL_CMD.QUERY, params, (msg) => {
-        resolve(msg);
+      io.sendCommand(SIGNAL_CMD.QUERY, params, (result) => {
+        let { messages } = result;
+        messageCacher.add(conversation, messages);
+        resolve(result);
       });
     });
   };

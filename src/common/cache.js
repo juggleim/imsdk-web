@@ -10,9 +10,13 @@ export default function () {
   let remove = (key) => {
     delete caches[key];
   };
+  let clear = () => {
+    caches = {};
+  };
   return {
     set,
     get,
-    remove
+    remove,
+    clear
   }
 }

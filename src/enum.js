@@ -109,7 +109,8 @@ export let NOTIFY_TYPE = {
 export let EVENT = {
   STATE_CHANGED: 'state_changed',
   MESSAGE_RECEIVED: 'message_received',
-  CONVERSATION_CHANGED: 'conversation_changed'
+  MESSAGE_RECALLED: 'message_recalled',
+  CONVERSATION_CHANGED: 'conversation_changed',
 };
 export let CONNECT_STATE = {
   CONNECTED: 0,

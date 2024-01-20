@@ -5,7 +5,11 @@ import Uploder from "../common/uploader";
 export default function(io, emitter){
   io.on(SIGNAL_NAME.CMD_RECEIVED, (message) => {
     io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);
-    emitter.emit(EVENT.MESSAGE_RECEIVED, message)
+    if(utils.isEqual(message.name, MESSAGE_TYPE.RECALL)){
+      emitter.emit(EVENT.MESSAGE_RECALLED, message);
+    }else{
+      emitter.emit(EVENT.MESSAGE_RECEIVED, message);
+    }
   });
 
   let maps = [

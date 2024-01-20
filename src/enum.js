@@ -8,6 +8,7 @@ export let STORAGE = {
 };
 
 export let HEART_TIMEOUT = 1 * 30 * 1000;
+export let SYNC_MESSAGE_TIME = 3 * 60 * 1000;
 export let CONNECT_ACK_INDEX = 'c_conn_ack_index';
 export let PONG_INDEX = 'c_pong_index';
 

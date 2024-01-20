@@ -2,7 +2,7 @@ import Emitter from "../common/emmit";
 import utils from "../utils";
 import Storage from "../common/storage";
 import Proto from "./proto";
-import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX, COMMAND_TOPICS, CONVERATION_TYPE } from "../enum";
+import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX, COMMAND_TOPICS, CONVERATION_TYPE, SYNC_MESSAGE_TIME } from "../enum";
 import BufferEncoder from "./encoder/encoder";
 import BufferDecoder from "./decoder";
 import Network from "../common/network";
@@ -27,6 +27,7 @@ export default function IO(config){
   let encoder = BufferEncoder(cache);
 
   let timer = Timer({ timeout: HEART_TIMEOUT });
+  let syncTimer = Timer({ timeout: SYNC_MESSAGE_TIME });
 
   let connectionState = CONNECT_STATE.DISCONNECTED;
   let updateState = (state, user) => {
@@ -50,7 +51,9 @@ export default function IO(config){
         if(!utils.isEqual(connectionState, CONNECT_STATE.CONNECTION_SICK)){
           updateState(state);
         }
+
         timer.pause();
+        syncTimer.pause();
       };
       Network.detect(servers, (domain, error) => {
         if(error){
@@ -87,6 +90,8 @@ export default function IO(config){
     let state = _state || CONNECT_STATE.DISCONNECTED;
     updateState(state);
     timer.pause();
+    syncTimer.pause();
+    
     PingTimeouts.length = 0;
   };
 
@@ -133,6 +138,8 @@ export default function IO(config){
         name: name,
         user: { id: currentUserId }
       });
+      // 连接成功后会开始计时 3 分钟拉取逻辑，如果收到直发或者 NTF 重新开始计算时长，连接断开后会清空计时
+      syncTimer.reset();
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.PUBLISH_ACK)){
       utils.extend(data, result);
@@ -165,6 +172,13 @@ export default function IO(config){
         }
         timer.resume(() => {
           sendCommand(SIGNAL_CMD.PING, {});
+        });
+        syncTimer.resume(() => {
+          syncer.exec({
+            msg: { type: NOTIFY_TYPE.MSG },
+            name: SIGNAL_NAME.S_NTF,
+            user: { id: currentUserId }
+          });
         });
       }
       updateState(state, user);

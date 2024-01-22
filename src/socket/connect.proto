@@ -171,6 +171,10 @@ message GroupInfo{
     int64 updatedTime = 6;
 }
 
+message UserIdReq{
+    string userId = 1;
+}
+
 message UserInfo{
     string userId = 1;
     string nickname = 2;

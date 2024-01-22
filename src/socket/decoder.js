@@ -81,6 +81,10 @@ export default function Decoder(cache){
     if(utils.isEqual(topic, COMMAND_TOPICS.GET_FILE_TOKEN)){
       result = getFileToken(index, data);
     }
+
+    if(utils.isEqual(topic, COMMAND_TOPICS.GET_USER_INFO)){
+      result = getUserInfo(index, data);
+    }
     return result;
   }
 
@@ -107,6 +111,14 @@ export default function Decoder(cache){
     }
     return {
       index, cred
+    };
+  }
+
+  function getUserInfo(index, data){
+    let payload = Proto.lookup('codec.UserInfo');
+    let user = payload.decode(data);
+    return {
+      index, user
     };
   }
 

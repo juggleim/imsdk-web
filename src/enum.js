@@ -94,6 +94,8 @@ export let COMMAND_TOPICS = {
   GET_MSG_BY_IDS: 'qry_hismsg_by_ids',
   GET_FILE_TOKEN: 'file_cred',
 
+  GET_USER_INFO: 'qry_userinfo',
+
   JOIN_CHATROOM: 'c_join',
   QUIT_CHATROOM: 'c_quit',
   SYNC_CHATROOM_MESSAGES: 'c_sync_msgs',

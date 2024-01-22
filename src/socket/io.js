@@ -22,6 +22,7 @@ export default function IO(config){
   nav = nav || 'http://120.48.178.248:8083';
   let ws = {};
   
+  
   let cache = Cache();
   let decoder = BufferDecoder(cache);
   let encoder = BufferEncoder(cache);
@@ -34,15 +35,15 @@ export default function IO(config){
     connectionState = state;
     emitter.emit(SIGNAL_NAME.CONN_CHANGED, { state, user });
   }
-  let currentUserId = '';
-  let setCurrentUserId = (id) => {
-    currentUserId = id;
+  let currentUserInfo = {};
+  let setCurrentUser = (user) => {
+    utils.extend(currentUserInfo, user);
   };
   let connect = ({ token, userId }, callback) => {
     updateState(CONNECT_STATE.CONNECTING);
     return Network.getNavi(nav, { appkey, token, userId }).then((result) => {
       let { servers, userId: id } = result;
-      setCurrentUserId(id);
+      setCurrentUser({ id });
 
       cache.set(SIGNAL_NAME.S_CONNECT_ACK, callback);
 
@@ -136,7 +137,7 @@ export default function IO(config){
       syncer.exec({
         msg: result,
         name: name,
-        user: { id: currentUserId }
+        user: { id: currentUserInfo.id }
       });
       // 连接成功后会开始计时 3 分钟拉取逻辑，如果收到直发或者 NTF 重新开始计算时长，连接断开后会清空计时
       syncTimer.reset();
@@ -154,36 +155,47 @@ export default function IO(config){
       callback(result);
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.CONNECT_ACK)){
+      let _callback = cache.get(SIGNAL_NAME.S_CONNECT_ACK) || utils.noop;
+
       let { ack: { code, userId } } = result;
-      // Protobuf 中会把 false、0 的属性隐藏，0 表示成功，此处做兼容处理
-      code = code || ErrorType.CONNECT_SUCCESS;
-      let user = { };
+   
       let state = CONNECT_STATE.CONNECT_FAILED;
       let error = common.getError(code);
-      if(utils.isEqual(code, ErrorType.CONNECT_SUCCESS)){
+      if(utils.isEqual(code, ErrorType.CONNECT_SUCCESS.code)){
         state = CONNECT_STATE.CONNECTED;
-        utils.extend(user, { id: userId });
-        if(isSync){
-          syncer.exec({
-            msg: { type: NOTIFY_TYPE.MSG },
-            name: SIGNAL_NAME.S_NTF,
-            user: { id: currentUserId }
+        setCurrentUser({ id: userId });
+
+        return getUserInfo({ id: userId }, (_user) => {
+          let name = _user.nickname;
+          let portrait = _user.userPortrait;
+          let exts = _user.extFields;
+          setCurrentUser({ name, portrait, exts });
+
+          if(isSync){
+            syncer.exec({
+              msg: { type: NOTIFY_TYPE.MSG },
+              name: SIGNAL_NAME.S_NTF,
+              user: { id: currentUserInfo.id }
+            });
+          }
+          timer.resume(() => {
+            sendCommand(SIGNAL_CMD.PING, {});
           });
-        }
-        timer.resume(() => {
-          sendCommand(SIGNAL_CMD.PING, {});
-        });
-        syncTimer.resume(() => {
-          syncer.exec({
-            msg: { type: NOTIFY_TYPE.MSG },
-            name: SIGNAL_NAME.S_NTF,
-            user: { id: currentUserId }
+          syncTimer.resume(() => {
+            syncer.exec({
+              msg: { type: NOTIFY_TYPE.MSG },
+              name: SIGNAL_NAME.S_NTF,
+              user: { id: currentUserInfo.id }
+            });
           });
+
+          updateState(state, currentUserInfo);
+          _callback({ user: currentUserInfo, error });
+
         });
       }
-      updateState(state, user);
-      let callback = cache.get(SIGNAL_NAME.S_CONNECT_ACK) || utils.noop;
-      callback({ user, error });
+      updateState(state, currentUserInfo);
+      _callback({ user: currentUserInfo, error });
     }
     cache.remove(index);
   }
@@ -192,12 +204,21 @@ export default function IO(config){
     return utils.isEqual(connectionState, CONNECT_STATE.CONNECTED)
   };
   function getCurrentUser(){
-    return { id: currentUserId };
+    return currentUserInfo;
   };
 
   function getConfig(){
     return config;
   };
+  function getUserInfo(user, callback){
+    let data = {
+      topic: COMMAND_TOPICS.GET_USER_INFO,
+      userId: user.id
+    };
+    sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+      callback(result.user);
+    });
+  }
   let io = {
     getConfig,
     connect,

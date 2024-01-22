@@ -99,6 +99,13 @@ export default function getQueryBody({ data, callback, index }){
     let message = codec.create({ fileType: type });
     buffer = codec.encode(message).finish();
   }
+
+  if(utils.isEqual(COMMAND_TOPICS.GET_USER_INFO, topic)){
+    targetId = userId;
+    let codec = Proto.lookup('codec.UserIdReq');
+    let message = codec.create({ userId });
+    buffer = codec.encode(message).finish();
+  }
   
   return {
     qryMsgBody: {

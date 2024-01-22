@@ -515,6 +515,14 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           }
         }
       },
+      UserIdReq: {
+        fields: {
+          userId: {
+            type: "string",
+            id: 1
+          }
+        }
+      },
       UserInfo: {
         fields: {
           userId: {

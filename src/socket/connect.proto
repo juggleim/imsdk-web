@@ -119,6 +119,9 @@ message UpMsg {
     string clientUid=4;   //客户端指定的消息唯一ID
     PushData pushData = 5; // 推送设置
     MentionInfo mentionInfo = 6; //@ 消息
+    DownMsg referMsg = 7;
+    repeated string toUserIds = 8;
+    MergedMsgs mergedMsgs = 9;
 }
 message MentionInfo {
     MentionType mentionType = 1;
@@ -145,6 +148,35 @@ message DownMsg{
     PushData pushData = 13;
     MentionInfo mentionInfo = 14;
     bool isReaded = 15;
+    // DownMsg referMsg = 16;
+    UserInfo senderInfo = 17;
+    GroupInfo groupInfo = 18;
+    MergedMsgs mergedMsgs = 19;
+    int32 undisturbType = 20;
+}
+
+message MergedMsgs{
+    ChannelType channelType = 1;
+    string userId = 2;
+    string targetId = 3;
+    repeated SimpleMsg msgs = 4;
+}
+
+message GroupInfo{
+    string groupId = 1;
+    string groupName = 2;
+    string groupPortrait = 3;
+    int32 isMute = 4;
+    map<string,string> extFields = 5;
+    int64 updatedTime = 6;
+}
+
+message UserInfo{
+    string userId = 1;
+    string nickname = 2;
+    string userPortrait = 3;
+    map<string,string> extFields = 4;
+    int64 updatedTime = 5;
 }
 
 message SyncConversationsReq{
@@ -171,10 +203,15 @@ message DelConversationReq{
 message Conversation{
     string converId = 1;
     string targetId = 2;
-    ChannelType type = 3;
+    ChannelType channelType = 3;
     int64 updateTime = 4;
-    int32 unreadCount = 5;
+    int64 unreadCount = 5;
     DownMsg msg = 6;
+    int64 latestReadedMsgIndex = 7;
+    MentionMsg LatestMentionMsg = 8;
+    int32 isTop = 9;
+    int64 topUpdatedTime = 10;
+    int32 undisturbType = 11;
 }
 
 message SyncMsgReq{

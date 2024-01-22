@@ -3,6 +3,13 @@ import utils from "../utils";
 import common from "../common/common";
 
 export default function(io, emitter){
+  /*  
+  1、内存中缓存最近 200 个会话，并按 message.sentTime 倒序排序
+  2、startTime 是 0 时，优先返回内存中会话，内存数量小于 count 数，从服务端获取
+  3、startTime 非 0 是，直接从服务端获取，并更新到内存中
+  */
+  let conversationUtils = common.ConversationUtils();
+
   io.on(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, (message) => {
     let conversation = createConversation(message);
     conversationUtils.update(conversation);
@@ -10,12 +17,7 @@ export default function(io, emitter){
     let conversations = conversationUtils.get();
     emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations, conversation });
   });
-  /*  
-  1、内存中缓存最近 200 个会话，并按 message.sentTime 倒序排序
-  2、startTime 是 0 时，优先返回内存中会话，内存数量小于 count 数，从服务端获取
-  3、startTime 非 0 是，直接从服务端获取，并更新到内存中
-  */
-  let conversationUtils = common.ConversationUtils();
+
   let getConversations = (params) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, params, []);
@@ -101,10 +103,13 @@ export default function(io, emitter){
   };
 
   function createConversation(message){
-    let { conversationId, conversationType } = message;
+    let { conversationId, conversationType, conversationTitle, conversationPortrait, conversationExts } = message;
     return {
       conversationId,
       conversationType,
+      conversationTitle, 
+      conversationPortrait,
+      conversationExts,
       latestMessage: message,
       unreadCount: 0,
       latestReadTime: 0

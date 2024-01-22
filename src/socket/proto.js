@@ -349,6 +349,19 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           mentionInfo: {
             type: "MentionInfo",
             id: 6
+          },
+          referMsg: {
+            type: "DownMsg",
+            id: 7
+          },
+          toUserIds: {
+            rule: "repeated",
+            type: "string",
+            id: 8
+          },
+          mergedMsgs: {
+            type: "MergedMsgs",
+            id: 9
           }
         }
       },
@@ -433,6 +446,97 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           isReaded: {
             type: "bool",
             id: 15
+          },
+          senderInfo: {
+            type: "UserInfo",
+            id: 17
+          },
+          groupInfo: {
+            type: "GroupInfo",
+            id: 18
+          },
+          mergedMsgs: {
+            type: "MergedMsgs",
+            id: 19
+          },
+          undisturbType: {
+            type: "int32",
+            id: 20
+          }
+        }
+      },
+      MergedMsgs: {
+        fields: {
+          channelType: {
+            type: "ChannelType",
+            id: 1
+          },
+          userId: {
+            type: "string",
+            id: 2
+          },
+          targetId: {
+            type: "string",
+            id: 3
+          },
+          msgs: {
+            rule: "repeated",
+            type: "SimpleMsg",
+            id: 4
+          }
+        }
+      },
+      GroupInfo: {
+        fields: {
+          groupId: {
+            type: "string",
+            id: 1
+          },
+          groupName: {
+            type: "string",
+            id: 2
+          },
+          groupPortrait: {
+            type: "string",
+            id: 3
+          },
+          isMute: {
+            type: "int32",
+            id: 4
+          },
+          extFields: {
+            keyType: "string",
+            type: "string",
+            id: 5
+          },
+          updatedTime: {
+            type: "int64",
+            id: 6
+          }
+        }
+      },
+      UserInfo: {
+        fields: {
+          userId: {
+            type: "string",
+            id: 1
+          },
+          nickname: {
+            type: "string",
+            id: 2
+          },
+          userPortrait: {
+            type: "string",
+            id: 3
+          },
+          extFields: {
+            keyType: "string",
+            type: "string",
+            id: 4
+          },
+          updatedTime: {
+            type: "int64",
+            id: 5
           }
         }
       },
@@ -501,7 +605,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "string",
             id: 2
           },
-          type: {
+          channelType: {
             type: "ChannelType",
             id: 3
           },
@@ -510,12 +614,32 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 4
           },
           unreadCount: {
-            type: "int32",
+            type: "int64",
             id: 5
           },
           msg: {
             type: "DownMsg",
             id: 6
+          },
+          latestReadedMsgIndex: {
+            type: "int64",
+            id: 7
+          },
+          LatestMentionMsg: {
+            type: "MentionMsg",
+            id: 8
+          },
+          isTop: {
+            type: "int32",
+            id: 9
+          },
+          topUpdatedTime: {
+            type: "int64",
+            id: 10
+          },
+          undisturbType: {
+            type: "int32",
+            id: 11
           }
         }
       },

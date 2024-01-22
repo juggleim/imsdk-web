@@ -142,9 +142,13 @@ function ConversationUtils(){
       if(!isNew){
         let conversation = conversations.splice(index, 1)[0]; 
         let { unreadCount } = conversation;
+        let { latestMessage, conversationTitle, conversationPortrait, conversationExts } = item;
         utils.extend(conversation, { 
           unreadCount: unreadCount + 1,
-          latestMessage: item.latestMessage
+          latestMessage: latestMessage,
+          conversationTitle, 
+          conversationPortrait,
+          conversationExts
         });
         return conversations.push(conversation);
       }

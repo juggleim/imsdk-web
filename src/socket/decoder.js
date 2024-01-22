@@ -1,7 +1,7 @@
 import Emitter from "../common/emmit";
 import utils from "../utils";
 import Proto from "./proto";
-import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, MESSAGE_FLAG, CONNECT_ACK_INDEX, PONG_INDEX, UPLOAD_TYPE } from "../enum";
+import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, MESSAGE_FLAG, CONNECT_ACK_INDEX, PONG_INDEX, UPLOAD_TYPE, CONVERATION_TYPE } from "../enum";
 export default function Decoder(cache){
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
   let decode = (buffer) => {
@@ -122,12 +122,16 @@ export default function Decoder(cache){
     let payload = Proto.lookup('codec.QryConversationsResp');
     let { conversations } = payload.decode(data);
     conversations = conversations.map((conversation) => {
-      let { msg, type: conversationType, targetId, unreadCount, updateTime: latestReadTime } = conversation;
+      let { msg, targetId, unreadCount, updateTime: latestReadTime } = conversation;
       utils.extend(msg, { targetId });
       let latestMessage = msgFormat(msg);
+      let { conversationTitle, conversationPortrait, conversationExts, conversationType } = latestMessage;
       return {
         conversationType,
         conversationId: targetId,
+        conversationTitle,
+        conversationPortrait,
+        conversationExts,
         unreadCount,
         latestReadTime,
         latestMessage
@@ -146,15 +150,25 @@ export default function Decoder(cache){
     return { isFinished, messages, index };
   }
   function msgFormat(msg){
-    let { senderId, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isReaded, flags } = msg;
+    let { senderId, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isReaded, flags, senderInfo, groupInfo } = msg;
     let content = new TextDecoder().decode(msgContent);
     content = utils.parse(content);
+
+    let { userPortrait, nickname, extFields: userExts } = senderInfo;
 
     let isUpdated = utils.isEqual(flags, MESSAGE_FLAG.IS_UPDATED);
     let _message = {
       conversationType,
       conversationId,
-      senderUserId: senderId, 
+      conversationTitle: '',
+      conversationPortrait: '',
+      conversationExts: {},
+      sender: {
+        id: senderId,
+        name: nickname,
+        portrait: userPortrait,
+        exts: userExts
+      },
       messageId: msgId, 
       sentTime: msgTime,
       name: msgType,
@@ -162,7 +176,7 @@ export default function Decoder(cache){
       msgIndex,
       mentionInfo,
       isReaded: !!isReaded,
-      isUpdated
+      isUpdated,
     };
 
     if(utils.isEqual(MESSAGE_TYPE.RECALL, msgType)){
@@ -172,6 +186,23 @@ export default function Decoder(cache){
         channel_type: 'conversationType',
         sender_id: 'senderUserId',
         receiver_id: 'conversationId'
+      });
+    }
+
+    if(utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)){
+      let { groupName, groupPortrait, extFields } = groupInfo;
+      utils.extend(_message, { 
+        conversationTitle: groupName,
+        conversationPortrait: groupPortrait,
+        conversationExts: extFields,
+      });
+    }
+
+    if(utils.isEqual(conversationType, CONVERATION_TYPE.PRIVATE)){
+      utils.extend(_message, { 
+        conversationTitle: nickname,
+        conversationPortrait: userPortrait,
+        conversationExts: userExts
       });
     }
 

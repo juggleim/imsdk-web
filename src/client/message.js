@@ -47,11 +47,13 @@ export default function(io, emitter){
       utils.extend(data, { topic })
 
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messageId, sentTime, code, msg }) => {
+        let sender = io.getCurrentUser() || {};
+        utils.extend(message, { sender, isSender: true });
         if(code){
           utils.extend(message, { error: { code, msg } });
           return reject(message)
         }
-        utils.extend(message, { sentTime, messageId, isSender: true });
+        utils.extend(message, { sentTime, messageId });
         io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);
         resolve(message);
       });

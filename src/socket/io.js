@@ -21,10 +21,10 @@ export default function IO(config){
   let { appkey, nav, isSync = true } = config;
   nav = nav || 'http://120.48.178.248:8083';
   let ws = {};
-  
+  let io = {};
   
   let cache = Cache();
-  let decoder = BufferDecoder(cache);
+  let decoder = BufferDecoder(cache, io);
   let encoder = BufferEncoder(cache);
 
   let timer = Timer({ timeout: HEART_TIMEOUT });
@@ -165,7 +165,9 @@ export default function IO(config){
         state = CONNECT_STATE.CONNECTED;
         setCurrentUser({ id: userId });
 
-        return getUserInfo({ id: userId }, (_user) => {
+        return getUserInfo({ id: userId }, ({ user: _user }) => {
+
+          _user = _user || {};
           let name = _user.nickname;
           let portrait = _user.userPortrait;
           let exts = _user.extFields;
@@ -216,10 +218,11 @@ export default function IO(config){
       userId: user.id
     };
     sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
-      callback(result.user);
+      callback(result);
     });
   }
-  let io = {
+  
+  utils.extend(io, { 
     getConfig,
     connect,
     disconnect,
@@ -227,6 +230,6 @@ export default function IO(config){
     isConnected,
     getCurrentUser,
     ...emitter
-  };
+  })
   return io;
 }

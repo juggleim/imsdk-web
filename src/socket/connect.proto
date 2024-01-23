@@ -110,6 +110,8 @@ message DownMsgSet{
     repeated DownMsg msgs = 1;
     int64 syncTime = 2;
     bool isFinished = 3;
+    UserInfo targetUserInfo = 4;
+    GroupInfo groupInfo = 5;
 }
 
 message UpMsg {
@@ -149,7 +151,7 @@ message DownMsg{
     MentionInfo mentionInfo = 14;
     bool isReaded = 15;
     // DownMsg referMsg = 16;
-    UserInfo senderInfo = 17;
+    UserInfo targetUserInfo = 17;
     GroupInfo groupInfo = 18;
     MergedMsgs mergedMsgs = 19;
     int32 undisturbType = 20;
@@ -216,6 +218,8 @@ message Conversation{
     int32 isTop = 9;
     int64 topUpdatedTime = 10;
     int32 undisturbType = 11;
+    UserInfo userInfo = 12;
+    GroupInfo groupInfo = 13;
 }
 
 message SyncMsgReq{

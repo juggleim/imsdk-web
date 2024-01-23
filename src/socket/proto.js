@@ -321,6 +321,14 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           isFinished: {
             type: "bool",
             id: 3
+          },
+          targetUserInfo: {
+            type: "UserInfo",
+            id: 4
+          },
+          groupInfo: {
+            type: "GroupInfo",
+            id: 5
           }
         }
       },
@@ -447,7 +455,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "bool",
             id: 15
           },
-          senderInfo: {
+          targetUserInfo: {
             type: "UserInfo",
             id: 17
           },
@@ -648,6 +656,14 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           undisturbType: {
             type: "int32",
             id: 11
+          },
+          userInfo: {
+            type: "UserInfo",
+            id: 12
+          },
+          groupInfo: {
+            type: "GroupInfo",
+            id: 13
           }
         }
       },

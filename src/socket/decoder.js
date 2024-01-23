@@ -2,7 +2,7 @@ import Emitter from "../common/emmit";
 import utils from "../utils";
 import Proto from "./proto";
 import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, MESSAGE_FLAG, CONNECT_ACK_INDEX, PONG_INDEX, UPLOAD_TYPE, CONVERATION_TYPE } from "../enum";
-export default function Decoder(cache){
+export default function Decoder(cache, io){
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
   let decode = (buffer) => {
     let msg = imsocket.decode(new Uint8Array(buffer));
@@ -134,19 +134,40 @@ export default function Decoder(cache){
     let payload = Proto.lookup('codec.QryConversationsResp');
     let { conversations } = payload.decode(data);
     conversations = conversations.map((conversation) => {
-      let { msg, targetId, unreadCount, updateTime: latestReadTime } = conversation;
+      let { msg, targetId, unreadCount, updateTime: latestReadTime, userInfo, groupInfo } = conversation;
       utils.extend(msg, { targetId });
+      
       let latestMessage = msgFormat(msg);
-      let { conversationTitle, conversationPortrait, conversationExts, conversationType } = latestMessage;
+      let { conversationType } = latestMessage;
+      
+      if(utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)){
+        let { groupName, groupPortrait, extFields } = groupInfo;
+        utils.extend(latestMessage, { 
+          conversationTitle: groupName,
+          conversationPortrait: groupPortrait,
+          conversationExts: extFields,
+        });
+      }
+  
+      if(utils.isEqual(conversationType, CONVERATION_TYPE.PRIVATE)){
+        let { userPortrait, nickname, extFields } = userInfo;
+        utils.extend(latestMessage, { 
+          conversationTitle: nickname,
+          conversationPortrait: userPortrait,
+          conversationExts: extFields
+        });
+      }
+
+      let { conversationTitle, conversationPortrait, conversationExts } = latestMessage;
       return {
         conversationType,
         conversationId: targetId,
+        unreadCount,
+        latestReadTime,
+        latestMessage,
         conversationTitle,
         conversationPortrait,
         conversationExts,
-        unreadCount,
-        latestReadTime,
-        latestMessage
       };
     });
     return { conversations, index };
@@ -155,18 +176,30 @@ export default function Decoder(cache){
     let payload = Proto.lookup('codec.DownMsgSet');
     let result = payload.decode(data);
     
-    let { isFinished, msgs } = result;
+    let { isFinished, msgs, targetUserInfo, groupInfo } = result;
     let messages = utils.map(msgs, (msg) => {
+      
+      // sync_msgs 和 getHistoryMessages 共用此方法，但 sync_msgs 的用户信息携带在消息里，历史消息在 pb 结构外侧与 msgs 同级，此处做兼容处理
+      if(targetUserInfo){
+        utils.extend(msg, { targetUserInfo });
+      }
+      if(groupInfo){
+        utils.extend(msg, { groupInfo });
+      }
+      
       return msgFormat(msg);
     });
     return { isFinished, messages, index };
   }
   function msgFormat(msg){
-    let { senderId, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isReaded, flags, senderInfo, groupInfo } = msg;
+    let { senderId, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isReaded, flags, targetUserInfo, groupInfo } = msg;
     let content = new TextDecoder().decode(msgContent);
     content = utils.parse(content);
 
-    let { userPortrait, nickname, extFields: userExts } = senderInfo;
+    targetUserInfo = targetUserInfo || {};
+    groupInfo = groupInfo || {};
+
+    let { userPortrait, nickname, extFields: userExts } = targetUserInfo;
 
     let isUpdated = utils.isEqual(flags, MESSAGE_FLAG.IS_UPDATED);
     let _message = {
@@ -191,14 +224,9 @@ export default function Decoder(cache){
       isUpdated,
     };
 
-    if(utils.isEqual(MESSAGE_TYPE.RECALL, msgType)){
-      content = utils.rename(content, { 
-        msg_id: 'messageId',
-        msg_time: 'sentTime',
-        channel_type: 'conversationType',
-        sender_id: 'senderUserId',
-        receiver_id: 'conversationId'
-      });
+    if(_message.isSender){
+      let user = io.getCurrentUser();
+      utils.extend(_message.sender, user);
     }
 
     if(utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)){
@@ -215,6 +243,16 @@ export default function Decoder(cache){
         conversationTitle: nickname,
         conversationPortrait: userPortrait,
         conversationExts: userExts
+      });
+    }
+
+    if(utils.isEqual(MESSAGE_TYPE.RECALL, msgType)){
+      content = utils.rename(content, { 
+        msg_id: 'messageId',
+        msg_time: 'sentTime',
+        channel_type: 'conversationType',
+        sender_id: 'senderUserId',
+        receiver_id: 'conversationId'
       });
     }
 

@@ -104,7 +104,8 @@ export default function(io, emitter){
 
   function createConversation(message){
     let { conversationId, conversationType, conversationTitle, conversationPortrait, conversationExts } = message;
-    return {
+
+    let $conversation = {
       conversationId,
       conversationType,
       conversationTitle, 
@@ -114,6 +115,15 @@ export default function(io, emitter){
       unreadCount: 0,
       latestReadTime: 0
     };
+    if(message.isSender){
+      let conversation = conversationUtils.getPer(message);
+      utils.extend($conversation, {
+        conversationTitle: conversation.conversationTitle,
+        conversationPortrait: conversation.conversationPortrait,
+        conversationExts: conversation.conversationExts,
+      });
+    }
+    return $conversation;
   }
 
   return {

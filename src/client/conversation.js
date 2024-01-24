@@ -1,4 +1,4 @@
-import { FUNC_PARAM_CHECKER, SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME, EVENT, MESSAGE_ORDER } from "../enum";
+import { FUNC_PARAM_CHECKER, SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME, EVENT, MESSAGE_ORDER, CONNECT_STATE } from "../enum";
 import utils from "../utils";
 import common from "../common/common";
 
@@ -16,6 +16,12 @@ export default function(io, emitter){
 
     let conversations = conversationUtils.get();
     emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations, conversation });
+  });
+
+  io.on(SIGNAL_NAME.CONN_CHANGED, ({ state }) => {
+    if(utils.isEqual(state, CONNECT_STATE.DISCONNECTED)){
+      conversationUtils.clear();
+    }
   });
 
   let getConversations = (params) => {

@@ -25,6 +25,7 @@ export default function(io, emitter){
       io.connect(user, ({ error, user }) => {
         let { code, msg } = error;
         if(utils.isEqual(code, ErrorType.CONNECT_SUCCESS.code)){
+          utils.extend(user, { code });
           return resolve(user);
         }
         reject({ code, msg });

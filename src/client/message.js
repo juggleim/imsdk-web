@@ -270,7 +270,7 @@ export default function(io, emitter){
             _callbacks.onprogress({ percent, message });
           },
           oncompleted: ({ url }) => {
-            utils.extend(message.content, { url });
+            utils.extend(message.content, { url, size: content.file.size });
             delete message.content.file;
             sendMessage(message).then(resolve, reject);
           },

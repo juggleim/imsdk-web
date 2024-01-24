@@ -375,6 +375,13 @@ const find = (arrs, callback) => {
   }
   return index;
 };
+const toObject = (arrs) => {
+  let objs = {};
+  forEach(arrs, ({ key, value }) => {
+    objs[key] = value;
+  });
+  return objs;
+};
 export default {
   Prosumer,
   Observer,
@@ -415,5 +422,6 @@ export default {
   getProtocol,
   sort,
   find,
-  quickSort
+  quickSort,
+  toObject
 }

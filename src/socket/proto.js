@@ -513,13 +513,25 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 4
           },
           extFields: {
-            keyType: "string",
-            type: "string",
+            rule: "repeated",
+            type: "KvItem",
             id: 5
           },
           updatedTime: {
             type: "int64",
             id: 6
+          }
+        }
+      },
+      KvItem: {
+        fields: {
+          key: {
+            type: "string",
+            id: 1
+          },
+          value: {
+            type: "string",
+            id: 2
           }
         }
       },
@@ -546,8 +558,8 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 3
           },
           extFields: {
-            keyType: "string",
-            type: "string",
+            rule: "repeated",
+            type: "KvItem",
             id: 4
           },
           updatedTime: {

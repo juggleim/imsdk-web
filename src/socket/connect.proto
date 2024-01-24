@@ -169,8 +169,13 @@ message GroupInfo{
     string groupName = 2;
     string groupPortrait = 3;
     int32 isMute = 4;
-    map<string,string> extFields = 5;
+    repeated KvItem extFields = 5;
     int64 updatedTime = 6;
+}
+
+message KvItem{
+    string key = 1;
+    string value = 2;
 }
 
 message UserIdReq{
@@ -181,7 +186,7 @@ message UserInfo{
     string userId = 1;
     string nickname = 2;
     string userPortrait = 3;
-    map<string,string> extFields = 4;
+    repeated KvItem extFields = 4;
     int64 updatedTime = 5;
 }
 

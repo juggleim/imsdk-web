@@ -142,6 +142,8 @@ export default function Decoder(cache, io){
       
       if(utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)){
         let { groupName, groupPortrait, extFields } = groupInfo;
+        extFields = utils.toObject(extFields);
+
         utils.extend(latestMessage, { 
           conversationTitle: groupName,
           conversationPortrait: groupPortrait,
@@ -151,6 +153,8 @@ export default function Decoder(cache, io){
   
       if(utils.isEqual(conversationType, CONVERATION_TYPE.PRIVATE)){
         let { userPortrait, nickname, extFields } = userInfo;
+        extFields = utils.toObject(extFields);
+        
         utils.extend(latestMessage, { 
           conversationTitle: nickname,
           conversationPortrait: userPortrait,
@@ -200,6 +204,7 @@ export default function Decoder(cache, io){
     groupInfo = groupInfo || {};
 
     let { userPortrait, nickname, extFields: userExts } = targetUserInfo;
+    userExts = utils.toObject(userExts);
 
     let isUpdated = utils.isEqual(flags, MESSAGE_FLAG.IS_UPDATED);
     let _message = {
@@ -231,6 +236,8 @@ export default function Decoder(cache, io){
 
     if(utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)){
       let { groupName, groupPortrait, extFields } = groupInfo;
+      extFields = utils.toObject(extFields);
+
       utils.extend(_message, { 
         conversationTitle: groupName,
         conversationPortrait: groupPortrait,

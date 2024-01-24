@@ -40,6 +40,7 @@ export default function(io, emitter){
   return {
     connect,
     disconnect,
-    isConnected: io.isConnected
+    isConnected: io.isConnected,
+    getCurrentUser: io.getCurrentUser
   }
 }

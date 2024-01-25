@@ -9,7 +9,7 @@ export default function (uploader, { type }) {
     let putExtra = {
       fname: name
     };
-    let observable = qiniu.upload(file, key, token, putExtra);
+    let observable = uploader.upload(file, key, token, putExtra);
     let subscription = observable.subscribe({
       next: (res) => {
         let { total: { percent } } = res;

@@ -143,8 +143,22 @@ function ConversationUtils(){
         let conversation = conversations.splice(index, 1)[0]; 
         let { unreadCount } = conversation;
         let { latestMessage, conversationTitle, conversationPortrait, conversationExts } = item;
+
+        if(utils.isEmpty(conversationTitle)){
+          conversationTitle = conversation.conversationTitle;
+        }
+        if(utils.isEmpty(conversationPortrait)){
+          conversationPortrait = conversation.conversationPortrait;
+        }
+        if(utils.isEmpty(conversationExts)){
+          conversationExts = conversation.conversationExts;
+        }
+
+        if(!latestMessage.isSender){
+          unreadCount = unreadCount + 1
+        }
         utils.extend(conversation, { 
-          unreadCount: unreadCount + 1,
+          unreadCount: unreadCount,
           latestMessage: latestMessage,
           conversationTitle, 
           conversationPortrait,

@@ -15,7 +15,8 @@ export default function(io, emitter){
     conversationUtils.update(conversation);
 
     let conversations = conversationUtils.get();
-    emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations, conversation });
+    let newConversation = conversationUtils.getPer(conversation);
+    emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations, conversation: newConversation });
   });
 
   io.on(SIGNAL_NAME.CONN_CHANGED, ({ state }) => {

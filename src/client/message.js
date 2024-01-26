@@ -130,7 +130,21 @@ export default function(io, emitter){
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, (result) => {
         let { code } = result;
         if(utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
-          return resolve();
+          let msg = utils.clone(message);
+          let { messageId, sentTime } = message;
+          let sender = io.getCurrentUser();
+          utils.extend(msg, {
+            name: MESSAGE_TYPE.RECALL,
+            sender,
+            isSender: true,
+            content: {
+              messageId,
+              sentTime,
+              senderUserId: sender.id
+            }
+          });
+          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
+          return resolve(msg);
         }
         let { msg } = common.getError(code);
         reject({ code, msg });

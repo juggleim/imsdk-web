@@ -200,6 +200,11 @@ export default function Decoder(cache, io){
     let content = new TextDecoder().decode(msgContent);
     content = utils.parse(content);
 
+    // 出现非法 JSON，强制转成对象
+    if(utils.isString(content)){
+      content = { content };
+    }
+
     targetUserInfo = targetUserInfo || {};
     groupInfo = groupInfo || {};
 
@@ -223,7 +228,7 @@ export default function Decoder(cache, io){
       sentTime: msgTime,
       name: msgType,
       isSender: !!isSend,
-      msgIndex,
+      messageIndex: msgIndex,
       mentionInfo,
       isReaded: !!isReaded,
       isUpdated,
@@ -260,6 +265,15 @@ export default function Decoder(cache, io){
         channel_type: 'conversationType',
         sender_id: 'senderUserId',
         receiver_id: 'conversationId'
+      });
+    }
+
+    if(utils.isEqual(MESSAGE_TYPE.MODIFY, msgType)){
+      content = utils.rename(content, { 
+        msg_content: 'content',
+        msg_id: 'messageId',
+        msg_index: 'messageIndex',
+        msg_time: 'sentTime'
       });
     }
 

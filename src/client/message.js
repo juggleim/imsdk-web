@@ -14,6 +14,19 @@ export default function(io, emitter){
     if(utils.isEqual(message.name, MESSAGE_TYPE.RECALL)){
       return emitter.emit(EVENT.MESSAGE_RECALLED, message);
     }
+
+    if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
+      let { conversationType, conversationId, content, sender } = message;
+      let notify = { 
+        conversationType, 
+        conversationId, 
+        content: content.content, 
+        messageId: content.messageId,
+        sentTime: content.sentTime,
+        sender 
+      };
+      return emitter.emit(EVENT.MESSAGE_UPDATED, notify);
+    }
     if(!messageCacher.isInclude(message)){
       emitter.emit(EVENT.MESSAGE_RECEIVED, message);
       let { conversationId, conversationType } = message;

@@ -27,7 +27,13 @@ const stringify = (obj) => {
   return JSON.stringify(obj);
 };
 const parse = (str) => {
-  return JSON.parse(str);
+  let obj = {};
+  try{
+    obj = JSON.parse(str); 
+  }catch(e){
+    obj = str;
+  }
+  return obj;
 };
 const forEach = (obj, callback) => {
   callback = callback || noop;

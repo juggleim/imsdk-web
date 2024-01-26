@@ -112,6 +112,7 @@ export let EVENT = {
   STATE_CHANGED: 'state_changed',
   MESSAGE_RECEIVED: 'message_received',
   MESSAGE_RECALLED: 'message_recalled',
+  MESSAGE_UPDATED: 'message_updated',
   CONVERSATION_CHANGED: 'conversation_changed',
 };
 export let CONNECT_STATE = {
@@ -210,6 +211,7 @@ export let MESSAGE_TYPE = {
   FILE: 'jg:file',
   RECALL: 'jg:recall',
   READ_MSG: 'jg:readedmsg',
+  MODIFY: 'jg:modify',
   CLEAR_MSG: 'jg:cleanmsg'
 }
 

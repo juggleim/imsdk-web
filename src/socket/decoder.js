@@ -2,6 +2,9 @@ import Emitter from "../common/emmit";
 import utils from "../utils";
 import Proto from "./proto";
 import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, MESSAGE_FLAG, CONNECT_ACK_INDEX, PONG_INDEX, UPLOAD_TYPE, CONVERATION_TYPE } from "../enum";
+import GroupCacher from "../common/group-cacher";
+import UserCacher from "../common/user-cacher";
+
 export default function Decoder(cache, io){
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
   let decode = (buffer) => {
@@ -141,7 +144,7 @@ export default function Decoder(cache, io){
       let { conversationType } = latestMessage;
       
       if(utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)){
-        let { groupName, groupPortrait, extFields } = groupInfo;
+        let { groupName, groupPortrait, extFields, groupId } = groupInfo;
         extFields = utils.toObject(extFields);
 
         utils.extend(latestMessage, { 
@@ -149,10 +152,12 @@ export default function Decoder(cache, io){
           conversationPortrait: groupPortrait,
           conversationExts: extFields,
         });
+
+        GroupCacher.set(groupId, groupInfo);
       }
   
       if(utils.isEqual(conversationType, CONVERATION_TYPE.PRIVATE)){
-        let { userPortrait, nickname, extFields } = userInfo;
+        let { userPortrait, nickname, extFields, userId } = userInfo;
         extFields = utils.toObject(extFields);
         
         utils.extend(latestMessage, { 
@@ -160,6 +165,8 @@ export default function Decoder(cache, io){
           conversationPortrait: userPortrait,
           conversationExts: extFields
         });
+
+        GroupCacher.set(userId, userInfo);
       }
 
       let { conversationTitle, conversationPortrait, conversationExts } = latestMessage;
@@ -205,8 +212,24 @@ export default function Decoder(cache, io){
       content = { content };
     }
 
-    targetUserInfo = targetUserInfo || {};
-    groupInfo = groupInfo || {};
+    // 服务端返回数据有 targetUserInfo 和 groupInfo 为 null 情况，此处补充 targetId，方便本地有缓存时获取信息
+    targetUserInfo = targetUserInfo || { userId: senderId };
+    groupInfo = groupInfo || { groupId: conversationId };
+
+    // 默认更新内存数据
+    let userId = targetUserInfo.userId;
+    let groupId = groupInfo.groupId;
+
+    GroupCacher.set(groupId, groupInfo);
+    UserCacher.set(userId, targetUserInfo);
+
+    if(utils.isEmpty(targetUserInfo.nickname)){
+      targetUserInfo = UserCacher.get(userId);
+    }
+
+    if(utils.isEmpty(targetUserInfo.groupName)){
+      groupInfo = GroupCacher.get(groupId);
+    }
 
     let { userPortrait, nickname, extFields: userExts } = targetUserInfo;
     userExts = utils.toObject(userExts);

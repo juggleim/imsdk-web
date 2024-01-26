@@ -49,12 +49,17 @@ export default function (uploader, { type }) {
 
     var captureImage = function () {
       var canvas = document.createElement("canvas");
-      canvas.width = video.videoWidth * scale;
-      canvas.height = video.videoHeight * scale;
+      let height = video.videoHeight;
+      let width = video.videoWidth;
+      let duration = video.duration;
+
+      canvas.width = width * scale;
+      canvas.height = height * scale;
       canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
       canvas.toBlob((blob) => {
         var frame = new File([blob], 'frame.png', { type: 'image/png' });
-        callback(frame);
+        let args = { height, width, duration };
+        callback(frame, args);
       });
     };
   };

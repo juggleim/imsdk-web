@@ -306,14 +306,14 @@ function uploadThumbnail(upload, option, callback){
 function uploadFrame(upload, option, callback){
   let { type, token, domain, file } = option;
   let uploader = Uploader(upload, { type });
-  uploader.capture(file, (frameFile) => {
+  uploader.capture(file, (frameFile, args) => {
     let content = { file: frameFile };
     let opts = { token, domain };
     let callbacks = {
       onprogress: utils.noop,
       oncompleted: ({ url }) => {
         let error = null;
-        callback(error, url);
+        callback(error, url, args);
       },
       onerror: (error) => {
         callback(error);

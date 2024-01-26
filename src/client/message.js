@@ -279,8 +279,9 @@ export default function(io, emitter){
           if(poster){
             return uploadFile(auth, message);
           }
-          common.uploadFrame(upload, params, (error, poster) => {
-            utils.extend(message.content, { poster });
+          common.uploadFrame(upload, params, (error, poster, args) => {
+            let { height, width, duration } = args;
+            utils.extend(message.content, { poster, height, width, duration});
             uploadFile(auth, message);
           });
         }

@@ -267,9 +267,10 @@ export default function(io, emitter){
           if(thumbnail){
             return uploadFile(auth, message);
           }
-          common.uploadThumbnail(upload, params, (error, thumbnail) => {
-            utils.extend(message.content, { thumbnail });
-            uploadFile(auth, message);  
+          common.uploadThumbnail(upload, params, (error, thumbnail, args) => {
+            let { height, width } = args;
+            utils.extend(message.content, { thumbnail, height, width, type: content.file.type });
+            uploadFile(auth, message);
           });
         }
         
@@ -298,7 +299,8 @@ export default function(io, emitter){
             _callbacks.onprogress({ percent, message });
           },
           oncompleted: ({ url }) => {
-            utils.extend(message.content, { url, size: content.file.size });
+            let size = content.file.size/1024;
+            utils.extend(message.content, { url, size: size.toFixed(2) });
             delete message.content.file;
             sendMessage(message).then(resolve, reject);
           },

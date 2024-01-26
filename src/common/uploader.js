@@ -68,9 +68,7 @@ export default function (uploader, { type }) {
   let compress = (file, callback, option = {}) => {
     let { scale = 0.4, fileCompressLimit = 500 } = option;
     let size = file.size / 1000;
-    if(size <= fileCompressLimit){
-      return callback(file);
-    }
+    
     let img = new Image();
     img.src = URL.createObjectURL(file);
     img.onload = function () {
@@ -78,12 +76,18 @@ export default function (uploader, { type }) {
     };
     var compressImage = function () {
       var canvas = document.createElement("canvas");
-      canvas.width = img.width * scale;
-      canvas.height = img.height * scale;
+      let height = img.height;
+      let width = img.width;
+
+      if(size <= fileCompressLimit){
+        scale = 1;
+      }
+      canvas.width = width * scale;
+      canvas.height = height * scale;
       canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
       canvas.toBlob((blob) => {
         var thumbnail = new File([blob], 'tb.png', { type: 'image/png' });
-        callback(thumbnail);
+        callback(thumbnail, { height, width });
       });
     };
   };

@@ -1,6 +1,7 @@
 import { FUNC_PARAM_CHECKER, SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME, EVENT, MESSAGE_ORDER, CONNECT_STATE } from "../enum";
 import utils from "../utils";
 import common from "../common/common";
+import Storage from "../common/storage";
 
 export default function(io, emitter){
   /*  
@@ -43,8 +44,8 @@ export default function(io, emitter){
       let _params = { topic: COMMAND_TOPICS.CONVERSATIONS, time: 0, count, order };
       utils.extend(_params, params);
       io.sendCommand(SIGNAL_CMD.QUERY, _params, (result) => {
-        let { conversations } = result;
-        conversationUtils.add(conversations);
+        conversationUtils.add(result.conversations);
+        let conversations = conversationUtils.get();
         resolve({ conversations });
       });
     });
@@ -109,6 +110,41 @@ export default function(io, emitter){
     });
   };
 
+  let setDraft = (conversation) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, conversation, FUNC_PARAM_CHECKER.SET_DRAFT);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let key = common.getDraftKey(conversation);
+      let { draft } = conversation;
+      Storage.set(key, draft);
+      resolve();
+    });
+  };
+  let getDraft = (conversation) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, conversation, FUNC_PARAM_CHECKER.GET_DRAFT);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let key = common.getDraftKey(conversation);
+      let draft = Storage.get(key);
+      resolve(draft);
+    });
+  };
+  let removeDraft = (conversation) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, conversation, FUNC_PARAM_CHECKER.GET_DRAFT);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let key = common.getDraftKey(conversation);
+      let draft = Storage.remove(key);
+      resolve(draft);
+    });
+  };
+
   function createConversation(message){
     let { conversationId, conversationType, conversationTitle, conversationPortrait, conversationExts } = message;
 
@@ -139,5 +175,8 @@ export default function(io, emitter){
     clearUnreadcount,
     getTotalUnreadcount,
     clearTotalUnreadcount,
+    setDraft,
+    getDraft,
+    removeDraft,
   };
 }

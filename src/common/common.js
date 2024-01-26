@@ -166,6 +166,10 @@ function ConversationUtils(){
         });
         return conversations.push(conversation);
       }
+      let key = getDraftKey(item);
+      let draft = Storage.get(key);
+      draft = utils.isEmpty(draft) ? '' : draft;
+      utils.extend(item, { draft })
       conversations.push(item);
     });
 
@@ -319,6 +323,9 @@ function uploadFrame(upload, option, callback){
   }, option);
 }
 
+function getDraftKey(item){
+  return `draft_${item.conversationType}_${item.conversationId}`;
+}
 export default {
   check,
   getNum,
@@ -331,5 +338,6 @@ export default {
   checkUploadType,
   formatMediaMessage,
   uploadThumbnail,
-  uploadFrame
+  uploadFrame,
+  getDraftKey,
 }

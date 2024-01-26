@@ -66,6 +66,8 @@ export let FUNC_PARAM_CHECKER = {
   GETCONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
 
   CLEARUNREADCOUNT: [{ name: 'conversationType' }, { name: 'conversationId' }],
+  SET_DRAFT: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'draft' }],
+  GET_DRAFT: [{ name: 'conversationType' }, { name: 'conversationId' }],
   REMOVECONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
 
   JOINCHATROOM: [{ name: 'id', type: 'String' }],

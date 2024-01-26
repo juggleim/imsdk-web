@@ -6,6 +6,7 @@ export default function () {
   }
 */
   let EmitterEvents = {};
+  let EmitterOnceEvent = {};
   let on = (name, event) => {
     let events = EmitterEvents[name] || [];
     events.push(event);
@@ -14,8 +15,13 @@ export default function () {
     utils.extend(EmitterEvents, eventObj);
   }
 
+  let once = (name, event) => {
+    EmitterOnceEvent[name] = event;
+  }
+
   let off = (name) => {
     delete EmitterEvents[name];
+    delete EmitterOnceEvent[name];
   }
 
   let emit = (name, data) => {
@@ -23,6 +29,8 @@ export default function () {
     utils.forEach(events, (event) => {
       event(data);
     });
+    let event = EmitterOnceEvent[name] || utils.noop;
+    event(data);
   }
 
   let clear = () => {
@@ -34,6 +42,7 @@ export default function () {
     on,
     off,
     emit,
-    clear
+    clear,
+    once
   }
 }

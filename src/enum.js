@@ -150,7 +150,7 @@ export let MESSAGE_FLAG = {
   STATE: 4,
   STORAGE: 8,
   COUNT_STORAGE: 10,
-  IS_UPDATED: 16,
+  IS_UPDATED: 26,
 };
 
 export let UPLOAD_TYPE = {

@@ -90,6 +90,7 @@ export default function({ data, callback, index }){
   if(utils.isEqual(COMMAND_TOPICS.UPDATE_MESSAGE, topic)){
     let { conversationId: targetId, conversationType: channelType, messageId: msgId, content, sentTime: msgTime } = data;
     let codec = Proto.lookup('codec.ModifyMsgReq');
+    content = utils.toJSON(content);
     let message = codec.create({
       channelType,
       targetId,

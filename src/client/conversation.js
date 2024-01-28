@@ -14,7 +14,7 @@ export default function(io, emitter){
   io.on(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, (message) => {
 
     // 如果会话最后一条消息和被撤回消息不匹配，不更新会话列表
-    if(utils.isEqual(message.name, MESSAGE_TYPE.RECALL)){
+    if(utils.isEqual(message.name, MESSAGE_TYPE.RECALL) || utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       let { content: { messageId } } = message;
       let conversation = conversationUtils.getPer(message);
       let { latestMessage } = conversation || {};

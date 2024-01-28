@@ -8,24 +8,24 @@ export default function(io, emitter){
   let messageCacher = MessageCacher();
 
   io.on(SIGNAL_NAME.CMD_RECEIVED, (message) => {
+
+    if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
+      let { content: { content, messageId, sentTime } } = message;
+      let str = utils.decodeBase64(content);
+      let newContent = utils.parse(str);
+      // 将被修改消息的 messageId 和 sentTime 赋值给 message，伪装成 message 对象抛给业务层
+      utils.extend(message, { content: newContent, messageId, sentTime });
+    }
+
     // 收到消息一定要更新会话列表
-    io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);
+    io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, utils.clone(message));
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.RECALL)){
       return emitter.emit(EVENT.MESSAGE_RECALLED, message);
     }
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
-      let { conversationType, conversationId, content, sender } = message;
-      let notify = { 
-        conversationType, 
-        conversationId, 
-        content: content.content, 
-        messageId: content.messageId,
-        sentTime: content.sentTime,
-        sender 
-      };
-      return emitter.emit(EVENT.MESSAGE_UPDATED, notify);
+      return emitter.emit(EVENT.MESSAGE_UPDATED, message);
     }
     if(utils.isEqual(message.name, MESSAGE_TYPE.READ_MSG)){
       let { conversationType, conversationId, content, sender, sentTime, messageId } = message;
@@ -202,6 +202,22 @@ export default function(io, emitter){
         ...message
       };
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, (result) => {
+        let sender = io.getCurrentUser();
+        let { messageId, conversationType, conversationId } = message;
+        let msg = {
+          messageId, 
+          conversationType, 
+          conversationId,
+          name: MESSAGE_TYPE.MODIFY,
+          sender,
+          isSender: true,
+          isUpdated: true,
+          content: {
+            messageId,
+            ...message.content
+          }
+        };
+        io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
         resolve(result);
       });
     });

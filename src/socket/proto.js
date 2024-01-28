@@ -676,6 +676,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           groupInfo: {
             type: "GroupInfo",
             id: 13
+          },
+          syncTime: {
+            type: "int64",
+            id: 14
           }
         }
       },
@@ -934,21 +938,17 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "MentionType",
             id: 1
           },
-          senderId: {
+          msgId: {
             type: "string",
             id: 2
           },
-          msgId: {
-            type: "string",
-            id: 3
-          },
           msgIndex: {
             type: "int64",
-            id: 4
+            id: 3
           },
           msgTime: {
             type: "int64",
-            id: 5
+            id: 4
           }
         }
       },

@@ -225,6 +225,7 @@ message Conversation{
     int32 undisturbType = 11;
     UserInfo userInfo = 12;
     GroupInfo groupInfo = 13;
+    int64 syncTime = 14;
 }
 
 message SyncMsgReq{
@@ -312,10 +313,9 @@ message QryMentionMsgsResp{
 }
 message MentionMsg{
     MentionType mentionType = 1;
-    string senderId = 2;
-    string msgId = 3;
-    int64 msgIndex = 4;
-    int64 msgTime = 5;
+    string msgId = 2;
+    int64 msgIndex = 3;
+    int64 msgTime = 4;
 }
 message QryUploadTokenResp{
     OssType ossType = 1;

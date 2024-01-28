@@ -383,7 +383,9 @@ const find = (arrs, callback) => {
 };
 const toObject = (arrs) => {
   let objs = {};
-  forEach(arrs, ({ key, value }) => {
+  forEach(arrs, (item = {}) => {
+    let key = item.key;
+    let value = item.value;
     objs[key] = value;
   });
   return objs;

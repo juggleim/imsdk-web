@@ -137,11 +137,13 @@ export default function Decoder(cache, io){
     let payload = Proto.lookup('codec.QryConversationsResp');
     let { conversations } = payload.decode(data);
     conversations = conversations.map((conversation) => {
-      let { msg, targetId, unreadCount, updateTime: latestReadTime, userInfo, groupInfo } = conversation;
+      let { msg, targetId, unreadCount, updateTime: latestReadTime, userInfo, groupInfo, channelType: conversationType } = conversation;
       utils.extend(msg, { targetId });
       
-      let latestMessage = msgFormat(msg);
-      let { conversationType } = latestMessage;
+      let latestMessage = {  }
+      if(!utils.isEqual(msg.msgContent.length, 0)){
+        latestMessage = msgFormat(msg);
+      }
       
       if(utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)){
         let { groupName, groupPortrait, extFields, groupId } = groupInfo;

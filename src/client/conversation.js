@@ -1,4 +1,4 @@
-import { FUNC_PARAM_CHECKER, SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME, EVENT, MESSAGE_ORDER, CONNECT_STATE } from "../enum";
+import { FUNC_PARAM_CHECKER, SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME, EVENT, MESSAGE_ORDER, CONNECT_STATE, MESSAGE_TYPE } from "../enum";
 import utils from "../utils";
 import common from "../common/common";
 import Storage from "../common/storage";
@@ -12,6 +12,16 @@ export default function(io, emitter){
   let conversationUtils = common.ConversationUtils();
 
   io.on(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, (message) => {
+
+    // 如果会话最后一条消息和被撤回消息不匹配，不更新会话列表
+    if(utils.isEqual(message.name, MESSAGE_TYPE.RECALL)){
+      let { content: { messageId } } = message;
+      let conversation = conversationUtils.getPer(message);
+      let { latestMessage } = conversation || {};
+      if(!utils.isEqual(latestMessage.messageId, messageId)){
+        return;
+      }
+    }
     let conversation = createConversation(message);
     conversationUtils.update(conversation);
 

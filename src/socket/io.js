@@ -63,18 +63,18 @@ export default function IO(config){
         let { ws: protocol } = utils.getProtocol();
         let url = `${protocol}//${domain}/im`;
         ws = new WebSocket(url);
-        ws.addEventListener("open", () => {
+        ws.onopen = function(){
           sendCommand(SIGNAL_CMD.CONNECT, { appkey, token });
-        });
-        ws.addEventListener("close", onDisconnect);
-        ws.addEventListener("error", onDisconnect);
-        ws.addEventListener("message", ({ data }) => {
+        };
+        ws.onclose = onDisconnect;
+        ws.onerror = onDisconnect;
+        ws.onmessage = function({ data }){
           let reader = new FileReader();
           reader.onload = function() {
             bufferHandler(this.result);
           }
           reader.readAsArrayBuffer(data);
-        });
+        };
       });
     }, ({ result: { code } }) => {
       let error = common.getError(code);

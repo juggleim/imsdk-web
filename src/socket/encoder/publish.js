@@ -70,12 +70,13 @@ export default function({ data, callback, index }){
     let targetId = '';
 
     let msgs = utils.map(messages, (item) => {
-      let { conversationType, conversationId, sentTime, messageId } = item;
+      let { conversationType, conversationId, sentTime, messageId, messageIndex } = item;
       channelType = conversationType;
       targetId = conversationId;
       return { 
         msgId: messageId,
-        msgTime: sentTime
+        msgTime: sentTime,
+        msgIndex: messageIndex
       };
     });
     let codec = Proto.lookup('codec.MarkReadReq');

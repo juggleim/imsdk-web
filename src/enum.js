@@ -115,6 +115,7 @@ export let EVENT = {
   MESSAGE_RECEIVED: 'message_received',
   MESSAGE_RECALLED: 'message_recalled',
   MESSAGE_UPDATED: 'message_updated',
+  MESSAGE_READED: 'message_readed',
   CONVERSATION_CHANGED: 'conversation_changed',
 };
 export let CONNECT_STATE = {

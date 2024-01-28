@@ -27,6 +27,18 @@ export default function(io, emitter){
       };
       return emitter.emit(EVENT.MESSAGE_UPDATED, notify);
     }
+    if(utils.isEqual(message.name, MESSAGE_TYPE.READ_MSG)){
+      let { conversationType, conversationId, content, sender, sentTime, messageId } = message;
+      let notify = {
+        conversationType, 
+        conversationId, 
+        content, 
+        messageId,
+        sentTime,
+        sender
+      };
+      return emitter.emit(EVENT.MESSAGE_READED, notify);
+    }
     if(!messageCacher.isInclude(message)){
       emitter.emit(EVENT.MESSAGE_RECEIVED, message);
       let { conversationId, conversationType } = message;

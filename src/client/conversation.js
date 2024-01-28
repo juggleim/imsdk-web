@@ -1,4 +1,4 @@
-import { FUNC_PARAM_CHECKER, SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME, EVENT, MESSAGE_ORDER, CONNECT_STATE, MESSAGE_TYPE } from "../enum";
+import { FUNC_PARAM_CHECKER, SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME, EVENT, MESSAGE_ORDER, CONNECT_STATE, MESSAGE_TYPE, MENTION_TYPE } from "../enum";
 import utils from "../utils";
 import common from "../common/common";
 import Storage from "../common/storage";
@@ -165,7 +165,7 @@ export default function(io, emitter){
   };
 
   function createConversation(message){
-    let { conversationId, conversationType, conversationTitle, conversationPortrait, conversationExts } = message;
+    let { conversationId, conversationType, conversationTitle, conversationPortrait, conversationExts, mentionInfo, messageId } = message;
 
     let $conversation = {
       conversationId,
@@ -177,6 +177,23 @@ export default function(io, emitter){
       unreadCount: 0,
       latestReadTime: 0
     };
+    let _conversation = conversationUtils.getPer(message);
+    let latestMentionMsg = _conversation.latestMentionMsg;
+    if(mentionInfo){
+      let { members, type } = mentionInfo;
+      let user = io.getCurrentUser();
+      let index = utils.find(members, (member) => {
+        return utils.isEqual(user.id, member.id);
+      });
+      if(index > -1 || utils.isEqual(type, MENTION_TYPE.ALL)){
+        latestMentionMsg = {
+          type,
+          messageId,
+          sender: message.sender
+        };
+      }
+      utils.extend($conversation, { latestMentionMsg });
+    }
     if(message.isSender){
       let conversation = conversationUtils.getPer(message);
       utils.extend($conversation, {

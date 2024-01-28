@@ -379,9 +379,9 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "MentionType",
             id: 1
           },
-          targetIds: {
+          targetUsers: {
             rule: "repeated",
-            type: "string",
+            type: "UserInfo",
             id: 2
           }
         }
@@ -949,6 +949,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           msgTime: {
             type: "int64",
             id: 4
+          },
+          senderInfo: {
+            type: "UserInfo",
+            id: 5
           }
         }
       },

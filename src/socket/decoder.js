@@ -4,6 +4,7 @@ import Proto from "./proto";
 import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, MESSAGE_FLAG, CONNECT_ACK_INDEX, PONG_INDEX, UPLOAD_TYPE, CONVERATION_TYPE } from "../enum";
 import GroupCacher from "../common/group-cacher";
 import UserCacher from "../common/user-cacher";
+import common from "../common/common";
 
 export default function Decoder(cache, io){
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
@@ -137,9 +138,25 @@ export default function Decoder(cache, io){
     let payload = Proto.lookup('codec.QryConversationsResp');
     let { conversations } = payload.decode(data);
     conversations = conversations.map((conversation) => {
-      let { msg, targetId, unreadCount, updateTime: latestReadTime, userInfo, groupInfo, channelType: conversationType } = conversation;
+      let { msg, 
+            targetId, 
+            unreadCount, 
+            updateTime: latestReadTime, 
+            userInfo, 
+            groupInfo, 
+            LatestMentionMsg: latestMentionMsg, 
+            channelType: conversationType 
+          } = conversation;
       utils.extend(msg, { targetId });
       
+      if(latestMentionMsg){
+        let { mentionType, senderInfo, msgId } = latestMentionMsg;
+        latestMentionMsg = {
+          type: mentionType,
+          sender: common.formatUser(senderInfo),
+          messageId: msgId
+        };
+      }
       let latestMessage = {  }
       if(!utils.isEqual(msg.msgContent.length, 0)){
         latestMessage = msgFormat(msg);
@@ -172,6 +189,7 @@ export default function Decoder(cache, io){
       }
 
       let { conversationTitle, conversationPortrait, conversationExts } = latestMessage;
+
       return {
         conversationType,
         conversationId: targetId,
@@ -181,6 +199,7 @@ export default function Decoder(cache, io){
         conversationTitle,
         conversationPortrait,
         conversationExts,
+        latestMentionMsg
       };
     });
     return { conversations, index };
@@ -233,8 +252,19 @@ export default function Decoder(cache, io){
       groupInfo = GroupCacher.get(groupId);
     }
 
-    let { userPortrait, nickname, extFields: userExts } = targetUserInfo;
-    userExts = utils.toObject(userExts);
+    let targetUser = common.formatUser(targetUserInfo);
+
+    if(mentionInfo){
+      let { targetUsers, mentionType } = mentionInfo;
+      let members = utils.map(targetUsers, (user) => {
+        user = common.formatUser(user);
+        return user;
+      });
+      mentionInfo = {
+        type: mentionType,
+        members,
+      };
+    }
 
     let isUpdated = utils.isEqual(flags, MESSAGE_FLAG.IS_UPDATED);
     let _message = {
@@ -243,12 +273,7 @@ export default function Decoder(cache, io){
       conversationTitle: '',
       conversationPortrait: '',
       conversationExts: {},
-      sender: {
-        id: senderId,
-        name: nickname,
-        portrait: userPortrait,
-        exts: userExts
-      },
+      sender: targetUser,
       messageId: msgId, 
       sentTime: msgTime,
       name: msgType,
@@ -277,9 +302,9 @@ export default function Decoder(cache, io){
 
     if(utils.isEqual(conversationType, CONVERATION_TYPE.PRIVATE)){
       utils.extend(_message, { 
-        conversationTitle: nickname,
-        conversationPortrait: userPortrait,
-        conversationExts: userExts
+        conversationTitle: targetUser.name,
+        conversationPortrait: targetUser.portrait,
+        conversationExts: targetUser.exts,
       });
     }
 

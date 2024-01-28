@@ -10,9 +10,20 @@ export default function({ data, callback, index }){
     let { name, content, mentionInfo, flag } = data;
     content  = utils.toJSON(content);
     let codec = Proto.lookup('codec.UpMsg');
+    let mention = { };
+    if(mentionInfo){
+      let { members = [], type } = mentionInfo;
+      members = utils.map(members, (member) => {
+        return { userId: member.id };
+      });
+      utils.extend(mention, {
+        mentionType: type,
+        targetUsers: members
+      }) 
+    }
     let message = codec.create({
       msgType: name,
-      mentionInfo,
+      mentionInfo: mention,
       flags: flag,
       msgContent: new TextEncoder().encode(content)
     });

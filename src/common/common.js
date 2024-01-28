@@ -142,7 +142,7 @@ function ConversationUtils(){
       if(!isNew){
         let conversation = conversations.splice(index, 1)[0]; 
         let { unreadCount } = conversation;
-        let { latestMessage, conversationTitle, conversationPortrait, conversationExts } = item;
+        let { latestMessage, conversationTitle, conversationPortrait, conversationExts, latestMentionMsg } = item;
 
         if(utils.isEmpty(conversationTitle)){
           conversationTitle = conversation.conversationTitle;
@@ -162,7 +162,8 @@ function ConversationUtils(){
           latestMessage: latestMessage,
           conversationTitle, 
           conversationPortrait,
-          conversationExts
+          conversationExts,
+          latestMentionMsg
         });
         return conversations.push(conversation);
       }
@@ -326,6 +327,16 @@ function uploadFrame(upload, option, callback){
 function getDraftKey(item){
   return `draft_${item.conversationType}_${item.conversationId}`;
 }
+function formatUser(user){
+  let exts = utils.toObject(user.extFields);
+  utils.extend(user, { extFields: exts });
+  return utils.rename(user, {
+    extFields: 'exts',
+    nickname: 'name',
+    userId: 'id',
+    userPortrait: 'portrait',
+  });
+}
 export default {
   check,
   getNum,
@@ -340,4 +351,5 @@ export default {
   uploadThumbnail,
   uploadFrame,
   getDraftKey,
+  formatUser
 }

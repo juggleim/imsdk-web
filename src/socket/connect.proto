@@ -127,7 +127,7 @@ message UpMsg {
 }
 message MentionInfo {
     MentionType mentionType = 1;
-    repeated string targetIds = 2;  //被@ 人列表
+    repeated UserInfo targetUsers = 2;  //被@ 人列表
 }
 enum MentionType{
     MentionDefault = 0;
@@ -316,6 +316,7 @@ message MentionMsg{
     string msgId = 2;
     int64 msgIndex = 3;
     int64 msgTime = 4;
+    UserInfo senderInfo = 5;
 }
 message QryUploadTokenResp{
     OssType ossType = 1;

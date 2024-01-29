@@ -60,7 +60,8 @@ export default function(io, emitter){
       if(isSynced && utils.isEqual(time, 0)){
         return resolve({ conversations });
       }
-      let _params = { topic: COMMAND_TOPICS.CONVERSATIONS, time: 0, count, order };
+      let user = io.getCurrentUser();
+      let _params = { topic: COMMAND_TOPICS.CONVERSATIONS, time: 0, count, order, userId: user.id };
       utils.extend(_params, params);
       io.sendCommand(SIGNAL_CMD.QUERY, _params, (result) => {
         conversationUtils.add(result.conversations);

@@ -273,7 +273,7 @@ export default function Decoder(cache, io){
       conversationTitle: '',
       conversationPortrait: '',
       conversationExts: {},
-      sender: targetUser,
+      sender: utils.clone(targetUser),
       messageId: msgId, 
       sentTime: msgTime,
       name: msgType,

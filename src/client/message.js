@@ -186,7 +186,7 @@ export default function(io, emitter){
         topic: COMMAND_TOPICS.READ_MESSAGE,
         messages
       };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
+      io.sendCommand(SIGNAL_CMD.QUERY, data, () => {
         resolve();
       });
     });

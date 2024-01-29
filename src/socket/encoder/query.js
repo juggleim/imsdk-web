@@ -1,4 +1,4 @@
-import { COMMAND_TOPICS } from "../../enum";
+import { COMMAND_TOPICS, CONVERATION_TYPE } from "../../enum";
 import utils from "../../utils";
 import Proto from "../proto";
 
@@ -76,6 +76,32 @@ export default function getQueryBody({ data, callback, index }){
     targetId = userId;
     let codec = Proto.lookup('codec.QryTotalUnreadCountReq');
     let message = codec.create({});
+    buffer = codec.encode(message).finish();
+  }
+
+  if(utils.isEqual(COMMAND_TOPICS.READ_MESSAGE, topic)){
+    let { messages } = data;
+    messages = utils.isArray(messages) ? messages : [messages];
+    let channelType = CONVERATION_TYPE.PRIVATE;
+    let channelId = '';
+    
+    let msgs = utils.map(messages, (item) => {
+      let { conversationType, conversationId, sentTime, messageId, messageIndex } = item;
+      channelType = conversationType;
+      channelId = conversationId;
+      targetId = conversationId;
+      return { 
+        msgId: messageId,
+        msgTime: sentTime,
+        msgIndex: messageIndex
+      };
+    });
+    let codec = Proto.lookup('codec.MarkReadReq');
+    let message = codec.create({
+      channelType,
+      targetId: channelId,
+      msgs
+    });
     buffer = codec.encode(message).finish();
   }
 

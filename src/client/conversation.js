@@ -22,6 +22,9 @@ export default function(io, emitter){
         return;
       }
     }
+    if(utils.isEqual(message.name, MESSAGE_TYPE.READ_MSG)){
+      return;
+    }
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       let conversation = conversationUtils.getPer(message);
       let { latestMessage } = conversation || {};

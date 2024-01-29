@@ -46,10 +46,11 @@ export default function({ data, callback, index }){
     let { conversations, userId } = data;
     conversations = utils.isArray(conversations) ? conversations : [conversations];
     let codec = Proto.lookup('codec.ClearUnreadReq');
-    let list = utils.map(conversations, ({ conversationType, conversationId }) => {
+    let list = utils.map(conversations, ({ conversationType, conversationId, messageIndex }) => {
       return { 
         channelType: conversationType,
-        targetId: conversationId 
+        targetId: conversationId,
+        latestReadedMsgIndex: messageIndex
       };
     });
     let message = codec.create({

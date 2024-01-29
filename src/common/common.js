@@ -157,6 +157,11 @@ function ConversationUtils(){
         if(!latestMessage.isSender){
           unreadCount = unreadCount + 1
         }
+        // 自己发送的多端同步清空消息，未读数设置为 0，最后一条消息保持不变
+        if(utils.isEqual(latestMessage.name, MESSAGE_TYPE.CLEAR_UNREAD) && latestMessage.isSender){
+          unreadCount = 0;
+          latestMessage = conversation.latestMessage;
+        }
         utils.extend(conversation, { 
           unreadCount: unreadCount,
           latestMessage: latestMessage,

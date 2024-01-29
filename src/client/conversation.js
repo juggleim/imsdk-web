@@ -25,6 +25,15 @@ export default function(io, emitter){
     if(utils.isEqual(message.name, MESSAGE_TYPE.READ_MSG)){
       return;
     }
+    if(utils.isEqual(message.name, MESSAGE_TYPE.CLEAR_UNREAD)){
+      let { content, name, isSender } = message;
+      let { conversations: msgs } = content;
+      utils.forEach(msgs, (msg) => {
+        utils.extend(msg, { name, isSender });
+        next(msg);
+      });
+      return;
+    }
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       let conversation = conversationUtils.getPer(message);
       let { latestMessage } = conversation || {};
@@ -34,12 +43,16 @@ export default function(io, emitter){
       }
       utils.extend(message, { name: latestMessage.name, isUpdated: true });
     }
-    let conversation = createConversation(message);
-    conversationUtils.update(conversation);
+    next(message);
 
-    let conversations = conversationUtils.get();
-    let newConversation = conversationUtils.getPer(conversation);
-    emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations, conversation: newConversation });
+    function next(message){
+      let conversation = createConversation(message);
+      conversationUtils.update(conversation);
+
+      let conversations = conversationUtils.get();
+      let newConversation = conversationUtils.getPer(conversation);
+      emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations, conversation: newConversation });
+    }
   });
 
   io.on(SIGNAL_NAME.CONN_CHANGED, ({ state }) => {
@@ -95,8 +108,9 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      let user = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.CLEAR_UNREAD };
-      utils.extend(data, { conversations });
+      utils.extend(data, { conversations, userId: user.id });
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
         conversationUtils.read(conversations);
         resolve();

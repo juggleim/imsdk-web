@@ -336,6 +336,17 @@ export default function Decoder(cache, io){
       utils.extend(content, { msgs });
     }
 
+    if(utils.isEqual(MESSAGE_TYPE.CLEAR_UNREAD, msgType)){
+      let { conversations } = content;
+      conversations = utils.map(conversations, ({ channel_type, target_id }) => {
+        return {
+          conversationType: channel_type,
+          conversationId: target_id
+        };
+      });
+      utils.extend(content, { conversations });
+    }
+
     utils.extend(_message, { content })
     return _message;
   }

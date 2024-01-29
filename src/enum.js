@@ -215,7 +215,8 @@ export let MESSAGE_TYPE = {
   RECALL: 'jg:recall',
   READ_MSG: 'jg:readedmsg',
   MODIFY: 'jg:modify',
-  CLEAR_MSG: 'jg:cleanmsg'
+  CLEAR_MSG: 'jg:cleanmsg',
+  CLEAR_UNREAD: 'jg:clearunread',
 }
 
 export let MENTION_TYPE = {

@@ -20,6 +20,10 @@ export default function(io, emitter){
     // 收到消息一定要更新会话列表
     io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, utils.clone(message));
 
+    //清理未读同步，只变更会话列表
+    if(utils.isEqual(message.name, MESSAGE_TYPE.CLEAR_UNREAD)){
+      return;
+    }
     if(utils.isEqual(message.name, MESSAGE_TYPE.RECALL)){
       return emitter.emit(EVENT.MESSAGE_RECALLED, message);
     }

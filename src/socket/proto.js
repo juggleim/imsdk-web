@@ -304,6 +304,11 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           order: {
             type: "int32",
             id: 5
+          },
+          msgTypes: {
+            rule: "repeated",
+            type: "string",
+            id: 6
           }
         }
       },

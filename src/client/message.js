@@ -103,7 +103,8 @@ export default function(io, emitter){
         count: 20,
         userId: userId,
         topic: COMMAND_TOPICS.HISTORY_MESSAGES,
-        targetId: conversationId
+        targetId: conversationId,
+        names: []
       };
       params = utils.extend(params, conversation);
       io.sendCommand(SIGNAL_CMD.QUERY, params, (result) => {

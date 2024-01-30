@@ -7,14 +7,15 @@ export default function getQueryBody({ data, callback, index }){
   let buffer = [];
   
   if(utils.isEqual(topic, COMMAND_TOPICS.HISTORY_MESSAGES)){
-    let { conversationType, time, count, order } = data;
+    let { conversationType, time, count, order, names } = data;
     let codec = Proto.lookup('codec.QryHisMsgsReq');
     let message = codec.create({
       converId: targetId,
       type: conversationType,
       startTime: time,
       count: count,
-      order: order
+      order: order,
+      msgTypes: names
     });
     buffer = codec.encode(message).finish();
   }

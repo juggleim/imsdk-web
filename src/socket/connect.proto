@@ -104,6 +104,7 @@ message QryHisMsgsReq{
     int64 startTime = 3;
     int32 count = 4;
     int32 order = 5;
+    repeated string msgTypes = 6;
 }
 
 message DownMsgSet{

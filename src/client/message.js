@@ -31,17 +31,14 @@ export default function(io, emitter){
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       return emitter.emit(EVENT.MESSAGE_UPDATED, message);
     }
-    if(utils.isEqual(message.name, MESSAGE_TYPE.READ_MSG)){
-      let { conversationType, conversationId, content, sender, sentTime, messageId } = message;
+    if(utils.isEqual(message.name, MESSAGE_TYPE.READ_MSG) || utils.isEqual(message.name, MESSAGE_TYPE.READ_GROUP_MSG)){
+      let { conversationType, conversationId, content: { msgs } } = message;
       let notify = {
         conversationType, 
         conversationId, 
-        content, 
-        messageId,
-        sentTime,
-        sender
+        messages: msgs
       };
-      return emitter.emit(EVENT.MESSAGE_READED, notify);
+      return emitter.emit(EVENT.MESSAGE_READ, notify);
     }
     if(!messageCacher.isInclude(message)){
       emitter.emit(EVENT.MESSAGE_RECEIVED, message);
@@ -196,6 +193,23 @@ export default function(io, emitter){
       });
     });
   };
+  let getMessageReadDetails = (message) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.GET_MESSAGE_READ_DETAILS);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let data = {
+        topic: COMMAND_TOPICS.GET_READ_MESSAGE_DETAIL,
+        message
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        delete result.index;
+        resolve(result);
+      });
+    });
+  };
+
   let updateMessage = (message) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, message, FUNC_PARAM_CHECKER.UPDATEMESSAGE);
@@ -382,6 +396,7 @@ export default function(io, emitter){
     clearMessage,
     recallMessage,
     readMessage,
+    getMessageReadDetails,
     updateMessage,
     getMentionMessages,
     getFileToken,

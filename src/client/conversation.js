@@ -22,7 +22,7 @@ export default function(io, emitter){
         return;
       }
     }
-    if(utils.isEqual(message.name, MESSAGE_TYPE.READ_MSG)){
+    if(utils.isInclude([MESSAGE_TYPE.READ_MSG, MESSAGE_TYPE.READ_GROUP_MSG], message.name)){
       return;
     }
     if(utils.isEqual(message.name, MESSAGE_TYPE.CLEAR_UNREAD)){

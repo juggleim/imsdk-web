@@ -78,6 +78,10 @@ export default function Decoder(cache, io){
       result = getTotalUnread(index, data);
     }
 
+    if(utils.isEqual(topic, COMMAND_TOPICS.GET_READ_MESSAGE_DETAIL)){
+      result = getMessageReadDetails(index, data);
+    }
+
     if(utils.isEqual(topic, COMMAND_TOPICS.GET_MENTION_MSGS)){
       result = getMentionMessages(index, data);
     }
@@ -123,6 +127,26 @@ export default function Decoder(cache, io){
     let user = payload.decode(data);
     return {
       index, user
+    };
+  }
+
+  function getMessageReadDetails(index, data){
+    let payload = Proto.lookup('codec.QryReadDetailResp');
+    let { readCount, memberCount, readMembers, unreadMembers } = payload.decode(data);
+    readMembers = utils.map(readMembers, (item) => {
+      return {
+        member: common.formatUser(item.member),
+        readTime: item.time,
+      };
+    });
+    unreadMembers = utils.map(unreadMembers, (item) => {
+      return {
+        member: common.formatUser(item.member),
+        readTime: item.time,
+      };
+    });
+    return {
+      index, readCount, unreadCount: memberCount - readCount, readMembers, unreadMembers
     };
   }
 
@@ -224,7 +248,7 @@ export default function Decoder(cache, io){
     return { isFinished, messages, index };
   }
   function msgFormat(msg){
-    let { senderId, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo } = msg;
+    let { senderId, memberCount, readCount, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo } = msg;
     let content = new TextDecoder().decode(msgContent);
     content = utils.parse(content);
 
@@ -297,6 +321,8 @@ export default function Decoder(cache, io){
         conversationTitle: groupName,
         conversationPortrait: groupPortrait,
         conversationExts: extFields,
+        unreadCount: memberCount - readCount,
+        readCount: readCount
       });
     }
 
@@ -332,6 +358,18 @@ export default function Decoder(cache, io){
       let { msgs } = content;
       msgs = utils.map(msgs, ({ msg_id: messageId }) => {
         return { messageId };
+      });
+      utils.extend(content, { msgs });
+    }
+
+    if(utils.isEqual(MESSAGE_TYPE.READ_GROUP_MSG, msgType)){
+      let { msgs } = content;
+      msgs = utils.map(msgs, ({ msg_id, member_count, read_count }) => {
+        return { 
+          messageId: msg_id,
+          unreadCount: member_count - read_count,
+          readCount: read_count
+        };
       });
       utils.extend(content, { msgs });
     }

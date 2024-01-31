@@ -156,6 +156,8 @@ message DownMsg{
     GroupInfo groupInfo = 18;
     MergedMsgs mergedMsgs = 19;
     int32 undisturbType = 20;
+    int32 memberCount = 21;
+    int32 readCount = 22;
 }
 
 message MergedMsgs{
@@ -343,4 +345,19 @@ enum FileType {
     Audio = 2;
     Video = 3;
     File = 4;
+}
+message QryReadDetailReq{
+    string targetId = 1;
+    ChannelType channelType = 2;
+    string msgId = 3;
+}
+message QryReadDetailResp{
+    int32 readCount = 1;
+    int32 memberCount = 2;
+    repeated MemberReadDetailItem readMembers = 3;
+    repeated MemberReadDetailItem unreadMembers = 4;
+}
+message MemberReadDetailItem{
+    UserInfo member = 1;
+    int64 time = 2;
 }

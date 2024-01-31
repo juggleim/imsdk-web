@@ -56,6 +56,7 @@ export let FUNC_PARAM_CHECKER = {
   CLEARMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'time', type: 'Number' }],
   RECALLMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'sentTime' }],
   READMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'sentTime', type: 'Number' }, { name: 'messageId' }],
+  GET_MESSAGE_READ_DETAILS: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }],
   UPDATEMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'content', type: 'Object' }],
   GET_MENTIOIN_MESSAGES: [{ name: 'conversationType' }, { name: 'conversationId' }],
   GET_FILE_TOKEN: [{ name: 'type' }],
@@ -91,6 +92,7 @@ export let COMMAND_TOPICS = {
   CLEAR_UNREAD_TOTLAL_CONVERSATION: 'clear_total_unread',
 
   READ_MESSAGE: 'mark_read',
+  GET_READ_MESSAGE_DETAIL: 'qry_read_detail',
   UPDATE_MESSAGE: 'modify_msg',
   CLEAR_MESSAGE: 'clean_hismsg',
   GET_MSG_BY_IDS: 'qry_hismsg_by_ids',
@@ -115,7 +117,7 @@ export let EVENT = {
   MESSAGE_RECEIVED: 'message_received',
   MESSAGE_RECALLED: 'message_recalled',
   MESSAGE_UPDATED: 'message_updated',
-  MESSAGE_READED: 'message_readed',
+  MESSAGE_READ: 'message_read',
   CONVERSATION_CHANGED: 'conversation_changed',
 };
 export let CONNECT_STATE = {
@@ -214,6 +216,7 @@ export let MESSAGE_TYPE = {
   FILE: 'jg:file',
   RECALL: 'jg:recall',
   READ_MSG: 'jg:readntf',
+  READ_GROUP_MSG: 'jg:grpreadntf',
   MODIFY: 'jg:modify',
   CLEAR_MSG: 'jg:cleanmsg',
   CLEAR_UNREAD: 'jg:clearunread',

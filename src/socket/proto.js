@@ -475,6 +475,14 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           undisturbType: {
             type: "int32",
             id: 20
+          },
+          memberCount: {
+            type: "int32",
+            id: 21
+          },
+          readCount: {
+            type: "int32",
+            id: 22
           }
         }
       },
@@ -1013,6 +1021,56 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           Audio: 2,
           Video: 3,
           File: 4
+        }
+      },
+      QryReadDetailReq: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 2
+          },
+          msgId: {
+            type: "string",
+            id: 3
+          }
+        }
+      },
+      QryReadDetailResp: {
+        fields: {
+          readCount: {
+            type: "int32",
+            id: 1
+          },
+          memberCount: {
+            type: "int32",
+            id: 2
+          },
+          readMembers: {
+            rule: "repeated",
+            type: "MemberReadDetailItem",
+            id: 3
+          },
+          unreadMembers: {
+            rule: "repeated",
+            type: "MemberReadDetailItem",
+            id: 4
+          }
+        }
+      },
+      MemberReadDetailItem: {
+        fields: {
+          member: {
+            type: "UserInfo",
+            id: 1
+          },
+          time: {
+            type: "int64",
+            id: 2
+          }
         }
       }
     }

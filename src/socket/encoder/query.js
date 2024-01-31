@@ -106,6 +106,19 @@ export default function getQueryBody({ data, callback, index }){
     buffer = codec.encode(message).finish();
   }
 
+  if(utils.isEqual(COMMAND_TOPICS.GET_READ_MESSAGE_DETAIL, topic)){
+    let { message } = data;
+    let { conversationType: channelType, conversationId, messageId: msgId } = message;
+    let codec = Proto.lookup('codec.QryReadDetailReq');
+    let msg = codec.create({
+      channelType,
+      targetId: conversationId,
+      msgId,
+    });
+    targetId = msgId;
+    buffer = codec.encode(msg).finish();
+  }
+
   if(utils.isEqual(COMMAND_TOPICS.GET_MENTION_MSGS, topic)){
     let { conversationId: targetId, conversationType: channelType, count, order, messageIndex: startIndex } = data;
     let codec = Proto.lookup('codec.QryMentionMsgsReq');

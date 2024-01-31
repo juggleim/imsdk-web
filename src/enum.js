@@ -213,7 +213,7 @@ export let MESSAGE_TYPE = {
   VIDEO: 'jg:video',
   FILE: 'jg:file',
   RECALL: 'jg:recall',
-  READ_MSG: 'jg:readedmsg',
+  READ_MSG: 'jg:readntf',
   MODIFY: 'jg:modify',
   CLEAR_MSG: 'jg:cleanmsg',
   CLEAR_UNREAD: 'jg:clearunread',

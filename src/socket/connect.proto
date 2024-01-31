@@ -150,7 +150,7 @@ message DownMsg{
     string clientUid = 12;
     PushData pushData = 13;
     MentionInfo mentionInfo = 14;
-    bool isReaded = 15;
+    bool isRead = 15;
     // DownMsg referMsg = 16;
     UserInfo targetUserInfo = 17;
     GroupInfo groupInfo = 18;

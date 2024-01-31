@@ -224,7 +224,7 @@ export default function Decoder(cache, io){
     return { isFinished, messages, index };
   }
   function msgFormat(msg){
-    let { senderId, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isReaded, flags, targetUserInfo, groupInfo } = msg;
+    let { senderId, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo } = msg;
     let content = new TextDecoder().decode(msgContent);
     content = utils.parse(content);
 
@@ -280,7 +280,7 @@ export default function Decoder(cache, io){
       isSender: !!isSend,
       messageIndex: msgIndex,
       mentionInfo,
-      isReaded: !!isReaded,
+      isRead: !!isRead,
       isUpdated,
     };
 
@@ -346,7 +346,7 @@ export default function Decoder(cache, io){
       });
       utils.extend(content, { conversations });
     }
-
+//, unreadCount: 12, readCount: 20
     utils.extend(_message, { content })
     return _message;
   }

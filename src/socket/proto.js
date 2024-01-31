@@ -456,7 +456,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "MentionInfo",
             id: 14
           },
-          isReaded: {
+          isRead: {
             type: "bool",
             id: 15
           },

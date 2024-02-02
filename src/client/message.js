@@ -72,14 +72,14 @@ export default function(io, emitter){
       let topic = topics[conversationType];
       utils.extend(data, { topic })
 
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messageId, sentTime, code, msg }) => {
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messageId, sentTime, code, msg, index }) => {
         let sender = io.getCurrentUser() || {};
         utils.extend(message, { sender, isSender: true });
         if(code){
           utils.extend(message, { error: { code, msg } });
           return reject(message)
         }
-        utils.extend(message, { sentTime, messageId });
+        utils.extend(message, { sentTime, messageId, messageIndex: index });
         io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);
         resolve(message);
       });

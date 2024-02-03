@@ -397,6 +397,9 @@ export default function(io, emitter){
         return reject(error);
       }
       let { conversationType, conversationId, messages, labels, title } = params;
+      if(messages.length > 20){
+        return reject(ErrorType.TRANSFER_MESSAGE_COUNT_EXCEED);
+      }
       let mergeMsg = {
         channelType: CONVERATION_TYPE.PRIVATE,
         targetId: ''

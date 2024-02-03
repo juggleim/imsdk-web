@@ -1072,6 +1072,22 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 2
           }
         }
+      },
+      QryMergedMsgsReq: {
+        fields: {
+          startTime: {
+            type: "int64",
+            id: 1
+          },
+          count: {
+            type: "int32",
+            id: 2
+          },
+          order: {
+            type: "int32",
+            id: 3
+          }
+        }
       }
     }
   }

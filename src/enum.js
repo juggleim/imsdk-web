@@ -62,6 +62,8 @@ export let FUNC_PARAM_CHECKER = {
   GET_FILE_TOKEN: [{ name: 'type' }],
   
   SEND_FILE_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'content', type: 'Object' }],
+  SEND_MERGE_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messages', type: 'Array' }, { name: 'labels', type: 'Array' }, { name: 'title' }],
+  GET_MERGE_MESSAGES: [{ name: 'messageId' }],
 
   GETCONVERSATIONS: [{ name: 'limit' }],
   GETCONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
@@ -85,6 +87,8 @@ export let COMMAND_TOPICS = {
   SEND_GROUP: 'g_msg',
   SEND_PRIVATE: 'p_msg',
   SEND_CHATROOM: 'c_msg',
+  
+  GET_MERGE_MSGS: 'qry_merged_msgs',
 
   CLEAR_UNREAD: 'clear_unread',
   REMOVE_CONVERSATION: 'del_convers',
@@ -156,6 +160,7 @@ export let MESSAGE_FLAG = {
   STATE: 4,
   STORAGE: 8,
   COUNT_STORAGE: 10,
+  COUNT_STORAGE_MERGE: 42,
   IS_UPDATED: 26,
 };
 
@@ -214,6 +219,7 @@ export let MESSAGE_TYPE = {
   VOICE: 'jg:voice',
   VIDEO: 'jg:video',
   FILE: 'jg:file',
+  MERGE: 'jg:merge',
   RECALL: 'jg:recall',
   READ_MSG: 'jg:readntf',
   READ_GROUP_MSG: 'jg:grpreadntf',

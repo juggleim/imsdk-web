@@ -146,6 +146,14 @@ export default function getQueryBody({ data, callback, index }){
     let message = codec.create({ userId });
     buffer = codec.encode(message).finish();
   }
+
+  if(utils.isEqual(COMMAND_TOPICS.GET_MERGE_MSGS, topic)){
+    let { messageId, time, count, order } = data;
+    targetId = messageId;
+    let codec = Proto.lookup('codec.QryMergedMsgsReq');
+    let message = codec.create({ startTime: time, count, order });
+    buffer = codec.encode(message).finish();
+  }
   
   return {
     qryMsgBody: {

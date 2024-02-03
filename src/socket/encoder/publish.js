@@ -7,7 +7,7 @@ export default function({ data, callback, index }){
   let buffer = [];
 
   if(utils.isInclude([COMMAND_TOPICS.SEND_GROUP, COMMAND_TOPICS.SEND_PRIVATE], topic)){
-    let { name, content, mentionInfo, flag } = data;
+    let { name, content, mentionInfo, flag, mergeMsg } = data;
     content  = utils.toJSON(content);
     let codec = Proto.lookup('codec.UpMsg');
     let mention = { };
@@ -21,10 +21,12 @@ export default function({ data, callback, index }){
         targetUsers: members
       }) 
     }
+
     let message = codec.create({
       msgType: name,
       mentionInfo: mention,
       flags: flag,
+      mergedMsgs: mergeMsg,
       msgContent: new TextEncoder().encode(content)
     });
     buffer = codec.encode(message).finish();

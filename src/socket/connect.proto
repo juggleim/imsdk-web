@@ -361,3 +361,8 @@ message MemberReadDetailItem{
     UserInfo member = 1;
     int64 time = 2;
 }
+message QryMergedMsgsReq{
+    int64 startTime = 1;
+    int32 count = 2;
+    int32 order = 3;
+}

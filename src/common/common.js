@@ -124,6 +124,7 @@ function getMsgConfig(name){
     {name: MESSAGE_TYPE.IMAGE, option: { flag: MESSAGE_FLAG.COUNT_STORAGE }},
     {name: MESSAGE_TYPE.VOICE, option: { flag: MESSAGE_FLAG.COUNT_STORAGE }},
     {name: MESSAGE_TYPE.VIDEO, option: { flag: MESSAGE_FLAG.COUNT_STORAGE }},
+    {name: MESSAGE_TYPE.MERGE, option: { flag: MESSAGE_FLAG.COUNT_STORAGE_MERGE }},
   ];
   let config = configs.find(cfg => cfg.name == name ) || {};
   return config.option || {};

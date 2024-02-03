@@ -389,6 +389,59 @@ export default function(io, emitter){
     let option = { fileType: FILE_TYPE.VIDEO, scale: message.scale };
     return sendFile(option, message, callbacks)
   };
+
+  let sendMergeMessage = (params) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, params, FUNC_PARAM_CHECKER.SEND_MERGE_MESSAGE);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { conversationType, conversationId, messages, labels, title } = params;
+      let mergeMsg = {
+        channelType: CONVERATION_TYPE.PRIVATE,
+        targetId: ''
+      };
+      messages = utils.map(messages, (message) => {
+        utils.extend(mergeMsg, { 
+          channelType: message.conversationType,
+          targetId: message.conversationId
+        });
+        return { msgId: message.messageId, msgTime: message.sentTime, msgIndex: message.messageIndex };
+      });
+      let user = io.getCurrentUser();
+      utils.extend(mergeMsg, { userId: user.id, msgs: messages });
+      let msg = {
+        conversationId,
+        conversationType,
+        name: MESSAGE_TYPE.MERGE,
+        mergeMsg: mergeMsg,
+        content: {
+          labels,
+          title
+        }
+      };
+      return sendMessage(msg).then(resolve, reject);
+    });
+  };
+
+  let getMergeMessages = (params) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, params, FUNC_PARAM_CHECKER.GET_MERGE_MESSAGES);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let data = {
+        time: 0,
+        order: MESSAGE_ORDER.FORWARD,
+        count: 20,
+        topic: COMMAND_TOPICS.GET_MERGE_MSGS,
+      };
+      utils.extend(data, params);
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ isFinished, messages }) => {
+        resolve({ isFinished, messages });
+      });
+    });
+  };
   return {
     sendMessage,
     getMessages,
@@ -403,6 +456,8 @@ export default function(io, emitter){
     sendFileMessage,
     sendImageMessage,
     sendVoiceMessage,
-    sendVideoMessage
+    sendVideoMessage,
+    sendMergeMessage,
+    getMergeMessages,
   };
 }

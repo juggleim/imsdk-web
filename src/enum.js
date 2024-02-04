@@ -222,6 +222,7 @@ export let MESSAGE_TYPE = {
   FILE: 'jg:file',
   MERGE: 'jg:merge',
   RECALL: 'jg:recall',
+  RECALL_INFO: 'jg:recallinfo',
   READ_MSG: 'jg:readntf',
   READ_GROUP_MSG: 'jg:grpreadntf',
   MODIFY: 'jg:modify',

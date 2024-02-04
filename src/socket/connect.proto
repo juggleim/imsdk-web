@@ -151,7 +151,7 @@ message DownMsg{
     PushData pushData = 13;
     MentionInfo mentionInfo = 14;
     bool isRead = 15;
-    // DownMsg referMsg = 16;
+    DownMsg referMsg = 16;
     UserInfo targetUserInfo = 17;
     GroupInfo groupInfo = 18;
     MergedMsgs mergedMsgs = 19;

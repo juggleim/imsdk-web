@@ -7,7 +7,7 @@ export default function({ data, callback, index }){
   let buffer = [];
 
   if(utils.isInclude([COMMAND_TOPICS.SEND_GROUP, COMMAND_TOPICS.SEND_PRIVATE], topic)){
-    let { name, content, mentionInfo, flag, mergeMsg } = data;
+    let { name, content, mentionInfo, flag, mergeMsg, referMsg } = data;
     content  = utils.toJSON(content);
     let codec = Proto.lookup('codec.UpMsg');
     let mention = { };
@@ -22,10 +22,29 @@ export default function({ data, callback, index }){
       }) 
     }
 
+    if(referMsg){
+      let { messageIndex, sentTime, messageId, sender } = referMsg;
+      let referContent = utils.toJSON(referMsg.content);
+      let referTarget = {
+        userId: sender.id,
+        nickname: sender.name,
+        userPortrait: sender.portrait,
+      };
+      referMsg = {
+        msgIndex: messageIndex,
+        msgTime: sentTime,
+        msgId: messageId,
+        msgContent: new TextEncoder().encode(referContent),
+        msgType: referMsg.name,
+        type: referMsg.conversationType,
+        targetInfo: referTarget
+      };
+    }
     let message = codec.create({
       msgType: name,
       mentionInfo: mention,
       flags: flag,
+      referMsg: referMsg,
       mergedMsgs: mergeMsg,
       msgContent: new TextEncoder().encode(content)
     });

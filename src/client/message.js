@@ -445,6 +445,7 @@ export default function(io, emitter){
       });
     });
   };
+
   return {
     sendMessage,
     getMessages,

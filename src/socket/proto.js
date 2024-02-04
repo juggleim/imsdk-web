@@ -460,6 +460,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "bool",
             id: 15
           },
+          referMsg: {
+            type: "DownMsg",
+            id: 16
+          },
           targetUserInfo: {
             type: "UserInfo",
             id: 17

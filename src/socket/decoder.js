@@ -248,7 +248,7 @@ export default function Decoder(cache, io){
     return { isFinished, messages, index };
   }
   function msgFormat(msg){
-    let { senderId, memberCount, readCount, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo } = msg;
+    let { senderId, memberCount, referMsg, readCount, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo } = msg;
     let content = new TextDecoder().decode(msgContent);
     content = utils.parse(content);
 
@@ -289,7 +289,23 @@ export default function Decoder(cache, io){
         members,
       };
     }
+    let newRefer = {};
+    if(referMsg){
+      let rcontent = referMsg.msgContent || '';
+      if(rcontent.length != 0){
+        rcontent = new TextDecoder().decode(rcontent);
+        newRefer.content = utils.parse(rcontent);
+      }
+      referMsg.targetUserInfo = common.formatUser(referMsg.targetUserInfo || {})
 
+      utils.extend(newRefer, { 
+        name: referMsg.msgType,
+        messageId: referMsg.messageIndex,
+        messageIndex: referMsg.msgIndex,
+        sentTime: referMsg.msgTime,
+        sender: common.formatUser(referMsg.targetUserInfo || {})
+      });
+    }
     let isUpdated = utils.isEqual(flags, MESSAGE_FLAG.IS_UPDATED);
     let _message = {
       conversationType,
@@ -306,6 +322,7 @@ export default function Decoder(cache, io){
       mentionInfo,
       isRead: !!isRead,
       isUpdated,
+      referMsg: newRefer,
     };
 
     if(_message.isSender){
@@ -314,7 +331,7 @@ export default function Decoder(cache, io){
     }
 
     if(utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)){
-      let { groupName, groupPortrait, extFields } = groupInfo;
+      let { groupName, groupPortrait, extFields } = groupInfo || { extFields: [] };
       extFields = utils.toObject(extFields);
 
       utils.extend(_message, { 

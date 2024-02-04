@@ -1,3 +1,4 @@
+import common from "../../common/common";
 import { CONVERATION_TYPE, COMMAND_TOPICS } from "../../enum";
 import utils from "../../utils";
 import Proto from "../proto";
@@ -29,6 +30,7 @@ export default function({ data, callback, index }){
         userId: sender.id,
         nickname: sender.name,
         userPortrait: sender.portrait,
+        extFields: common.toKVs(sender.exts)
       };
       referMsg = {
         msgIndex: messageIndex,
@@ -37,7 +39,7 @@ export default function({ data, callback, index }){
         msgContent: new TextEncoder().encode(referContent),
         msgType: referMsg.name,
         type: referMsg.conversationType,
-        targetInfo: referTarget
+        targetUserInfo: referTarget
       };
     }
     let message = codec.create({

@@ -343,6 +343,13 @@ function formatUser(user){
     userPortrait: 'portrait',
   });
 }
+function toKVs(obj){
+  let arrs = [];
+  utils.forEach(obj, (value, key) => {
+    arrs.push({key, value});
+  });
+  return arrs;
+}
 export default {
   check,
   getNum,
@@ -357,5 +364,6 @@ export default {
   uploadThumbnail,
   uploadFrame,
   getDraftKey,
-  formatUser
+  formatUser,
+  toKVs
 }

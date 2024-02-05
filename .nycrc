@@ -1,7 +1,11 @@
 {
-  
+  "reporter":[
+    "text",
+    "html"
+  ],
   "exclude": [
     "coverage/**",
+    "src/utils.js",
     "src/socket/proto.js",
     "src/3rd/protobuf.js",
     "test/**",

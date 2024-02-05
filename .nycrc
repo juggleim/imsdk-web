@@ -1,0 +1,10 @@
+{
+  
+  "exclude": [
+    "coverage/**",
+    "src/socket/proto.js",
+    "src/3rd/protobuf.js",
+    "test/**",
+    "scripts/**"
+  ]
+}

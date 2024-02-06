@@ -1,6 +1,0 @@
-
-{
-  "extension": [".js"],
-  "require": ["@babel/register", "test/hooks.js"],
-  "spec": ["test/**/*.spec.js"]
-}

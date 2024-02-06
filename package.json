@@ -9,8 +9,7 @@
     "release:jet:dev": "rollup -c ./scripts/rollup.jet.config.js --environment TAG:dev",
     "release:min": "rollup -c ./scripts/rollup.config.js --environment TAG:min",
     "release:es": "rollup -c ./scripts/rollup.config.js --environment TAG:es",
-    "build:pb": "npx pbjs -t json-module -w es6 -o ./src/socket/proto.js ./src/socket/connect.proto && node ./scripts/repair-pb.js",
-    "test": "nyc mocha"
+    "build:pb": "npx pbjs -t json-module -w es6 -o ./src/socket/proto.js ./src/socket/connect.proto && node ./scripts/repair-pb.js"
   },
   "keywords": [
     "IM",
@@ -19,11 +18,7 @@
   "author": "supersun@gmail.com",
   "license": "MIT",
   "devDependencies": {
-    "@babel/preset-env": "^7.23.9",
-    "@babel/register": "^7.23.7",
     "@rollup/plugin-json": "^6.0.1",
-    "mocha": "^10.2.0",
-    "nyc": "^15.1.0",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-babel-minify": "^10.0.0"
   },

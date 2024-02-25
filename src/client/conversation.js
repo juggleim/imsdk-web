@@ -17,7 +17,8 @@ export default function(io, emitter){
     if(utils.isEqual(message.name, MESSAGE_TYPE.RECALL)){
       let { content: { messageId } } = message;
       let conversation = conversationUtils.getPer(message);
-      let { latestMessage } = conversation || {};
+      let { latestMessage } = conversation || { };
+      latestMessage = latestMessage || {}; 
       if(!utils.isEqual(latestMessage.messageId, messageId)){
         return;
       }

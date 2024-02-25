@@ -5,13 +5,15 @@ import Socket from "./socket";
 import Chatroom from "./chatroom";
 import Emitter from "../common/emmit";
 import common from "../common/common";
-import { EVENT, CONNECT_STATE, CONVERATION_TYPE, MESSAGE_TYPE, ErrorType, CONVERSATION_ORDER, MESSAGE_ORDER, MENTION_TYPE, FILE_TYPE, MENTION_ORDER } from "../enum";
+import { EVENT, CONNECT_STATE, CONVERATION_TYPE, MESSAGE_TYPE, ErrorType, CONVERSATION_ORDER, MESSAGE_ORDER, MENTION_TYPE, FILE_TYPE, MENTION_ORDER, SIGNAL_NAME } from "../enum";
+import * as ENUM from "../enum";
 import utils from "../utils";
+import MessageCacher from "../common/msg-cacher";
 
 let init = (config) => {
   let emitter = Emitter();
   
-  let { upload } = config;
+  let { upload, appkey } = config;
   let uploadType = common.checkUploadType(upload);
   utils.extend(config, { uploadType });
 
@@ -20,12 +22,37 @@ let init = (config) => {
   let conversation = Conversation(io, emitter);
   let message = Message(io, emitter);
   let chatroom = Chatroom(io);
+
+  /* PC 特性检查： 全局变量中存在约定变量自动切换为本地存储 */
+  let conversationProvider = conversation;
+  let messageProvider = message;
+  let emitterProvider = emitter;
+  if(typeof JGChatPCClient != 'undefined'){
+    // 移除 Web 监听
+    emitter.off(SIGNAL_NAME.CMD_CONVERSATION_CHANGED);
+    emitter.off(SIGNAL_NAME.CONN_CHANGED);
+    emitter.off(SIGNAL_NAME.CMD_RECEIVED);
+    // PC 端重新创建事件分发对象，与 Web 进行隔离
+    emitterProvider = Emitter();
+    let pc = JGChatPCClient.init(appkey, { 
+      conversation, 
+      message,
+      emitter: emitterProvider,
+      io,
+      ENUM,
+      utils,
+      MessageCacher
+    });
+    conversationProvider = pc.conversation;
+    messageProvider = pc.message;
+  }
+
   return  {
     ...socket,
-    ...conversation,
-    ...message,
+    ...conversationProvider,
+    ...messageProvider,
     ...chatroom,
-    ...emitter,
+    ...emitterProvider,
     Event: EVENT,
     ConnectionState: CONNECT_STATE,
     ConversationType: CONVERATION_TYPE,

@@ -338,6 +338,7 @@ export default function Decoder(cache, io){
         conversationTitle: groupName,
         conversationPortrait: groupPortrait,
         conversationExts: extFields,
+        conversationUpdatedTime: groupInfo.updatedTime,
         unreadCount: memberCount - readCount,
         readCount: readCount
       });
@@ -348,6 +349,7 @@ export default function Decoder(cache, io){
         conversationTitle: targetUser.name,
         conversationPortrait: targetUser.portrait,
         conversationExts: targetUser.exts,
+        conversationUpdatedTime: targetUser.updatedTime,
       });
     }
 

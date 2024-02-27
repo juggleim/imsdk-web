@@ -335,13 +335,13 @@ function getDraftKey(item){
 }
 function formatUser(user){
   let exts = utils.toObject(user.extFields);
-  utils.extend(user, { extFields: exts });
-  return utils.rename(user, {
-    extFields: 'exts',
-    nickname: 'name',
-    userId: 'id',
-    userPortrait: 'portrait',
-  });
+  return {
+    id: user.userId,
+    name: user.nickname,
+    portrait: user.userPortrait,
+    updatedTime: user.updatedTime,
+    exts: exts
+  };
 }
 function toKVs(obj){
   let arrs = [];

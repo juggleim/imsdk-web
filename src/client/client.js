@@ -43,6 +43,7 @@ let init = (config) => {
       io,
       ENUM,
       utils,
+      common,
       MessageCacher
     });
     socketProvider = pc.socket;

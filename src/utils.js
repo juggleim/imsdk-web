@@ -421,6 +421,15 @@ const decodeBase64 = function (input) {
 
   return output;
 };
+const isContinuous = (numbers, callback) => {
+ numbers.sort(callback);
+ for (let i = 0; i < numbers.length - 1; i++) {
+     if (numbers[i + 1] !== numbers[i] + 1) {
+         return false;
+     }
+ }
+ return true;
+};
 export default {
   Prosumer,
   Observer,
@@ -464,4 +473,5 @@ export default {
   quickSort,
   toObject,
   decodeBase64,
+  isContinuous,
 }

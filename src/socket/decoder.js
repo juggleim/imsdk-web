@@ -18,8 +18,8 @@ export default function Decoder(cache, io){
         name = SIGNAL_NAME.S_CONNECT_ACK;
         break;
       case SIGNAL_CMD.PUBLISH_ACK:
-        let { pubAckMsgBody: { index, msgId: messageId, timestamp: sentTime, code } } = msg;
-        result = { messageId, sentTime, index, isSender: true, code };
+        let { pubAckMsgBody: { index, msgId: messageId, timestamp: sentTime, code, msgIndex } } = msg;
+        result = { messageId, sentTime, index, isSender: true, code, msgIndex };
         break;
       case SIGNAL_CMD.PUBLISH:
         let {_msg, _name } = publishHandler(msg);

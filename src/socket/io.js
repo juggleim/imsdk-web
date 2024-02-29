@@ -171,7 +171,7 @@ export default function IO(config){
           let name = _user.nickname;
           let portrait = _user.userPortrait;
           let exts = utils.toObject(_user.extFields);
-          setCurrentUser({ name, portrait, exts });
+          setCurrentUser({ name, portrait, exts, updatedTime: _user.updatedTime });
 
           if(isSync){
             syncer.exec({

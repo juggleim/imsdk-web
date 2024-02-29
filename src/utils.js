@@ -421,10 +421,12 @@ const decodeBase64 = function (input) {
 
   return output;
 };
-const isContinuous = (numbers, callback) => {
- numbers.sort(callback);
+const isContinuous = (numbers, key) => {
+ numbers.sort((a, b) => {
+  return a[key] - b[key];
+ });
  for (let i = 0; i < numbers.length - 1; i++) {
-     if (numbers[i + 1] !== numbers[i] + 1) {
+     if (numbers[i + 1][key] !== numbers[i][key] + 1) {
          return false;
      }
  }

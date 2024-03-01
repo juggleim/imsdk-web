@@ -70,7 +70,7 @@ export default function Decoder(cache, io){
       result = getMessagesHandler(index, data);
     }
 
-    if(utils.isEqual(topic, COMMAND_TOPICS.CONVERSATIONS)){
+    if(utils.isInclude([COMMAND_TOPICS.CONVERSATIONS, COMMAND_TOPICS.SYNC_CONVERSATIONS], topic)){
       result = getConversationsHandler(index, data);
     }
 
@@ -160,7 +160,7 @@ export default function Decoder(cache, io){
   
   function getConversationsHandler(index, data){
     let payload = Proto.lookup('codec.QryConversationsResp');
-    let { conversations } = payload.decode(data);
+    let { conversations, isFinished } = payload.decode(data);
     conversations = conversations.map((conversation) => {
       let { msg, 
             targetId, 
@@ -168,6 +168,7 @@ export default function Decoder(cache, io){
             updateTime: latestReadTime, 
             userInfo, 
             groupInfo, 
+            syncTime,
             LatestMentionMsg: latestMentionMsg, 
             channelType: conversationType 
           } = conversation;
@@ -181,32 +182,34 @@ export default function Decoder(cache, io){
           messageId: msgId
         };
       }
-      let latestMessage = {  }
+      let latestMessage = { }
       if(!utils.isEqual(msg.msgContent.length, 0)){
         latestMessage = msgFormat(msg);
       }
       
       if(utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)){
-        let { groupName, groupPortrait, extFields, groupId } = groupInfo;
+        let { groupName, groupPortrait, extFields, groupId, updatedTime } = groupInfo;
         extFields = utils.toObject(extFields);
 
         utils.extend(latestMessage, { 
           conversationTitle: groupName,
           conversationPortrait: groupPortrait,
           conversationExts: extFields,
+          conversationUpdatedTime: updatedTime,
         });
 
         GroupCacher.set(groupId, groupInfo);
       }
   
       if(utils.isEqual(conversationType, CONVERATION_TYPE.PRIVATE)){
-        let { userPortrait, nickname, extFields, userId } = userInfo;
+        let { userPortrait, nickname, extFields, userId, updatedTime } = userInfo;
         extFields = utils.toObject(extFields);
         
         utils.extend(latestMessage, { 
           conversationTitle: nickname,
           conversationPortrait: userPortrait,
-          conversationExts: extFields
+          conversationExts: extFields,
+          conversationUpdatedTime: updatedTime,
         });
 
         GroupCacher.set(userId, userInfo);
@@ -223,10 +226,11 @@ export default function Decoder(cache, io){
         conversationTitle,
         conversationPortrait,
         conversationExts,
-        latestMentionMsg
+        latestMentionMsg,
+        syncTime,
       };
     });
-    return { conversations, index };
+    return { conversations, isFinished, index };
   }
   function getMessagesHandler(index, data){
     let payload = Proto.lookup('codec.DownMsgSet');
@@ -258,7 +262,7 @@ export default function Decoder(cache, io){
     }
 
     // 服务端返回数据有 targetUserInfo 和 groupInfo 为 null 情况，此处补充 targetId，方便本地有缓存时获取信息
-    targetUserInfo = targetUserInfo || { userId: senderId };
+    targetUserInfo = targetUserInfo || { userId: conversationId };
     groupInfo = groupInfo || { groupId: conversationId };
 
     // 默认更新内存数据
@@ -268,15 +272,18 @@ export default function Decoder(cache, io){
     GroupCacher.set(groupId, groupInfo);
     UserCacher.set(userId, targetUserInfo);
 
-    if(utils.isEmpty(targetUserInfo.nickname)){
-      targetUserInfo = UserCacher.get(userId);
-    }
-
-    if(utils.isEmpty(targetUserInfo.groupName)){
-      groupInfo = GroupCacher.get(groupId);
-    }
-
     let targetUser = common.formatUser(targetUserInfo);
+    
+    // 特性检查，如果没有 name 尝试从内存获取信息
+    if(utils.isUndefined(targetUser.name)){
+      let _user = UserCacher.get(userId);
+      targetUser = utils.isEmpty(_user) ? { id: userId } : _user;
+    }
+
+    if(utils.isUndefined(groupInfo.groupName)){
+      let _group = GroupCacher.get(groupId);
+      groupInfo = utils.isEmpty(_group) ? { id: groupId } : _group;
+    }
 
     if(mentionInfo){
       let { targetUsers, mentionType } = mentionInfo;
@@ -331,7 +338,7 @@ export default function Decoder(cache, io){
     }
 
     if(utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)){
-      let { groupName, groupPortrait, extFields } = groupInfo || { extFields: [] };
+      let { groupName, groupPortrait, extFields } = groupInfo || { extFields: {} };
       extFields = utils.toObject(extFields);
 
       utils.extend(_message, { 
@@ -403,7 +410,6 @@ export default function Decoder(cache, io){
       });
       utils.extend(content, { conversations });
     }
-//, unreadCount: 12, readCount: 20
     utils.extend(_message, { content })
     return _message;
   }

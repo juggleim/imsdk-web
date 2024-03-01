@@ -31,6 +31,14 @@ export default function getQueryBody({ data, callback, index }){
     });
     buffer = codec.encode(message).finish();
   }
+  
+  if(utils.isEqual(COMMAND_TOPICS.SYNC_CONVERSATIONS, topic)){
+    let { count, syncTime } = data;
+    targetId = userId;
+    let codec = Proto.lookup('codec.SyncConversationsReq');
+    let message = codec.create({ syncTime, count });
+    buffer = codec.encode(message).finish();
+  }
 
   if(utils.isEqual(topic, COMMAND_TOPICS.SYNC_MESSAGES)){
     let { syncTime, containsSendBox, sendBoxSyncTime } = data;

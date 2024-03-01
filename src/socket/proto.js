@@ -619,6 +619,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             rule: "repeated",
             type: "Conversation",
             id: 1
+          },
+          isFinished: {
+            type: "bool",
+            id: 2
           }
         }
       },

@@ -29,6 +29,11 @@ let init = (config) => {
   let socketProvider = socket;
   let emitterProvider = emitter;
   if(typeof JGChatPCClient != 'undefined'){
+    // 告知 IO 模块当前是 PC 端，做特殊处理，例如：同步会话列表
+    io.setConfig({
+      isPC: true
+    });
+
     // 移除 Web 监听
     io.off(SIGNAL_NAME.CMD_CONVERSATION_CHANGED);
     io.off(SIGNAL_NAME.CONN_CHANGED);

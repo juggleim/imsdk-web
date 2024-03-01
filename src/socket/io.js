@@ -2,7 +2,7 @@ import Emitter from "../common/emmit";
 import utils from "../utils";
 import Storage from "../common/storage";
 import Proto from "./proto";
-import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX, COMMAND_TOPICS, CONVERATION_TYPE, SYNC_MESSAGE_TIME } from "../enum";
+import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX, COMMAND_TOPICS, CONVERATION_TYPE, SYNC_MESSAGE_TIME, STORAGE } from "../enum";
 import BufferEncoder from "./encoder/encoder";
 import BufferDecoder from "./decoder";
 import Network from "../common/network";
@@ -173,6 +173,14 @@ export default function IO(config){
           let exts = utils.toObject(_user.extFields);
           setCurrentUser({ name, portrait, exts, updatedTime: _user.updatedTime });
 
+          // 同步会话和同步消息顺序不能调整，保证先同步会话再同步消息，规避会话列表最后一条消息不是最新的
+          if(config.isPC){
+            syncer.exec({
+              time: Storage.get(STORAGE.SYNC_CONVERSATION_TIME).time || 0,
+              name: SIGNAL_NAME.S_SYNC_CONVERSATION_NTF,
+              user: { id: currentUserInfo.id }
+            });
+          }
           if(isSync){
             syncer.exec({
               msg: { type: NOTIFY_TYPE.MSG },
@@ -212,6 +220,9 @@ export default function IO(config){
   function getConfig(){
     return config;
   };
+  function setConfig(cfg){
+    utils.extend(config, cfg);
+  }
   function getUserInfo(user, callback){
     let data = {
       topic: COMMAND_TOPICS.GET_USER_INFO,
@@ -224,6 +235,7 @@ export default function IO(config){
   
   utils.extend(io, { 
     getConfig,
+    setConfig,
     connect,
     disconnect,
     sendCommand,

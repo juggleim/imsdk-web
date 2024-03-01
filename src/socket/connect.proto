@@ -206,6 +206,7 @@ message QryConversationsReq{
 
 message QryConversationsResp{
     repeated Conversation conversations = 1;
+    bool isFinished = 2;
 }
 message ClearUnreadReq{
     repeated Conversation conversations = 1;

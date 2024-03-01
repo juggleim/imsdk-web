@@ -5,6 +5,7 @@ export let STORAGE = {
   SYNC_RECEIVED_MSG_TIME: 'sync_received_msg_time',
   SYNC_SENT_MSG_TIME: 'sync_sent_msg_time',
   SYNC_CHATROOM_RECEIVED_MSG_TIME: 'sync_chatroom_received_msg_time',
+  SYNC_CONVERSATION_TIME: 'sync_conversation_time',
 };
 
 export let HEART_TIMEOUT = 1 * 30 * 1000;
@@ -14,6 +15,7 @@ export let PONG_INDEX = 'c_pong_index';
 
 export let SIGNAL_NAME = {
   CMD_RECEIVED: 'cmd_inner_receive',
+  CMD_SYNC_CONVERSATIONS: 'cmd_inner_sync_conversations',
   CMD_CONVERSATION_CHANGED: 'cmd_inner_conversation_changed',
   CONN_CHANGED: 'conn_inner_changed',
 
@@ -23,6 +25,8 @@ export let SIGNAL_NAME = {
   S_PUBLICH_ACK: 's_publish_ack',
   S_QUERY_ACK: 's_query_ack',
   S_NTF: 's_ntf',
+  // PC 端自定义通知
+  S_SYNC_CONVERSATION_NTF: 's_sync_conversation_ntf',
   S_PONG: 's_pong'
 };
 
@@ -79,6 +83,7 @@ export let FUNC_PARAM_CHECKER = {
 export let COMMAND_TOPICS = {
   HISTORY_MESSAGES: 'qry_hismsgs',
   CONVERSATIONS: 'qry_convers',
+  SYNC_CONVERSATIONS: 'sync_convers',
   SYNC_MESSAGES: 'sync_msgs',
   RECALL: 'recall_msg',
   GET_MENTION_MSGS: 'qry_mention_msgs',
@@ -123,12 +128,15 @@ export let EVENT = {
   MESSAGE_UPDATED: 'message_updated',
   MESSAGE_READ: 'message_read',
   CONVERSATION_CHANGED: 'conversation_changed',
+  CONVERSATION_SYNCED: 'conversation_synced',
 };
 export let CONNECT_STATE = {
   CONNECTED: 0,
   CONNECTING: 1,
   DISCONNECTED: 2,
   CONNECT_FAILED: 3,
+  DB_OPENED: 4,
+  DB_CLOSED: 5,
   CONNECTION_SICK: 1000
 };
 

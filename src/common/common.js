@@ -337,10 +337,10 @@ function formatUser(user){
   let exts = utils.toObject(user.extFields);
   return {
     id: user.userId,
-    name: user.nickname,
-    portrait: user.userPortrait,
-    updatedTime: user.updatedTime,
-    exts: exts
+    name: user.nickname || "",
+    portrait: user.userPortrait || "",
+    updatedTime: user.updatedTime || 0,
+    exts: exts || {}
   };
 }
 function toKVs(obj){

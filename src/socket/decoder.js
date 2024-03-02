@@ -262,7 +262,7 @@ export default function Decoder(cache, io){
     }
 
     // 服务端返回数据有 targetUserInfo 和 groupInfo 为 null 情况，此处补充 targetId，方便本地有缓存时获取信息
-    targetUserInfo = targetUserInfo || { userId: conversationId };
+    targetUserInfo = targetUserInfo || { userId: senderId };
     groupInfo = groupInfo || { groupId: conversationId };
 
     // 默认更新内存数据

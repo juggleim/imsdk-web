@@ -142,7 +142,7 @@ function ConversationUtils(){
       let isNew = utils.isEqual(index, -1);
       if(!isNew){
         let conversation = conversations.splice(index, 1)[0]; 
-        let { unreadCount } = conversation;
+        let { unreadCount = 0 } = conversation;
         let { latestMessage, conversationTitle, conversationPortrait, conversationExts, latestMentionMsg } = item;
 
         if(utils.isEmpty(conversationTitle)){

@@ -80,7 +80,10 @@ export default function(io, emitter){
           return reject(message)
         }
         utils.extend(message, { sentTime, messageId, messageIndex: msgIndex });
-        io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);
+        let config = io.getConfig();
+        if(!config.isPC){
+          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);
+        }
         resolve(message);
       });
     });

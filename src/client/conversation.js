@@ -38,6 +38,7 @@ export default function(io, emitter){
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       let conversation = conversationUtils.getPer(message);
       let { latestMessage } = conversation || {};
+      latestMessage = latestMessage || {}; 
       // 如果会话最后一条消息和被修改消息不匹配，不更新会话列表
       if(!utils.isEqual(latestMessage.messageId, message.messageId)){
         return;

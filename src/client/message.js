@@ -173,7 +173,10 @@ export default function(io, emitter){
               senderUserId: sender.id
             }
           });
-          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
+          let config = io.getConfig();
+          if(!config.isPC){
+            io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
+          }
           return resolve(msg);
         }
         let { msg } = common.getError(code);
@@ -239,8 +242,11 @@ export default function(io, emitter){
             ...message.content
           }
         };
-        io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
-        resolve(result);
+        let config = io.getConfig();
+          if(!config.isPC){
+            io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
+          }
+        resolve(msg);
       });
     });
   };

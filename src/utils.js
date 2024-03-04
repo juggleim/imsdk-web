@@ -432,6 +432,10 @@ const isContinuous = (numbers, key) => {
  }
  return true;
 };
+const isBase64 = (str) => {
+  var regex = /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/;
+  return regex.test(str);
+};
 export default {
   Prosumer,
   Observer,
@@ -476,4 +480,5 @@ export default {
   toObject,
   decodeBase64,
   isContinuous,
+  isBase64,
 }

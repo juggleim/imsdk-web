@@ -62,6 +62,7 @@ export let FUNC_PARAM_CHECKER = {
   READMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'sentTime', type: 'Number' }, { name: 'messageId' }],
   GET_MESSAGE_READ_DETAILS: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }],
   UPDATEMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'content', type: 'Object' }],
+  MESSAGE_DEFERRED: [{ name: 'messageId' }, { name: 'content', type: 'Object' }],
   GET_MENTIOIN_MESSAGES: [{ name: 'conversationType' }, { name: 'conversationId' }],
   GET_FILE_TOKEN: [{ name: 'type' }],
   

@@ -289,18 +289,8 @@ export default function(io, emitter){
     });
   };
 /* options: fileType, Video and Image: scale: 0 ~ 1 */
-  let sendFile = (options, message, callbacks = {}) => {
-    return utils.deferred((resolve, reject) => {
-      let error = common.check(io, message, FUNC_PARAM_CHECKER.SEND_FILE_MESSAGE);
-      
-      let { uploadType, upload, fileCompressLimit } = io.getConfig();
-      if(utils.isEqual(uploadType, UPLOAD_TYPE.NONE)){
-        error = ErrorType.UPLOAD_PLUGIN_ERROR;
-      }
-      if(!utils.isEmpty(error)){
-        return reject(error);
-      }
-
+  let _uploadFile = (options, message, callbacks = {}) => {
+    let { uploadType, upload, fileCompressLimit } = io.getConfig();
       let _callbacks = {
         onprogress: () => { },
         onerror: () => { }
@@ -358,7 +348,7 @@ export default function(io, emitter){
             let size = content.file.size/1024;
             utils.extend(message.content, { url, size: size.toFixed(2) });
             delete message.content.file;
-            sendMessage(message).then(resolve, reject);
+            _callbacks.oncompleted(message);
           },
           onerror: (error) => {
             _callbacks.onerror(ErrorType.UPLOADING_FILE_ERROR, error);
@@ -366,7 +356,6 @@ export default function(io, emitter){
         };
         uploader.exec(content, option, cbs);
       }
-    });
   };
   /* 
     message = {
@@ -376,27 +365,95 @@ export default function(io, emitter){
     }
   */
   let sendFileMessage = (message, callbacks = {}) => {
-    utils.extend(message, { name: MESSAGE_TYPE.FILE });
+    message = utils.extend(message, { name: MESSAGE_TYPE.FILE });
     let option = { fileType: FILE_TYPE.FILE };
-    return sendFile(option, message, callbacks)
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.SEND_FILE_MESSAGE);
+      let { uploadType } = io.getConfig();
+      if(utils.isEqual(uploadType, UPLOAD_TYPE.NONE)){
+        error = ErrorType.UPLOAD_PLUGIN_ERROR;
+      }
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+
+      _uploadFile(option, message, {
+        onprogress: callbacks.onprogress,
+        oncompleted: (message) => {
+          sendMessage(message).then(resolve, reject);
+        },
+        onerror: callbacks.onerror,
+      })
+    });
   };
 
   let sendImageMessage = (message, callbacks = {}) => {
-    utils.extend(message, { name: MESSAGE_TYPE.IMAGE });
+    message = utils.extend(message, { name: MESSAGE_TYPE.IMAGE });
     let option = { fileType: FILE_TYPE.IMAGE, scale: message.scale };
-    return sendFile(option, message, callbacks)
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.SEND_FILE_MESSAGE);
+      let { uploadType } = io.getConfig();
+      if(utils.isEqual(uploadType, UPLOAD_TYPE.NONE)){
+        error = ErrorType.UPLOAD_PLUGIN_ERROR;
+      }
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+
+      _uploadFile(option, message, {
+        onprogress: callbacks.onprogress,
+        oncompleted: (message) => {
+          sendMessage(message).then(resolve, reject);
+        },
+        onerror: callbacks.onerror,
+      })
+    });
   };
 
   let sendVoiceMessage = (message, callbacks = {}) => {
-    utils.extend(message, { name: MESSAGE_TYPE.VOICE });
+    message = utils.extend(message, { name: MESSAGE_TYPE.VOICE });
     let option = { fileType: FILE_TYPE.AUDIO };
-    return sendFile(option, message, callbacks)
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.SEND_FILE_MESSAGE);
+      let { uploadType } = io.getConfig();
+      if(utils.isEqual(uploadType, UPLOAD_TYPE.NONE)){
+        error = ErrorType.UPLOAD_PLUGIN_ERROR;
+      }
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+
+      _uploadFile(option, message, {
+        onprogress: callbacks.onprogress,
+        oncompleted: (message) => {
+          sendMessage(message).then(resolve, reject);
+        },
+        onerror: callbacks.onerror,
+      })
+    });
   };
 
   let sendVideoMessage = (message, callbacks = {}) => {
-    utils.extend(message, { name: MESSAGE_TYPE.VIDEO });
+    message = utils.extend(message, { name: MESSAGE_TYPE.VIDEO });
     let option = { fileType: FILE_TYPE.VIDEO, scale: message.scale };
-    return sendFile(option, message, callbacks)
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.SEND_FILE_MESSAGE);
+      let { uploadType } = io.getConfig();
+      if(utils.isEqual(uploadType, UPLOAD_TYPE.NONE)){
+        error = ErrorType.UPLOAD_PLUGIN_ERROR;
+      }
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+
+      _uploadFile(option, message, {
+        onprogress: callbacks.onprogress,
+        oncompleted: (message) => {
+          sendMessage(message).then(resolve, reject);
+        },
+        onerror: callbacks.onerror,
+      });
+    });
   };
 
   let sendMergeMessage = (params) => {
@@ -472,5 +529,6 @@ export default function(io, emitter){
     sendVideoMessage,
     sendMergeMessage,
     getMergeMessages,
+    _uploadFile,
   };
 }

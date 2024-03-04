@@ -242,6 +242,6 @@ export default function IO(config){
     isConnected,
     getCurrentUser,
     ...emitter
-  })
+  });
   return io;
 }

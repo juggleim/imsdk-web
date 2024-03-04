@@ -163,16 +163,6 @@ export let MENTION_ORDER = {
   BACKWARD: 1
 };
 
-export let MESSAGE_FLAG = {
-  COMMAND: 1,
-  COUNT: 2,
-  STATE: 4,
-  STORAGE: 8,
-  COUNT_STORAGE: 10,
-  COUNT_STORAGE_MERGE: 42,
-  IS_UPDATED: 26,
-};
-
 export let UPLOAD_TYPE = {
   NONE: 0,
   QINIU: 1

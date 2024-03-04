@@ -62,6 +62,7 @@ let init = (config) => {
     ...messageProvider,
     ...chatroom,
     ...emitterProvider,
+    registerMessage: common.registerMessage,
     Event: EVENT,
     ConnectionState: CONNECT_STATE,
     ConversationType: CONVERATION_TYPE,

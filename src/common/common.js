@@ -1,5 +1,5 @@
 import utils from "../utils";
-import { ErrorType, STORAGE, ErrorMessages, MESSAGE_TYPE, MESSAGE_FLAG, UPLOAD_TYPE } from "../enum";
+import { ErrorType, STORAGE, ErrorMessages, MESSAGE_TYPE, UPLOAD_TYPE } from "../enum";
 import Storage from "./storage";
 import Uploader from "./uploader";
 
@@ -117,18 +117,60 @@ function getError(code) {
   return { code, msg };
 }
 
-function getMsgConfig(name){
-  let configs = [
-    {name: MESSAGE_TYPE.TEXT, option: { flag: MESSAGE_FLAG.COUNT_STORAGE }},
-    {name: MESSAGE_TYPE.FILE, option: { flag: MESSAGE_FLAG.COUNT_STORAGE }},
-    {name: MESSAGE_TYPE.IMAGE, option: { flag: MESSAGE_FLAG.COUNT_STORAGE }},
-    {name: MESSAGE_TYPE.VOICE, option: { flag: MESSAGE_FLAG.COUNT_STORAGE }},
-    {name: MESSAGE_TYPE.VIDEO, option: { flag: MESSAGE_FLAG.COUNT_STORAGE }},
-    {name: MESSAGE_TYPE.MERGE, option: { flag: MESSAGE_FLAG.COUNT_STORAGE_MERGE }},
-  ];
-  let config = configs.find(cfg => cfg.name == name ) || {};
-  return config.option || {};
-}
+// 内置消息类型和动态注入的自定消息类型
+let _MSG_FLAG_NAMES = [
+  {name: MESSAGE_TYPE.TEXT,  isCount: true, isStorage: true },
+  {name: MESSAGE_TYPE.FILE,  isCount: true, isStorage: true },
+  {name: MESSAGE_TYPE.IMAGE, isCount: true, isStorage: true },
+  {name: MESSAGE_TYPE.VOICE, isCount: true, isStorage: true },
+  {name: MESSAGE_TYPE.VIDEO, isCount: true, isStorage: true },
+  {name: MESSAGE_TYPE.MERGE, isCount: true, isStorage: true, isMerge: true},
+];
+
+let formatter = {
+  toFlag: ({ isCommand, isCount, isStorage, isMerge }) => {
+    let flag = 0;
+    isCommand && (flag |= (1 << 0));
+    isCount && (flag |= (1 << 1));
+    isStorage && (flag |= (1 << 3));
+    isMerge && (flag |= (1 << 5));
+    return flag;
+  },
+  toMsg: (flag) => {
+    let obj = {
+      1: { name: 'isCommand' },
+      2: { name: 'isCount' },
+      3: { name: 'isStatus' },
+      4: { name: 'isStorage' },
+      5: { name: 'isUpdated' },
+      6: { name: 'isMerge' },
+      7: { name: 'isMute' },
+    };
+    let result = {};
+    for(let num in obj){
+      // 创建一个只有第 N 位为 1 其他都为 0 的掩码
+      let bitMask = Math.pow(2, (num - 1)); 
+      let name = obj[num].name;
+      result[name] = ((flag & bitMask) !== 0);
+    }
+    return result;
+  }
+};
+
+let registerMessage = (names) => {
+  names = utils.isArray(names) ? names : [names];
+  utils.forEach(names, (name) => {
+    _MSG_FLAG_NAMES.push(name);
+  });
+};
+
+let getMsgFlag = (name) => {
+  let msg = utils.filter(_MSG_FLAG_NAMES, (n) => {
+    return utils.isEqual(n.name, name);
+  })[0] || {};
+  let flag = formatter.toFlag(msg);
+  return flag;
+};
 
 function ConversationUtils(){
   let conversations = [];
@@ -155,11 +197,14 @@ function ConversationUtils(){
           conversationExts = conversation.conversationExts;
         }
 
-        if(!latestMessage.isSender){
-          unreadCount = unreadCount + 1
+        let messageName = latestMessage.name;
+        let flag = getMsgFlag(messageName);
+        let msgFlag = formatter.toMsg(flag);
+        if(!latestMessage.isSender && msgFlag.isCount){
+          unreadCount = unreadCount + 1;
         }
         // 自己发送的多端同步清空消息，未读数设置为 0，最后一条消息保持不变
-        if(utils.isEqual(latestMessage.name, MESSAGE_TYPE.CLEAR_UNREAD) && latestMessage.isSender){
+        if(utils.isEqual(messageName, MESSAGE_TYPE.CLEAR_UNREAD) && latestMessage.isSender){
           unreadCount = 0;
           latestMessage = conversation.latestMessage;
         }
@@ -350,6 +395,7 @@ function toKVs(obj){
   });
   return arrs;
 }
+
 export default {
   check,
   getNum,
@@ -357,7 +403,6 @@ export default {
   updateSyncTime,
   updateChatroomSyncTime,
   getError,
-  getMsgConfig,
   ConversationUtils,
   checkUploadType,
   formatMediaMessage,
@@ -365,5 +410,8 @@ export default {
   uploadFrame,
   getDraftKey,
   formatUser,
-  toKVs
+  toKVs,
+  registerMessage,
+  getMsgFlag,
+  formatter,
 }

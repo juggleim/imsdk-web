@@ -66,8 +66,8 @@ export default function(io, emitter){
 
       let data = utils.clone(message);
       let { name, conversationType, conversationId } = data;
-      let config = common.getMsgConfig(name);
-      utils.extend(data, config);
+      let flag = common.getMsgFlag(name);
+      utils.extend(data, { flag });
 
       let topic = topics[conversationType];
       utils.extend(data, { topic })

@@ -1,7 +1,7 @@
 import Emitter from "../common/emmit";
 import utils from "../utils";
 import Proto from "./proto";
-import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, MESSAGE_FLAG, CONNECT_ACK_INDEX, PONG_INDEX, UPLOAD_TYPE, CONVERATION_TYPE } from "../enum";
+import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, CONNECT_ACK_INDEX, PONG_INDEX, UPLOAD_TYPE, CONVERATION_TYPE } from "../enum";
 import GroupCacher from "../common/group-cacher";
 import UserCacher from "../common/user-cacher";
 import common from "../common/common";
@@ -313,7 +313,7 @@ export default function Decoder(cache, io){
         sender: common.formatUser(referMsg.targetUserInfo || {})
       });
     }
-    let isUpdated = utils.isEqual(flags, MESSAGE_FLAG.IS_UPDATED);
+    let msgFlag = common.formatter.toMsg(flags);
     let _message = {
       conversationType,
       conversationId,
@@ -328,7 +328,7 @@ export default function Decoder(cache, io){
       messageIndex: msgIndex,
       mentionInfo,
       isRead: !!isRead,
-      isUpdated,
+      isUpdated: msgFlag.isUpdated,
       referMsg: newRefer,
     };
 

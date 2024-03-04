@@ -125,6 +125,13 @@ let _MSG_FLAG_NAMES = [
   {name: MESSAGE_TYPE.VOICE, isCount: true, isStorage: true },
   {name: MESSAGE_TYPE.VIDEO, isCount: true, isStorage: true },
   {name: MESSAGE_TYPE.MERGE, isCount: true, isStorage: true, isMerge: true},
+  {name: MESSAGE_TYPE.RECALL, isCommand: true },
+  {name: MESSAGE_TYPE.RECALL_INFO, isCommand: true },
+  {name: MESSAGE_TYPE.READ_MSG, isCommand: true },
+  {name: MESSAGE_TYPE.READ_GROUP_MSG, isCommand: true },
+  {name: MESSAGE_TYPE.MODIFY, isCommand: true },
+  {name: MESSAGE_TYPE.CLEAR_MSG, isCommand: true },
+  {name: MESSAGE_TYPE.CLEAR_UNREAD, isCommand: true },
 ];
 
 let formatter = {

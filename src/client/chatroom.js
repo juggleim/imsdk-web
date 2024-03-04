@@ -7,7 +7,7 @@ export default function(io){
 
   let joinChatroom = (chatroom) =>{
     return utils.deferred((resolve, reject) => {
-      let error = common.check(io, chatroom, FUNC_PARAM_CHECKER.JOINCHATROOM, true);
+      let error = common.check(io, chatroom, FUNC_PARAM_CHECKER.JOINCHATROOM);
       if(!utils.isEmpty(error)){
         return reject(error);
       }
@@ -25,7 +25,7 @@ export default function(io){
 
   let quitChatroom = (chatroom) => {
     return utils.deferred((resolve, reject) => {
-      let error = common.check(io, chatroom, FUNC_PARAM_CHECKER.QUITCHATROOM, true);
+      let error = common.check(io, chatroom, FUNC_PARAM_CHECKER.QUITCHATROOM);
       if(!utils.isEmpty(error)){
         return reject(error);
       }

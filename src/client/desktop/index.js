@@ -7,6 +7,7 @@ import * as ENUM from "../../enum";
 import utils from "../../utils";
 import MessageCacher from "../../common/msg-cacher";
 import common from "../../common/common";
+import Storage from "../../common/storage";
 
 let init = ({ appkey, io, emitter, web, client }) => {
   // 告知 IO 模块当前是 PC 端，做特殊处理，例如：同步会话列表
@@ -26,7 +27,8 @@ let init = ({ appkey, io, emitter, web, client }) => {
     ENUM,
     utils,
     common,
-    MessageCacher
+    MessageCacher,
+    Storage
   });
   let socket = Socket(pc.socket);
   let conversation = Conversation(pc.conversation);

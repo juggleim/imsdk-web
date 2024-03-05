@@ -1,7 +1,7 @@
-import { SIGNAL_NAME, EVENT, CONNECT_STATE, ErrorType, FUNC_PARAM_CHECKER } from "../enum";
-import utils from "../utils";
-import Storage from "../common/storage";
-import common from "../common/common";
+import { SIGNAL_NAME, EVENT, CONNECT_STATE, ErrorType, FUNC_PARAM_CHECKER } from "../../enum";
+import utils from "../../utils";
+import Storage from "../../common/storage";
+import common from "../../common/common";
 
 export default function(io, emitter){
   let connectState = CONNECT_STATE.DISCONNECTED;

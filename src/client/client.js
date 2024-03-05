@@ -1,8 +1,7 @@
 import IO from "../socket/io";
-import Conversation from "./conversation";
-import Message from "./message";
-import Socket from "./socket";
-import Chatroom from "./chatroom";
+import Web from "./web/index";
+import Desktop from "./desktop/index";
+
 import Emitter from "../common/emmit";
 import common from "../common/common";
 import { EVENT, CONNECT_STATE, CONVERATION_TYPE, MESSAGE_TYPE, ErrorType, CONVERSATION_ORDER, MESSAGE_ORDER, MENTION_TYPE, FILE_TYPE, MENTION_ORDER, SIGNAL_NAME } from "../enum";
@@ -12,56 +11,27 @@ import MessageCacher from "../common/msg-cacher";
 
 let init = (config) => {
   let emitter = Emitter();
-  
+  let provider = {};
   let { upload, appkey } = config;
   let uploadType = common.checkUploadType(upload);
   utils.extend(config, { uploadType });
 
   let io = IO(config);
-  let socket = Socket(io, emitter);
-  let conversation = Conversation(io, emitter);
-  let message = Message(io, emitter);
-  let chatroom = Chatroom(io);
+  let web = Web.init({ io, emitter });
+  provider = web;
 
-  /* PC 特性检查： 全局变量中存在约定变量自动切换为本地存储 */
-  let conversationProvider = conversation;
-  let messageProvider = message;
-  let socketProvider = socket;
-  let emitterProvider = emitter;
+  /* PC 特性检查： 全局变量中存在约定变量自动切换为 PC */
   if(typeof JGChatPCClient != 'undefined'){
-    // 告知 IO 模块当前是 PC 端，做特殊处理，例如：同步会话列表
-    io.setConfig({
-      isPC: true
-    });
-
-    // 移除 Web 监听
-    io.off(SIGNAL_NAME.CMD_CONVERSATION_CHANGED);
-    io.off(SIGNAL_NAME.CONN_CHANGED);
-    io.off(SIGNAL_NAME.CMD_RECEIVED);
-    // PC 端重新创建事件分发对象，与 Web 进行隔离
-    emitterProvider = Emitter();
-    let pc = JGChatPCClient.init(appkey, { 
-      conversation, 
-      message,
-      socket,
-      emitter: emitterProvider,
-      io,
-      ENUM,
-      utils,
-      common,
-      MessageCacher
-    });
-    socketProvider = pc.socket;
-    conversationProvider = pc.conversation;
-    messageProvider = pc.message;
+    emitter = Emitter();
+    provider = Desktop.init({ appkey, io, emitter, web, client: JGChatPCClient });
   }
 
   return  {
-    ...socketProvider,
-    ...conversationProvider,
-    ...messageProvider,
-    ...chatroom,
-    ...emitterProvider,
+    ...provider.socket,
+    ...provider.message,
+    ...provider.conversation,
+    ...provider.chatroom,
+    ...emitter,
     registerMessage: common.registerMessage,
     Event: EVENT,
     ConnectionState: CONNECT_STATE,
@@ -75,6 +45,7 @@ let init = (config) => {
     FileType: FILE_TYPE
   }
 }
+
 export default {
   init
 }

@@ -402,7 +402,28 @@ function toKVs(obj){
   });
   return arrs;
 }
+function formatProvider(funcs, instance){
+  let invokes = {};
 
+  utils.forEach(funcs, (name) => {
+    invokes[name] = function(){
+      let args = [];
+      for(let i = 0; i < arguments.length; i++){
+        let item = arguments[i];
+        if(utils.isObject(item)){
+          item = utils.clone(item);
+        }
+        args.push(item);
+      }
+      let func = instance[name];
+      if(func){
+        return func(...args);
+      }
+      return Promise.reject(ErrorType.SDK_FUNC_NOT_DEFINED);
+    };
+  });
+  return invokes;
+}
 export default {
   check,
   getNum,
@@ -421,4 +442,5 @@ export default {
   registerMessage,
   getMsgFlag,
   formatter,
+  formatProvider,
 }

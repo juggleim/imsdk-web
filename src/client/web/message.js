@@ -177,6 +177,9 @@ export default function(io, emitter){
           if(!config.isPC){
             io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
           }
+
+          let _msg = utils.clone(msg);
+          _msg = utils.extend(msg, { name: MESSAGE_TYPE.RECALL_INFO });
           return resolve(msg);
         }
         let { msg } = common.getError(code);

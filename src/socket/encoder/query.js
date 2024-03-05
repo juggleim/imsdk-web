@@ -36,7 +36,7 @@ export default function getQueryBody({ data, callback, index }){
     let { count, syncTime } = data;
     targetId = userId;
     let codec = Proto.lookup('codec.SyncConversationsReq');
-    let message = codec.create({ syncTime, count });
+    let message = codec.create({ startTime: syncTime, count });
     buffer = codec.encode(message).finish();
   }
 

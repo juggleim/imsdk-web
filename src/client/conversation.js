@@ -195,7 +195,7 @@ export default function(io, emitter){
       conversationExts,
       latestMessage: message,
       unreadCount: 0,
-      latestReadTime: 0
+      updatedTime: 0
     };
     let _conversation = conversationUtils.getPer(message);
     let latestMentionMsg = _conversation.latestMentionMsg;

@@ -21,7 +21,7 @@ let init = (config) => {
   provider = web;
 
   /* PC 特性检查： 全局变量中存在约定变量自动切换为 PC */
-  if(typeof JGChatPCClient != 'undefined'){
+  if(common.isDesktop()){
     emitter = Emitter();
     provider = Desktop.init({ appkey, io, emitter, web, client: JGChatPCClient });
   }
@@ -33,6 +33,7 @@ let init = (config) => {
     ...provider.chatroom,
     ...emitter,
     registerMessage: common.registerMessage,
+    isDesktop: common.isDesktop,
     Event: EVENT,
     ConnectionState: CONNECT_STATE,
     ConversationType: CONVERATION_TYPE,

@@ -425,6 +425,9 @@ function formatProvider(funcs, instance){
   });
   return invokes;
 }
+function isDesktop(){
+  return typeof JGChatPCClient != 'undefined';
+}
 export default {
   check,
   getNum,
@@ -444,4 +447,5 @@ export default {
   getMsgFlag,
   formatter,
   formatProvider,
+  isDesktop,
 }

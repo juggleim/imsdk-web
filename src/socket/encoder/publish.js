@@ -84,7 +84,7 @@ export default function({ data, callback, index }){
   }
 
   if(utils.isEqual(COMMAND_TOPICS.REMOVE_CONVERSATION, topic)){
-    let { conversations } = data;
+    let { conversations, userId } = data;
     conversations = utils.isArray(conversations) ? conversations : [conversations];
     let list = utils.map(conversations, ({ conversationType, conversationId }) => {
       return { 
@@ -96,6 +96,7 @@ export default function({ data, callback, index }){
     let message = codec.create({
       conversations: list
     });
+    targetId = userId;
     buffer = codec.encode(message).finish();
   }
 

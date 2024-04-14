@@ -94,7 +94,8 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-      let data = { topic: COMMAND_TOPICS.REMOVE_CONVERSATION, conversations };
+      let user = io.getCurrentUser();
+      let data = { topic: COMMAND_TOPICS.REMOVE_CONVERSATION, conversations, userId: user.id };
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
         let list = utils.isArray(conversations) ? conversations : [conversations];
         utils.forEach(list, (conversation) => {

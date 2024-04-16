@@ -84,7 +84,7 @@ export default function(io, emitter){
       io.sendCommand(SIGNAL_CMD.QUERY, _params, (result) => {
         conversationUtils.add(result.conversations);
         let conversations = conversationUtils.get();
-        resolve({ conversations });
+        resolve({ conversations, isFinished: result.isFinished });
       });
     });
   };

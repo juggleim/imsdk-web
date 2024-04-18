@@ -105,6 +105,19 @@ export default function(io, emitter){
       });
     });
   };
+  let insertConversation = (conversation) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, conversation, FUNC_PARAM_CHECKER.INSERTCONVERSATION);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let user = io.getCurrentUser();
+      let data = { topic: COMMAND_TOPICS.INSERT_CONVERSATION, conversation, userId: user.id };
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
+        resolve();
+      });
+    });
+  };
   let clearUnreadcount = ( conversations ) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, conversations, FUNC_PARAM_CHECKER.CLEARUNREADCOUNT);
@@ -229,6 +242,7 @@ export default function(io, emitter){
   return {
     getConversations,
     removeConversation,
+    insertConversation,
     clearUnreadcount,
     getTotalUnreadcount,
     clearTotalUnreadcount,

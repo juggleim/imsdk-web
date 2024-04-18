@@ -367,3 +367,12 @@ message QryMergedMsgsReq{
     int32 count = 2;
     int32 order = 3;
 }
+message UndisturbConversReq {
+    string userId = 1;
+    repeated UndisturbConverItem items = 2;
+}
+message UndisturbConverItem {
+    string targetId = 1;
+    ChannelType channelType = 2;
+    int32 undisturbType = 3;  // 0：非免打扰；1：普通免打扰
+}

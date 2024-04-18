@@ -78,6 +78,9 @@ export let FUNC_PARAM_CHECKER = {
   GET_DRAFT: [{ name: 'conversationType' }, { name: 'conversationId' }],
   REMOVECONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
   INSERTCONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
+  
+  MUTE_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
+  UNMUTE_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
 
   JOINCHATROOM: [{ name: 'id', type: 'String' }],
   QUITCHATROOM: [{ name: 'id', type: 'String' }],
@@ -100,6 +103,7 @@ export let COMMAND_TOPICS = {
   CLEAR_UNREAD: 'clear_unread',
   REMOVE_CONVERSATION: 'del_convers',
   INSERT_CONVERSATION: 'add_conver',
+  MUTE_CONVERSATION: 'undisturb_convers',
   GET_UNREAD_TOTLAL_CONVERSATION: 'qry_total_unread_count',
   CLEAR_UNREAD_TOTLAL_CONVERSATION: 'clear_total_unread',
 
@@ -168,6 +172,11 @@ export let MENTION_ORDER = {
 export let UPLOAD_TYPE = {
   NONE: 0,
   QINIU: 1
+};
+
+export let MUTE_TYPE = {
+  MUTE: 1,
+  UNMUTE: 0
 };
 
 export let ErrorMessages = [

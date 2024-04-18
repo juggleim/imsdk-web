@@ -1096,6 +1096,35 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 3
           }
         }
+      },
+      UndisturbConversReq: {
+        fields: {
+          userId: {
+            type: "string",
+            id: 1
+          },
+          items: {
+            rule: "repeated",
+            type: "UndisturbConverItem",
+            id: 2
+          }
+        }
+      },
+      UndisturbConverItem: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 2
+          },
+          undisturbType: {
+            type: "int32",
+            id: 3
+          }
+        }
       }
     }
   }

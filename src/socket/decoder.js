@@ -329,6 +329,7 @@ export default function Decoder(cache, io){
       mentionInfo,
       isRead: !!isRead,
       isUpdated: msgFlag.isUpdated,
+      isMuted: msgFlag.isMute,
       referMsg: newRefer,
     };
 

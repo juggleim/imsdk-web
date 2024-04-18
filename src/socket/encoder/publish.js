@@ -149,6 +149,23 @@ export default function({ data, callback, index }){
     });
     buffer = codec.encode(message).finish();
   }
+  
+  if(utils.isEqual(COMMAND_TOPICS.MUTE_CONVERSATION, topic)){
+    let { userId, conversations, type } = data;
+    targetId = userId;
+
+    let items = utils.isArray(conversations) ? conversations : [conversations];
+    items = utils.map(items, (item) => {
+      let { conversationType, conversationId } = item;
+      return { targetId: conversationId, channelType: conversationType, undisturbType: type };
+    });
+    let codec = Proto.lookup('codec.UndisturbConversReq');
+    let message = codec.create({ 
+      userId: userId,
+      items: items
+    });
+    buffer = codec.encode(message).finish();
+  }
 
   return {
     publishMsgBody: {

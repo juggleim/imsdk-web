@@ -140,20 +140,19 @@ export default function({ data, callback, index }){
   }
 
   if(utils.isEqual(COMMAND_TOPICS.INSERT_CONVERSATION, topic)){
-    let { userId, conversation } = data;
-    targetId = userId;
+    let {  conversation } = data;
+    let { conversationId, conversationType } = conversation;
     let codec = Proto.lookup('codec.Conversation');
     let message = codec.create({ 
-      channelType: conversation.conversationType,
-      targetId: conversation.conversationId
+      channelType: conversationType,
+      targetId: conversationId
     });
+    targetId = conversationId;
     buffer = codec.encode(message).finish();
   }
   
   if(utils.isEqual(COMMAND_TOPICS.MUTE_CONVERSATION, topic)){
     let { userId, conversations, type } = data;
-    targetId = userId;
-
     let items = utils.isArray(conversations) ? conversations : [conversations];
     items = utils.map(items, (item) => {
       let { conversationType, conversationId } = item;
@@ -164,6 +163,7 @@ export default function({ data, callback, index }){
       userId: userId,
       items: items
     });
+    targetId = userId;
     buffer = codec.encode(message).finish();
   }
 

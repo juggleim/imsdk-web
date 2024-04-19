@@ -117,17 +117,17 @@ export default function(io, emitter){
         if(code){
           return reject({ code, msg })
         }
-        let conversation = createConversation({
+        let item = createConversation({
           ...conversation,
           sentTime: Date.now()
         });
-        conversationUtils.update(conversation);
+        conversationUtils.update(item);
 
         let conversations = conversationUtils.get();
-        let newConversation = conversationUtils.getPer(conversation);
+        let newConversation = conversationUtils.getPer(item);
         let config = io.getConfig();
         if(!config.isPC){
-          emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations, conversation: newConversation });
+          emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations: utils.clone(conversations), conversation: newConversation });
         }
         resolve();
       });

@@ -1,4 +1,4 @@
-import { FUNC_PARAM_CHECKER, SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME, EVENT, MESSAGE_ORDER, CONNECT_STATE, MESSAGE_TYPE, MENTION_TYPE, MUTE_TYPE } from "../../enum";
+import { FUNC_PARAM_CHECKER, SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME, EVENT, MESSAGE_ORDER, CONNECT_STATE, MESSAGE_TYPE, MENTION_TYPE, UNDISTURB_TYPE } from "../../enum";
 import utils from "../../utils";
 import common from "../../common/common";
 import Storage from "../../common/storage";
@@ -133,14 +133,14 @@ export default function(io, emitter){
       });
     });
   };
-  let muteConversation = (conversations) => {
+  let disturbConversation = (conversations) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, conversations, FUNC_PARAM_CHECKER.MUTE_CONVERSATION);
       if(!utils.isEmpty(error)){
         return reject(error);
       }
       let user = io.getCurrentUser();
-      let data = { topic: COMMAND_TOPICS.MUTE_CONVERSATION, conversations, userId: user.id, type: MUTE_TYPE.MUTE };
+      let data = { topic: COMMAND_TOPICS.MUTE_CONVERSATION, conversations, userId: user.id, type: UNDISTURB_TYPE.DISTURB };
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg }) => {
         if(code){
           return reject({ code, msg })
@@ -149,14 +149,14 @@ export default function(io, emitter){
       });
     });
   };
-  let unmuteConversation = (conversations) => {
+  let undisturbConversation = (conversations) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, conversations, FUNC_PARAM_CHECKER.UNMUTE_CONVERSATION);
       if(!utils.isEmpty(error)){
         return reject(error);
       }
       let user = io.getCurrentUser();
-      let data = { topic: COMMAND_TOPICS.MUTE_CONVERSATION, conversations, userId: user.id, type: MUTE_TYPE.UNMUTE };
+      let data = { topic: COMMAND_TOPICS.MUTE_CONVERSATION, conversations, userId: user.id, type: UNDISTURB_TYPE.UNDISTURB };
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg }) => {
         if(code){
           return reject({ code, msg })
@@ -339,8 +339,8 @@ export default function(io, emitter){
     getConversations,
     removeConversation,
     insertConversation,
-    muteConversation,
-    unmuteConversation,
+    disturbConversation,
+    undisturbConversation,
     topConversation,
     untopConversation,
     getTopConversations,

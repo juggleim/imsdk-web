@@ -179,9 +179,9 @@ export let UPLOAD_TYPE = {
   QINIU: 1
 };
 
-export let MUTE_TYPE = {
-  MUTE: 1,
-  UNMUTE: 0
+export let UNDISTURB_TYPE = {
+  DISTURB: 1,
+  UNDISTURB: 0
 };
 
 export let ErrorMessages = [

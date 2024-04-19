@@ -644,6 +644,15 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           }
         }
       },
+      ConversationsReq: {
+        fields: {
+          conversations: {
+            rule: "repeated",
+            type: "Conversation",
+            id: 1
+          }
+        }
+      },
       Conversation: {
         fields: {
           converId: {
@@ -1123,6 +1132,14 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           undisturbType: {
             type: "int32",
             id: 3
+          }
+        }
+      },
+      QryTopConversReq: {
+        fields: {
+          startTime: {
+            type: "int64",
+            id: 1
           }
         }
       }

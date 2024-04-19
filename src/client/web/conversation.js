@@ -113,7 +113,22 @@ export default function(io, emitter){
       }
       let user = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.INSERT_CONVERSATION, conversation, userId: user.id };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg }) => {
+        if(code){
+          return reject({ code, msg })
+        }
+        let conversation = createConversation({
+          ...conversation,
+          sentTime: Date.now()
+        });
+        conversationUtils.update(conversation);
+
+        let conversations = conversationUtils.get();
+        let newConversation = conversationUtils.getPer(conversation);
+        let config = io.getConfig();
+        if(!config.isPC){
+          emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations, conversation: newConversation });
+        }
         resolve();
       });
     });
@@ -126,7 +141,10 @@ export default function(io, emitter){
       }
       let user = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.MUTE_CONVERSATION, conversations, userId: user.id, type: MUTE_TYPE.MUTE };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg }) => {
+        if(code){
+          return reject({ code, msg })
+        }
         resolve();
       });
     });
@@ -139,8 +157,60 @@ export default function(io, emitter){
       }
       let user = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.MUTE_CONVERSATION, conversations, userId: user.id, type: MUTE_TYPE.UNMUTE };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg }) => {
+        if(code){
+          return reject({ code, msg })
+        }
         resolve();
+      });
+    });
+  };
+  let topConversation = (conversations) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, conversations, FUNC_PARAM_CHECKER.TOP_CONVERSATION);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let user = io.getCurrentUser();
+      let data = { topic: COMMAND_TOPICS.TOP_CONVERSATION, conversations, userId: user.id, isTop: true };
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg }) => {
+        if(code){
+          return reject({ code, msg })
+        }
+        resolve();
+      });
+    });
+  };
+  let untopConversation = (conversations) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, conversations, FUNC_PARAM_CHECKER.UNTOP_CONVERSATION);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let user = io.getCurrentUser();
+      let data = { topic: COMMAND_TOPICS.TOP_CONVERSATION, conversations, userId: user.id, isTop: false };
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg }) => {
+        if(code){
+          return reject({ code, msg })
+        }
+        resolve();
+      });
+    });
+  };
+  let getTopConversations = (params) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, params, []);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+
+      params = params || {};
+      let { count = 50, time = 0 } = params;
+      let user = io.getCurrentUser();
+      let _params = { topic: COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS, time: 0, count, userId: user.id };
+      utils.extend(_params, params);
+      io.sendCommand(SIGNAL_CMD.QUERY, _params, (result) => {
+        resolve({ conversations: result.conversations, isFinished: result.isFinished });
       });
     });
   };
@@ -271,6 +341,9 @@ export default function(io, emitter){
     insertConversation,
     muteConversation,
     unmuteConversation,
+    topConversation,
+    untopConversation,
+    getTopConversations,
     clearUnreadcount,
     getTotalUnreadcount,
     clearTotalUnreadcount,

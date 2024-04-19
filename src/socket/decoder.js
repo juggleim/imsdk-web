@@ -70,7 +70,7 @@ export default function Decoder(cache, io){
       result = getMessagesHandler(index, data);
     }
 
-    if(utils.isInclude([COMMAND_TOPICS.CONVERSATIONS, COMMAND_TOPICS.SYNC_CONVERSATIONS], topic)){
+    if(utils.isInclude([COMMAND_TOPICS.CONVERSATIONS, COMMAND_TOPICS.SYNC_CONVERSATIONS, COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS], topic)){
       result = getConversationsHandler(index, data);
     }
 
@@ -169,6 +169,7 @@ export default function Decoder(cache, io){
             userInfo, 
             groupInfo, 
             syncTime,
+            undisturbType,
             LatestMentionMsg: latestMentionMsg, 
             channelType: conversationType 
           } = conversation;
@@ -228,6 +229,7 @@ export default function Decoder(cache, io){
         conversationExts,
         latestMentionMsg,
         syncTime,
+        muteType: undisturbType
       };
     });
     return { conversations, isFinished, index };

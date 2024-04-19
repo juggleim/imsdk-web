@@ -162,6 +162,13 @@ export default function getQueryBody({ data, callback, index }){
     let message = codec.create({ startTime: time, count, order });
     buffer = codec.encode(message).finish();
   }
+
+  if(utils.isEqual(COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS, topic)){
+    let { time } = data;
+    let codec = Proto.lookup('codec.QryTopConversReq');
+    let message = codec.create({ startTime: time });
+    buffer = codec.encode(message).finish();
+  }
   
   return {
     qryMsgBody: {

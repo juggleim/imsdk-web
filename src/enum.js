@@ -81,6 +81,9 @@ export let FUNC_PARAM_CHECKER = {
   
   MUTE_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
   UNMUTE_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
+  
+  TOP_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
+  UNTOP_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
 
   JOINCHATROOM: [{ name: 'id', type: 'String' }],
   QUITCHATROOM: [{ name: 'id', type: 'String' }],
@@ -88,6 +91,7 @@ export let FUNC_PARAM_CHECKER = {
 export let COMMAND_TOPICS = {
   HISTORY_MESSAGES: 'qry_hismsgs',
   CONVERSATIONS: 'qry_convers',
+  QUERY_TOP_CONVERSATIONS: 'qry_top_convers',
   SYNC_CONVERSATIONS: 'sync_convers',
   SYNC_MESSAGES: 'sync_msgs',
   RECALL: 'recall_msg',
@@ -104,6 +108,7 @@ export let COMMAND_TOPICS = {
   REMOVE_CONVERSATION: 'del_convers',
   INSERT_CONVERSATION: 'add_conver',
   MUTE_CONVERSATION: 'undisturb_convers',
+  TOP_CONVERSATION: 'top_convers',
   GET_UNREAD_TOTLAL_CONVERSATION: 'qry_total_unread_count',
   CLEAR_UNREAD_TOTLAL_CONVERSATION: 'clear_total_unread',
 

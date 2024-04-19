@@ -88,7 +88,7 @@ export default function({ data, callback, index }){
     conversations = utils.isArray(conversations) ? conversations : [conversations];
     let list = utils.map(conversations, ({ conversationType, conversationId }) => {
       return { 
-        type: conversationType,
+        channelType: conversationType,
         targetId: conversationId 
       };
     });

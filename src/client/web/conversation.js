@@ -53,7 +53,7 @@ export default function(io, emitter){
 
       let conversations = conversationUtils.get();
       let newConversation = conversationUtils.getPer(conversation);
-      emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations, conversation: newConversation });
+      emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations: utils.clone(conversations), conversation: newConversation });
     }
   });
 
@@ -76,7 +76,7 @@ export default function(io, emitter){
       let conversations = conversationUtils.get();
       let isSynced = conversationUtils.isSync();
       if(isSynced && utils.isEqual(time, 0)){
-        return resolve({ conversations });
+        return resolve({ conversations: utils.clone(conversations) });
       }
       let user = io.getCurrentUser();
       let _params = { topic: COMMAND_TOPICS.CONVERSATIONS, time: 0, count, order, userId: user.id };
@@ -84,7 +84,7 @@ export default function(io, emitter){
       io.sendCommand(SIGNAL_CMD.QUERY, _params, (result) => {
         conversationUtils.add(result.conversations);
         let conversations = conversationUtils.get();
-        resolve({ conversations, isFinished: result.isFinished });
+        resolve({ conversations: utils.clone(conversations), isFinished: result.isFinished });
       });
     });
   };

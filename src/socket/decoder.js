@@ -229,7 +229,7 @@ export default function Decoder(cache, io){
         conversationExts,
         latestMentionMsg,
         syncTime,
-        muteType: undisturbType
+        undisturbType: undisturbType || 0
       };
     });
     return { conversations, isFinished, index };

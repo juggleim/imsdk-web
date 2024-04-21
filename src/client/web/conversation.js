@@ -128,7 +128,7 @@ export default function(io, emitter){
         // if(!config.isPC){
         //   emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations: utils.clone(conversations), conversation: newConversation });
         // }
-        resolve(newConversation);
+        resolve({ conversation: newConversation });
       });
     });
   };

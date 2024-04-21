@@ -152,11 +152,11 @@ export default function({ data, callback, index }){
   }
   
   if(utils.isEqual(COMMAND_TOPICS.MUTE_CONVERSATION, topic)){
-    let { userId, conversations, type } = data;
+    let { userId, conversations } = data;
     let items = utils.isArray(conversations) ? conversations : [conversations];
     items = utils.map(items, (item) => {
-      let { conversationType, conversationId } = item;
-      return { targetId: conversationId, channelType: conversationType, undisturbType: type };
+      let { conversationType, conversationId, undisturbType } = item;
+      return { targetId: conversationId, channelType: conversationType, undisturbType };
     });
     let codec = Proto.lookup('codec.UndisturbConversReq');
     let message = codec.create({ 

@@ -79,7 +79,7 @@ export let FUNC_PARAM_CHECKER = {
   REMOVECONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
   INSERTCONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
   
-  MUTE_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
+  MUTE_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'undisturbType' } ],
   UNMUTE_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
   
   TOP_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],

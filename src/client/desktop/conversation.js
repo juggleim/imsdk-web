@@ -9,6 +9,12 @@ export default function($conversation){
     'setDraft',
     'getDraft',
     'removeDraft',
+    'insertConversation',
+    'disturbConversation',
+    'undisturbConversation',
+    'topConversation',
+    'untopConversation',
+    'getTopConversations',
   ];
   let invokes = common.formatProvider(funcs, $conversation);
   return invokes;

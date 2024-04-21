@@ -122,14 +122,13 @@ export default function(io, emitter){
           sentTime: Date.now()
         });
         conversationUtils.update(item);
-
-        let conversations = conversationUtils.get();
         let newConversation = conversationUtils.getPer(item);
-        let config = io.getConfig();
-        if(!config.isPC){
-          emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations: utils.clone(conversations), conversation: newConversation });
-        }
-        resolve();
+        // let conversations = conversationUtils.get();
+        // let config = io.getConfig();
+        // if(!config.isPC){
+        //   emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations: utils.clone(conversations), conversation: newConversation });
+        // }
+        resolve(newConversation);
       });
     });
   };
@@ -140,7 +139,7 @@ export default function(io, emitter){
         return reject(error);
       }
       let user = io.getCurrentUser();
-      let data = { topic: COMMAND_TOPICS.MUTE_CONVERSATION, conversations, userId: user.id, type: UNDISTURB_TYPE.DISTURB };
+      let data = { topic: COMMAND_TOPICS.MUTE_CONVERSATION, conversations, userId: user.id };
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg }) => {
         if(code){
           return reject({ code, msg })

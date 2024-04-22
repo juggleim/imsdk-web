@@ -264,13 +264,23 @@ function ConversationUtils(){
     isSynced = false;
     conversations.length = 0;
   };
-  let modify = (conversation) => {
+  let relpace = (conversation) => {
     let index = utils.find(conversations, ({ conversationType, conversationId }) => {
       return utils.isEqual(conversation.conversationType, conversationType) && utils.isEqual(conversation.conversationId, conversationId);
     });
     if(!utils.isEqual(index, -1)){
       utils.extend(conversations[index], conversation);
     }
+  };
+  let modify = (_conversations, props) => {
+    _conversations = utils.isArray(_conversations) ? _conversations : [_conversations];
+    utils.forEach(_conversations, (item) => {
+      let conversation = getPer(item);
+      if(!utils.isEmpty(conversation)){
+        utils.extend(conversation, props);
+        relpace(conversation);
+      }
+    });
   };
   let get = () => {
     return conversations;
@@ -302,6 +312,7 @@ function ConversationUtils(){
     get,
     isSync,
     add,
+    relpace,
     modify,
     getPer,
     read

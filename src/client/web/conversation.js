@@ -144,6 +144,9 @@ export default function(io, emitter){
         if(code){
           return reject({ code, msg })
         }
+        let list = utils.isArray(conversations) ? conversations : [conversations];
+        let undisturbType = list[0].undisturbType;
+        conversationUtils.modify(conversations, { undisturbType  });
         resolve();
       });
     });
@@ -160,6 +163,7 @@ export default function(io, emitter){
         if(code){
           return reject({ code, msg })
         }
+        conversationUtils.modify(conversations, { undisturbType: UNDISTURB_TYPE.UNDISTURB });
         resolve();
       });
     });
@@ -176,6 +180,7 @@ export default function(io, emitter){
         if(code){
           return reject({ code, msg })
         }
+        conversationUtils.modify(conversations, { isTop: true });
         resolve();
       });
     });
@@ -192,6 +197,7 @@ export default function(io, emitter){
         if(code){
           return reject({ code, msg })
         }
+        conversationUtils.modify(conversations, { isTop: false });
         resolve();
       });
     });

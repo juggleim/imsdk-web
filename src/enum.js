@@ -259,3 +259,11 @@ export let FILE_TYPE = {
   VIDEO: 3,
   FILE: 4,
 };
+
+export let MESSAGE_SENT_STATE = {
+  NONE: 0,
+  SENDING: 1,
+  SUCCESS: 2,
+  FAILED: 3,
+  UPLOADING: 4,
+}

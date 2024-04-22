@@ -319,10 +319,8 @@ message QryMentionMsgsResp{
 }
 message MentionMsg{
     MentionType mentionType = 1;
-    string msgId = 2;
-    int64 msgIndex = 3;
-    int64 msgTime = 4;
-    UserInfo senderInfo = 5;
+    UserInfo senderInfo = 2;
+    DownMsg msg = 3;
 }
 message QryUploadTokenResp{
     OssType ossType = 1;

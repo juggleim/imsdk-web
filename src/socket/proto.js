@@ -968,21 +968,13 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "MentionType",
             id: 1
           },
-          msgId: {
-            type: "string",
-            id: 2
-          },
-          msgIndex: {
-            type: "int64",
-            id: 3
-          },
-          msgTime: {
-            type: "int64",
-            id: 4
-          },
           senderInfo: {
             type: "UserInfo",
-            id: 5
+            id: 2
+          },
+          msg: {
+            type: "DownMsg",
+            id: 3
           }
         }
       },

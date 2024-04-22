@@ -1,7 +1,7 @@
 import Emitter from "../common/emmit";
 import utils from "../utils";
 import Proto from "./proto";
-import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, CONNECT_ACK_INDEX, PONG_INDEX, UPLOAD_TYPE, CONVERATION_TYPE } from "../enum";
+import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, CONNECT_ACK_INDEX, PONG_INDEX, UPLOAD_TYPE, CONVERATION_TYPE, MESSAGE_SENT_STATE } from "../enum";
 import GroupCacher from "../common/group-cacher";
 import UserCacher from "../common/user-cacher";
 import common from "../common/common";
@@ -333,6 +333,7 @@ export default function Decoder(cache, io){
       isUpdated: msgFlag.isUpdated,
       isMuted: msgFlag.isMute,
       referMsg: newRefer,
+      sentState: MESSAGE_SENT_STATE.SUCCESS
     };
 
     if(_message.isSender){

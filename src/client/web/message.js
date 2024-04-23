@@ -264,9 +264,11 @@ export default function(io, emitter){
         order: MENTION_ORDER.BACKWARD,
         messageIndex: 0
       };
+      let user = io.getCurrentUser();
       utils.extend(params, conversation);
       let data = {
         topic: COMMAND_TOPICS.GET_MENTION_MSGS,
+        userId: user.id,
         ...params
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, ({ isFinished, msgs }) => {

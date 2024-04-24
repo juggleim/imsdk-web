@@ -99,7 +99,7 @@ export default function(io, emitter){
       let { id: userId } = io.getCurrentUser();
       let params = {
         time: 0,
-        order: MESSAGE_ORDER.FORWARD,
+        order: MESSAGE_ORDER.BACKWARD,
         count: 20,
         userId: userId,
         topic: COMMAND_TOPICS.HISTORY_MESSAGES,

@@ -517,6 +517,16 @@ export default function(io, emitter){
     });
   };
 
+  let searchMessages = (params) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, params, FUNC_PARAM_CHECKER.SEARCH_MESSAGES);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      return reject(ErrorType.SDK_FUNC_NOT_DEFINED);
+    });
+  };
+
   return {
     sendMessage,
     getMessages,
@@ -534,6 +544,7 @@ export default function(io, emitter){
     sendVideoMessage,
     sendMergeMessage,
     getMergeMessages,
+    searchMessages,
     _uploadFile,
   };
 }

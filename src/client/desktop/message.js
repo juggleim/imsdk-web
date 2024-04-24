@@ -17,6 +17,7 @@ export default function($message){
     'sendVideoMessage',
     'sendMergeMessage',
     'getMergeMessages',
+    'searchMessages',
   ];
   let invokes = common.formatProvider(funcs, $message);
   return invokes;

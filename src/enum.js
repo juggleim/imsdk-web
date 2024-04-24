@@ -64,6 +64,7 @@ export let FUNC_PARAM_CHECKER = {
   UPDATEMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'content', type: 'Object' }],
   MESSAGE_DEFERRED: [{ name: 'messageId' }, { name: 'content', type: 'Object' }],
   GET_MENTIOIN_MESSAGES: [{ name: 'conversationType' }, { name: 'conversationId' }],
+  SEARCH_MESSAGES: [{ name: 'keywords', type: 'Array' }],
   GET_FILE_TOKEN: [{ name: 'type' }],
   
   SEND_FILE_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'content', type: 'Object' }],

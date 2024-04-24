@@ -89,7 +89,7 @@ export default function IO(config){
       ws.close && ws.close();
     }
     let state = _state || CONNECT_STATE.DISCONNECTED;
-    updateState(state);
+    // updateState(state);
     timer.pause();
     syncTimer.pause();
     

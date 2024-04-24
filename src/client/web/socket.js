@@ -34,7 +34,14 @@ export default function(io, emitter){
   };
 
   let disconnect = () => {
-    io.disconnect();
+    return utils.deferred((resolve) => {
+      io.disconnect();
+      let config = io.getConfig();
+      if(!config.isPC){
+        io.emit(SIGNAL_NAME.CLIENT_CLEAR_MEMORY_CACHE, {});
+      }
+      resolve();
+    });
   };
 
   return {

@@ -57,10 +57,8 @@ export default function(io, emitter){
     }
   });
 
-  io.on(SIGNAL_NAME.CONN_CHANGED, ({ state }) => {
-    if(utils.isEqual(state, CONNECT_STATE.DISCONNECTED)){
-      conversationUtils.clear();
-    }
+  io.on(SIGNAL_NAME.CLIENT_CLEAR_MEMORY_CACHE, () => {
+    conversationUtils.clear();
   });
 
   let getConversations = (params) => {

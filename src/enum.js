@@ -27,7 +27,9 @@ export let SIGNAL_NAME = {
   S_NTF: 's_ntf',
   // PC 端自定义通知
   S_SYNC_CONVERSATION_NTF: 's_sync_conversation_ntf',
-  S_PONG: 's_pong'
+  S_PONG: 's_pong',
+
+  CLIENT_CLEAR_MEMORY_CACHE: 'cmd_clear_memory_cache',
 };
 
 export let PLATFORM = {

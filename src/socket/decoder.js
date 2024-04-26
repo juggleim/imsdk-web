@@ -254,7 +254,7 @@ export default function Decoder(cache, io){
     return { isFinished, messages, index };
   }
   function msgFormat(msg){
-    let { senderId, memberCount, referMsg, readCount, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo } = msg;
+    let { undisturbType, senderId, memberCount, referMsg, readCount, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo } = msg;
     let content = new TextDecoder().decode(msgContent);
     content = utils.parse(content);
 
@@ -333,7 +333,8 @@ export default function Decoder(cache, io){
       isUpdated: msgFlag.isUpdated,
       isMuted: msgFlag.isMute,
       referMsg: newRefer,
-      sentState: MESSAGE_SENT_STATE.SUCCESS
+      sentState: MESSAGE_SENT_STATE.SUCCESS,
+      undisturbType:  undisturbType || 0,
     };
 
     if(_message.isSender){

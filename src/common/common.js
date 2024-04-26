@@ -131,7 +131,7 @@ let _MSG_FLAG_NAMES = [
   {name: MESSAGE_TYPE.READ_GROUP_MSG, isCommand: true },
   {name: MESSAGE_TYPE.MODIFY, isCommand: true },
   {name: MESSAGE_TYPE.CLEAR_MSG, isCommand: true },
-  {name: MESSAGE_TYPE.CLEAR_UNREAD, isCommand: true },
+  {name: MESSAGE_TYPE.CLEAR_UNREAD, isCommand: true,  isCount: false, isStorage: false },
 ];
 
 let formatter = {
@@ -192,7 +192,7 @@ function ConversationUtils(){
       if(!isNew){
         let conversation = conversations.splice(index, 1)[0]; 
         let { unreadCount = 0 } = conversation;
-        let { latestMessage, updatedTime, conversationExts, latestMentionMsg } = item;
+        let { latestMessage, updatedTime, conversationExts, latestMentionMsg, undisturbType } = item;
         let { conversationTitle, conversationPortrait } = latestMessage;
         conversationTitle = conversationTitle || item.conversationTitle;
         conversationPortrait = conversationPortrait || item.conversationPortrait;
@@ -226,6 +226,7 @@ function ConversationUtils(){
           conversationExts,
           latestMentionMsg,
           updatedTime,
+          undisturbType,
         });
         return conversations.push(conversation);
       }

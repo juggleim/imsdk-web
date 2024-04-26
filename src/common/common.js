@@ -135,12 +135,13 @@ let _MSG_FLAG_NAMES = [
 ];
 
 let formatter = {
-  toFlag: ({ isCommand, isCount, isStorage, isMerge }) => {
+  toFlag: ({ isCommand, isCount, isStorage, isMerge, isMass }) => {
     let flag = 0;
     isCommand && (flag |= (1 << 0));
     isCount && (flag |= (1 << 1));
     isStorage && (flag |= (1 << 3));
     isMerge && (flag |= (1 << 5));
+    isMass && (flag |= (1 << 7));
     return flag;
   },
   toMsg: (flag) => {
@@ -152,6 +153,7 @@ let formatter = {
       5: { name: 'isUpdated' },
       6: { name: 'isMerge' },
       7: { name: 'isMute' },
+      8: { name: 'isMass' },
     };
     let result = {};
     for(let num in obj){
@@ -171,11 +173,12 @@ let registerMessage = (names) => {
   });
 };
 
-let getMsgFlag = (name) => {
+let getMsgFlag = (name, option = {}) => {
   let msg = utils.filter(_MSG_FLAG_NAMES, (n) => {
     return utils.isEqual(n.name, name);
   })[0] || {};
-  let flag = formatter.toFlag(msg);
+  let _msg = { ...msg, ...option };
+  let flag = formatter.toFlag(_msg);
   return flag;
 };
 
@@ -213,6 +216,10 @@ function ConversationUtils(){
         if(!latestMessage.isSender && msgFlag.isCount){
           unreadCount = unreadCount + 1;
         }
+        // 如果是群发消息不更新会话列表
+        if(msgFlag.isMass){
+          return;
+        }
         // 自己发送的多端同步清空消息，未读数设置为 0，最后一条消息保持不变
         if(utils.isEqual(messageName, MESSAGE_TYPE.CLEAR_UNREAD) && latestMessage.isSender){
           unreadCount = 0;
@@ -246,7 +253,7 @@ function ConversationUtils(){
       }
     });
     conversations = utils.quickSort(conversations, (a, b) => {
-      return a.latestMessage.sentTime > b.latestMessage.sentTime;
+      return a.sortTime > b.sortTime;
     });
     conversations = tops.concat(conversations);
   };

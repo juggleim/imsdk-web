@@ -65,8 +65,9 @@ export default function(io, emitter){
       }
 
       let data = utils.clone(message);
-      let { name, conversationType, conversationId } = data;
-      let flag = common.getMsgFlag(name);
+      let { name, conversationType, conversationId, isMass } = data;
+
+      let flag = common.getMsgFlag(name, { isMass });
       utils.extend(data, { flag });
 
       let topic = topics[conversationType];
@@ -89,6 +90,48 @@ export default function(io, emitter){
     });
   };
 
+  /* 
+    let messages = [ Message, Message, ... ];  
+    let callbacks = {
+      onprogress: ({ message, count, total }) => {},
+      oncompleted: ({ messages }) => {},
+    };
+  */
+  let sendMassMessage = (messages, callbacks = {}) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, messages, FUNC_PARAM_CHECKER.SENDMSG);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let _cbs = {
+        onprogress: () => {},
+        oncompleted: () => {},
+      };
+      utils.extend(_cbs, callbacks);
+
+      messages = utils.isArray(messages) ? messages : [messages];
+      messages = utils.map(messages, (message) => {
+        return { ...message, isMass: true }
+      });
+      
+      let _msgs = [];
+      let total = messages.length;
+      utils.iterator(messages, (message, next, isFinished) => {
+        let _next = () => {
+          if(isFinished){
+            return _cbs.oncompleted({ messages: _msgs });
+          }
+          next();
+        };
+        let progress = (msg) => {
+          _msgs.push(msg);
+          _next();
+          _cbs.onprogress({ message: msg, count: _msgs.length, total });
+        };
+        sendMessage(message).then(progress, progress);
+      });
+    });
+  };
   let getMessages = (conversation) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, conversation, FUNC_PARAM_CHECKER.GETMSGS);
@@ -529,6 +572,7 @@ export default function(io, emitter){
 
   return {
     sendMessage,
+    sendMassMessage,
     getMessages,
     getMessagesByIds,
     clearMessage,

@@ -436,6 +436,17 @@ const isBase64 = (str) => {
   var regex = /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/;
   return regex.test(str);
 };
+function iterator(list, callback){
+  let next = () => {
+    let item = list.splice(0, 1);
+    if(isEmpty(item)){
+      return;
+    }
+    let isFinished = isEqual(list.length, 0);
+    callback(item[0], next, isFinished);
+  };
+  next();
+}
 export default {
   Prosumer,
   Observer,
@@ -481,4 +492,5 @@ export default {
   decodeBase64,
   isContinuous,
   isBase64,
+  iterator,
 }

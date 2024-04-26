@@ -238,7 +238,8 @@ function ConversationUtils(){
     });
 
     let tops = [];
-    utils.forEach(conversations, ({ isTop }, index) => {
+    utils.forEach(conversations, ( item = {}, index) => {
+      let { isTop } = item;
       if(isTop){
         let conversation =  conversations.splice(index, 1)[0];
         tops.push(conversation);

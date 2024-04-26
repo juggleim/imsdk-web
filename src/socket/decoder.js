@@ -165,8 +165,8 @@ export default function Decoder(cache, io){
       let { msg, 
             targetId, 
             unreadCount, 
-            updateTime: _updatedTime, 
-            userInfo, 
+            sortTime: _sortTime, 
+            targetUserInfo, 
             groupInfo, 
             syncTime,
             undisturbType,
@@ -174,7 +174,7 @@ export default function Decoder(cache, io){
             channelType: conversationType 
           } = conversation;
       utils.extend(msg, { targetId });
-      
+      unreadCount = unreadCount || 0;
       if(latestMentionMsg){
         let { mentionType, senderInfo, msgId } = latestMentionMsg;
         latestMentionMsg = {
@@ -203,7 +203,7 @@ export default function Decoder(cache, io){
       }
   
       if(utils.isEqual(conversationType, CONVERATION_TYPE.PRIVATE)){
-        let { userPortrait, nickname, extFields, userId, updatedTime } = userInfo;
+        let { userPortrait, nickname, extFields, userId, updatedTime } = targetUserInfo;
         extFields = utils.toObject(extFields);
         
         utils.extend(latestMessage, { 
@@ -213,7 +213,7 @@ export default function Decoder(cache, io){
           conversationUpdatedTime: updatedTime,
         });
 
-        GroupCacher.set(userId, userInfo);
+        GroupCacher.set(userId, targetUserInfo);
       }
 
       let { conversationTitle, conversationPortrait, conversationExts } = latestMessage;
@@ -222,7 +222,7 @@ export default function Decoder(cache, io){
         conversationType,
         conversationId: targetId,
         unreadCount,
-        updatedTime: _updatedTime,
+        sortTime: _sortTime,
         latestMessage,
         conversationTitle,
         conversationPortrait,

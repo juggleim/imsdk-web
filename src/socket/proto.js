@@ -655,7 +655,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
       },
       Conversation: {
         fields: {
-          converId: {
+          userId: {
             type: "string",
             id: 1
           },
@@ -667,7 +667,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "ChannelType",
             id: 3
           },
-          updateTime: {
+          sortTime: {
             type: "int64",
             id: 4
           },
@@ -679,13 +679,9 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "DownMsg",
             id: 6
           },
-          latestReadedMsgIndex: {
+          latestReadIndex: {
             type: "int64",
             id: 7
-          },
-          LatestMentionMsg: {
-            type: "MentionMsg",
-            id: 8
           },
           isTop: {
             type: "int32",
@@ -699,7 +695,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "int32",
             id: 11
           },
-          userInfo: {
+          targetUserInfo: {
             type: "UserInfo",
             id: 12
           },
@@ -710,6 +706,14 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           syncTime: {
             type: "int64",
             id: 14
+          },
+          isDelete: {
+            type: "int32",
+            id: 15
+          },
+          latestUnreadIndex: {
+            type: "int64",
+            id: 16
           }
         }
       },

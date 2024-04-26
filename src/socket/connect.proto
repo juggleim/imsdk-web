@@ -218,20 +218,23 @@ message ConversationsReq{
     repeated Conversation conversations = 1;
 }
 message Conversation{
-    string converId = 1;
+    string userId = 1;
     string targetId = 2;
     ChannelType channelType = 3;
-    int64 updateTime = 4;
+    int64 sortTime = 4;
     int64 unreadCount = 5;
     DownMsg msg = 6;
-    int64 latestReadedMsgIndex = 7;
-    MentionMsg LatestMentionMsg = 8;
+    int64 latestReadIndex = 7;
+    //MentionMsg LatestMentionMsg = 8;
     int32 isTop = 9;
     int64 topUpdatedTime = 10;
     int32 undisturbType = 11;
-    UserInfo userInfo = 12;
+    UserInfo targetUserInfo = 12;
     GroupInfo groupInfo = 13;
     int64 syncTime = 14;
+    int32 isDelete = 15;
+    int64 latestUnreadIndex = 16;
+
 }
 
 message SyncMsgReq{

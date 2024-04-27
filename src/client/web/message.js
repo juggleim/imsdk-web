@@ -119,6 +119,7 @@ export default function(io, emitter){
       utils.iterator(messages, (message, next, isFinished) => {
         let _next = () => {
           if(isFinished){
+            resolve();
             return _cbs.oncompleted({ messages: _msgs });
           }
           next();

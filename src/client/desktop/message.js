@@ -2,6 +2,7 @@ import common from "../../common/common";
 export default function($message){
   let funcs = [
     'sendMessage',
+    'sendMassMessage',
     'getMessages',
     'getMessagesByIds',
     'clearMessage',

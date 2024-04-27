@@ -2,6 +2,8 @@ import common from "../../common/common";
 export default function($message){
   let funcs = [
     'sendMessage',
+    'updateMessageAttr',
+    'removeMessages',
     'sendMassMessage',
     'getMessages',
     'getMessagesByIds',

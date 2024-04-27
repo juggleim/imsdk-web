@@ -1138,6 +1138,27 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 1
           }
         }
+      },
+      DelHisMsgsReq: {
+        fields: {
+          senderId: {
+            type: "string",
+            id: 1
+          },
+          targetId: {
+            type: "string",
+            id: 2
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 3
+          },
+          msgs: {
+            rule: "repeated",
+            type: "SimpleMsg",
+            id: 4
+          }
+        }
       }
     }
   }

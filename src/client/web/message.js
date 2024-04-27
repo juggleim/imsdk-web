@@ -190,6 +190,23 @@ export default function(io, emitter){
       });
     });
   };
+  let removeMessages = (messages) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, messages, FUNC_PARAM_CHECKER.REMOVE_MSGS);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let user = io.getCurrentUser();
+      let data = {
+        topic: COMMAND_TOPICS.REMOVE_MESSAGE,
+        messages,
+        userId: user.id
+      };
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
+        resolve();
+      });
+    });
+  };
   /* 
     let message = {conversationType, conversationId, sentTime, messageId}
   */
@@ -575,6 +592,7 @@ export default function(io, emitter){
     sendMessage,
     sendMassMessage,
     getMessages,
+    removeMessages,
     getMessagesByIds,
     clearMessage,
     recallMessage,

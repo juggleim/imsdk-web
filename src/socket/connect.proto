@@ -382,3 +382,9 @@ message UndisturbConverItem {
 message QryTopConversReq{
     int64 startTime = 1;
 }
+message DelHisMsgsReq{
+    string senderId = 1;
+    string targetId = 2;
+    ChannelType channelType = 3;
+    repeated SimpleMsg msgs = 4; 
+}

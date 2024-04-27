@@ -182,6 +182,27 @@ export default function({ data, callback, index }){
     buffer = codec.encode(message).finish();
   }
 
+  if(utils.isEqual(COMMAND_TOPICS.REMOVE_MESSAGE, topic)){
+    let { userId, messages } = data;
+    messages = utils.isArray(messages) ? messages : [messages];
+    let msgs = [], _targetId = '', channelType = CONVERATION_TYPE.PRIVATE;
+    utils.forEach(messages, (message) => {
+      let { conversationType, conversationId, messageIndex, sentTime, messageId } = message;
+      _targetId = conversationId;
+      channelType = conversationType,
+      msgs.push({ msgId: messageId, msgIndex: messageIndex, msgTime: sentTime });
+    });
+    let codec = Proto.lookup('codec.DelHisMsgsReq');
+    let message = codec.create({ 
+      channelType,
+      targetId: _targetId,
+      msgs: msgs
+    });
+    
+    targetId = userId;
+    buffer = codec.encode(message).finish();
+  }
+
   return {
     publishMsgBody: {
       index,

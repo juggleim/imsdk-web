@@ -60,6 +60,7 @@ export let FUNC_PARAM_CHECKER = {
   GETMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageIds', type: 'Array' }],
   REMOVEMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }],
   CLEARMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'time', type: 'Number' }],
+  REMOVE_MSGS: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'sentTime', type: 'Number' }, { name: 'messageId' }, { name: 'messageIndex' }],
   RECALLMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'sentTime' }],
   READMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'sentTime', type: 'Number' }, { name: 'messageId' }],
   GET_MESSAGE_READ_DETAILS: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }],
@@ -119,6 +120,7 @@ export let COMMAND_TOPICS = {
   GET_READ_MESSAGE_DETAIL: 'qry_read_detail',
   UPDATE_MESSAGE: 'modify_msg',
   CLEAR_MESSAGE: 'clean_hismsg',
+  REMOVE_MESSAGE: 'del_hismsg',
   GET_MSG_BY_IDS: 'qry_hismsg_by_ids',
   GET_FILE_TOKEN: 'file_cred',
 

@@ -111,7 +111,7 @@ export default function(io, emitter){
 
       messages = utils.isArray(messages) ? messages : [messages];
       messages = utils.map(messages, (message) => {
-        return { ...message, isMass: true }
+        return { isMass: true, ...message }
       });
       
       let _msgs = [];

@@ -165,18 +165,20 @@ export let CONVERATION_TYPE = {
 };
 
 export let MESSAGE_ORDER = {
-  FORWARD: 0,
-  BACKWARD: 1
+  // 获取新的历史消息
+  FORWARD: 1,
+  // 获取旧的历史消息
+  BACKWARD: 0
 };
 
 export let CONVERSATION_ORDER = {
-  FORWARD: 0,
-  BACKWARD: 1
+  FORWARD: 1,
+  BACKWARD: 0
 };
 
 export let MENTION_ORDER = {
-  FORWARD: 0,
-  BACKWARD: 1
+  FORWARD: 1,
+  BACKWARD: 0
 };
 
 export let UPLOAD_TYPE = {

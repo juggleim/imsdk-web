@@ -185,6 +185,7 @@ export default function({ data, callback, index }){
   if(utils.isEqual(COMMAND_TOPICS.REMOVE_MESSAGE, topic)){
     let { userId, messages } = data;
     messages = utils.isArray(messages) ? messages : [messages];
+
     let msgs = [], _targetId = '', channelType = CONVERATION_TYPE.PRIVATE;
     utils.forEach(messages, (message) => {
       let { conversationType, conversationId, messageIndex, sentTime, messageId } = message;
@@ -192,6 +193,7 @@ export default function({ data, callback, index }){
       channelType = conversationType,
       msgs.push({ msgId: messageId, msgIndex: messageIndex, msgTime: sentTime });
     });
+
     let codec = Proto.lookup('codec.DelHisMsgsReq');
     let message = codec.create({ 
       channelType,
@@ -199,7 +201,7 @@ export default function({ data, callback, index }){
       msgs: msgs
     });
     
-    targetId = userId;
+    targetId = _targetId;
     buffer = codec.encode(message).finish();
   }
 

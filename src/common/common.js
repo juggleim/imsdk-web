@@ -433,11 +433,19 @@ function formatProvider(funcs, instance){
     invokes[name] = function(){
       let args = [];
       for(let i = 0; i < arguments.length; i++){
-        let item = arguments[i];
-        if(utils.isObject(item)){
-          item = utils.clone(item);
-        }
-        args.push(item);
+        let item = arguments[i], itemNew = {};
+        // if(utils.isObject(item)){
+        //   let content = item.content || {};
+        //   let { file } = content;
+        //   if(file){
+        //     itemNew = { ...item }
+        //   }else{
+        //     itemNew = utils.clone(item);
+        //   }
+        // }
+        // 参数有 File 或者 callbacks 不能走克隆逻辑
+        itemNew = { ...item }
+        args.push(itemNew);
       }
       let func = instance[name];
       if(func){

@@ -172,8 +172,8 @@ export let MESSAGE_ORDER = {
 };
 
 export let CONVERSATION_ORDER = {
-  FORWARD: 1,
-  BACKWARD: 0
+  FORWARD: 0,
+  BACKWARD: 1
 };
 
 export let MENTION_ORDER = {

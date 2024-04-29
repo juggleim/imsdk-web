@@ -171,7 +171,9 @@ export default function Decoder(cache, io){
             syncTime,
             undisturbType,
             LatestMentionMsg: latestMentionMsg, 
-            channelType: conversationType 
+            channelType: conversationType,
+            latestReadIndex,
+            latestUnreadIndex 
           } = conversation;
       utils.extend(msg, { targetId });
       unreadCount = unreadCount || 0;
@@ -229,7 +231,9 @@ export default function Decoder(cache, io){
         conversationExts,
         latestMentionMsg,
         syncTime,
-        undisturbType: undisturbType || 0
+        undisturbType: undisturbType || 0,
+        latestReadIndex,
+        latestUnreadIndex,
       };
     });
     return { conversations, isFinished, index };

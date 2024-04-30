@@ -77,7 +77,7 @@ export default function(io, emitter){
       let topic = topics[conversationType];
       utils.extend(data, { topic })
 
-      let tid = utils.getUUID();
+      let tid = message.tid || utils.getUUID();
       utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
       _callbacks.onbefore(message);
 
@@ -101,6 +101,7 @@ export default function(io, emitter){
   /* 
     let messages = [ Message, Message, ... ];  
     let callbacks = {
+      onbefore: () => {},
       onprogress: ({ message, count, total }) => {},
       oncompleted: ({ messages }) => {},
     };
@@ -134,10 +135,10 @@ export default function(io, emitter){
         };
         let progress = (msg) => {
           _msgs.push(msg);
-          _next();
           _cbs.onprogress({ message: msg, count: _msgs.length, total });
+          _next();
         };
-        sendMessage(message).then(progress, progress);
+        sendMessage(message, callbacks).then(progress, progress);
       });
     });
   };
@@ -450,6 +451,10 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      let onbefore = callbacks.onbefore || utils.noop;
+      let tid = message.tid || utils.getUUID();
+      utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
+      onbefore(message);
 
       _uploadFile(option, message, {
         onprogress: callbacks.onprogress,
@@ -473,6 +478,10 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      let onbefore = callbacks.onbefore || utils.noop;
+      let tid = message.tid || utils.getUUID();
+      utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
+      onbefore(message);
 
       _uploadFile(option, message, {
         onprogress: callbacks.onprogress,
@@ -496,6 +505,10 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      let onbefore = callbacks.onbefore || utils.noop;
+      let tid = message.tid || utils.getUUID();
+      utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
+      onbefore(message);
 
       _uploadFile(option, message, {
         onprogress: callbacks.onprogress,
@@ -519,7 +532,11 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-
+      let onbefore = callbacks.onbefore || utils.noop;
+      let tid = message.tid || utils.getUUID();
+      utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
+      onbefore(message);
+      
       _uploadFile(option, message, {
         onprogress: callbacks.onprogress,
         oncompleted: (message) => {
@@ -530,7 +547,7 @@ export default function(io, emitter){
     });
   };
 
-  let sendMergeMessage = (params) => {
+  let sendMergeMessage = (params, callbacks = {}) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, params, FUNC_PARAM_CHECKER.SEND_MERGE_MESSAGE);
       if(!utils.isEmpty(error)){
@@ -563,7 +580,7 @@ export default function(io, emitter){
           title
         }
       };
-      return sendMessage(msg).then(resolve, reject);
+      return sendMessage(msg, callbacks).then(resolve, reject);
     });
   };
 

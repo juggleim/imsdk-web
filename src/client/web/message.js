@@ -1,4 +1,4 @@
-import { SIGNAL_CMD, EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_ORDER, COMMAND_TOPICS, CONVERATION_TYPE, ErrorType, MENTION_ORDER, UPLOAD_TYPE, FILE_TYPE, MESSAGE_TYPE } from "../../enum";
+import { MESSAGE_SENT_STATE, SIGNAL_CMD, EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_ORDER, COMMAND_TOPICS, CONVERATION_TYPE, ErrorType, MENTION_ORDER, UPLOAD_TYPE, FILE_TYPE, MESSAGE_TYPE } from "../../enum";
 import utils from "../../utils";
 import common from "../../common/common";
 import Uploder from "../../common/uploader";
@@ -57,12 +57,16 @@ export default function(io, emitter){
     topics[map[0]] = map[1];
   });
 
-  let sendMessage = (message) => {
+  let sendMessage = (message, callbacks = {}) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, message, FUNC_PARAM_CHECKER.SENDMSG);
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      let _callbacks = {
+        onbefore: () => {}
+      };
+      utils.extend(_callbacks, callbacks);
 
       let data = utils.clone(message);
       let { name, conversationType, conversationId, isMass } = data;
@@ -73,14 +77,18 @@ export default function(io, emitter){
       let topic = topics[conversationType];
       utils.extend(data, { topic })
 
+      let tid = utils.getUUID();
+      utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
+      _callbacks.onbefore(message);
+
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messageId, sentTime, code, msg, msgIndex }) => {
         let sender = io.getCurrentUser() || {};
         utils.extend(message, { sender, isSender: true });
         if(code){
-          utils.extend(message, { error: { code, msg } });
+          utils.extend(message, { error: { code, msg }, sentState: MESSAGE_SENT_STATE.FAILED });
           return reject(message)
         }
-        utils.extend(message, { sentTime, messageId, messageIndex: msgIndex });
+        utils.extend(message, { sentTime, messageId, messageIndex: msgIndex, sentState: MESSAGE_SENT_STATE.SUCCESS });
         let config = io.getConfig();
         if(!config.isPC){
           io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);

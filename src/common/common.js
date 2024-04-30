@@ -450,7 +450,7 @@ function formatProvider(funcs, instance){
         //   }
         // }
         // 参数有 File 或者 callbacks 不能走克隆逻辑
-        itemNew = { ...item }
+        itemNew = utils.isArray(item) ? item : { ...item };
         args.push(itemNew);
       }
       let func = instance[name];

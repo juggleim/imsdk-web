@@ -56,6 +56,7 @@ export let FUNC_PARAM_CHECKER = {
   CONNECT: [{ name: 'token' }, { name: 'userId' }],
 
   SENDMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'content', type: 'Object' }, { name: 'name' }],
+  INSERT_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'content', type: 'Object' }, { name: 'name' }, { name: 'sentState' }, { name: 'sender', type: 'Object' }],
   GETMSGS: [{ name: 'conversationType' }, { name: 'conversationId' }],
   GETMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageIds', type: 'Array' }],
   REMOVEMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }],

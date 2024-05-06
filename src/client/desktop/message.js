@@ -12,6 +12,7 @@ export default function($message){
     'readMessage',
     'getMessageReadDetails',
     'updateMessage',
+    'insertMessage',
     'getMentionMessages',
     'getFileToken',
     'sendFileMessage',

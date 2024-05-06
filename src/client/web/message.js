@@ -623,6 +623,20 @@ export default function(io, emitter){
     });
   };
 
+  let insertMessage = (message) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.INSERT_MESSAGE);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let user = io.getCurrentUser();
+      let { sender } = message;
+      let isSender = utils.isEqual(user.id, sender.id);
+      let tid = utils.getUUID();
+      let msg = { tid, ...message, isSender, sender };
+      resolve(msg);
+    });
+  };
   return {
     sendMessage,
     sendMassMessage,
@@ -634,6 +648,7 @@ export default function(io, emitter){
     readMessage,
     getMessageReadDetails,
     updateMessage,
+    insertMessage,
     updateMessageAttr,
     getMentionMessages,
     getFileToken,

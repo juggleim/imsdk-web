@@ -295,8 +295,10 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      let { tid } = message;
       let msg = {
         ...message,
+        messageId: tid,
         name: MESSAGE_TYPE.MODIFY,
       };
       let notify = (_msg = {}) => {
@@ -313,17 +315,18 @@ export default function(io, emitter){
       }
       let data = {
         topic: COMMAND_TOPICS.UPDATE_MESSAGE,
-        ...message
+        ...message,
+        messageId: tid,
       };
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, (result) => {
         let sender = io.getCurrentUser();
-        let { messageId } = message;
+        
         notify({
           sender,
           isSender: true,
           isUpdated: true,
           content: {
-            messageId,
+            messageId: tid,
             ...message.content
           }
         });

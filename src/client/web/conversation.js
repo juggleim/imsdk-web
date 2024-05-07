@@ -13,6 +13,17 @@ export default function(io, emitter){
 
   io.on(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, (message) => {
 
+    // 如果会话最后一条消息大于清理的时间，不更新会话列表
+    if(utils.isEqual(message.name, MESSAGE_TYPE.CLEAR_MSG)){
+      let { content: { clean_time: cleanTime, channel_type: conversationType, target_id: conversationId  } } = message;
+      utils.extend(message, { content: { cleanTime },  conversationType, conversationId });
+      let conversation = conversationUtils.getPer(message);
+      let { latestMessage } = conversation || { };
+      latestMessage = latestMessage || {}; 
+      if(latestMessage.sentTime > cleanTime){
+        return;
+      }
+    }
     // 如果会话最后一条消息和被撤回消息不匹配，不更新会话列表
     if(utils.isEqual(message.name, MESSAGE_TYPE.RECALL)){
       let { content: { messageId } } = message;

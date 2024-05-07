@@ -146,6 +146,7 @@ export let EVENT = {
   MESSAGE_UPDATED: 'message_updated',
   MESSAGE_READ: 'message_read',
   CONVERSATION_CHANGED: 'conversation_changed',
+  CONVERSATION_CLEAN: 'conversation_clean',
   CONVERSATION_SYNCED: 'conversation_synced',
 };
 export let CONNECT_STATE = {

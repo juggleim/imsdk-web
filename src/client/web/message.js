@@ -27,9 +27,14 @@ export default function(io, emitter){
     if(utils.isEqual(message.name, MESSAGE_TYPE.RECALL)){
       return emitter.emit(EVENT.MESSAGE_RECALLED, message);
     }
-
+  
+    if(utils.isEqual(message.name, MESSAGE_TYPE.CLEAR_MSG)){
+      let { content: { clean_time: cleanTime, channel_type: conversationType, target_id: conversationId } } = message;
+      return emitter.emit(EVENT.CONVERSATION_CLEAN, { conversationType, conversationId, cleanTime });
+    }
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
-      return emitter.emit(EVENT.MESSAGE_UPDATED, message);
+      let { conversationType, conversationId, content, messageId } = message;
+      return emitter.emit(EVENT.MESSAGE_UPDATED, { conversationType, conversationId, messageId, content });
     }
     if(utils.isEqual(message.name, MESSAGE_TYPE.READ_MSG) || utils.isEqual(message.name, MESSAGE_TYPE.READ_GROUP_MSG)){
       let { conversationType, conversationId, content: { msgs } } = message;

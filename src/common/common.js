@@ -212,7 +212,7 @@ function ConversationUtils(){
 
         let messageName = latestMessage.name;
         let flag = getMsgFlag(messageName);
-        let msgFlag = formatter.toMsg(flag);
+        let msgFlag = formatter.toMsg(flag) || {};
         if(!latestMessage.isSender && msgFlag.isCount){
           latestUnreadIndex = latestMessage.messageIndex;
           unreadCount = latestUnreadIndex - latestReadIndex;
@@ -228,6 +228,9 @@ function ConversationUtils(){
         }
         if(unreadCount < 0){
           unreadCount = 0;
+        }
+        if(utils.isEqual(latestMessage.name, MESSAGE_TYPE.CLEAR_MSG) && latestMessage.isSender){
+          latestMessage = {};
         }
         utils.extend(conversation, { 
           unreadCount: unreadCount,

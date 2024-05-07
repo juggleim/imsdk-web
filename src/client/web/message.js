@@ -25,7 +25,8 @@ export default function(io, emitter){
       return;
     }
     if(utils.isEqual(message.name, MESSAGE_TYPE.RECALL)){
-      return emitter.emit(EVENT.MESSAGE_RECALLED, message);
+      let { conversationId, conversationType, content } = message;
+      return emitter.emit(EVENT.MESSAGE_RECALLED, { conversationId, conversationType, content });
     }
   
     if(utils.isEqual(message.name, MESSAGE_TYPE.CLEAR_MSG)){
@@ -232,7 +233,7 @@ export default function(io, emitter){
       }
       let data = { topic:  COMMAND_TOPICS.RECALL };
       utils.extend(data, message);
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, (result) => {
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let { code } = result;
         if(utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
           let msg = utils.clone(message);

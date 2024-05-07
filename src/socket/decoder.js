@@ -62,10 +62,10 @@ export default function Decoder(cache, io){
   }
   function queryAckHandler(msg){
 
-    let { qryAckMsgBody: { index, data } } = msg;
+    let { qryAckMsgBody: { index, data, code } } = msg;
     let { topic, targetId } = cache.get(index);
 
-    let result = { index };
+    let result = { index, code };
     if(utils.isInclude([COMMAND_TOPICS.HISTORY_MESSAGES, COMMAND_TOPICS.SYNC_MESSAGES, COMMAND_TOPICS.SYNC_CHATROOM_MESSAGES, COMMAND_TOPICS.GET_MSG_BY_IDS, COMMAND_TOPICS.GET_MERGE_MSGS], topic)){
       result = getMessagesHandler(index, data);
     }
@@ -370,13 +370,10 @@ export default function Decoder(cache, io){
       });
     }
 
-    if(utils.isEqual(MESSAGE_TYPE.RECALL, msgType)){
+    if(utils.isInclude([MESSAGE_TYPE.RECALL_INFO, MESSAGE_TYPE.RECALL], msgType)){
       content = utils.rename(content, { 
         msg_id: 'messageId',
         msg_time: 'sentTime',
-        channel_type: 'conversationType',
-        sender_id: 'senderUserId',
-        receiver_id: 'conversationId'
       });
     }
 

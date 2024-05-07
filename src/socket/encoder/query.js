@@ -172,6 +172,25 @@ export default function getQueryBody({ data, callback, index }){
     buffer = codec.encode(message).finish();
   }
   
+
+  if(utils.isEqual(COMMAND_TOPICS.RECALL, topic)){
+    let { messageId, sentTime, exts, conversationType, conversationId } = data;
+    let _exts = [];
+    utils.forEach(exts, (value, key) => {
+      _exts.push({ key, value });
+    });
+    let codec = Proto.lookup('codec.RecallMsgReq');
+    let message = codec.create({
+      targetId: conversationId,
+      channelType: conversationType,
+      msgId: messageId,
+      msgTime: sentTime,
+      exts: _exts
+    });
+    targetId = conversationId;
+    buffer = codec.encode(message).finish();
+  }
+
   return {
     qryMsgBody: {
       index,

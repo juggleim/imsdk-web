@@ -789,13 +789,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "int64",
             id: 4
           },
-          msgType: {
-            type: "string",
+          exts: {
+            rule: "repeated",
+            type: "KvItem",
             id: 5
-          },
-          msgContent: {
-            type: "bytes",
-            id: 6
           }
         }
       },

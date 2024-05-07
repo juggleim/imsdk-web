@@ -53,18 +53,6 @@ export default function({ data, callback, index }){
     buffer = codec.encode(message).finish();
   }
  
-  if(utils.isEqual(COMMAND_TOPICS.RECALL, topic)){
-    let { messageId, sentTime } = data;
-    let codec = Proto.lookup('codec.RecallMsgReq');
-    let message = codec.create({
-      targetId,
-      channelType: conversationType,
-      msgId: messageId,
-      msgTime: sentTime
-    });
-    buffer = codec.encode(message).finish();
-  }
-
   if(utils.isEqual(COMMAND_TOPICS.CLEAR_UNREAD, topic)){
     let { conversations, userId } = data;
     conversations = utils.isArray(conversations) ? conversations : [conversations];

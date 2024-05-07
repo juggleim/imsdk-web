@@ -867,7 +867,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "int64",
             id: 4
           },
-          msgIndex: {
+          msgSeqNo: {
             type: "int64",
             id: 5
           },

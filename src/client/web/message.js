@@ -67,7 +67,7 @@ export default function(io, emitter){
         onbefore: () => {}
       };
       utils.extend(_callbacks, callbacks);
-
+      
       let data = utils.clone(message);
       let { name, conversationType, conversationId, isMass } = data;
 
@@ -295,10 +295,8 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-      let { tid } = message;
       let msg = {
         ...message,
-        messageId: tid,
         name: MESSAGE_TYPE.MODIFY,
       };
       let notify = (_msg = {}) => {
@@ -315,8 +313,7 @@ export default function(io, emitter){
       }
       let data = {
         topic: COMMAND_TOPICS.UPDATE_MESSAGE,
-        ...message,
-        messageId: tid,
+        ...message
       };
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, (result) => {
         let sender = io.getCurrentUser();
@@ -326,7 +323,7 @@ export default function(io, emitter){
           isSender: true,
           isUpdated: true,
           content: {
-            messageId: tid,
+            messageId: message.messageId,
             ...message.content
           }
         });

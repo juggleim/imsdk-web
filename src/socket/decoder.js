@@ -384,7 +384,7 @@ export default function Decoder(cache, io){
       content = utils.rename(content, { 
         msg_content: 'content',
         msg_id: 'messageId',
-        msg_index: 'messageIndex',
+        msg_seq: 'messageIndex',
         msg_time: 'sentTime'
       });
     }

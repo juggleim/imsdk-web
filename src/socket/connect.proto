@@ -288,7 +288,7 @@ message ModifyMsgReq{
     ChannelType channelType = 2;
     string msgId = 3;  //必填
     int64 msgTime = 4; //可选
-    int64 msgIndex = 5; //可选
+    int64 msgSeqNo = 5; //可选
     bytes msgContent = 6; //修改后的消息内容
 }
 message CleanHisMsgReq{

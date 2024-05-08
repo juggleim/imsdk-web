@@ -250,6 +250,10 @@ function ConversationUtils(){
       let draft = Storage.get(key);
       draft = utils.isEmpty(draft) ? '' : draft;
       utils.extend(item, { draft })
+
+      if(item.unreadCount < 0){
+        item.unreadCount = 0;
+      }
       conversations.push(item);
     });
 

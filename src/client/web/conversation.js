@@ -91,7 +91,11 @@ export default function(io, emitter){
       utils.extend(_params, params);
       io.sendCommand(SIGNAL_CMD.QUERY, _params, (result) => {
         if(!utils.isUndefined(conversationType)){
-          let list = result.conversations || [];
+          let list = utils.map(result.conversations, (item) => {
+            let { unreadCount } = item;
+            item.unreadCount = unreadCount < 0 ? 0 : unreadCount;
+            return item;
+          });
           return resolve(utils.clone({ conversations: list.reverse(), isFinished: result.isFinished }));
         }
         conversationUtils.add(result.conversations);

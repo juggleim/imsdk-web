@@ -194,7 +194,7 @@ function ConversationUtils(){
       let isNew = utils.isEqual(index, -1);
       if(!isNew){
         let conversation = conversations.splice(index, 1)[0]; 
-        let { unreadCount = 0, latestReadIndex = 0, latestUnreadIndex } = conversation;
+        let { unreadCount = 0, latestReadIndex = 0, latestUnreadIndex = 0 } = conversation;
         let { latestMessage, updatedTime, conversationExts, latestMentionMsg, undisturbType } = item;
         let { conversationTitle, conversationPortrait } = latestMessage;
         conversationTitle = conversationTitle || item.conversationTitle;
@@ -214,7 +214,7 @@ function ConversationUtils(){
         let flag = getMsgFlag(messageName);
         let msgFlag = formatter.toMsg(flag) || {};
         if(!latestMessage.isSender && msgFlag.isCount){
-          latestUnreadIndex = latestMessage.messageIndex;
+          latestUnreadIndex = latestMessage.messageIndex || 0;
           unreadCount = latestUnreadIndex - latestReadIndex;
         }
         // 如果是群发消息不更新会话列表

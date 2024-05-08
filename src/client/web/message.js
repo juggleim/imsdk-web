@@ -7,7 +7,7 @@ import MessageCacher from "../../common/msg-cacher";
 export default function(io, emitter){
   let messageCacher = MessageCacher();
 
-  io.on(SIGNAL_NAME.CMD_RECEIVED, (message) => {
+  io.on(SIGNAL_NAME.CMD_RECEIVED, (message, isPullFinished = true) => {
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       let { content: { content, messageId, sentTime } } = message;
@@ -47,7 +47,7 @@ export default function(io, emitter){
       return emitter.emit(EVENT.MESSAGE_READ, notify);
     }
     if(!messageCacher.isInclude(message)){
-      emitter.emit(EVENT.MESSAGE_RECEIVED, message);
+      emitter.emit(EVENT.MESSAGE_RECEIVED, [message, isPullFinished]);
       let { conversationId, conversationType } = message;
       messageCacher.add({ conversationId, conversationType }, message);
     }

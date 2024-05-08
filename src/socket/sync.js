@@ -60,7 +60,8 @@ export default function Syncer(send, emitter) {
       send(SIGNAL_CMD.QUERY, data, ({ isFinished, messages }) => {
         utils.forEach(messages, (message) => {
           common.updateChatroomSyncTime(message);
-          emitter.emit(SIGNAL_NAME.CMD_RECEIVED, message);
+          let isFinishedAll = isFinished && utils.isEqual(messages.length - 1, index);
+          emitter.emit(SIGNAL_NAME.CMD_RECEIVED, [message, isFinishedAll]);
         });
         let isSyncing = !isFinished;
         if (isSyncing) {
@@ -89,10 +90,11 @@ export default function Syncer(send, emitter) {
         topic: COMMAND_TOPICS.SYNC_MESSAGES
       };
       send(SIGNAL_CMD.QUERY, data, ({ isFinished, messages }) => {
-        utils.forEach(messages, (message) => {
+        utils.forEach(messages, (message, index) => {
           let isNewMsg = common.updateSyncTime(message);
           if (isNewMsg) {
-            emitter.emit(SIGNAL_NAME.CMD_RECEIVED, message);
+            let isFinishedAll = isFinished && utils.isEqual(messages.length - 1, index);
+            emitter.emit(SIGNAL_NAME.CMD_RECEIVED, [message, isFinishedAll]);
           }
         });
         let isSyncing = !isFinished;

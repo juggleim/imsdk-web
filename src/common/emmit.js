@@ -26,11 +26,12 @@ export default function () {
 
   let emit = (name, data) => {
     let events = EmitterEvents[name] || [];
+    data = utils.isArray(data) ? data : [data];
     utils.forEach(events, (event) => {
-      event(data);
+      event(...data);
     });
     let event = EmitterOnceEvent[name] || utils.noop;
-    event(data);
+    event(...data);
   }
 
   let clear = () => {

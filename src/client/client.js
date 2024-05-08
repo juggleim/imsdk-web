@@ -50,5 +50,17 @@ let init = (config) => {
 }
 
 export default {
-  init
+  init,
+  Event: EVENT,
+  ConnectionState: CONNECT_STATE,
+  ConversationType: CONVERATION_TYPE,
+  MessageType: MESSAGE_TYPE,
+  ConversationOrder: CONVERSATION_ORDER,
+  ErrorType,
+  MentionType: MENTION_TYPE,
+  MessageOrder: MESSAGE_ORDER,
+  MentionOrder: MENTION_ORDER,
+  FileType: FILE_TYPE,
+  UndisturbType: UNDISTURB_TYPE,
+  SentState: MESSAGE_SENT_STATE,
 }

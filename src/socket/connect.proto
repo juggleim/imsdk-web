@@ -202,6 +202,7 @@ message QryConversationsReq{
     int64 startTime = 1;
     int32 count = 2;
     int32 order = 3;
+    ChannelType channelType = 4;
 }
 
 message QryConversationsResp{

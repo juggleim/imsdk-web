@@ -21,14 +21,18 @@ export default function getQueryBody({ data, callback, index }){
   }
 
   if(utils.isEqual(topic, COMMAND_TOPICS.CONVERSATIONS)){
-    let { count, time, order } = data;
+    let { count, time, order, conversationType } = data;
     targetId = userId;
     let codec = Proto.lookup('codec.QryConversationsReq');
-    let message = codec.create({
+    let content = {
       startTime: time,
       count: count,
       order: order
-    });
+    };
+    if(!utils.isUndefined(conversationType)){
+      utils.extend(content, { channelType: conversationType });
+    }
+    let message = codec.create(content);
     buffer = codec.encode(message).finish();
   }
   

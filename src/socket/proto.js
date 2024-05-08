@@ -610,6 +610,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           order: {
             type: "int32",
             id: 3
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 4
           }
         }
       },

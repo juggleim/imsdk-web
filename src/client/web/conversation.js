@@ -72,25 +72,28 @@ export default function(io, emitter){
     conversationUtils.clear();
   });
 
-  let getConversations = (params) => {
+  let getConversations = (params = {}) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, params, []);
       if(!utils.isEmpty(error)){
         return reject(error);
       }
 
-      params = params || {};
-      let { count = 50, order = MESSAGE_ORDER.FORWARD, time = 0 } = params;
+      let { count = 50, order = MESSAGE_ORDER.FORWARD, time = 0, conversationType } = params;
 
-      let conversations = conversationUtils.get();
-      let isSynced = conversationUtils.isSync();
-      if(isSynced && utils.isEqual(time, 0)){
-        return resolve({ conversations: utils.clone(conversations) });
-      }
+      // let conversations = conversationUtils.get();
+      // let isSynced = conversationUtils.isSync();
+      // if(isSynced && utils.isEqual(time, 0)){
+      //   return resolve({ conversations: utils.clone(conversations) });
+      // }
       let user = io.getCurrentUser();
-      let _params = { topic: COMMAND_TOPICS.CONVERSATIONS, time: 0, count, order, userId: user.id };
+      let _params = { topic: COMMAND_TOPICS.CONVERSATIONS, time: 0, count, order, userId: user.id, conversationType };
       utils.extend(_params, params);
       io.sendCommand(SIGNAL_CMD.QUERY, _params, (result) => {
+        if(!utils.isUndefined(conversationType)){
+          let list = result.conversations || [];
+          return resolve(utils.clone({ conversations: list.reverse(), isFinished: result.isFinished }));
+        }
         conversationUtils.add(result.conversations);
         let conversations = conversationUtils.get();
         resolve({ conversations: utils.clone(conversations), isFinished: result.isFinished });

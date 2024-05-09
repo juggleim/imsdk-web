@@ -375,7 +375,6 @@ export default function Decoder(cache, io){
         msg_id: 'messageId',
         msg_time: 'sentTime',
       });
-      utils.extend(_message, { messageId: content.messageId, sentTime: content.sentTime });
     }
 
     if(utils.isEqual(MESSAGE_TYPE.MODIFY, msgType)){

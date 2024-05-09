@@ -141,6 +141,7 @@ message DownMsg{
     string msgType = 3;
     string senderId = 4;
     string msgId = 5;
+    // msgIndex 是双方混排的序号！序号！序号！
     int64 msgIndex = 6;
     bytes msgContent = 7;
     int64 msgTime = 8;
@@ -158,6 +159,7 @@ message DownMsg{
     int32 undisturbType = 20;
     int32 memberCount = 21;
     int32 readCount = 22;
+    int64 unreadIndex = 23;
 }
 
 message MergedMsgs{

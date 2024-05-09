@@ -487,6 +487,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           readCount: {
             type: "int32",
             id: 22
+          },
+          unreadIndex: {
+            type: "int64",
+            id: 23
           }
         }
       },

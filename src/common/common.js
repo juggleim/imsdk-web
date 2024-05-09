@@ -214,7 +214,7 @@ function ConversationUtils(){
         let flag = getMsgFlag(messageName);
         let msgFlag = formatter.toMsg(flag) || {};
         if(!latestMessage.isSender && msgFlag.isCount){
-          latestUnreadIndex = latestMessage.messageIndex || 0;
+          latestUnreadIndex = latestMessage.unreadIndex || 0;
           unreadCount = latestUnreadIndex - latestReadIndex;
         }
         // 如果是群发消息不更新会话列表
@@ -243,6 +243,7 @@ function ConversationUtils(){
           undisturbType,
           latestReadIndex,
           latestUnreadIndex,
+          sortTime: latestMessage.sentTime,
         });
         return conversations.push(conversation);
       }
@@ -254,6 +255,9 @@ function ConversationUtils(){
       if(item.unreadCount < 0){
         item.unreadCount = 0;
       }
+
+      let _msg = item.latestMessage;
+      item.sortTime = _msg.sentTime,
       conversations.push(item);
     });
 

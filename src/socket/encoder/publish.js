@@ -23,8 +23,8 @@ export default function({ data, callback, index }){
       }) 
     }
 
-    if(referMsg){
-      let { messageIndex, sentTime, messageId, sender } = referMsg;
+    if(!utils.isEmpty(referMsg)){
+      let { messageIndex, sentTime, messageId, sender = { exts: {} } } = referMsg;
       let referContent = utils.toJSON(referMsg.content);
       let referTarget = {
         userId: sender.id,

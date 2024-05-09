@@ -69,6 +69,13 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      let { referMsg } = message;
+      if(!utils.isUndefined(referMsg)){
+        let { messageIndex, messageId } = referMsg;
+        if(utils.isUndefined(messageIndex) || utils.isUndefined(messageId) ){
+          return reject(ErrorType.SEND_REFER_MESSAGE_ERROR);
+        }
+      }
       let _callbacks = {
         onbefore: () => {}
       };

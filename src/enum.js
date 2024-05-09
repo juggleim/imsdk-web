@@ -223,6 +223,7 @@ export let ErrorMessages = [
   { code: 25008, msg: '单次合并转发消息条数上限为 20 条', name: 'TRANSFER_MESSAGE_COUNT_EXCEED' },
   { code: 25009, msg: '未建立本地数据库连接，请优先调用连接方法', name: 'DATABASE_NOT_OPENED' },
   { code: 25010, msg: '方法未实现，请确定 SDK 版本', name: 'SDK_FUNC_NOT_DEFINED' },
+  { code: 25011, msg: '引用消息必须传入完成的 Message 对象', name: 'SEND_REFER_MESSAGE_ERROR' },
 
   { code: 21200, msg: '消息撤回成功', name: 'MESSAGE_RECALL_SUCCESS' },
   

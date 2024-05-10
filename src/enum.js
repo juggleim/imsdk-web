@@ -61,7 +61,7 @@ export let FUNC_PARAM_CHECKER = {
   GETMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageIds', type: 'Array' }],
   REMOVEMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }],
   CLEARMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'time', type: 'Number' }],
-  REMOVE_MSGS: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'sentTime', type: 'Number' }, { name: 'messageId' }, { name: 'messageIndex' }],
+  REMOVE_MSGS: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'sentTime', type: 'Number' }, { name: 'tid' }, { name: 'messageIndex' }],
   RECALLMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'sentTime' }],
   READMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'sentTime', type: 'Number' }, { name: 'messageId' }],
   GET_MESSAGE_READ_DETAILS: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }],
@@ -255,6 +255,7 @@ export let MESSAGE_TYPE = {
   MODIFY: 'jg:modify',
   CLEAR_MSG: 'jg:cleanmsg',
   CLEAR_UNREAD: 'jg:clearunread',
+  DELETE_MSGS: 'jg:delmsgs',
 }
 
 export let MENTION_TYPE = {

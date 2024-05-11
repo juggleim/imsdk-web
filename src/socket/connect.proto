@@ -228,7 +228,7 @@ message Conversation{
     int64 unreadCount = 5;
     DownMsg msg = 6;
     int64 latestReadIndex = 7;
-    //MentionMsg LatestMentionMsg = 8;
+    Mentions mentions = 8;
     int32 isTop = 9;
     int64 topUpdatedTime = 10;
     int32 undisturbType = 11;
@@ -237,7 +237,18 @@ message Conversation{
     int64 syncTime = 14;
     int32 isDelete = 15;
     int64 latestUnreadIndex = 16;
+}
 
+message Mentions{
+    bool isMentioned = 1;
+    int32 mentionMsgCount = 2;
+    repeated UserInfo senders = 3;
+    repeated MentionMsg mentionMsgs = 4;
+}
+message MentionMsg{
+    string senderId = 1;
+    string msgId = 2;
+    int64 msgTime = 3;
 }
 
 message SyncMsgReq{
@@ -319,10 +330,10 @@ message QryMentionMsgsReq{
     int32 order = 5;  //0：倒序；1：正序
 }
 message QryMentionMsgsResp{
-    repeated MentionMsg mentionMsgs = 1;
+    repeated QMentionMsg mentionMsgs = 1;
     bool isFinished = 2;
 }
-message MentionMsg{
+message QMentionMsg{
     MentionType mentionType = 1;
     UserInfo senderInfo = 2;
     DownMsg msg = 3;

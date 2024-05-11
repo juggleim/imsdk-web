@@ -330,21 +330,33 @@ export default function(io, emitter){
       undisturbType: message.undisturbType
     };
     let _conversation = conversationUtils.getPer(message);
-    let latestMentionMsg = _conversation.latestMentionMsg;
+    let mentions = _conversation.mentions || {};
     if(mentionInfo){
       let { members, type } = mentionInfo;
       let user = io.getCurrentUser();
       let index = utils.find(members, (member) => {
         return utils.isEqual(user.id, member.id);
       });
+      //TODO 撤回 @ 消息需要删除
       if(index > -1 || utils.isEqual(type, MENTION_TYPE.ALL)){
-        latestMentionMsg = {
-          type,
-          messageId,
-          sender: message.sender
+        let { isMentioned = true, senders = [], msgs = [] } = mentions;
+        msgs.push({ senderId: message.sender.id, messageId: message.messageId, sentTime: message.sentTime });
+
+        let senderIndex = utils.find(senders, (member) => {
+          return utils.isEqual(message.sender.id, member.id);
+        });
+        if(utils.isEqual(senderIndex, -1)){
+          senders.push(message.sender);
+        }
+
+        mentions = {
+          isMentioned,
+          senders,
+          msgs,
+          count: msgs.length
         };
       }
-      utils.extend($conversation, { latestMentionMsg });
+      utils.extend($conversation, { mentions });
     }
     if(message.isSender){
       let conversation = conversationUtils.getPer(message);

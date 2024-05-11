@@ -195,7 +195,7 @@ function ConversationUtils(){
       if(!isNew){
         let conversation = conversations.splice(index, 1)[0]; 
         let { unreadCount = 0, latestReadIndex = 0, latestUnreadIndex = 0 } = conversation;
-        let { latestMessage, updatedTime, conversationExts, latestMentionMsg, undisturbType } = item;
+        let { latestMessage, updatedTime, conversationExts, mentions, undisturbType } = item;
         let { conversationTitle, conversationPortrait } = latestMessage;
         conversationTitle = conversationTitle || item.conversationTitle;
         conversationPortrait = conversationPortrait || item.conversationPortrait;
@@ -238,7 +238,7 @@ function ConversationUtils(){
           conversationTitle, 
           conversationPortrait,
           conversationExts,
-          latestMentionMsg,
+          mentions,
           updatedTime,
           undisturbType,
           latestReadIndex,

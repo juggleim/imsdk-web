@@ -170,19 +170,29 @@ export default function Decoder(cache, io){
             groupInfo, 
             syncTime,
             undisturbType,
-            LatestMentionMsg: latestMentionMsg, 
+            mentions, 
             channelType: conversationType,
             latestReadIndex,
             latestUnreadIndex 
           } = conversation;
       utils.extend(msg, { targetId });
       unreadCount = unreadCount || 0;
-      if(latestMentionMsg){
-        let { mentionType, senderInfo, msgId } = latestMentionMsg;
-        latestMentionMsg = {
-          type: mentionType,
-          sender: common.formatUser(senderInfo),
-          messageId: msgId
+
+      mentions = mentions || {};
+      if(!utils.isEmpty(mentions)){
+        let { isMentioned, senders, mentionMsgs } = mentions;
+        senders = utils.map(senders, (sender) => {
+          return common.formatUser(sender);
+        });
+        mentionMsgs = utils.map(mentionMsgs, (msg) => {
+          let { senderId, msgId, msgTime } = msg;
+          return { senderId, messageId: msgId, sentTime: msgTime };
+        });
+        mentions = {
+          isMentioned: isMentioned,
+          senders: senders,
+          msgs: mentionMsgs,
+          count: mentionMsgs.length,
         };
       }
       let latestMessage = { }
@@ -229,7 +239,7 @@ export default function Decoder(cache, io){
         conversationTitle,
         conversationPortrait,
         conversationExts,
-        latestMentionMsg,
+        mentions,
         syncTime,
         undisturbType: undisturbType || 0,
         latestReadIndex,

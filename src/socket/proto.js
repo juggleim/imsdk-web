@@ -691,6 +691,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "int64",
             id: 7
           },
+          mentions: {
+            type: "Mentions",
+            id: 8
+          },
           isTop: {
             type: "int32",
             id: 9
@@ -722,6 +726,44 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           latestUnreadIndex: {
             type: "int64",
             id: 16
+          }
+        }
+      },
+      Mentions: {
+        fields: {
+          isMentioned: {
+            type: "bool",
+            id: 1
+          },
+          mentionMsgCount: {
+            type: "int32",
+            id: 2
+          },
+          senders: {
+            rule: "repeated",
+            type: "UserInfo",
+            id: 3
+          },
+          mentionMsgs: {
+            rule: "repeated",
+            type: "MentionMsg",
+            id: 4
+          }
+        }
+      },
+      MentionMsg: {
+        fields: {
+          senderId: {
+            type: "string",
+            id: 1
+          },
+          msgId: {
+            type: "string",
+            id: 2
+          },
+          msgTime: {
+            type: "int64",
+            id: 3
           }
         }
       },
@@ -962,7 +1004,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
         fields: {
           mentionMsgs: {
             rule: "repeated",
-            type: "MentionMsg",
+            type: "QMentionMsg",
             id: 1
           },
           isFinished: {
@@ -971,7 +1013,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           }
         }
       },
-      MentionMsg: {
+      QMentionMsg: {
         fields: {
           mentionType: {
             type: "MentionType",

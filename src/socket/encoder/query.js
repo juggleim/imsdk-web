@@ -99,14 +99,14 @@ export default function getQueryBody({ data, callback, index }){
     let channelId = '';
     
     let msgs = utils.map(messages, (item) => {
-      let { conversationType, conversationId, sentTime, messageId, messageIndex } = item;
+      let { conversationType, conversationId, sentTime, messageId, unreadIndex } = item;
       channelType = conversationType;
       channelId = conversationId;
       targetId = conversationId;
       return { 
         msgId: messageId,
         msgTime: sentTime,
-        msgIndex: messageIndex
+        msgIndex: unreadIndex
       };
     });
     let codec = Proto.lookup('codec.MarkReadReq');

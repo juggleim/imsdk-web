@@ -420,10 +420,11 @@ export default function Decoder(cache, io){
 
     if(utils.isEqual(MESSAGE_TYPE.CLEAR_UNREAD, msgType)){
       let { conversations } = content;
-      conversations = utils.map(conversations, ({ channel_type, target_id }) => {
+      conversations = utils.map(conversations, ({ channel_type, target_id, latest_read_index }) => {
         return {
           conversationType: channel_type,
-          conversationId: target_id
+          conversationId: target_id,
+          unreadIndex: latest_read_index,
         };
       });
       utils.extend(content, { conversations });

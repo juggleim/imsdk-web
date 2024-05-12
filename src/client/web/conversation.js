@@ -39,12 +39,8 @@ export default function(io, emitter){
     }
     if(utils.isEqual(message.name, MESSAGE_TYPE.CLEAR_UNREAD)){
       let { content, name, isSender } = message;
-      let { conversations: msgs } = content;
-      utils.forEach(msgs, (msg) => {
-        utils.extend(msg, { name, isSender });
-        next(msg);
-      });
-      return;
+      let { conversations } = content;
+      return emitter.emit(EVENT.CONVERSATION_CLEARUNREAD, { conversations });
     }
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       let conversation = conversationUtils.getPer(message);

@@ -148,6 +148,7 @@ export let EVENT = {
   CONVERSATION_CHANGED: 'conversation_changed',
   CONVERSATION_CLEAN: 'conversation_clean',
   CONVERSATION_SYNCED: 'conversation_synced',
+  CONVERSATION_CLEARUNREAD: 'conversation_clearunead',
 };
 export let CONNECT_STATE = {
   CONNECTED: 0,

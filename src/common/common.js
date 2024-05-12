@@ -451,17 +451,7 @@ function formatProvider(funcs, instance){
       let args = [];
       for(let i = 0; i < arguments.length; i++){
         let item = arguments[i], itemNew = {};
-        // if(utils.isObject(item)){
-        //   let content = item.content || {};
-        //   let { file } = content;
-        //   if(file){
-        //     itemNew = { ...item }
-        //   }else{
-        //     itemNew = utils.clone(item);
-        //   }
-        // }
-        // 参数有 File 或者 callbacks 不能走克隆逻辑
-        itemNew = utils.isArray(item) ? item : { ...item };
+        itemNew = utils.isArray(item) ? item : clone(item);
         args.push(itemNew);
       }
       let func = instance[name];
@@ -472,6 +462,24 @@ function formatProvider(funcs, instance){
     };
   });
   return invokes;
+}
+function clone(item){
+  let loop = (obj) => {
+    let newObj = {};
+    utils.forEach(obj, (v, k) => {
+      // 递归循环中包含 File 对象直接跳过，File 对象不能 clone
+      if(utils.isObject(v)){
+        newObj[k] = loop(v);
+      }else if(utils.isArray(v)){
+        newObj[k] = utils.clone(v);
+      }else{
+        newObj[k] = v;
+      }
+    });
+    return newObj;
+  }
+  let result = loop(item);
+  return result;
 }
 function isDesktop(){
   return typeof JGChatPCClient != 'undefined';

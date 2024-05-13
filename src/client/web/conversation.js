@@ -240,7 +240,9 @@ export default function(io, emitter){
       let user = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.CLEAR_UNREAD };
       utils.extend(data, { conversations, userId: user.id });
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { timestamp } = result;
+        common.updateSyncTime({ isSender: true,  sentTime: timestamp });
         conversationUtils.read(conversations);
         resolve();
       });

@@ -53,23 +53,6 @@ export default function({ data, callback, index }){
     buffer = codec.encode(message).finish();
   }
  
-  if(utils.isEqual(COMMAND_TOPICS.CLEAR_UNREAD, topic)){
-    let { conversations, userId } = data;
-    conversations = utils.isArray(conversations) ? conversations : [conversations];
-    let codec = Proto.lookup('codec.ClearUnreadReq');
-    let list = utils.map(conversations, ({ conversationType, conversationId, unreadIndex }) => {
-      return { 
-        channelType: conversationType,
-        targetId: conversationId,
-        latestReadIndex: unreadIndex
-      };
-    });
-    let message = codec.create({
-      conversations: list
-    });
-    targetId = userId;
-    buffer = codec.encode(message).finish();
-  }
 
   if(utils.isEqual(COMMAND_TOPICS.REMOVE_CONVERSATION, topic)){
     let { conversations, userId } = data;

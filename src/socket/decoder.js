@@ -62,10 +62,10 @@ export default function Decoder(cache, io){
   }
   function queryAckHandler(msg){
 
-    let { qryAckMsgBody: { index, data, code } } = msg;
+    let { qryAckMsgBody: { index, data, code, timestamp } } = msg;
     let { topic, targetId } = cache.get(index);
 
-    let result = { index, code };
+    let result = { index, code, timestamp };
     if(utils.isInclude([COMMAND_TOPICS.HISTORY_MESSAGES, COMMAND_TOPICS.SYNC_MESSAGES, COMMAND_TOPICS.SYNC_CHATROOM_MESSAGES, COMMAND_TOPICS.GET_MSG_BY_IDS, COMMAND_TOPICS.GET_MERGE_MSGS], topic)){
       result = getMessagesHandler(index, data);
     }

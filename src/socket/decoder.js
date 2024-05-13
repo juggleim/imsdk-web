@@ -326,7 +326,7 @@ export default function Decoder(cache, io){
         messageId: referMsg.messageIndex,
         messageIndex: referMsg.msgIndex,
         sentTime: referMsg.msgTime,
-        sender: common.formatUser(referMsg.targetUserInfo || {})
+        sender: referMsg.targetUserInfo
       });
     }
     let msgFlag = common.formatter.toMsg(flags);

@@ -327,6 +327,8 @@ function ConversationUtils(){
         return utils.isEqual(item.conversationType, conversationType) && utils.isEqual(item.conversationId, conversationId);
       });
       if(index > -1){
+        let conver = conversations[index];
+        conversations[index].latestReadIndex = item.unreadIndex;
         conversations[index].unreadCount = 0;
       }
     });

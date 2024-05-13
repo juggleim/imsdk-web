@@ -24,6 +24,23 @@ export default function(io, emitter){
         return;
       }
     }
+    if(utils.isEqual(MESSAGE_TYPE.CLIENT_REMOVE_MSGS, message.name)){
+      let { messages } = message;
+      let msg = messages[0];
+      let conversation = conversationUtils.getPer(msg);
+      if(utils.isEmpty(conversation)){
+        conversation = { latestMessage: { tid: '' } };
+      }
+      let tids = utils.map(messages, (item) => {
+        return item.tid;
+      });
+      let { latestMessage } = conversation;
+      // 只有会话最后一条消息被删除时触发会话列表变更
+      if(utils.isInclude(tids, latestMessage.tid)){
+        next({ conversationId: msg.conversationId, conversationType: msg.conversationType });
+      }
+      return;
+    }
     // 如果会话最后一条消息和被撤回消息不匹配，不更新会话列表
     if(utils.isEqual(message.name, MESSAGE_TYPE.RECALL)){
       let { content: { messageId } } = message;

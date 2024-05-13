@@ -257,6 +257,9 @@ export let MESSAGE_TYPE = {
   CLEAR_MSG: 'jg:cleanmsg',
   CLEAR_UNREAD: 'jg:clearunread',
   DELETE_MSGS: 'jg:delmsgs',
+  
+  // CLIENT_* 约定为客户端定义适用
+  CLIENT_REMOVE_MSGS: 'jgc:removemsgs',
 }
 
 export let MENTION_TYPE = {

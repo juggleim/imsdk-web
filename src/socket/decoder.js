@@ -390,6 +390,7 @@ export default function Decoder(cache, io){
 
     if(utils.isEqual(MESSAGE_TYPE.MODIFY, msgType)){
       content = utils.rename(content, { 
+        msg_type: 'name',
         msg_content: 'content',
         msg_id: 'messageId',
         msg_seq: 'messageIndex',

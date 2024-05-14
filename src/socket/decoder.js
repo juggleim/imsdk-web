@@ -442,6 +442,17 @@ export default function Decoder(cache, io){
       });
       utils.extend(content, { conversations });
     }
+    if(utils.isEqual(MESSAGE_TYPE.COMMAND_TOPCONVERS, msgType)){
+      let { conversations } = content;
+      conversations = utils.map(conversations, (item) => {
+        return {
+          conversationId: item.target_id,
+          conversationType: item.channel_type,
+          isTop: Boolean(item.is_top),
+        }
+      });
+      utils.extend(content, { conversations });
+    }
 
     utils.extend(_message, { content })
     return _message;

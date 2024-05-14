@@ -150,6 +150,7 @@ export let EVENT = {
   CONVERSATION_SYNCED: 'conversation_synced',
   CONVERSATION_CLEARUNREAD: 'conversation_clearunead',
   CONVERSATION_UNDISTURBED: 'conversation_undisturb',
+  CONVERSATION_TOP: 'conversation_top',
 };
 export let CONNECT_STATE = {
   CONNECTED: 0,
@@ -259,6 +260,7 @@ export let MESSAGE_TYPE = {
   CLEAR_UNREAD: 'jg:clearunread',
   DELETE_MSGS: 'jg:delmsgs',
   COMMAND_UNDISTURB: 'jg:undisturb',
+  COMMAND_TOPCONVERS: 'jg:topconvers',
   
   // CLIENT_* 约定为客户端定义适用
   CLIENT_REMOVE_MSGS: 'jgc:removemsgs',

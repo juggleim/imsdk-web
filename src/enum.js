@@ -149,6 +149,7 @@ export let EVENT = {
   CONVERSATION_CLEAN: 'conversation_clean',
   CONVERSATION_SYNCED: 'conversation_synced',
   CONVERSATION_CLEARUNREAD: 'conversation_clearunead',
+  CONVERSATION_UNDISTURBED: 'conversation_undisturb',
 };
 export let CONNECT_STATE = {
   CONNECTED: 0,
@@ -257,6 +258,7 @@ export let MESSAGE_TYPE = {
   CLEAR_MSG: 'jg:cleanmsg',
   CLEAR_UNREAD: 'jg:clearunread',
   DELETE_MSGS: 'jg:delmsgs',
+  COMMAND_UNDISTURB: 'jg:undisturb',
   
   // CLIENT_* 约定为客户端定义适用
   CLIENT_REMOVE_MSGS: 'jgc:removemsgs',

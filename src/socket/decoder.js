@@ -430,6 +430,11 @@ export default function Decoder(cache, io){
       });
       utils.extend(content, { conversations });
     }
+
+    if(utils.isEqual(MESSAGE_TYPE.COMMAND_UNDISTURB, msgType)){
+      utils.extend(content, { name: 'test', undisturbType });
+    }
+
     utils.extend(_message, { content })
     return _message;
   }

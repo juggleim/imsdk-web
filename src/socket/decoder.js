@@ -463,6 +463,21 @@ export default function Decoder(cache, io){
       });
       utils.extend(content, { conversations });
     }
+    if(utils.isEqual(MESSAGE_TYPE.COMMAND_DELETE_MSGS, msgType)){
+      let msgs = utils.map(content.msgs, (item) => {
+        return { 
+          tid: item.msg_id,
+          messageId: item.msg_id,
+          conversationId: content.target_id,
+          conversationType: content.channel_type,
+         };
+      });
+      content = { 
+        conversationId: content.target_id,
+        conversationType: content.channel_type,
+        messages: msgs,
+      }
+    }
 
     utils.extend(_message, { content })
     return _message;

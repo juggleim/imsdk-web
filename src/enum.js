@@ -259,7 +259,7 @@ export let MESSAGE_TYPE = {
   MODIFY: 'jg:modify',
   CLEAR_MSG: 'jg:cleanmsg',
   CLEAR_UNREAD: 'jg:clearunread',
-  DELETE_MSGS: 'jg:delmsgs',
+  COMMAND_DELETE_MSGS: 'jg:delmsgs',
   COMMAND_UNDISTURB: 'jg:undisturb',
   COMMAND_TOPCONVERS: 'jg:topconvers',
   COMMAND_REMOVE_CONVERS: 'jg:delconvers',

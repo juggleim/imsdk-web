@@ -20,6 +20,10 @@ export default function(io, emitter){
     // 收到消息一定要更新会话列表
     io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, utils.clone(message));
 
+    // 消息监听无需处理会话删除
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_REMOVE_CONVERS)){
+      return;
+    }
     // 消息监听无需处理会话置顶
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_TOPCONVERS)){
       return;

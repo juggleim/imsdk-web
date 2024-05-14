@@ -13,6 +13,14 @@ export default function(io, emitter){
 
   io.on(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, (message) => {
 
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_REMOVE_CONVERS)){
+      let { content: { conversations } } = message;
+      utils.forEach(conversations, (item) => {
+        conversationUtils.remove(item);
+      });
+      return emitter.emit(EVENT.CONVERSATION_REMOVED, { conversations });
+    }
+    
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_TOPCONVERS)){
       let { content: { conversations } } = message;
       let item = conversations[0] || { isTop: false }

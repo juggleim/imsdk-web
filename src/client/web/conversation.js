@@ -14,14 +14,11 @@ export default function(io, emitter){
   io.on(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, (message) => {
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_UNDISTURB)){
-      let { undisturbType, conversationType, conversationId } = message;
-      let conversation = conversationUtils.getPer(message);
-      if(!utils.isEmpty(conversation)){
-        conversationUtils.modify(conversation, { undisturbType });
-        conversation.latestMessage = utils.extend(conversation.latestMessage, { undisturbType });
-        next(conversation.latestMessage);
-      }
-      return emitter.emit(EVENT.CONVERSATION_UNDISTURBED, { undisturbType, conversationType, conversationId });
+      let { content: { conversations } } = message;
+      let item = conversations[0] || { undisturbType: UNDISTURB_TYPE.UNDISTURB }
+      conversationUtils.modify(conversations, { undisturbType: item.undisturbType });
+      // 会话变更单次触发，会触发多次，所以只触发免打扰监听
+      return emitter.emit(EVENT.CONVERSATION_UNDISTURBED, { conversations });
     }
 
     // 如果会话最后一条消息大于清理的时间，不更新会话列表

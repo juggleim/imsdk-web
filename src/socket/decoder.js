@@ -432,7 +432,15 @@ export default function Decoder(cache, io){
     }
 
     if(utils.isEqual(MESSAGE_TYPE.COMMAND_UNDISTURB, msgType)){
-      utils.extend(content, { name: 'test', undisturbType });
+      let { conversations } = content;
+      conversations = utils.map(conversations, (item) => {
+        return {
+          conversationId: item.target_id,
+          conversationType: item.channel_type,
+          undisturbType: item.undisturb_type,
+        }
+      });
+      utils.extend(content, { conversations });
     }
 
     utils.extend(_message, { content })

@@ -15,7 +15,7 @@ export default function(io, emitter){
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_DELETE_MSGS)){
       let { content: { messages } } = message;
-      return io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, { name: MESSAGE_TYPE.CLIENT_REMOVE_MSGS, messages });
+      return io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, { ...message, name: MESSAGE_TYPE.CLIENT_REMOVE_MSGS });
     }
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_REMOVE_CONVERS)){
@@ -56,7 +56,10 @@ export default function(io, emitter){
       }
     }
     if(utils.isEqual(MESSAGE_TYPE.CLIENT_REMOVE_MSGS, message.name)){
-      let { messages } = message;
+      let { content: { messages } } = message;
+      if(utils.isEmpty(messages)){
+        return;
+      }
       let msg = messages[0];
       let conversation = conversationUtils.getPer(msg);
       if(utils.isEmpty(conversation)){

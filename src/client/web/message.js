@@ -246,7 +246,10 @@ export default function(io, emitter){
         userId: user.id
       };
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
-        io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, { name: MESSAGE_TYPE.CLIENT_REMOVE_MSGS, messages });
+        let config = io.getConfig();
+        if(!config.isPC){
+          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, { name: MESSAGE_TYPE.CLIENT_REMOVE_MSGS, content: { messages } });
+        }
         resolve();
       });
     });

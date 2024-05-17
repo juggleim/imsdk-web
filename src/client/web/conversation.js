@@ -86,9 +86,11 @@ export default function(io, emitter){
       return;
     }
     if(utils.isEqual(message.name, MESSAGE_TYPE.CLEAR_UNREAD)){
-      let { content, name, isSender } = message;
+      let { content } = message;
       let { conversations } = content;
-      return emitter.emit(EVENT.CONVERSATION_CLEARUNREAD, { conversations });
+      let list = conversationUtils.read(conversations);
+      emitter.emit(EVENT.CONVERSATION_CLEARUNREAD, { conversations });
+      return emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations: list });
     }
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       let conversation = conversationUtils.getPer(message);
@@ -245,7 +247,15 @@ export default function(io, emitter){
         if(code){
           return reject({ code, msg })
         }
-        conversationUtils.modify(conversations, { isTop: true });
+        let config = io.getConfig();
+        if(!config.isPC){
+          let list = utils.isArray(conversations) ? conversations : [conversations];
+          list = utils.map(list, (item) => {
+            return { ...item, isTop: true };
+          });
+          let msg = { name: MESSAGE_TYPE.COMMAND_TOPCONVERS, content: { conversations: list } };
+          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
+        }
         resolve();
       });
     });
@@ -262,7 +272,15 @@ export default function(io, emitter){
         if(code){
           return reject({ code, msg })
         }
-        conversationUtils.modify(conversations, { isTop: false });
+        let config = io.getConfig();
+        if(!config.isPC){
+          let list = utils.isArray(conversations) ? conversations : [conversations];
+          list = utils.map(list, (item) => {
+            return { ...item, isTop: false };
+          });
+          let msg = { name: MESSAGE_TYPE.COMMAND_TOPCONVERS, content: { conversations: list } };
+          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
+        }
         resolve();
       });
     });
@@ -296,7 +314,11 @@ export default function(io, emitter){
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let { timestamp } = result;
         common.updateSyncTime({ isSender: true,  sentTime: timestamp });
-        conversationUtils.read(conversations);
+        let config = io.getConfig();
+        if(!config.isPC){
+          let msg = { name: MESSAGE_TYPE.CLEAR_UNREAD, content: { conversations } };
+          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
+        }
         resolve();
       });
     });

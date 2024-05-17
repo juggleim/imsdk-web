@@ -335,16 +335,20 @@ function ConversationUtils(){
   };
   let read = (list) => {
     list = utils.isArray(list) ? list : [list];
+    let _list = [];
     utils.forEach(list, (item) => {
       let index = utils.find(conversations, ({ conversationType, conversationId }) => {
         return utils.isEqual(item.conversationType, conversationType) && utils.isEqual(item.conversationId, conversationId);
       });
       if(index > -1){
-        let conver = conversations[index];
         conversations[index].latestReadIndex = item.unreadIndex;
         conversations[index].unreadCount = 0;
+        _list.push(conversations[index]);
+      }else{
+        _list.push(item);
       }
     });
+    return _list;
   };
   return {
     remove,

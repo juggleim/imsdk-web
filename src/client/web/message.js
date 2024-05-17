@@ -332,9 +332,9 @@ export default function(io, emitter){
       let notify = (_msg = {}) => {
         utils.extend(msg, _msg);
         let config = io.getConfig();
-        // if(!config.isPC){
-          // io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
-        // }
+        if(!config.isPC){
+          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
+        }
       };
       // 兼容 PC 端修改非 content 属性，保证多端行为一致性，直接返回，PC 端会做本地消息 update
       if(utils.isUndefined(message.content)){

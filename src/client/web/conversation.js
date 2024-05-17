@@ -29,16 +29,17 @@ export default function(io, emitter){
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_TOPCONVERS)){
       let { content: { conversations } } = message;
       let item = conversations[0] || { isTop: false }
-      conversationUtils.modify(conversations, { isTop: item.isTop });
-      return emitter.emit(EVENT.CONVERSATION_TOP, { conversations });
+      let list = conversationUtils.modify(conversations, { isTop: item.isTop });
+      emitter.emit(EVENT.CONVERSATION_TOP, { conversations });
+      return emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations: list });
     }
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_UNDISTURB)){
       let { content: { conversations } } = message;
       let item = conversations[0] || { undisturbType: UNDISTURB_TYPE.UNDISTURB }
-      conversationUtils.modify(conversations, { undisturbType: item.undisturbType });
-      // 会话变更单次触发，会触发多次，所以只触发免打扰监听
-      return emitter.emit(EVENT.CONVERSATION_UNDISTURBED, { conversations });
+      let list = conversationUtils.modify(conversations, { undisturbType: item.undisturbType });
+      emitter.emit(EVENT.CONVERSATION_UNDISTURBED, { conversations });
+      return emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations: list });
     }
 
     // 如果会话最后一条消息大于清理的时间，不更新会话列表
@@ -78,6 +79,8 @@ export default function(io, emitter){
       if(!utils.isEqual(latestMessage.messageId, messageId)){
         return;
       }
+      // 对外模拟 recallinfo 消息
+      message = utils.extend(message, { name: MESSAGE_TYPE.RECALL_INFO });
     }
     if(utils.isInclude([MESSAGE_TYPE.READ_MSG, MESSAGE_TYPE.READ_GROUP_MSG], message.name)){
       return;
@@ -101,11 +104,15 @@ export default function(io, emitter){
 
     function next(message){
       let conversation = createConversation(message);
-      conversationUtils.update(conversation);
+      if(conversationUtils.isExisted(conversation)){
+        conversationUtils.update(conversation);
+        let updateConversation = conversationUtils.getPer(conversation);
+        return emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations: utils.clone([updateConversation]) });
+      }
 
-      let conversations = conversationUtils.get();
+      conversationUtils.add([conversation]);
       let newConversation = conversationUtils.getPer(conversation);
-      emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations: utils.clone(conversations), conversation: newConversation });
+      emitter.emit(EVENT.CONVERSATION_ADDED, { conversations: utils.clone([newConversation]) });
     }
   });
 
@@ -139,6 +146,7 @@ export default function(io, emitter){
           });
           return resolve(utils.clone({ conversations: list.reverse(), isFinished: result.isFinished }));
         }
+        conversationUtils.setSynced();
         conversationUtils.add(result.conversations);
         let conversations = conversationUtils.get();
         resolve({ conversations: utils.clone(conversations), isFinished: result.isFinished });

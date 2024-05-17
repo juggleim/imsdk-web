@@ -185,14 +185,19 @@ let getMsgFlag = (name, option = {}) => {
 function ConversationUtils(){
   let conversations = [];
   let isSynced = false;
+  let isExisted = (item) => {
+    let index = utils.find(conversations, ({ conversationType, conversationId }) => {
+      return utils.isEqual(item.conversationType, conversationType) && utils.isEqual(item.conversationId, conversationId);
+    });
+    return index > -1;
+  };
   let update = (list) => {
     list = utils.isArray(list) ? list : [list];
     utils.forEach(list, (item) => {
       let index = utils.find(conversations, ({ conversationType, conversationId }) => {
         return utils.isEqual(item.conversationType, conversationType) && utils.isEqual(item.conversationId, conversationId);
       });
-      let isNew = utils.isEqual(index, -1);
-      if(!isNew){
+      if(!utils.isEqual(index, -1)){
         let conversation = conversations.splice(index, 1)[0]; 
         let { unreadCount = 0, latestReadIndex = 0, latestUnreadIndex = 0 } = conversation;
         let { latestMessage, updatedTime, conversationExts, mentions, undisturbType } = item;
@@ -274,8 +279,10 @@ function ConversationUtils(){
     });
     conversations = tops.concat(conversations);
   };
-  let add = (list) => {
+  let setSynced = () => {
     isSynced = true;
+  };
+  let add = (list) => {
     update(list);
   };
   let remove = (item) => {
@@ -297,16 +304,22 @@ function ConversationUtils(){
     if(!utils.isEqual(index, -1)){
       utils.extend(conversations[index], conversation);
     }
+    return conversations[index] || {};
   };
   let modify = (_conversations, props) => {
+    let list = [];
     _conversations = utils.isArray(_conversations) ? _conversations : [_conversations];
     utils.forEach(_conversations, (item) => {
       let conversation = getPer(item);
       if(!utils.isEmpty(conversation)){
         utils.extend(conversation, props);
-        relpace(conversation);
+        let conver = relpace(conversation);
+        list.push(conver);
+      }else{
+        list.push(item);
       }
     });
+    return list;
   };
   let get = () => {
     return conversations;
@@ -341,9 +354,11 @@ function ConversationUtils(){
     isSync,
     add,
     relpace,
+    setSynced,
     modify,
     getPer,
-    read
+    read,
+    isExisted,
   };
 }
 

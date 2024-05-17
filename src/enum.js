@@ -145,12 +145,16 @@ export let EVENT = {
   MESSAGE_RECALLED: 'message_recalled',
   MESSAGE_UPDATED: 'message_updated',
   MESSAGE_READ: 'message_read',
-  CONVERSATION_CHANGED: 'conversation_changed',
+  
+  // 清空历史消息
   CONVERSATION_CLEAN: 'conversation_clean',
   CONVERSATION_SYNCED: 'conversation_synced',
-  CONVERSATION_CLEARUNREAD: 'conversation_clearunead',
   CONVERSATION_UNDISTURBED: 'conversation_undisturb',
   CONVERSATION_TOP: 'conversation_top',
+  CONVERSATION_CLEARUNREAD: 'conversation_clearunead',
+
+  CONVERSATION_CHANGED: 'conversation_changed',
+  CONVERSATION_ADDED: 'conversation_added',
   CONVERSATION_REMOVED: 'conversation_removed',
 };
 export let CONNECT_STATE = {

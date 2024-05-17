@@ -286,12 +286,15 @@ function ConversationUtils(){
     update(list);
   };
   let remove = (item) => {
+    let _conver = item;
     let index = utils.find(conversations, ({ conversationType, conversationId }) => {
       return utils.isEqual(item.conversationType, conversationType) && utils.isEqual(item.conversationId, conversationId);
     });
     if(!utils.isEqual(index, -1)){
-      conversations.splice(index, 1);
+      let arrs = conversations.splice(index, 1);
+      _conver = arrs[0];
     }
+    return _conver;
   };
   let clear = () => {
     isSynced = false;

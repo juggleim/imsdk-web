@@ -224,6 +224,11 @@ export default function(io, emitter){
       utils.extend(data, params);
 
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
+        let config = io.getConfig();
+        if(!config.isPC){
+          let msg = { name: MESSAGE_TYPE.CLEAR_MSG, content: { ...data } };
+          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
+        }
         resolve();
       });
     });

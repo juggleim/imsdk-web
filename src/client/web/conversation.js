@@ -20,10 +20,12 @@ export default function(io, emitter){
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_REMOVE_CONVERS)){
       let { content: { conversations } } = message;
+      let list = [];
       utils.forEach(conversations, (item) => {
-        conversationUtils.remove(item);
+        let _item = conversationUtils.remove(item);
+        list.push(_item);
       });
-      return emitter.emit(EVENT.CONVERSATION_REMOVED, { conversations });
+      return emitter.emit(EVENT.CONVERSATION_REMOVED, { conversations: list });
     }
     
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_TOPCONVERS)){
@@ -165,9 +167,11 @@ export default function(io, emitter){
       let data = { topic: COMMAND_TOPICS.REMOVE_CONVERSATION, conversations, userId: user.id };
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
         let list = utils.isArray(conversations) ? conversations : [conversations];
-        utils.forEach(list, (conversation) => {
-          conversationUtils.remove(conversation);
-        });
+        let config = io.getConfig();
+        if(!config.isPC){
+          let msg = { name: MESSAGE_TYPE.COMMAND_REMOVE_CONVERS, content: { conversations: list } };
+          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
+        }
         resolve();
       });
     });
@@ -211,9 +215,12 @@ export default function(io, emitter){
         if(code){
           return reject({ code, msg })
         }
-        let list = utils.isArray(conversations) ? conversations : [conversations];
-        let undisturbType = list[0].undisturbType;
-        conversationUtils.modify(conversations, { undisturbType  });
+        let config = io.getConfig();
+        if(!config.isPC){
+          let list = utils.isArray(conversations) ? conversations : [conversations];
+          let msg = { name: MESSAGE_TYPE.COMMAND_UNDISTURB, content: { conversations: list } };
+          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
+        }
         resolve();
       });
     });
@@ -230,7 +237,15 @@ export default function(io, emitter){
         if(code){
           return reject({ code, msg })
         }
-        conversationUtils.modify(conversations, { undisturbType: UNDISTURB_TYPE.UNDISTURB });
+        let config = io.getConfig();
+        if(!config.isPC){
+          let list = utils.isArray(conversations) ? conversations : [conversations];
+          list = utils.map(list, (item) => {
+            return { ...item, undisturbType: UNDISTURB_TYPE.UNDISTURB };
+          })
+          let msg = { name: MESSAGE_TYPE.COMMAND_UNDISTURB, content: { conversations: list } };
+          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
+        }
         resolve();
       });
     });

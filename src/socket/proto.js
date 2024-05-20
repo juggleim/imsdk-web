@@ -78,6 +78,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           timestamp: {
             type: "int64",
             id: 4
+          },
+          ext: {
+            type: "string",
+            id: 5
           }
         }
       },
@@ -90,6 +94,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           timestamp: {
             type: "int64",
             id: 2
+          },
+          ext: {
+            type: "string",
+            id: 3
           }
         }
       },

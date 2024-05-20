@@ -31,31 +31,30 @@ export default function IO(config){
   let syncTimer = Timer({ timeout: SYNC_MESSAGE_TIME });
 
   let connectionState = CONNECT_STATE.DISCONNECTED;
-  let updateState = (state, user) => {
+  let updateState = ({ state, user }) => {
     connectionState = state;
     emitter.emit(SIGNAL_NAME.CONN_CHANGED, { state, user });
   }
+  let onDisconnect = (result = {}) => {
+    let state = CONNECT_STATE.DISCONNECTED;
+    if(!utils.isEqual(connectionState, CONNECT_STATE.CONNECTION_SICK)){
+      updateState({ state, ...result});
+    }
+    timer.pause();
+    syncTimer.pause();
+  };
   let currentUserInfo = {};
   let setCurrentUser = (user) => {
     utils.extend(currentUserInfo, user);
   };
   let connect = ({ token, userId }, callback) => {
-    updateState(CONNECT_STATE.CONNECTING);
+    updateState({ state: CONNECT_STATE.CONNECTING, user: { id: userId } });
     return Network.getNavi(nav, { appkey, token, userId }).then((result) => {
       let { servers, userId: id } = result;
       setCurrentUser({ id });
 
       cache.set(SIGNAL_NAME.S_CONNECT_ACK, callback);
 
-      let onDisconnect = () => {
-        let state = CONNECT_STATE.DISCONNECTED;
-        if(!utils.isEqual(connectionState, CONNECT_STATE.CONNECTION_SICK)){
-          updateState(state);
-        }
-
-        timer.pause();
-        syncTimer.pause();
-      };
       Network.detect(servers, (domain, error) => {
         if(error){
           return disconnect(CONNECT_STATE.CONNECTION_SICK)
@@ -66,8 +65,12 @@ export default function IO(config){
         ws.onopen = function(){
           sendCommand(SIGNAL_CMD.CONNECT, { appkey, token });
         };
-        ws.onclose = onDisconnect;
-        ws.onerror = onDisconnect;
+        ws.onclose = () => {
+          onDisconnect();
+        };
+        ws.onerror = () => {
+          onDisconnect();
+        };
         ws.onmessage = function({ data }){
           let reader = new FileReader();
           reader.onload = function() {
@@ -89,7 +92,6 @@ export default function IO(config){
       ws.close && ws.close();
     }
     let state = _state || CONNECT_STATE.DISCONNECTED;
-    // updateState(state);
     timer.pause();
     syncTimer.pause();
     
@@ -199,13 +201,16 @@ export default function IO(config){
             });
           });
 
-          updateState(state, currentUserInfo);
+          updateState({ state, user: currentUserInfo });
           _callback({ user: currentUserInfo, error });
 
         });
       }
-      updateState(state, currentUserInfo);
+      updateState({ state, user: currentUserInfo });
       _callback({ user: currentUserInfo, error });
+    }
+    if(utils.isEqual(cmd, SIGNAL_CMD.DISCONNECT)){
+      onDisconnect(result)
     }
     cache.remove(index);
   }

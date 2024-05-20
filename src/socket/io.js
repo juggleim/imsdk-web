@@ -31,9 +31,9 @@ export default function IO(config){
   let syncTimer = Timer({ timeout: SYNC_MESSAGE_TIME });
 
   let connectionState = CONNECT_STATE.DISCONNECTED;
-  let updateState = ({ state, user }) => {
+  let updateState = ({ state, user, extra = '' }) => {
     connectionState = state;
-    emitter.emit(SIGNAL_NAME.CONN_CHANGED, { state, user });
+    emitter.emit(SIGNAL_NAME.CONN_CHANGED, { state, user, extra });
   }
   let onDisconnect = (result = {}) => {
     let state = CONNECT_STATE.DISCONNECTED;
@@ -210,7 +210,9 @@ export default function IO(config){
       _callback({ user: currentUserInfo, error });
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.DISCONNECT)){
-      onDisconnect(result)
+      let { code, extra } = result;
+      code = code || CONNECT_STATE.DISCONNECTED;
+      onDisconnect({ state: code, extra });
     }
     cache.remove(index);
   }

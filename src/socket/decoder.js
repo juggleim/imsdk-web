@@ -14,7 +14,8 @@ export default function Decoder(cache, io){
     let { cmd } = msg;
     switch(cmd){
       case SIGNAL_CMD.CONNECT_ACK:
-        result = utils.extend(result, { ack: msg.ConnectAckMsgBody, index: CONNECT_ACK_INDEX, ext: msg.ext });
+        let { ConnectAckMsgBody } = msg;
+        result = utils.extend(result, { ack: ConnectAckMsgBody, index: CONNECT_ACK_INDEX, extra: ConnectAckMsgBody.ext });
         name = SIGNAL_NAME.S_CONNECT_ACK;
         break;
       case SIGNAL_CMD.PUBLISH_ACK:
@@ -35,7 +36,8 @@ export default function Decoder(cache, io){
         name = SIGNAL_NAME.S_PONG;
         break;
       case SIGNAL_CMD.DISCONNECT:
-        result = utils.extend(result, { ext: msg.ext, cdoe: msg.code });
+        let { disconnectMsgBody } = msg;
+        result = utils.extend(result, { extra: disconnectMsgBody.ext, code: disconnectMsgBody.code });
         break;
     }
     return {

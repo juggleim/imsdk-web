@@ -20,9 +20,9 @@ export default function(io, emitter){
     // 收到消息一定要更新会话列表
     io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, utils.clone(message));
 
-    // 消息监听无需处理消息删除
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_DELETE_MSGS)){
-      return;
+      let { content: { conversationId, conversationType, messages } } = message;
+      return emitter.emit(EVENT.MESSAGE_REMOVED, { conversationId, conversationType, messages });
     }
     // 消息监听无需处理会话删除
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_REMOVE_CONVERS)){
@@ -46,8 +46,8 @@ export default function(io, emitter){
     }
   
     if(utils.isEqual(message.name, MESSAGE_TYPE.CLEAR_MSG)){
-      let { content: { clean_time: cleanTime, channel_type: conversationType, target_id: conversationId } } = message;
-      return emitter.emit(EVENT.CONVERSATION_CLEAN, { conversationType, conversationId, cleanTime });
+      let { content: {  conversationType, conversationId, cleanTime } } = message;
+      return emitter.emit(EVENT.MESSAGE_CLEAN, { conversationType, conversationId, cleanTime });
     }
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       let { conversationType, conversationId, content, messageId } = message;

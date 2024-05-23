@@ -46,14 +46,16 @@ export default function(io, emitter){
 
     // 如果会话最后一条消息大于清理的时间，不更新会话列表
     if(utils.isEqual(message.name, MESSAGE_TYPE.CLEAR_MSG)){
-      let { content: { clean_time: cleanTime, channel_type: conversationType, target_id: conversationId  } } = message;
-      utils.extend(message, { content: { cleanTime },  conversationType, conversationId });
-      let conversation = conversationUtils.getPer(message);
+      let { content: { cleanTime, conversationType, conversationId  } } = message;
+      let params = { conversationType, conversationId };
+      let conversation = conversationUtils.getPer(params) || params;
       let { latestMessage } = conversation || { };
       latestMessage = latestMessage || {}; 
-      if(latestMessage.sentTime > cleanTime){
-        return;
+      if(cleanTime >= latestMessage.sentTime){
+        conversation.latestMessage = {};
+        emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations: [conversation] });
       }
+      return;
     }
     if(utils.isEqual(MESSAGE_TYPE.CLIENT_REMOVE_MSGS, message.name)){
       let { content: { messages } } = message;

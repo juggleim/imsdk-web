@@ -473,14 +473,21 @@ export default function Decoder(cache, io){
         return { 
           tid: item.msg_id,
           messageId: item.msg_id,
-          conversationId: content.target_id,
+          conversationId: msg.targetId,
           conversationType: content.channel_type,
          };
       });
       content = { 
-        conversationId: content.target_id,
+        conversationId: msg.targetId,
         conversationType: content.channel_type,
         messages: msgs,
+      }
+    }
+    if(utils.isEqual(MESSAGE_TYPE.CLEAR_MSG, msgType)){
+      content = { 
+        cleanTime: content.clean_time, 
+        conversationType: content.channel_type,
+        conversationId: msg.targetId
       }
     }
 

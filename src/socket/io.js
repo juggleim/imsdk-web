@@ -31,13 +31,13 @@ export default function IO(config){
   let syncTimer = Timer({ timeout: SYNC_MESSAGE_TIME });
 
   let connectionState = CONNECT_STATE.DISCONNECTED;
-  let updateState = ({ state, user, extra = '' }) => {
-    connectionState = state;
-    emitter.emit(SIGNAL_NAME.CONN_CHANGED, { state, user, extra });
+  let updateState = (result) => {
+    connectionState = result.state;
+    emitter.emit(SIGNAL_NAME.CONN_CHANGED, { ...result });
   }
   let onDisconnect = (result = {}) => {
     let state = CONNECT_STATE.DISCONNECTED;
-    if(!utils.isEqual(connectionState, CONNECT_STATE.CONNECTION_SICK)){
+    if(!utils.isEqual(connectionState, CONNECT_STATE.DISCONNECTED)){
       updateState({ state, ...result});
     }
     timer.pause();
@@ -57,7 +57,7 @@ export default function IO(config){
 
       Network.detect(servers, (domain, error) => {
         if(error){
-          return disconnect(CONNECT_STATE.CONNECTION_SICK)
+          return disconnect()
         }
         let { ws: protocol } = utils.getProtocol();
         let url = `${protocol}//${domain}/im`;
@@ -87,11 +87,11 @@ export default function IO(config){
   
   let PingTimeouts = [];
 
-  let disconnect = (_state) => {
+  let disconnect = () => {
     if(ws){
       ws.close && ws.close();
     }
-    let state = _state || CONNECT_STATE.DISCONNECTED;
+    let state = CONNECT_STATE.DISCONNECTED;
     timer.pause();
     syncTimer.pause();
     
@@ -119,7 +119,7 @@ export default function IO(config){
           return PingTimeouts.push({ cmd: _cmd });
         }
         callback(ErrorType.COMMAND_FAILED);
-        disconnect(CONNECT_STATE.CONNECTION_SICK);
+        disconnect();
       });
     }
   };
@@ -211,8 +211,7 @@ export default function IO(config){
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.DISCONNECT)){
       let { code, extra } = result;
-      code = code || CONNECT_STATE.DISCONNECTED;
-      onDisconnect({ state: code, extra });
+      onDisconnect({ code, extra });
     }
     cache.remove(index);
   }

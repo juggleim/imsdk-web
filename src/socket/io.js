@@ -2,7 +2,7 @@ import Emitter from "../common/emmit";
 import utils from "../utils";
 import Storage from "../common/storage";
 import Proto from "./proto";
-import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX, COMMAND_TOPICS, CONVERATION_TYPE, SYNC_MESSAGE_TIME, STORAGE } from "../enum";
+import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX, COMMAND_TOPICS, CONVERATION_TYPE, SYNC_MESSAGE_TIME, STORAGE, PLATFORM } from "../enum";
 import BufferEncoder from "./encoder/encoder";
 import BufferDecoder from "./decoder";
 import Network from "../common/network";
@@ -47,7 +47,7 @@ export default function IO(config){
   let setCurrentUser = (user) => {
     utils.extend(currentUserInfo, user);
   };
-  let connect = ({ token, userId }, callback) => {
+  let connect = ({ token, userId, deviceId }, callback) => {
     updateState({ state: CONNECT_STATE.CONNECTING, user: { id: userId } });
     return Network.getNavi(nav, { appkey, token, userId }).then((result) => {
       let { servers, userId: id } = result;
@@ -63,7 +63,11 @@ export default function IO(config){
         let url = `${protocol}//${domain}/im`;
         ws = new WebSocket(url);
         ws.onopen = function(){
-          sendCommand(SIGNAL_CMD.CONNECT, { appkey, token });
+          let platform = PLATFORM.WEB;
+          if(common.isDesktop()){
+            platform = PLATFORM.DESKTOP;
+          }
+          sendCommand(SIGNAL_CMD.CONNECT, { appkey, token, deviceId, platform });
         };
         ws.onclose = () => {
           onDisconnect();

@@ -33,7 +33,8 @@ export let SIGNAL_NAME = {
 };
 
 export let PLATFORM = {
-  WEB: 'Web'
+  WEB: 'Web',
+  DESKTOP: 'PC'
 }
 
 export let SIGNAL_CMD = {

@@ -487,7 +487,8 @@ export default function Decoder(cache, io){
       content = { 
         cleanTime: content.clean_time, 
         conversationType: content.channel_type,
-        conversationId: msg.targetId
+        conversationId: msg.targetId,
+        senderId: content.sender_id,
       }
     }
 

@@ -148,6 +148,7 @@ export let EVENT = {
   MESSAGE_READ: 'message_read',
   MESSAGE_REMOVED: 'message_removed',
   MESSAGE_CLEAN: 'message_clean',
+  MESSAGE_CLEAN_SOMEONE: 'message_clean_someone',
 
   // 清空历史消息
   CONVERSATION_SYNCED: 'conversation_synced',

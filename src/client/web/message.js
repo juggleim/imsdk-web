@@ -46,7 +46,10 @@ export default function(io, emitter){
     }
   
     if(utils.isEqual(message.name, MESSAGE_TYPE.CLEAR_MSG)){
-      let { content: {  conversationType, conversationId, cleanTime } } = message;
+      let { content: {  conversationType, conversationId, cleanTime, senderId } } = message;
+      if(!utils.isEmpty(senderId)){
+        return emitter.emit(EVENT.MESSAGE_CLEAN_SOMEONE, { conversationType, conversationId, senderId });
+      }
       return emitter.emit(EVENT.MESSAGE_CLEAN, { conversationType, conversationId, cleanTime });
     }
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){

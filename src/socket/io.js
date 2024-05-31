@@ -19,7 +19,9 @@ import Counter from "../common/counter";
 export default function IO(config){
   let emitter = Emitter();
   let { appkey, navList, isSync = true, connectTimeout = 1 * 90 * 1000 } = config;
-  navList = navList || ['http://120.48.178.248:8083'];
+  if(!utils.isArray(navList)){
+    navList = ['http://120.48.178.248:8083'];
+  }
   let ws = {};
   let io = {};
   
@@ -63,7 +65,11 @@ export default function IO(config){
       if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
         let error = common.getError(code);
         clearLocalServers(userId);
-        updateState({ state: CONNECT_STATE.DISCONNECTED, code: ErrorType.IM_SERVER_CONNECT_ERROR.code });
+        // 网络异常 code 为空，通过 code 检测是否为网络异常
+        if(!code){
+          error = ErrorType.IM_SERVER_CONNECT_ERROR;
+        }
+        updateState({ state: CONNECT_STATE.DISCONNECTED, code: error.code });
         return callback({ error });
       }
       

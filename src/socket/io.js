@@ -18,7 +18,7 @@ import Counter from "../common/counter";
 */
 export default function IO(config){
   let emitter = Emitter();
-  let { appkey, navList, isSync = true, connectTimeout = 1 * 60 * 1000 } = config;
+  let { appkey, navList, isSync = true, connectTimeout = 1 * 90 * 1000 } = config;
   navList = navList || ['http://120.48.178.248:8083'];
   let ws = {};
   let io = {};
@@ -116,11 +116,9 @@ export default function IO(config){
     
     let count = reconnectOpt.count || 1;
     let msec = count * 1000;
-    if(count > 5){
-      msec = 1 * 5 * 1000;
-    }
+    console.log('msec', msec)
     setTimeout(() => {
-      count += 1;
+      count = count * 2;
       cache.set(CONNECT_TOOL.RECONNECT_COUNT, { count });
       connect({ token, userId, deviceId, _isReconnect: true }, callback);
     }, msec)

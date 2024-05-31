@@ -2,7 +2,7 @@ import Emitter from "../common/emmit";
 import utils from "../utils";
 import Storage from "../common/storage";
 import Proto from "./proto";
-import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX, COMMAND_TOPICS, CONVERATION_TYPE, SYNC_MESSAGE_TIME, STORAGE, PLATFORM } from "../enum";
+import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX, COMMAND_TOPICS, CONVERATION_TYPE, SYNC_MESSAGE_TIME, STORAGE, PLATFORM, CONNECT_TOOL } from "../enum";
 import BufferEncoder from "./encoder/encoder";
 import BufferDecoder from "./decoder";
 import Network from "../common/network";
@@ -18,8 +18,8 @@ import Counter from "../common/counter";
 */
 export default function IO(config){
   let emitter = Emitter();
-  let { appkey, nav, isSync = true } = config;
-  nav = nav || 'http://120.48.178.248:8083';
+  let { appkey, navList, isSync = true, connectTimeout = 1 * 60 * 1000 } = config;
+  navList = navList || ['http://120.48.178.248:8083'];
   let ws = {};
   let io = {};
   
@@ -47,17 +47,35 @@ export default function IO(config){
   let setCurrentUser = (user) => {
     utils.extend(currentUserInfo, user);
   };
-  let connect = ({ token, userId, deviceId }, callback) => {
-    updateState({ state: CONNECT_STATE.CONNECTING, user: { id: userId } });
-    return Network.getNavi(nav, { appkey, token, userId }).then((result) => {
-      let { servers, userId: id } = result;
-      setCurrentUser({ id });
+  let clearLocalServers = (userId) => {
+    let key = common.getNaviStorageKey(appkey, userId);
+    Storage.remove(key);
+  };
+  let connect = ({ token, userId, deviceId, _isReconnect = false }, callback) => {
+    if(!_isReconnect){
+      cache.set(CONNECT_TOOL.START_TIME, Date.now());
+      updateState({ state: CONNECT_STATE.CONNECTING, user: { id: userId } });
+    }
+
+    return Network.getNavis(navList, { appkey, token, userId }, (result) => {
+      let { code, servers, userId } = result;
+
+      if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
+        let error = common.getError(code);
+        clearLocalServers(userId);
+        updateState({ state: CONNECT_STATE.DISCONNECTED, code: ErrorType.IM_SERVER_CONNECT_ERROR.code });
+        return callback({ error });
+      }
+      
+      setCurrentUser({ id: userId });
 
       cache.set(SIGNAL_NAME.S_CONNECT_ACK, callback);
 
       Network.detect(servers, (domain, error) => {
+        // 如果嗅探失败，返回连接断开，同时清理已缓存的 CMP 地址
         if(error){
-          return disconnect()
+          clearLocalServers(userId);
+          return reconnect({ token, userId, deviceId }, callback);
         }
         let { ws: protocol } = utils.getProtocol();
         let url = `${protocol}//${domain}/im`;
@@ -83,19 +101,36 @@ export default function IO(config){
           reader.readAsArrayBuffer(data);
         };
       });
-    }, ({ result: { code } }) => {
-      let error = common.getError(code);
-      callback({ error });
     });
   };
   
+  let reconnect = ({ token, userId, deviceId }, callback) => {
+    let startTime = cache.get(CONNECT_TOOL.START_TIME);
+    let currentTime = Date.now();
+    let isTimeout = ( currentTime - startTime - connectTimeout ) > 0;
+    if(isTimeout){
+      cache.remove(CONNECT_TOOL.RECONNECT_COUNT);
+      return updateState({ state: CONNECT_STATE.DISCONNECTED, code: ErrorType.IM_SERVER_CONNECT_ERROR.code });
+    }
+    let reconnectOpt = cache.get(CONNECT_TOOL.RECONNECT_COUNT);
+    
+    let count = reconnectOpt.count || 1;
+    let msec = count * 1000;
+    if(count > 5){
+      msec = 1 * 5 * 1000;
+    }
+    setTimeout(() => {
+      count += 1;
+      cache.set(CONNECT_TOOL.RECONNECT_COUNT, { count });
+      connect({ token, userId, deviceId, _isReconnect: true }, callback);
+    }, msec)
+  }
   let PingTimeouts = [];
 
   let disconnect = () => {
     if(ws){
       ws.close && ws.close();
     }
-    let state = CONNECT_STATE.DISCONNECTED;
     timer.pause();
     syncTimer.pause();
     
@@ -170,6 +205,7 @@ export default function IO(config){
       if(utils.isEqual(code, ErrorType.CONNECT_SUCCESS.code)){
         state = CONNECT_STATE.CONNECTED;
         setCurrentUser({ id: userId });
+        cache.remove(CONNECT_TOOL.RECONNECT_COUNT);
 
         return getUserInfo({ id: userId }, ({ user: _user }) => {
 

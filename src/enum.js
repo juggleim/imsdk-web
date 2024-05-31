@@ -137,7 +137,10 @@ export let NOTIFY_TYPE = {
   MSG: 1,
   CHATROOM: 2,
 };
-
+export let CONNECT_TOOL = {
+  START_TIME: 'connect_start_time',
+  RECONNECT_COUNT: 'reconnect_count'
+};
 
 // 以下是对外暴露枚举
 export let EVENT = {
@@ -235,6 +238,7 @@ export let ErrorMessages = [
   { code: 25009, msg: '未建立本地数据库连接，请优先调用连接方法', name: 'DATABASE_NOT_OPENED' },
   { code: 25010, msg: '方法未实现，请确定 SDK 版本', name: 'SDK_FUNC_NOT_DEFINED' },
   { code: 25011, msg: '引用消息必须传入完成的 Message 对象', name: 'SEND_REFER_MESSAGE_ERROR' },
+  { code: 25012, msg: 'IM 服务连接失败，请检查当前设备网络是否可用', name: 'IM_SERVER_CONNECT_ERROR' },
 
   { code: 21200, msg: '消息撤回成功', name: 'MESSAGE_RECALL_SUCCESS' },
   

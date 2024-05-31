@@ -1,6 +1,6 @@
 import utils from "../utils";
 import Storage from "../common/storage";
-import { STORAGE } from "../enum";
+import { STORAGE, ErrorType } from "../enum";
 import common from "./common";
 
 let detect = (urls, callback) => {
@@ -37,29 +37,59 @@ let detect = (urls, callback) => {
   }
 };
 
-let getNavi = (nav, option) => {
-  let url = nav.replaceAll(/http:\/\/|https:\/\/|file:\/\//g, '')
-  let { http } = utils.getProtocol(nav);
-  url = `${http}//${url}/navigator/general`
+let getNavis = (urls, option, callback) => {
+  let requests = [], isResponsed = false, errors = []; 
   let { appkey, token, userId } = option;
+
   let key = common.getNaviStorageKey(appkey, userId);
   let navi = Storage.get(key);
   if(!utils.isEmpty(navi)){
-    return utils.Defer.resolve(navi);
+    return callback(navi);
   }
-  return utils.request(url, {
-    headers: {
-      'x-appkey': appkey,
-      'x-token': token
-    }
-  }).then(({data}) => {
-    let { servers, user_id: userId } = data;
-    let result = { servers, userId };
-    Storage.set(key, result);
-    return result;
+
+  utils.forEach(urls, (domain) => {
+    let url = domain.replaceAll(/http:\/\/|https:\/\/|file:\/\//g, '')
+    let { http } = utils.getProtocol(domain);
+    url = `${http}//${url}/navigator/general`;
+    let options = {
+      headers: {
+        'x-appkey': appkey,
+        'x-token': token
+      }
+    };
+    let xhr = utils.requestNormal(url, options, {
+      success: function(result, $xhr){
+        if(!isResponsed){
+          let { responseURL } = $xhr;
+          isResponsed = true;
+          let { code, data = {} } = result;
+          let { servers, user_id: userId } = data;
+          let nav = { servers, userId, code };
+          if(!utils.isEmpty(servers)){
+            Storage.set(key, nav);
+          }
+          callback(nav);
+          abortAll();
+        }
+      },
+      fail: function(error){
+        errors.push(error);
+        if(utils.isEqual(errors.length, urls.length)){
+          callback({});
+        }
+      }
+    });
+    requests.push(xhr);
   });
+
+  function abortAll(){
+    utils.forEach(requests, (xhr) => {
+      xhr.abort();
+    });
+    requests = [];
+  }
 };
 export default {
   detect,
-  getNavi
+  getNavis
 }

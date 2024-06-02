@@ -3,7 +3,7 @@ import utils from "../../utils";
 import Storage from "../../common/storage";
 import common from "../../common/common";
 
-export default function(io, emitter){
+export default function(io, emitter, logger){
   let connectState = CONNECT_STATE.DISCONNECTED;
   
   io.on(SIGNAL_NAME.CONN_CHANGED, (data) => {
@@ -11,6 +11,7 @@ export default function(io, emitter){
   });
 
   let connect = (user) =>{
+    logger.info({ tag: 'WS-Connect' })
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, user, FUNC_PARAM_CHECKER.CONNECT, true);
       if(!utils.isEmpty(error)){

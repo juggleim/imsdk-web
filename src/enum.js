@@ -141,6 +141,15 @@ export let CONNECT_TOOL = {
   START_TIME: 'connect_start_time',
   RECONNECT_COUNT: 'reconnect_count'
 };
+export let LOG_LEVEL = {
+  NONE: 0,
+  FATAL: 1,
+  ERROR: 2,
+  WARN: 3,
+  INFO: 4,
+  DEBUG: 5,
+  VERBOSE: 6
+};
 
 // 以下是对外暴露枚举
 export let EVENT = {

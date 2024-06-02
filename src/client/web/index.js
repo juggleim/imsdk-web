@@ -2,11 +2,11 @@ import Conversation from "./conversation";
 import Message from "./message";
 import Socket from "./socket";
 import Chatroom from "./chatroom";
-let init = ({ io, emitter }) => {
-  let socket = Socket(io, emitter);
-  let conversation = Conversation(io, emitter);
-  let message = Message(io, emitter);
-  let chatroom = Chatroom(io);
+let init = ({ io, emitter, logger }) => {
+  let socket = Socket(io, emitter, logger);
+  let conversation = Conversation(io, emitter, logger);
+  let message = Message(io, emitter, logger);
+  let chatroom = Chatroom(io, emitter, logger);
   return {
     socket,
     conversation,

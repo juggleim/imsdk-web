@@ -151,6 +151,48 @@ export let LOG_LEVEL = {
   VERBOSE: 6
 };
 
+export let LOG_MODULE = {
+  INIT: 'J-Init',
+  DB_OPEN: 'DB-Open',
+  DB_CLOSE: 'DB-Close',
+
+  PB_PARSE: 'PB-Parse',
+  PB_MATCH: 'PB-Match',
+
+  WS_RECEIVE: 'WS-Receive',
+  WS_SEND: 'WS-Send',
+  WS_CONNECT: 'WS-Connect',
+
+  NAV_START: 'Nav-Start',
+  NAV_REQEST: 'Nav-Request',
+  
+  HB_START: 'HB-Start',
+  HB_STOP: 'HB-Stop',
+
+  CON_CONNECt: 'CON-Connect',
+  CON_STATUS: 'CON-Status',
+  CON_DISCONNECT: 'CON-Disconnect',
+  CON_TOKEN: 'CON-Token',
+  CON_RECONNECT: 'CON-Reconnect',
+
+  MSG_SYNC: 'MSG-Sync',
+  MSG_DELETE: 'MSG-Delete',
+  MSG_RECALL: 'MSG-Recall',
+  MSG_CLEAR: 'MSG-Clear',
+  MSG_GROUP_READ_DETAIL: 'MSG-GroupReadDetail',
+  MSG_GET_LIST: 'MSG-Get',
+  MSG_GET_MERGE: 'MSG-GetMerge',
+  MSG_GET_MENTION: 'MSG-GetMention',
+  MSG_REGISTER: 'MSG-Register',
+
+  CONV_SYNC: 'CONV-Sync',
+  CONV_DELETE: 'CONV-Delete',
+  CONV_CLEAR_UNREAD: 'CONV-ClearUnread',
+  CONV_CLEAR_TOTAL: 'CONV-ClearTotal',
+  CONV_MUTE: 'CONV-Mute',
+  CONV_TOP: 'CONV-Top'
+};
+
 // 以下是对外暴露枚举
 export let EVENT = {
   STATE_CHANGED: 'state_changed',

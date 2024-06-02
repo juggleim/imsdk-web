@@ -158,7 +158,9 @@ export default function DB(option){
         });
       }
     });
-    consumer();
+    setTimeout(() => {
+      consumer();
+    }, 100);
   };
 
   return dbTools;

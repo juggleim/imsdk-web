@@ -169,7 +169,7 @@ export let LOG_MODULE = {
   HB_START: 'HB-Start',
   HB_STOP: 'HB-Stop',
 
-  CON_CONNECt: 'CON-Connect',
+  CON_CONNECT: 'CON-Connect',
   CON_STATUS: 'CON-Status',
   CON_DISCONNECT: 'CON-Disconnect',
   CON_TOKEN: 'CON-Token',

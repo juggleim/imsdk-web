@@ -1,4 +1,4 @@
-import { SIGNAL_NAME, EVENT, CONNECT_STATE, ErrorType, FUNC_PARAM_CHECKER } from "../../enum";
+import { SIGNAL_NAME, EVENT, CONNECT_STATE, ErrorType, FUNC_PARAM_CHECKER, LOG_MODULE } from "../../enum";
 import utils from "../../utils";
 import Storage from "../../common/storage";
 import common from "../../common/common";
@@ -11,7 +11,7 @@ export default function(io, emitter, logger){
   });
 
   let connect = (user) =>{
-    logger.info({ tag: 'WS-Connect' })
+    logger.info({ tag: LOG_MODULE.CON_CONNECT});
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, user, FUNC_PARAM_CHECKER.CONNECT, true);
       if(!utils.isEmpty(error)){

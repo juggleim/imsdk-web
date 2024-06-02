@@ -7,22 +7,23 @@ export default function(io, emitter, logger){
   let connectState = CONNECT_STATE.DISCONNECTED;
   
   io.on(SIGNAL_NAME.CONN_CHANGED, (data) => {
+    let { state, code = '', user } = data;
+    logger.info({ tag: LOG_MODULE.CON_STATUS, state, code, userId: user.id });
     emitter.emit(EVENT.STATE_CHANGED, data);
   });
 
   let connect = (user) =>{
-    logger.info({ tag: LOG_MODULE.CON_CONNECT});
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, user, FUNC_PARAM_CHECKER.CONNECT, true);
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      logger.info({ tag: LOG_MODULE.CON_CONNECT });
       // 通过 appkye_userid 隔离本地存储 Key
       let config = io.getConfig();
       let { appkey } = config;
       let { userId } = user;
       Storage.setPrefix(`${appkey}_${userId}`);
-
       io.connect(user, ({ error, user }) => {
         let { code, msg } = error;
         if(utils.isEqual(code, ErrorType.CONNECT_SUCCESS.code)){
@@ -36,6 +37,7 @@ export default function(io, emitter, logger){
 
   let disconnect = () => {
     return utils.deferred((resolve) => {
+      logger.info({ tag: LOG_MODULE.CON_DISCONNECT });
       io.disconnect();
       let config = io.getConfig();
       if(!config.isPC){

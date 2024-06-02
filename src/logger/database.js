@@ -157,7 +157,7 @@ export default function DB(option){
           store.createIndex(idx.name, idx.value);
         });
       }
-    })
+    });
     consumer();
   };
 

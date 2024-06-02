@@ -1,7 +1,6 @@
 import utils from "../utils";
 import Proto from "./proto";
 import Storage from "../common/storage";
-import Logger from "../common/logger";
 import Consumer from "../common/consumer";
 import common from "../common/common";
 

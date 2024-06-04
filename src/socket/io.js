@@ -73,7 +73,7 @@ export default function IO(config){
         return callback({ error });
       }
       
-      setCurrentUser({ id: userId });
+      setCurrentUser({ id: userId, token });
 
       cache.set(SIGNAL_NAME.S_CONNECT_ACK, callback);
 

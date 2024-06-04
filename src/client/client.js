@@ -16,11 +16,12 @@ let init = (config) => {
   let { upload, appkey, log = {} } = config;
   let uploadType = common.checkUploadType(upload);
  
+  let io = IO(config);
+
   let sessionId = common.getSessionId();
-  let logger = Logger({ ...log, appkey, sessionId })
+  let logger = Logger({ ...log, appkey, sessionId, io })
   utils.extend(config, { uploadType, logger });
 
-  let io = IO(config);
   let web = Web.init({ io, emitter, logger });
   provider = web;
 

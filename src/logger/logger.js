@@ -1,6 +1,8 @@
 import DB from './database';
 import { LOG_LEVEL } from '../enum';
 import utils from "../utils";
+import Storage from '../common/storage';
+import common from "../common/common";
 
 export default function Logger(option = {}){
   let TABLE_NAME = 'LOGS';
@@ -9,7 +11,7 @@ export default function Logger(option = {}){
     LEVEL: 'level',
     T_L_GROUP: 'time_level'
   };
-  let { isConsole = true, appkey, sessionId } = option;
+  let { isConsole = true, appkey, sessionId, io } = option;
 
   let $db = DB({
     name: `JUGGLEIM_${appkey}`,
@@ -75,11 +77,26 @@ export default function Logger(option = {}){
         values: [starTime, endTime, false, false]
       }
     };
+    let user = io.getCurrentUser();
+    let key = common.getNaviStorageKey(appkey, user.id);
+    let navi = Storage.get(key);
+
     $db.search(params, (result) => {
-      console.log(result);
+      console.log(result, navi, user);
+      let { token } = user;
+      let api = navi.logAPI || 'https://imlog.gxjipei.com';
+      let url = `${api}/api/upload-log`;
+      utils.requestNormal(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'app-key': appkey,
+          token: token
+        }
+      });
     });
   };
-  
+
   return {
     log,
     error,

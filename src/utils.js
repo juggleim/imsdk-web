@@ -168,6 +168,7 @@ const request = (url, option) => {
 };
 const requestNormal = (url, option, callback) => {
   option = option || {};
+  callback = callback || { success: noop, fail: noop }
   let xhr = new XMLHttpRequest();
   let method = option.method || 'GET';
   xhr.open(method, url, true);

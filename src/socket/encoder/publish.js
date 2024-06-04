@@ -155,8 +155,7 @@ export default function({ data, callback, index }){
 
   if(utils.isEqual(COMMAND_TOPICS.REMOVE_MESSAGE, topic)){
     let { userId, messages } = data;
-    messages = utils.isArray(messages) ? messages : [messages];
-
+  
     let msgs = [], _targetId = '', channelType = CONVERATION_TYPE.PRIVATE;
     utils.forEach(messages, (message) => {
       let { conversationType, conversationId, messageIndex, sentTime, messageId } = message;

@@ -40,7 +40,8 @@ export default function IO(config){
   let onDisconnect = (result = {}) => {
     let state = CONNECT_STATE.DISCONNECTED;
     if(!utils.isEqual(connectionState, CONNECT_STATE.DISCONNECTED)){
-      updateState({ state, ...result});
+      let user = getCurrentUser();
+      updateState({ state, ...result, user});
     }
     timer.pause();
     syncTimer.pause();

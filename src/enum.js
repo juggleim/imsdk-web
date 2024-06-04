@@ -188,7 +188,10 @@ export let LOG_MODULE = {
   MSG_SEND_MASS: 'MSG-ST-MASS',
   MSG_SEND_MERGE: 'MSG-ST-MERGE',
   MSG_SEND_FILE: 'MSG-ST-FILE',
+<<<<<<< HEAD
   MSG_RECEIVE: 'MSG-ST-RECEIVE',
+=======
+>>>>>>> 83eda0b4ecdfbc819d796b1bfe5c5ebecb8c54d9
   MSG_UPDATE: 'MSG-UPDATE',
   
   CONV_SYNC: 'CONV-Sync',

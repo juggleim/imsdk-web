@@ -1,10 +1,15 @@
-import { MESSAGE_SENT_STATE, SIGNAL_CMD, EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_ORDER, COMMAND_TOPICS, CONVERATION_TYPE, ErrorType, MENTION_ORDER, UPLOAD_TYPE, FILE_TYPE, MESSAGE_TYPE } from "../../enum";
+import { 
+  MESSAGE_SENT_STATE, SIGNAL_CMD, 
+  EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_ORDER, COMMAND_TOPICS, CONVERATION_TYPE, 
+  ErrorType, MENTION_ORDER, UPLOAD_TYPE, FILE_TYPE, MESSAGE_TYPE,
+  LOG_MODULE,
+} from "../../enum";
 import utils from "../../utils";
 import common from "../../common/common";
 import Uploder from "../../common/uploader";
 import MessageCacher from "../../common/msg-cacher";
 
-export default function(io, emitter){
+export default function(io, emitter, logger){
   let messageCacher = MessageCacher();
 
   io.on(SIGNAL_NAME.CMD_RECEIVED, (message, isPullFinished = true) => {
@@ -95,6 +100,7 @@ export default function(io, emitter){
           return reject(ErrorType.SEND_REFER_MESSAGE_ERROR);
         }
       }
+      logger.info({ tag: LOG_MODULE.MSG_SEND });
       let _callbacks = {
         onbefore: () => {}
       };
@@ -112,7 +118,6 @@ export default function(io, emitter){
       let tid = message.tid || utils.getUUID();
       utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
       _callbacks.onbefore(message);
-
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messageId, sentTime, code, msg, msgIndex }) => {
         let sender = io.getCurrentUser() || {};
         utils.extend(message, { sender, isSender: true });
@@ -144,6 +149,7 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      logger.info({ tag: LOG_MODULE.MSG_SEND_MASS });
       let _cbs = {
         onprogress: () => {},
         oncompleted: () => {},
@@ -220,6 +226,7 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      logger.info({ tag: LOG_MODULE.MSG_CLEAR, ...params });
       let data = {
         topic: COMMAND_TOPICS.CLEAR_MESSAGE,
         time: 0
@@ -242,6 +249,13 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      messages = utils.isArray(messages) ? messages : [messages];
+      let list = utils.quickSort(utils.clone(messages), (a, b) => {
+        return a.sentTime > b.sentTime;
+      });
+      let item = list[0] || { sentTime: -10 };
+      logger.info({ tag: LOG_MODULE.MSG_DELETE, time: item.sentTime });
+
       let user = io.getCurrentUser();
       let data = {
         topic: COMMAND_TOPICS.REMOVE_MESSAGE,
@@ -268,6 +282,9 @@ export default function(io, emitter){
       }
       let data = { topic:  COMMAND_TOPICS.RECALL };
       utils.extend(data, message);
+      
+      logger.info({ tag: LOG_MODULE.MSG_RECALL,  messageId: message.messageId, sentTime: message.sentTime});
+
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let { code } = result;
         if(utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
@@ -336,6 +353,7 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      logger.info({ tag: LOG_MODULE.MSG_UPDATE,  messageId: message.messageId });
       let msg = {
         ...message,
         name: MESSAGE_TYPE.MODIFY,
@@ -500,6 +518,7 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      logger.info({ tag: LOG_MODULE.MSG_SEND_FILE, type: FILE_TYPE.FILE });
       let onbefore = callbacks.onbefore || utils.noop;
       let tid = message.tid || utils.getUUID();
       utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
@@ -527,6 +546,7 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      logger.info({ tag: LOG_MODULE.MSG_SEND_FILE, type: FILE_TYPE.IMAGE });
       let onbefore = callbacks.onbefore || utils.noop;
       let tid = message.tid || utils.getUUID();
       utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
@@ -554,6 +574,8 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      logger.info({ tag: LOG_MODULE.MSG_SEND_FILE, type: FILE_TYPE.AUDIO });
+
       let onbefore = callbacks.onbefore || utils.noop;
       let tid = message.tid || utils.getUUID();
       utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
@@ -581,6 +603,7 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      logger.info({ tag: LOG_MODULE.MSG_SEND_FILE, type: FILE_TYPE.VIDEO });
       let onbefore = callbacks.onbefore || utils.noop;
       let tid = message.tid || utils.getUUID();
       utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
@@ -602,6 +625,7 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      logger.info({ tag: LOG_MODULE.MSG_SEND_MERGE });
       let { conversationType, conversationId, messages, labels, title } = params;
       if(messages.length > 20){
         return reject(ErrorType.TRANSFER_MESSAGE_COUNT_EXCEED);

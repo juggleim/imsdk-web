@@ -82,7 +82,6 @@ export default function Logger(option = {}){
     let navi = Storage.get(key);
 
     $db.search(params, (result) => {
-      console.log(result, navi, user);
       let { token } = user;
       let api = navi.logAPI || 'https://imlog.gxjipei.com';
       let url = `${api}/api/upload-log`;
@@ -90,9 +89,10 @@ export default function Logger(option = {}){
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'app-key': appkey,
-          token: token
-        }
+          'x-appkey': appkey,
+          'x-token': token
+        },
+        body: utils.toJSON({ log: result.list })
       });
     });
   };

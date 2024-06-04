@@ -328,6 +328,7 @@ export let MESSAGE_TYPE = {
   
   // CLIENT_* 约定为客户端定义适用
   CLIENT_REMOVE_MSGS: 'jgc:removemsgs',
+  CLIENT_RECALL_MSG: 'jgc:recallmsg',
 }
 
 export let MENTION_TYPE = {

@@ -41,8 +41,8 @@ export default function(io, emitter){
       return;
     }
     if(utils.isEqual(message.name, MESSAGE_TYPE.RECALL)){
-      let { conversationId, conversationType, content } = message;
-      return emitter.emit(EVENT.MESSAGE_RECALLED, { conversationId, conversationType, content });
+      let { conversationId, conversationType, content, sender } = message;
+      return emitter.emit(EVENT.MESSAGE_RECALLED, { conversationId, conversationType, content, sender });
     }
   
     if(utils.isEqual(message.name, MESSAGE_TYPE.CLEAR_MSG)){
@@ -281,12 +281,12 @@ export default function(io, emitter){
             content: {
               messageId,
               sentTime,
-              senderUserId: sender.id
-            }
+            },
+            sender: sender
           });
           let config = io.getConfig();
           if(!config.isPC){
-            io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
+            io.emit(SIGNAL_NAME.CMD_RECEIVED, msg);
           }
 
           let _msg = utils.clone(msg);

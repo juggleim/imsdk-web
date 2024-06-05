@@ -67,7 +67,7 @@ export default function Logger(option = {}){
     log(LOG_LEVEL.INFO, content);
   };
   let report = () => {
-    let starTime = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    let starTime = Date.now() - 10000;
     let endTime = Date.now();
     let params = { 
       name: TABLE_NAME, 
@@ -84,7 +84,7 @@ export default function Logger(option = {}){
     $db.search(params, (result) => {
       let { token } = user;
       let api = navi.logAPI || 'https://imlog.gxjipei.com';
-      let url = `${api}/api/upload-log`;
+      let url = `${api}/api/upload-log-plain`;
       utils.requestNormal(url, {
         method: 'POST',
         headers: {
@@ -92,11 +92,10 @@ export default function Logger(option = {}){
           'x-appkey': appkey,
           'x-token': token
         },
-        body: utils.toJSON({ log: result.list })
+        body: utils.toJSON({ log: utils.toJSON(result.list) })
       });
     });
   };
-
   return {
     log,
     error,

@@ -628,7 +628,7 @@ export default function(io, emitter, logger){
         return reject(error);
       }
       logger.info({ tag: LOG_MODULE.MSG_SEND_MERGE });
-      let { conversationType, conversationId, messages, labels, title } = params;
+      let { conversationType, conversationId, messages, previewList, title } = params;
       if(messages.length > 20){
         return reject(ErrorType.TRANSFER_MESSAGE_COUNT_EXCEED);
       }
@@ -636,6 +636,7 @@ export default function(io, emitter, logger){
         channelType: CONVERATION_TYPE.PRIVATE,
         targetId: ''
       };
+      let messageIdList = [];
       messages = utils.map(messages, (message) => {
         utils.extend(mergeMsg, { 
           channelType: message.conversationType,
@@ -643,15 +644,21 @@ export default function(io, emitter, logger){
         });
         return { msgId: message.messageId, msgTime: message.sentTime, msgIndex: message.messageIndex };
       });
+
+      utils.forEach(messages, ({ msgId }) => {
+        messageIdList.push(msgId);
+      });
       let user = io.getCurrentUser();
       utils.extend(mergeMsg, { userId: user.id, msgs: messages });
+
       let msg = {
         conversationId,
         conversationType,
         name: MESSAGE_TYPE.MERGE,
         mergeMsg: mergeMsg,
         content: {
-          labels,
+          previewList,
+          messageIdList,
           title
         }
       };

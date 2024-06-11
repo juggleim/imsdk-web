@@ -73,7 +73,7 @@ export let FUNC_PARAM_CHECKER = {
   GET_FILE_TOKEN: [{ name: 'type' }],
   
   SEND_FILE_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'content', type: 'Object' }],
-  SEND_MERGE_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messages', type: 'Array' }, { name: 'labels', type: 'Array' }, { name: 'title' }],
+  SEND_MERGE_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'title' }, { name: 'previewList', type: 'Array' }, { name: 'messages', type: 'Array' }],
   GET_MERGE_MESSAGES: [{ name: 'messageId' }],
 
   GETCONVERSATIONS: [{ name: 'limit' }],

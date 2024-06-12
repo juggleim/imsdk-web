@@ -291,7 +291,7 @@ export default function(io, emitter, logger){
         let { code } = result;
         if(utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
           let msg = utils.clone(message);
-          let { messageId, sentTime } = message;
+          let { messageId, sentTime, exts } = message;
           let sender = io.getCurrentUser();
           utils.extend(msg, {
             name: MESSAGE_TYPE.RECALL,
@@ -300,6 +300,7 @@ export default function(io, emitter, logger){
             content: {
               messageId,
               sentTime,
+              exts,
             },
             sender: sender
           });
@@ -309,6 +310,7 @@ export default function(io, emitter, logger){
           }
 
           let _msg = utils.clone(msg);
+          delete msg.exts;
           _msg = utils.extend(msg, { name: MESSAGE_TYPE.RECALL_INFO });
           return resolve(msg);
         }
@@ -446,7 +448,7 @@ export default function(io, emitter, logger){
       getFileToken({ type: fileType }).then((auth) => {
         let { type } = auth;
         if(!utils.isEqual(type, uploadType)){
-          return reject(ErrorType.UPLOAD_PLUGIN_NOTMATCH);
+          return _callbacks.onerror(ErrorType.UPLOAD_PLUGIN_NOTMATCH);
         }
         let { name, content } = message;
         let params = utils.extend(auth, { file: content.file, scale, fileCompressLimit });

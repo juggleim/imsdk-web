@@ -14,12 +14,13 @@ let props = [
   }
 ]
 */
-let check = (io, _params, props, isStatic) => {
+let check = (io, _params, props, isStatic, option = {}) => {
   if(!isStatic){
     if(!io.isConnected()){
       return ErrorType.CONNECTION_NOT_READY;
     }
   }
+  let { isChild, isArray } = option;
   _params = _params || {};
   let checkType = (val, type, name) => {
     let error = null;
@@ -32,13 +33,29 @@ let check = (io, _params, props, isStatic) => {
     }
     return error;
   };
+  let checkEmpty = (val, type, name) => {
+    let error = null;
+    let { msg, code } = ErrorType.ILLEGAL_PARAMS_EMPTY;
+
+    if(utils.isEmpty(val)){
+      msg = `${name} ${msg}`;
+      error = { msg, code };
+    }
+    return error;
+  };
   let checkRequire = (val, name, index) => {
     let error = null;
     let { msg, code } = ErrorType.ILLEGAL_PARAMS;
     if(utils.isUndefined(val)){
       msg = `${name} ${msg}`;
-      if(utils.isArray(_params)){
+      if(!isChild && utils.isArray(_params)){
         msg = `Array index ${index} : ${msg}`;
+      }
+      if(isChild && isArray){
+        msg = `${option.name}[${option.num}].${msg}`;
+      }
+      if(isChild && !isArray){
+        msg = `${option.name}.${msg}`;
       }
       error = { msg, code };
     }
@@ -46,7 +63,7 @@ let check = (io, _params, props, isStatic) => {
   };
 
   let _check = (prop, param, index) => {
-    let { name, type } = prop;
+    let { name, type, children} = prop;
     let val = param[name];
     let error = null;
     error = checkRequire(val, name, index);
@@ -56,6 +73,13 @@ let check = (io, _params, props, isStatic) => {
 
     if(type){
       error = checkType(val, type, name);
+      if(!error){
+        error = checkEmpty(val, type, name);
+      }
+      if(!error && !utils.isUndefined(children)){
+        let isArray = utils.isEqual(type, 'Array');
+        error = check(io, val, children, isStatic, { num: index, name: name, isChild: true, isArray  });
+      }
     }
     return error;
   };

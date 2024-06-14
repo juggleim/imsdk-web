@@ -73,7 +73,18 @@ export let FUNC_PARAM_CHECKER = {
   GET_FILE_TOKEN: [{ name: 'type' }],
   
   SEND_FILE_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'content', type: 'Object' }],
-  SEND_MERGE_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'title' }, { name: 'previewList', type: 'Array' }, { name: 'messages', type: 'Array' }],
+  SEND_MERGE_MESSAGE: [ 
+    { name: 'conversationType' }, 
+    { name: 'conversationId' }, 
+    { name: 'title' }, 
+    { name: 'previewList', type: 'Array' }, 
+    { name: 'messages', type: 'Array', children: [
+      { name: 'conversationType' },
+      { name: 'conversationId' },
+      { name: 'messageId' },
+      { name: 'sentTime' },
+      { name: 'messageIndex' },
+    ] }],
   GET_MERGE_MESSAGES: [{ name: 'messageId' }],
 
   GETCONVERSATIONS: [{ name: 'limit' }],
@@ -296,6 +307,7 @@ export let ErrorMessages = [
   { code: 25010, msg: '方法未实现，请确定 SDK 版本', name: 'SDK_FUNC_NOT_DEFINED' },
   { code: 25011, msg: '引用消息必须传入完成的 Message 对象', name: 'SEND_REFER_MESSAGE_ERROR' },
   { code: 25012, msg: 'IM 服务连接失败，请检查当前设备网络是否可用', name: 'IM_SERVER_CONNECT_ERROR' },
+  { code: 25013, msg: '参数不可为空，请检查传入参数', name: 'ILLEGAL_PARAMS_EMPTY' },
 
   { code: 21200, msg: '消息撤回成功', name: 'MESSAGE_RECALL_SUCCESS' },
   

@@ -1,4 +1,4 @@
-import { FUNC_PARAM_CHECKER, SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME, EVENT, MESSAGE_ORDER, CONNECT_STATE, MESSAGE_TYPE, MENTION_TYPE, UNDISTURB_TYPE } from "../../enum";
+import { FUNC_PARAM_CHECKER, SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME, EVENT, MESSAGE_ORDER, CONNECT_STATE, MESSAGE_TYPE, MENTION_TYPE, UNDISTURB_TYPE, CONVERSATION_ORDER } from "../../enum";
 import utils from "../../utils";
 import common from "../../common/common";
 import Storage from "../../common/storage";
@@ -140,8 +140,9 @@ export default function(io, emitter){
         return reject(error);
       }
 
-      let { count = 50, order = MESSAGE_ORDER.FORWARD, time = 0, conversationType } = params;
+      let { count = 50, time = 0, conversationType } = params;
 
+      let order = utils.isEqual(params.order, CONVERSATION_ORDER.FORWARD) ? CONVERSATION_ORDER.FORWARD : CONVERSATION_ORDER.BACKWARD;
       // let conversations = conversationUtils.get();
       // let isSynced = conversationUtils.isSync();
       // if(isSynced && utils.isEqual(time, 0)){

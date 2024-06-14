@@ -266,18 +266,19 @@ function ConversationUtils(){
       conversations.push(item);
     });
 
-    let tops = [];
-    utils.forEach(conversations, ( item = {}, index) => {
-      let { isTop } = item;
-      if(isTop){
-        let conversation =  conversations.splice(index, 1)[0];
-        tops.push(conversation);
-      }
-    });
+    // 置顶会话单独获取，此处不做置顶排序
+    // let tops = [];
+    // utils.forEach(conversations, ( item = {}, index) => {
+    //   let { isTop } = item;
+    //   if(isTop){
+    //     let conversation =  conversations.splice(index, 1)[0];
+    //     tops.push(conversation);
+    //   }
+    // });
     conversations = utils.quickSort(conversations, (a, b) => {
       return a.sortTime > b.sortTime;
     });
-    conversations = tops.concat(conversations);
+    // conversations = tops.concat(conversations);
   };
   let setSynced = () => {
     isSynced = true;

@@ -178,7 +178,8 @@ export default function Decoder(cache, io){
             mentions, 
             channelType: conversationType,
             latestReadIndex,
-            latestUnreadIndex 
+            latestUnreadIndex,
+            isTop,
           } = conversation;
       utils.extend(msg, { targetId });
       unreadCount = unreadCount || 0;
@@ -249,6 +250,7 @@ export default function Decoder(cache, io){
         undisturbType: undisturbType || 0,
         latestReadIndex,
         latestUnreadIndex,
+        isTop: !!isTop,
       };
     });
     return { conversations, isFinished, index };

@@ -279,11 +279,6 @@ export default function Decoder(cache, io){
     let content = new TextDecoder().decode(msgContent);
     content = utils.parse(content);
 
-    // 出现非法 JSON，强制转成对象
-    if(utils.isString(content)){
-      content = { content };
-    }
-
     // 服务端返回数据有 targetUserInfo 和 groupInfo 为 null 情况，此处补充 targetId，方便本地有缓存时获取信息
     targetUserInfo = targetUserInfo || { userId: senderId };
     groupInfo = groupInfo || { groupId: conversationId };

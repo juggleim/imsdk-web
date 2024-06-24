@@ -235,7 +235,10 @@ export default function(io, emitter, logger){
       };
       utils.extend(data, params);
 
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, timestamp }) => {
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp });  
+        }
         let config = io.getConfig();
         if(!config.isPC){
           let msg = { name: MESSAGE_TYPE.CLEAR_MSG, content: { ...data } };
@@ -264,7 +267,10 @@ export default function(io, emitter, logger){
         messages,
         userId: user.id
       };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, timestamp }) => {
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp });  
+        }
         let config = io.getConfig();
         if(!config.isPC){
           io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, { name: MESSAGE_TYPE.CLIENT_REMOVE_MSGS, content: { messages } });
@@ -288,8 +294,10 @@ export default function(io, emitter, logger){
       logger.info({ tag: LOG_MODULE.MSG_RECALL,  messageId: message.messageId, sentTime: message.sentTime});
 
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
-        let { code } = result;
+        let { code, timestamp } = result;
         if(utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp });  
+          
           let msg = utils.clone(message);
           let { messageId, sentTime, exts } = message;
           let sender = io.getCurrentUser();
@@ -329,7 +337,10 @@ export default function(io, emitter, logger){
         topic: COMMAND_TOPICS.READ_MESSAGE,
         messages
       };
-      io.sendCommand(SIGNAL_CMD.QUERY, data, () => {
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code,  timestamp }) => {
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp });  
+        }
         resolve();
       });
     });

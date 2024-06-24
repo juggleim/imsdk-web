@@ -1,4 +1,4 @@
-import { FUNC_PARAM_CHECKER, SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME, EVENT, MESSAGE_ORDER, CONNECT_STATE, MESSAGE_TYPE, MENTION_TYPE, UNDISTURB_TYPE, CONVERSATION_ORDER } from "../../enum";
+import { FUNC_PARAM_CHECKER, ErrorType, SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME, EVENT, MESSAGE_ORDER, CONNECT_STATE, MESSAGE_TYPE, MENTION_TYPE, UNDISTURB_TYPE, CONVERSATION_ORDER } from "../../enum";
 import utils from "../../utils";
 import common from "../../common/common";
 import Storage from "../../common/storage";
@@ -178,11 +178,14 @@ export default function(io, emitter){
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, (result) => {
         let list = utils.isArray(conversations) ? conversations : [conversations];
         let config = io.getConfig();
-        let { timestamp } = result;
+        let { timestamp, code } = result;
         list = utils.map(list, (item) => {
           item.time = timestamp;
           return item;
         });
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp });  
+        }
         if(!config.isPC){
           let msg = { name: MESSAGE_TYPE.COMMAND_REMOVE_CONVERS, content: { conversations: list } };
           io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
@@ -199,10 +202,11 @@ export default function(io, emitter){
       }
       let user = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.INSERT_CONVERSATION, conversation, userId: user.id };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg }) => {
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg, timestamp }) => {
         if(code){
           return reject({ code, msg })
         }
+        common.updateSyncTime({ isSender: true,  sentTime: timestamp });
         let item = createConversation({
           ...conversation,
           sentTime: Date.now()
@@ -226,10 +230,11 @@ export default function(io, emitter){
       }
       let user = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.MUTE_CONVERSATION, conversations, userId: user.id };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg }) => {
-        if(code){
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg, timestamp }) => {
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           return reject({ code, msg })
         }
+        common.updateSyncTime({ isSender: true,  sentTime: timestamp });  
         let config = io.getConfig();
         if(!config.isPC){
           let list = utils.isArray(conversations) ? conversations : [conversations];
@@ -248,10 +253,11 @@ export default function(io, emitter){
       }
       let user = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.MUTE_CONVERSATION, conversations, userId: user.id, type: UNDISTURB_TYPE.UNDISTURB };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg }) => {
-        if(code){
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg, timestamp }) => {
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           return reject({ code, msg })
         }
+        common.updateSyncTime({ isSender: true,  sentTime: timestamp });  
         let config = io.getConfig();
         if(!config.isPC){
           let list = utils.isArray(conversations) ? conversations : [conversations];
@@ -273,10 +279,11 @@ export default function(io, emitter){
       }
       let user = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.TOP_CONVERSATION, conversations, userId: user.id, isTop: true };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg }) => {
-        if(code){
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg, timestamp }) => {
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           return reject({ code, msg })
         }
+        common.updateSyncTime({ isSender: true,  sentTime: timestamp }); 
         let config = io.getConfig();
         if(!config.isPC){
           let list = utils.isArray(conversations) ? conversations : [conversations];
@@ -298,10 +305,11 @@ export default function(io, emitter){
       }
       let user = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.TOP_CONVERSATION, conversations, userId: user.id, isTop: false };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg }) => {
-        if(code){
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg, timestamp }) => {
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           return reject({ code, msg })
         }
+        common.updateSyncTime({ isSender: true,  sentTime: timestamp }); 
         let config = io.getConfig();
         if(!config.isPC){
           let list = utils.isArray(conversations) ? conversations : [conversations];
@@ -342,8 +350,10 @@ export default function(io, emitter){
       let data = { topic: COMMAND_TOPICS.CLEAR_UNREAD };
       utils.extend(data, { conversations, userId: user.id });
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
-        let { timestamp } = result;
-        common.updateSyncTime({ isSender: true,  sentTime: timestamp });
+        let { timestamp, code } = result;
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp });  
+        }
         let config = io.getConfig();
         if(!config.isPC){
           let msg = { name: MESSAGE_TYPE.CLEAR_UNREAD, content: { conversations } };

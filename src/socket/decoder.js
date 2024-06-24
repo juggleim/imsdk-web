@@ -460,7 +460,8 @@ export default function Decoder(cache, io){
       conversations = utils.map(conversations, (item) => {
         return {
           conversationId: item.target_id,
-          conversationType: item.channel_type
+          conversationType: item.channel_type,
+          time: msg.msgTime
         }
       });
       utils.extend(content, { conversations });

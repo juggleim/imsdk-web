@@ -175,9 +175,14 @@ export default function(io, emitter){
       }
       let user = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.REMOVE_CONVERSATION, conversations, userId: user.id };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, (result) => {
         let list = utils.isArray(conversations) ? conversations : [conversations];
         let config = io.getConfig();
+        let { timestamp } = result;
+        list = utils.map(list, (item) => {
+          item.time = timestamp;
+          return item;
+        });
         if(!config.isPC){
           let msg = { name: MESSAGE_TYPE.COMMAND_REMOVE_CONVERS, content: { conversations: list } };
           io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);

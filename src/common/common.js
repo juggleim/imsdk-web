@@ -312,8 +312,13 @@ function ConversationUtils(){
   };
   let remove = (item) => {
     let _conver = item;
-    let index = utils.find(conversations, ({ conversationType, conversationId }) => {
-      return utils.isEqual(item.conversationType, conversationType) && utils.isEqual(item.conversationId, conversationId);
+    let index = utils.find(conversations, ({ conversationType, conversationId, latestMessage = {} }) => {
+      let isMatched = true;
+      // 删除会话指令中包含 time，用来判断是否是过期的删除指令
+      if(item.time > 0){
+        isMatched = item.time >= latestMessage.sentTime;
+      }
+      return isMatched && utils.isEqual(item.conversationType, conversationType) && utils.isEqual(item.conversationId, conversationId);
     });
     if(!utils.isEqual(index, -1)){
       let arrs = conversations.splice(index, 1);

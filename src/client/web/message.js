@@ -440,8 +440,8 @@ export default function(io, emitter, logger){
         ...params,
         userId
       };
-      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ cred: { token, domain, type } }) => {
-        resolve({ token, domain, type });
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ cred: { token, domain, type, url } }) => {
+        resolve({ token, domain, type, url });
       });
     });
   };
@@ -456,12 +456,16 @@ export default function(io, emitter, logger){
 
       let { fileType, scale } = options;
       let uploader = Uploder(upload, { type: uploadType });
-      getFileToken({ type: fileType }).then((auth) => {
+
+      let { name, content } = message;
+      let _file = content.file;
+      let names = _file.name.split('.');
+      let ext = names[names.length - 1];
+      getFileToken({ type: fileType, ext }).then((auth) => {
         let { type } = auth;
         if(!utils.isEqual(type, uploadType)){
           return _callbacks.onerror(ErrorType.UPLOAD_PLUGIN_NOTMATCH);
         }
-        let { name, content } = message;
         let params = utils.extend(auth, { file: content.file, scale, fileCompressLimit });
 
         if(utils.isEqual(name, MESSAGE_TYPE.IMAGE)){

@@ -168,7 +168,7 @@ const request = (url, option) => {
 };
 const requestNormal = (url, option, callback) => {
   option = option || {};
-  callback = callback || { success: noop, fail: noop }
+  callback = callback || { success: noop, fail: noop, progress: noop }
   let xhr = new XMLHttpRequest();
   let method = option.method || 'GET';
   xhr.open(method, url, true);
@@ -188,7 +188,7 @@ const requestNormal = (url, option, callback) => {
     if (isEqual(xhr.readyState, 4)) {
       let { responseText } = xhr;
       responseText = responseText || '{}';
-      let result = JSON.parse(responseText);
+      let result = parse(responseText);
       if (isSuccess()) {
         callback.success(result, xhr);
       } else {
@@ -196,6 +196,11 @@ const requestNormal = (url, option, callback) => {
         let error = { status, result };
         callback.fail(error)
       }
+    }
+  };
+  xhr.upload.onprogress = function(event) {
+    if (event.lengthComputable) {
+      callback.progress(event)
     }
   };
   xhr.onerror = (error) => {

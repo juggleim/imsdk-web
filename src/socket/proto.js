@@ -1041,7 +1041,8 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
         oneofs: {
           ossOf: {
             oneof: [
-              "qiniuCred"
+              "qiniuCred",
+              "preSignResp"
             ]
           }
         },
@@ -1053,13 +1054,28 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           qiniuCred: {
             type: "QiniuCredResp",
             id: 11
+          },
+          preSignResp: {
+            type: "PreSignResp",
+            id: 12
+          }
+        }
+      },
+      PreSignResp: {
+        fields: {
+          url: {
+            type: "string",
+            id: 1
           }
         }
       },
       OssType: {
         values: {
           DefaultOss: 0,
-          Qiniu: 1
+          QiNiu: 1,
+          S3: 2,
+          Minio: 3,
+          Oss: 4
         }
       },
       QiniuCredResp: {
@@ -1079,6 +1095,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           fileType: {
             type: "FileType",
             id: 1
+          },
+          ext: {
+            type: "string",
+            id: 2
           }
         }
       },

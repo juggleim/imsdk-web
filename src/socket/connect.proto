@@ -344,11 +344,18 @@ message QryUploadTokenResp{
     OssType ossType = 1;
     oneof ossOf{
         QiniuCredResp qiniuCred = 11;
+        PreSignResp preSignResp = 12;
     }
+}
+message PreSignResp {
+  string url = 1;
 }
 enum OssType{
     DefaultOss = 0;
-    Qiniu = 1;
+    QiNiu = 1;
+    S3 = 2;
+    Minio = 3;
+    Oss = 4;
 }
 message QiniuCredResp{
     string domain = 1;
@@ -357,6 +364,7 @@ message QiniuCredResp{
 
 message QryUploadTokenReq{
     FileType fileType = 1;
+    string ext = 2;
 }
 enum FileType {
     DefaultFileType = 0;

@@ -399,11 +399,15 @@ function ConversationUtils(){
   };
 }
 
+// 特性检查
 function checkUploadType(upload){
   upload = upload || {};
   let type = UPLOAD_TYPE.NONE;
   if(upload.QiniuError){
-    type = UPLOAD_TYPE.QINIU
+    type = UPLOAD_TYPE.QINIU;
+  }
+  if(OSS.urllib){
+    type = UPLOAD_TYPE.ALI;
   }
   return type;
 }

@@ -147,9 +147,9 @@ export default function getQueryBody({ data, callback, index }){
 
   if(utils.isEqual(COMMAND_TOPICS.GET_FILE_TOKEN, topic)){
     targetId = userId;
-    let { type } = data;
+    let { type, ext } = data;
     let codec = Proto.lookup('codec.QryUploadTokenReq');
-    let message = codec.create({ fileType: type });
+    let message = codec.create({ fileType: type, ext });
     buffer = codec.encode(message).finish();
   }
 

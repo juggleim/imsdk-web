@@ -30,11 +30,35 @@ export default function (uploader, { type }) {
       return names[names.length - 1];
     }
   };
+  let aliExec = (content, option, callbacks) => {
+    let { url } = option;
+    let { file, name } = content;
+    utils.requestNormal(url, {
+      method: 'PUT',
+      headers: { 'Content-Type': '' },
+      body: file
+    }, {
+      success: () => {
+        url = url.split('?')[0]
+        callbacks.oncompleted({ url });
+      },
+      progress: (event) => {
+        let percent =  (event.loaded / event.total) * 100;
+        callbacks.onprogress({ percent });
+      },
+      fail: (error) => {
+        callbacks.onerror(error);
+      },
+    });
+  };
   let exec = (content, option, callbacks) => {
     if (utils.isEqual(type, UPLOAD_TYPE.QINIU)) {
       return qiniuExec(content, option, callbacks);
     }
-    // ... other upload plugion
+    if(utils.isEqual(type, UPLOAD_TYPE.ALI)){
+      return aliExec(content, option, callbacks);
+    }
+    // ... other upload plugin
   };
 
   /* 视频截取首帧 */

@@ -122,6 +122,10 @@ export default function Decoder(cache, io){
       let { qiniuCred } = result;
       utils.extend(cred, qiniuCred);
     }
+    if(utils.isEqual(ossType, UPLOAD_TYPE.ALI)){
+      let { preSignResp } = result;
+      utils.extend(cred, preSignResp);
+    }
     return {
       index, cred
     };

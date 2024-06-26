@@ -406,7 +406,7 @@ function checkUploadType(upload){
   if(upload.QiniuError){
     type = UPLOAD_TYPE.QINIU;
   }
-  if(OSS.urllib){
+  if(upload.urllib){
     type = UPLOAD_TYPE.ALI;
   }
   return type;

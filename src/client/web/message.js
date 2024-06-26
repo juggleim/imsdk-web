@@ -310,7 +310,6 @@ export default function(io, emitter, logger){
               sentTime,
               exts,
             },
-            sender: sender
           });
           let config = io.getConfig();
           if(!config.isPC){

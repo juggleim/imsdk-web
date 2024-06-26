@@ -47,9 +47,16 @@ export default function(io, emitter, logger){
     });
   };
 
+  let getDevice = () => {
+    return utils.deferred((resolve, reject) => {
+      return reject(ErrorType.SDK_FUNC_NOT_DEFINED);
+    });
+  };
+
   return {
     connect,
     disconnect,
+    getDevice: getDevice,
     isConnected: io.isConnected,
     getCurrentUser: io.getCurrentUser
   }

@@ -3,6 +3,7 @@ export default function($socket){
   let funcs = [
     'connect',
     'disconnect',
+    'getDevice',
     'isConnected',
     'getCurrentUser',
   ];

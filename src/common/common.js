@@ -255,7 +255,7 @@ function ConversationUtils(){
           unreadCount = 0;
           latestMessage = conversation.latestMessage;
         }
-        if(unreadCount < 0){
+        if(unreadCount <= 0){
           unreadCount = 0;
         }
         if(utils.isEqual(latestMessage.name, MESSAGE_TYPE.CLEAR_MSG) && latestMessage.isSender){
@@ -281,7 +281,7 @@ function ConversationUtils(){
       draft = utils.isEmpty(draft) ? '' : draft;
       utils.extend(item, { draft })
 
-      if(item.unreadCount < 0){
+      if(item.unreadCount < 0 || utils.isNull(item.unreadCount)){
         item.unreadCount = 0;
       }
 

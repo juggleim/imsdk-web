@@ -344,6 +344,7 @@ export let MESSAGE_TYPE = {
   COMMAND_UNDISTURB: 'jg:undisturb',
   COMMAND_TOPCONVERS: 'jg:topconvers',
   COMMAND_REMOVE_CONVERS: 'jg:delconvers',
+  COMMAND_ADD_CONVER: 'jg:addconver',
   
   // CLIENT_* 约定为客户端定义适用
   CLIENT_REMOVE_MSGS: 'jgc:removemsgs',

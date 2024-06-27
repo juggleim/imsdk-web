@@ -18,6 +18,13 @@ export default function(io, emitter){
       return io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, { ...message, name: MESSAGE_TYPE.CLIENT_REMOVE_MSGS });
     }
 
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_ADD_CONVER)){
+      let { content: _conversation } = message;
+      conversationUtils.update(_conversation);
+      let newConversation = conversationUtils.getPer(_conversation);
+      return emitter.emit(EVENT.CONVERSATION_ADDED, { conversations: utils.clone([newConversation]) });
+    }
+    
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_REMOVE_CONVERS)){
       let { content: { conversations } } = message;
       let list = [];

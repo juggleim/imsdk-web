@@ -495,6 +495,24 @@ export default function Decoder(cache, io){
       }
     }
 
+    if(utils.isEqual(MESSAGE_TYPE.COMMAND_ADD_CONVER, msgType)){
+      let _conversation = content.conversation;
+      let { target_id, channel_type, sort_time, sync_time, target_user_info = {} } = _conversation;
+      let { nickname, user_portrait, ext_fields, updated_time } = target_user_info;
+      content = {
+        conversationId: target_id,
+        conversationType: channel_type,
+        conversationTitle: nickname, 
+        conversationPortrait: user_portrait,
+        conversationExts: ext_fields,
+        latestMessage: { conversationId: target_id, conversationType: channel_type },
+        unreadCount: 0,
+        updatedTime: updated_time,
+        sortTime: sort_time,
+        syncTime: sync_time
+      };
+    }
+
     utils.extend(_message, { content })
     return _message;
   }

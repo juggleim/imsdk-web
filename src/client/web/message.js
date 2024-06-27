@@ -31,6 +31,10 @@ export default function(io, emitter, logger){
       let { content: { conversationId, conversationType, messages } } = message;
       return emitter.emit(EVENT.MESSAGE_REMOVED, { conversationId, conversationType, messages });
     }
+    // 消息监听无需处理会话添加
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_ADD_CONVER)){
+      return;
+    }
     // 消息监听无需处理会话删除
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_REMOVE_CONVERS)){
       return;

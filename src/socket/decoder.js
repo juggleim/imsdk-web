@@ -353,6 +353,7 @@ export default function Decoder(cache, io){
       isRead: !!isRead,
       isUpdated: msgFlag.isUpdated,
       isMuted: msgFlag.isMute,
+      isMass: msgFlag.isMass,
       referMsg: newRefer,
       sentState: MESSAGE_SENT_STATE.SUCCESS,
       undisturbType:  undisturbType || 0,

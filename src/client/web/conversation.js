@@ -25,6 +25,12 @@ export default function(io, emitter){
       return emitter.emit(EVENT.CONVERSATION_ADDED, { conversations: utils.clone([newConversation]) });
     }
     
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CLEAR_TOTALUNREAD)){
+      let { content: { clearTime } } = message;
+      let conversations = conversationUtils.get();
+      conversationUtils.read(conversations);
+      return emitter.emit(EVENT.CLEAR_TOTAL_UNREADCOUNT, { clearTime });
+    }
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_REMOVE_CONVERS)){
       let { content: { conversations } } = message;
       let list = [];

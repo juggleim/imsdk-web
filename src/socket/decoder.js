@@ -512,6 +512,12 @@ export default function Decoder(cache, io){
         syncTime: sync_time
       };
     }
+    
+    if(utils.isEqual(MESSAGE_TYPE.COMMAND_CLEAR_TOTALUNREAD, msgType)){
+      content = {
+        clearTime: content.clear_time
+      };
+    }
 
     utils.extend(_message, { content })
     return _message;

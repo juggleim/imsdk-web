@@ -221,16 +221,16 @@ export let EVENT = {
   MESSAGE_CLEAN: 'message_clean',
   MESSAGE_CLEAN_SOMEONE: 'message_clean_someone',
 
-  // 清空历史消息
   CONVERSATION_SYNCED: 'conversation_synced',
   CONVERSATION_UNDISTURBED: 'conversation_undisturb',
   CONVERSATION_TOP: 'conversation_top',
   CONVERSATION_CLEARUNREAD: 'conversation_clearunead',
+  CLEAR_TOTAL_UNREADCOUNT: 'conversation_total_unreadcount',
 
   CONVERSATION_CHANGED: 'conversation_changed',
   CONVERSATION_ADDED: 'conversation_added',
   CONVERSATION_REMOVED: 'conversation_removed',
-  
+
 };
 export let CONNECT_STATE = {
   CONNECTED: 0,
@@ -345,6 +345,7 @@ export let MESSAGE_TYPE = {
   COMMAND_TOPCONVERS: 'jg:topconvers',
   COMMAND_REMOVE_CONVERS: 'jg:delconvers',
   COMMAND_ADD_CONVER: 'jg:addconver',
+  COMMAND_CLEAR_TOTALUNREAD: 'jg:cleartotalunread',
   
   // CLIENT_* 约定为客户端定义适用
   CLIENT_REMOVE_MSGS: 'jgc:removemsgs',

@@ -225,8 +225,7 @@ function ConversationUtils(){
       let { latestMessage, updatedTime, conversationExts, mentions, undisturbType } = item;
 
       let messageName = latestMessage.name;
-      let flag = getMsgFlag(messageName);
-      let msgFlag = formatter.toMsg(flag) || {};
+      let msgFlag = formatter.toMsg(latestMessage.flags) || {};
 
       let _isSender = latestMessage.isSender;
       let isSender = utils.isBoolean(_isSender) && _isSender;

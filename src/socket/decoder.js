@@ -358,6 +358,7 @@ export default function Decoder(cache, io){
       sentState: MESSAGE_SENT_STATE.SUCCESS,
       undisturbType:  undisturbType || 0,
       unreadIndex: unreadIndex || 0,
+      flags,
     };
 
     if(_message.isSender){

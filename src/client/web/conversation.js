@@ -147,9 +147,9 @@ export default function(io, emitter){
         return reject(error);
       }
 
-      let { count = 50, time = 0, conversationType } = params;
+      let { count = 50, time = 0, conversationType, order = CONVERSATION_ORDER.FORWARD } = params;
+      order = utils.isEqual(order, CONVERSATION_ORDER.FORWARD) ? CONVERSATION_ORDER.FORWARD : CONVERSATION_ORDER.BACKWARD;
 
-      let order = utils.isEqual(params.order, CONVERSATION_ORDER.FORWARD) ? CONVERSATION_ORDER.FORWARD : CONVERSATION_ORDER.BACKWARD;
       // let conversations = conversationUtils.get();
       // let isSynced = conversationUtils.isSync();
       // if(isSynced && utils.isEqual(time, 0)){

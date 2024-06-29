@@ -233,13 +233,6 @@ function ConversationUtils(){
 
       if(!utils.isEqual(index, -1)){
         conversation = conversations.splice(index, 1)[0]; 
-        let { unreadCount = 0, latestReadIndex = 0, latestUnreadIndex = 0 } = conversation;
-
-        if(isSender && msgFlag.isCount){
-          latestUnreadIndex = latestMessage.unreadIndex || 0;
-          unreadCount = latestUnreadIndex - latestReadIndex;
-        }
-        
         let { conversationTitle, conversationPortrait } = latestMessage;
         conversationTitle = conversationTitle || item.conversationTitle;
         conversationPortrait = conversationPortrait || item.conversationPortrait;
@@ -253,18 +246,11 @@ function ConversationUtils(){
         if(utils.isEmpty(conversationExts)){
           conversationExts = conversation.conversationExts;
         }
-
-        // 自己发送的多端同步清空消息，未读数设置为 0，最后一条消息保持不变
-        if(utils.isEqual(messageName, MESSAGE_TYPE.CLEAR_UNREAD) && latestMessage.isSender){
-          unreadCount = 0;
-          latestMessage = conversation.latestMessage;
-        }
  
         if(utils.isEqual(latestMessage.name, MESSAGE_TYPE.CLEAR_MSG) && latestMessage.isSender){
           latestMessage = {};
         }
         conversation = utils.extend(conversation, { 
-          unreadCount: unreadCount,
           latestMessage: latestMessage,
           conversationTitle, 
           conversationPortrait,
@@ -272,9 +258,22 @@ function ConversationUtils(){
           mentions,
           updatedTime,
           undisturbType,
-          latestReadIndex,
-          latestUnreadIndex,
         });
+      }
+
+      let { unreadCount = 0, latestReadIndex = 0, latestUnreadIndex = 0 } = conversation;
+      // 自己发送的多端同步清空消息，未读数设置为 0，最后一条消息保持不变
+      if(utils.isEqual(messageName, MESSAGE_TYPE.CLEAR_UNREAD) && latestMessage.isSender){
+        unreadCount = 0;
+        latestMessage = conversation.latestMessage;
+      }
+      if(unreadCount < 0 || utils.isNull(unreadCount)){
+        unreadCount = 0;
+      }
+
+      if(!isSender && msgFlag.isCount){
+        latestUnreadIndex = latestMessage.unreadIndex || 0;
+        unreadCount = latestUnreadIndex - latestReadIndex;
       }
 
       let key = getDraftKey(conversation);
@@ -282,33 +281,18 @@ function ConversationUtils(){
       draft = utils.isEmpty(draft) ? '' : draft;
       utils.extend(conversation, { draft })
 
-      if(conversation.unreadCount < 0 || utils.isNull(conversation.unreadCount)){
-        conversation.unreadCount = 0;
-      }
-
       let sortTime = latestMessage.sentTime || conversation.sortTime;
 
       // 如果是自己发发送的群发消息不更新会话列表, 自己本地发送的消息通过 isMass 区分，接收或同步消息通过消息位计算
       if((latestMessage.isMass && isSender)){
         sortTime = conversation.sortTime;
       }
-      conversation = utils.extend(conversation, { sortTime });  
+      conversation = utils.extend(conversation, { sortTime, unreadCount, latestUnreadIndex, latestReadIndex });  
       conversations.push(conversation);
     });
-
-    // 置顶会话单独获取，此处不做置顶排序
-    // let tops = [];
-    // utils.forEach(conversations, ( item = {}, index) => {
-    //   let { isTop } = item;
-    //   if(isTop){
-    //     let conversation =  conversations.splice(index, 1)[0];
-    //     tops.push(conversation);
-    //   }
-    // });
     conversations = utils.quickSort(conversations, (a, b) => {
       return a.sortTime > b.sortTime;
     });
-    // conversations = tops.concat(conversations);
   };
   let setSynced = () => {
     isSynced = true;

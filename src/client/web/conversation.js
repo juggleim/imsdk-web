@@ -191,7 +191,7 @@ export default function(io, emitter){
           return item;
         });
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          common.updateSyncTime({ isSender: true,  sentTime: timestamp });  
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp });
         }
         if(!config.isPC){
           let msg = { name: MESSAGE_TYPE.COMMAND_REMOVE_CONVERS, content: { conversations: list } };

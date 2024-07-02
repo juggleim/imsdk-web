@@ -39,6 +39,7 @@ export default function({ data, callback, index }){
         msgContent: new TextEncoder().encode(referContent),
         msgType: referMsg.name,
         type: referMsg.conversationType,
+        senderId: sender.id
         // targetUserInfo: referTarget
       };
     }

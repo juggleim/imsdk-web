@@ -26,12 +26,12 @@ export default function({ data, callback, index }){
     if(!utils.isEmpty(referMsg)){
       let { messageIndex, sentTime, messageId, sender = { exts: {} } } = referMsg;
       let referContent = utils.toJSON(referMsg.content);
-      let referTarget = {
-        userId: sender.id,
-        nickname: sender.name,
-        userPortrait: sender.portrait,
-        extFields: common.toKVs(sender.exts)
-      };
+      // let referTarget = {
+      //   userId: sender.id,
+      //   nickname: sender.name,
+      //   userPortrait: sender.portrait,
+      //   extFields: common.toKVs(sender.exts)
+      // };
       referMsg = {
         msgIndex: messageIndex,
         msgTime: sentTime,
@@ -39,7 +39,7 @@ export default function({ data, callback, index }){
         msgContent: new TextEncoder().encode(referContent),
         msgType: referMsg.name,
         type: referMsg.conversationType,
-        targetUserInfo: referTarget
+        // targetUserInfo: referTarget
       };
     }
     let message = codec.create({

@@ -75,7 +75,7 @@ let getNavis = (urls, option, callback) => {
       fail: function(error){
         errors.push(error);
         if(utils.isEqual(errors.length, urls.length)){
-          callback({});
+          callback(error.result);
         }
       }
     });

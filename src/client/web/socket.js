@@ -7,7 +7,7 @@ export default function(io, emitter, logger){
   let connectState = CONNECT_STATE.DISCONNECTED;
   
   io.on(SIGNAL_NAME.CONN_CHANGED, (data) => {
-    let { state, code = '', user } = data;
+    let { state, code = '', user = {} } = data;
     logger.info({ tag: LOG_MODULE.CON_STATUS, state, code, userId: user.id });
     emitter.emit(EVENT.STATE_CHANGED, data);
   });

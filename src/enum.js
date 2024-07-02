@@ -89,6 +89,13 @@ export let FUNC_PARAM_CHECKER = {
 
   GETCONVERSATIONS: [{ name: 'limit' }],
   GETCONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
+  
+  GET_TOTAL_UNREADCOUNT: [
+    { name: 'ignoreConversations', type: 'Array', children: [
+      { name: 'conversationType' },
+      { name: 'conversationId' },
+    ] },
+  ],
 
   CLEARUNREADCOUNT: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'unreadIndex' }],
   SET_DRAFT: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'draft' }],

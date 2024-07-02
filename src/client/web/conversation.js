@@ -376,15 +376,22 @@ export default function(io, emitter){
       });
     });
   };
-  let getTotalUnreadcount = () => {
+  let getTotalUnreadcount = (params = {}) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, {}, {});
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-
+      let { conversationTypes = [], ignoreConversations } = params;
+      conversationTypes = utils.isArray(conversationTypes) ? conversationTypes : [conversationTypes];
+      if(!utils.isEmpty(ignoreConversations)){
+        let error = common.check(io, params, FUNC_PARAM_CHECKER.GET_TOTAL_UNREADCOUNT);
+        if(!utils.isEmpty(error)){
+          return reject(error);
+        }
+      }
       let { id: userId } = io.getCurrentUser();
-      let data = { topic: COMMAND_TOPICS.GET_UNREAD_TOTLAL_CONVERSATION, userId };
+      let data = { topic: COMMAND_TOPICS.GET_UNREAD_TOTLAL_CONVERSATION, userId, conversationTypes, ignoreConversations };
       io.sendCommand(SIGNAL_CMD.QUERY, data, ({ count }) => {
         resolve({ count });
       });

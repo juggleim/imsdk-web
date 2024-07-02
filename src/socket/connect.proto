@@ -320,6 +320,16 @@ message ChatRoomReq{
     string chatId = 1;
 }
 message QryTotalUnreadCountReq{
+    int64 time = 1;
+    ConverFilter filter = 2;
+}
+message ConverFilter{
+  repeated ChannelType channelTypes = 1;
+  repeated SimpleConversation ignoreConvers = 2;
+}
+message SimpleConversation {
+  string targetId = 1;
+  ChannelType channelType = 2;
 }
 message QryTotalUnreadCountResp{
     int64 totalCount = 1;

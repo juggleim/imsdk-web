@@ -974,7 +974,42 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
         }
       },
       QryTotalUnreadCountReq: {
-        fields: {}
+        fields: {
+          time: {
+            type: "int64",
+            id: 1
+          },
+          filter: {
+            type: "ConverFilter",
+            id: 2
+          }
+        }
+      },
+      ConverFilter: {
+        fields: {
+          channelTypes: {
+            rule: "repeated",
+            type: "ChannelType",
+            id: 1
+          },
+          ignoreConvers: {
+            rule: "repeated",
+            type: "SimpleConversation",
+            id: 2
+          }
+        }
+      },
+      SimpleConversation: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 2
+          }
+        }
       },
       QryTotalUnreadCountResp: {
         fields: {

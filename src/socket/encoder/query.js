@@ -81,7 +81,21 @@ export default function getQueryBody({ data, callback, index }){
   if(utils.isEqual(COMMAND_TOPICS.GET_UNREAD_TOTLAL_CONVERSATION, topic)){
     targetId = userId;
     let codec = Proto.lookup('codec.QryTotalUnreadCountReq');
-    let message = codec.create({});
+    let { conversationTypes = [], ignoreConversations = [] } = data;
+    let ingores = [];
+    utils.forEach(ignoreConversations, ({ conversationId, conversationType }) => {
+      ingores.push({ 
+        targetId: conversationId,
+        channelType: conversationType
+       });
+    });
+    let filter = {
+      channelTypes: conversationTypes,
+      ignoreConvers: ingores
+    };
+    let message = codec.create({ 
+      filter: filter
+    });
     buffer = codec.encode(message).finish();
   }
 

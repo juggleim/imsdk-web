@@ -432,9 +432,11 @@ const isContinuous = (numbers, key) => {
   return a[key] - b[key];
  });
  for (let i = 0; i < numbers.length - 1; i++) {
-     if (numbers[i + 1][key] !== numbers[i][key] + 1) {
-         return false;
-     }
+    if(!isEmpty(numbers[i + 1][key])){
+      if (numbers[i + 1][key] !== numbers[i][key] + 1) {
+        return false;
+      }
+    }
  }
  return true;
 };

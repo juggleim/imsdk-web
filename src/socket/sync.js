@@ -123,6 +123,7 @@ export default function Syncer(send, emitter) {
         let { syncTime: newSyncTime } = conversation;
         if(newSyncTime > syncTime){
           Storage.set(STORAGE.SYNC_CONVERSATION_TIME, { time: newSyncTime });
+          item = utils.extend(item, { time: newSyncTime});
         }
         emitter.emit(SIGNAL_NAME.CMD_SYNC_CONVERSATIONS, { isFinished, conversations });
         let isSyncing = !isFinished;

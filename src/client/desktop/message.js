@@ -82,8 +82,16 @@ export default function($message, { webAgent }){
     });
   };
 
-  invokes.searchMessages = () => {
-
+  invokes.searchMessages = (params) => {
+    return $message.searchMessages(params).then((result) => {
+      let { total, list, groups, senders, isFinished } = result;
+      list = utils.map(list, (item) => {
+        let { matchedList, matchedCount, conversationType, conversationId } = item;
+        let _msgs = tools.formatMsgs({ messages: matchedList, senders, groups });
+        return { matchedList: _msgs, matchedCount, conversationType, conversationId };
+      });
+      return { total, list, isFinished };
+    });
   };
   return invokes;
 }

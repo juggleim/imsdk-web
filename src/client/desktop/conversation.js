@@ -24,9 +24,9 @@ export default function($conversation, { conversationUtils, webAgent }){
       return webAgent.getConversations(params).then((result) => {
         let { isFinished, conversations } = result;
         if(utils.isUndefined(params.conversationType)){
-          conversationUtils.add(_conversations);
+          conversationUtils.add(conversations);
         }
-        return { isFinished, conversations: utils.clone(_conversations)};
+        return { isFinished, conversations: utils.clone(conversations)};
       });
     }
     return $conversation.getConversations(params).then(({ conversations, groups, users, isFinished }) => {

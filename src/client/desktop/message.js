@@ -29,9 +29,10 @@ export default function($message, { webAgent }){
 
   invokes.getMessages = (conversation) => {
     return utils.deferred((resolve, reject) => {
+      let { order = MESSAGE_ORDER.BACKWARD } = conversation;
       let params = {
         time: conversation.time || 0,
-        order: utils.isEqual(conversation.order, MESSAGE_ORDER.BACKWARD) ? conversation.order : MESSAGE_ORDER.FORWARD, 
+        order: order, 
         count: conversation.count || 20,
         names: conversation.names || [],
         conversationType: conversation.conversationType,
@@ -43,6 +44,9 @@ export default function($message, { webAgent }){
         });
   
         let next = () => {
+          if(utils.isEqual(order, MESSAGE_ORDER.BACKWARD)){
+            messages.reverse();
+          }
           let _msgs = tools.formatMsgs({ messages, senders, groups });
           resolve({ isFinished, messages: _msgs });
         };

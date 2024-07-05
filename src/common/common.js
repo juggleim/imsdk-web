@@ -281,7 +281,6 @@ function ConversationUtils(){
       utils.extend(conversation, { draft })
 
       let sortTime = latestMessage.sentTime || conversation.sortTime;
-
       // 如果是自己发发送的群发消息不更新会话列表, 自己本地发送的消息通过 isMass 区分，接收或同步消息通过消息位计算
       if((latestMessage.isMass && isSender)){
         sortTime = conversation.sortTime;

@@ -35,7 +35,7 @@ let init = ({ appkey, io, emitter, web, client }) => {
     Storage
   });
   let socket = Socket(pc.socket);
-  let conversation = Conversation(pc.conversation, conversationUtils);
+  let conversation = Conversation(pc.conversation, { webAgent: web.conversation, conversationUtils });
   let message = Message(pc.message, { webAgent: web.message });
   let chatroom = Chatroom(web.chatroom);
   

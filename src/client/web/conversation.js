@@ -173,9 +173,9 @@ export default function(io, emitter){
           });
           return resolve(utils.clone({ conversations: list.reverse(), isFinished: result.isFinished }));
         }
+        let { conversations } = result;
         conversationUtils.setSynced();
-        conversationUtils.add(result.conversations);
-        let conversations = conversationUtils.get();
+        conversationUtils.add(conversations);
         resolve({ conversations: utils.clone(conversations), isFinished: result.isFinished });
       });
     });

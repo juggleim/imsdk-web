@@ -3,11 +3,18 @@ import Storage from "../common/storage";
 import { STORAGE, ErrorType } from "../enum";
 import common from "./common";
 
-let detect = (urls, callback) => {
+let detect = (urls, callback, option = {}) => {
   let requests = [], superior = '', errors = []; 
-  
+  let { isHttps } = option;
+
   utils.forEach(urls, (domain) => {
     let { http } = utils.getProtocol(domain);
+
+    if(isHttps){
+      domain = domain.replace(/(https:\/\/|http:\/\/)|(\/health)/g, '');
+      http = 'https:';
+    }
+
     let url = `${http}//${domain}/health`;
     let options = {};
     let xhr = utils.requestNormal(url, options, {
@@ -64,7 +71,10 @@ let getNavis = (urls, option, callback) => {
           isResponsed = true;
           let { code, data = {} } = result;
           let { servers, user_id: userId } = data;
-          let nav = { servers, userId, code };
+          
+          // 默认规则：导航和 CMP 的协议必须一致
+          let isHttps = utils.isEqual(http, 'https:');
+          let nav = { servers, userId, code, isHttps };
           if(!utils.isEmpty(servers)){
             Storage.set(key, nav);
           }

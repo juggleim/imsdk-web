@@ -61,7 +61,7 @@ export default function IO(config){
     }
 
     return Network.getNavis(navList, { appkey, token, userId }, (result) => {
-      let { code, servers, userId } = result;
+      let { code, servers, userId, isHttps } = result;
 
       if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
         let error = common.getError(code);
@@ -84,7 +84,11 @@ export default function IO(config){
           clearLocalServers(userId);
           return reconnect({ token, userId, deviceId }, callback);
         }
-        let { ws: protocol } = utils.getProtocol();
+        let fakeUrl = '';
+        if(isHttps){
+          fakeUrl = 'https://fake.im.com';
+        }
+        let { ws: protocol } = utils.getProtocol(fakeUrl);
         let url = `${protocol}//${domain}/im`;
         ws = new WebSocket(url);
         ws.onopen = function(){
@@ -107,7 +111,7 @@ export default function IO(config){
           }
           reader.readAsArrayBuffer(data);
         };
-      });
+      }, { isHttps });
     });
   };
   
@@ -225,7 +229,8 @@ export default function IO(config){
             syncer.exec({
               time: Storage.get(STORAGE.SYNC_CONVERSATION_TIME).time || 0,
               name: SIGNAL_NAME.S_SYNC_CONVERSATION_NTF,
-              user: { id: currentUserInfo.id }
+              user: { id: currentUserInfo.id },
+              $conversatioin: config.$conversation
             });
           }
           if(isSync){

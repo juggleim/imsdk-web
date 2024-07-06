@@ -61,7 +61,7 @@ export default function IO(config){
     }
 
     return Network.getNavis(navList, { appkey, token, userId }, (result) => {
-      let { code, servers, userId, isHttps } = result;
+      let { code, servers, userId } = result;
 
       if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
         let error = common.getError(code);
@@ -84,11 +84,7 @@ export default function IO(config){
           clearLocalServers(userId);
           return reconnect({ token, userId, deviceId }, callback);
         }
-        let fakeUrl = '';
-        if(isHttps){
-          fakeUrl = 'https://fake.im.com';
-        }
-        let { ws: protocol } = utils.getProtocol(fakeUrl);
+        let { ws: protocol } = utils.getProtocol();
         let url = `${protocol}//${domain}/im`;
         ws = new WebSocket(url);
         ws.onopen = function(){
@@ -111,7 +107,7 @@ export default function IO(config){
           }
           reader.readAsArrayBuffer(data);
         };
-      }, { isHttps });
+      });
     });
   };
   
@@ -127,7 +123,6 @@ export default function IO(config){
     
     let count = reconnectOpt.count || 1;
     let msec = count * 1000;
-    console.log('msec', msec)
     setTimeout(() => {
       count = count * 2;
       cache.set(CONNECT_TOOL.RECONNECT_COUNT, { count });

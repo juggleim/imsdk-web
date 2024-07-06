@@ -1,4 +1,4 @@
-import { SIGNAL_NAME, EVENT, CONNECT_STATE, ErrorType, FUNC_PARAM_CHECKER, LOG_MODULE } from "../../enum";
+import { SIGNAL_NAME, EVENT, CONNECT_STATE, ErrorType, FUNC_PARAM_CHECKER, LOG_MODULE, STORAGE } from "../../enum";
 import utils from "../../utils";
 import Storage from "../../common/storage";
 import common from "../../common/common";
@@ -24,6 +24,12 @@ export default function(io, emitter, logger){
       let { appkey } = config;
       let { userId } = user;
       Storage.setPrefix(`${appkey}_${userId}`);
+
+      let { syncConversationTime } = user;
+      if(utils.isNumber(syncConversationTime)){
+        Storage.set(STORAGE.SYNC_CONVERSATION_TIME,  { time: syncConversationTime })
+      }
+
       io.connect(user, ({ error, user }) => {
         let { code, msg } = error;
         if(utils.isEqual(code, ErrorType.CONNECT_SUCCESS.code)){

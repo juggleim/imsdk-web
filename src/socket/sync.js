@@ -125,7 +125,7 @@ export default function Syncer(send, emitter) {
           Storage.set(STORAGE.SYNC_CONVERSATION_TIME, { time: newSyncTime });
           item = utils.extend(item, { time: newSyncTime});
         }
-        $conversation._batchInsertConversations({ conversations }).then((result) => {
+        $conversation._batchInsertConversations({ conversations, syncTime: newSyncTime }).then((result) => {
           emitter.emit(SIGNAL_NAME.CMD_SYNC_CONVERSATIONS_PROGRESS, result);
           let isSyncing = !isFinished;
           if (isSyncing) {

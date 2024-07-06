@@ -5,6 +5,8 @@ export let STORAGE = {
   SYNC_RECEIVED_MSG_TIME: 'sync_received_msg_time',
   SYNC_SENT_MSG_TIME: 'sync_sent_msg_time',
   SYNC_CHATROOM_RECEIVED_MSG_TIME: 'sync_chatroom_received_msg_time',
+  
+  //PC 端有同样的 KEY，如果修改 VALUE，需要一起修改
   SYNC_CONVERSATION_TIME: 'sync_conversation_time',
 };
 

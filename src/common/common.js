@@ -291,6 +291,10 @@ function ConversationUtils(){
     conversations = utils.quickSort(conversations, (a, b) => {
       return a.sortTime > b.sortTime;
     });
+    let MAX_COUNT = 1000;
+    if(conversations.length > MAX_COUNT){
+      conversations.length = MAX_COUNT;
+    }
   };
   let setSynced = () => {
     isSynced = true;

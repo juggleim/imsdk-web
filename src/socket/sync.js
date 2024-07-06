@@ -106,7 +106,7 @@ export default function Syncer(send, emitter) {
     }
 
     function syncConversations(item, next) {
-      let { user, name, time } = item;
+      let { user, name, time, $conversation } = item;
       let syncTime = Storage.get(STORAGE.SYNC_CONVERSATION_TIME).time || 0;
       if(syncTime > time){
         return;
@@ -125,13 +125,17 @@ export default function Syncer(send, emitter) {
           Storage.set(STORAGE.SYNC_CONVERSATION_TIME, { time: newSyncTime });
           item = utils.extend(item, { time: newSyncTime});
         }
-        emitter.emit(SIGNAL_NAME.CMD_SYNC_CONVERSATIONS, { isFinished, conversations });
-        let isSyncing = !isFinished;
-        if (isSyncing) {
-          // 如果有未拉取，向队列下标最小位置插入消费对象，一次拉取执行完成后再处理它 ntf 或者 msg
-          consumer.produce(item, isSyncing);
-        }
-        next();
+        $conversation._batchInsertConversations({ conversations }).then((result) => {
+          emitter.emit(SIGNAL_NAME.CMD_SYNC_CONVERSATIONS_PROGRESS, result);
+          let isSyncing = !isFinished;
+          if (isSyncing) {
+            // 如果有未拉取，向队列下标最小位置插入消费对象，一次拉取执行完成后再处理它 ntf 或者 msg
+            consumer.produce(item, isSyncing);
+          }else{
+            emitter.emit(SIGNAL_NAME.CMD_SYNC_CONVERSATION_FINISHED, {});
+          }
+          next();
+        });
       })
     }
   }

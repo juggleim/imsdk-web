@@ -156,11 +156,6 @@ export default function(io, emitter){
       let { count = 50, time = 0, conversationType, order = CONVERSATION_ORDER.FORWARD } = params;
       order = utils.isEqual(order, CONVERSATION_ORDER.FORWARD) ? CONVERSATION_ORDER.FORWARD : CONVERSATION_ORDER.BACKWARD;
 
-      // let conversations = conversationUtils.get();
-      // let isSynced = conversationUtils.isSync();
-      // if(isSynced && utils.isEqual(time, 0)){
-      //   return resolve({ conversations: utils.clone(conversations) });
-      // }
       let user = io.getCurrentUser();
       let _params = { topic: COMMAND_TOPICS.CONVERSATIONS, time: 0, count, order, userId: user.id, conversationType };
       utils.extend(_params, params);
@@ -226,11 +221,6 @@ export default function(io, emitter){
         });
         conversationUtils.update(item);
         let newConversation = conversationUtils.getPer(item);
-        // let conversations = conversationUtils.get();
-        // let config = io.getConfig();
-        // if(!config.isPC){
-        //   emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations: utils.clone(conversations), conversation: newConversation });
-        // }
         resolve({ conversation: newConversation });
       });
     });

@@ -238,7 +238,7 @@ export default function Decoder(cache, io){
         GroupCacher.set(userId, targetUserInfo);
       }
 
-      let { conversationTitle, conversationPortrait, conversationExts } = latestMessage;
+      let { conversationTitle, conversationPortrait, conversationExts, conversationUpdatedTime } = latestMessage;
 
       return {
         conversationType,
@@ -248,6 +248,7 @@ export default function Decoder(cache, io){
         latestMessage,
         conversationTitle,
         conversationPortrait,
+        conversationUpdatedTime,
         conversationExts,
         mentions,
         syncTime,

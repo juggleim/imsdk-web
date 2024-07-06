@@ -230,7 +230,7 @@ export default function IO(config){
               time: Storage.get(STORAGE.SYNC_CONVERSATION_TIME).time || 0,
               name: SIGNAL_NAME.S_SYNC_CONVERSATION_NTF,
               user: { id: currentUserInfo.id },
-              $conversatioin: config.$conversation
+              $conversation: config.$conversation
             });
           }
           if(isSync){

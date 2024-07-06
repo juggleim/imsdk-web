@@ -15,7 +15,8 @@ export let PONG_INDEX = 'c_pong_index';
 
 export let SIGNAL_NAME = {
   CMD_RECEIVED: 'cmd_inner_receive',
-  CMD_SYNC_CONVERSATIONS: 'cmd_inner_sync_conversations',
+  CMD_SYNC_CONVERSATIONS_PROGRESS: 'cmd_inner_sync_conversations_progress',
+  CMD_SYNC_CONVERSATION_FINISHED: 'cmd_inner_sync_conversations_finished',
   CMD_CONVERSATION_CHANGED: 'cmd_inner_conversation_changed',
   CONN_CHANGED: 'conn_inner_changed',
 
@@ -228,7 +229,7 @@ export let EVENT = {
   MESSAGE_CLEAN: 'message_clean',
   MESSAGE_CLEAN_SOMEONE: 'message_clean_someone',
 
-  CONVERSATION_SYNCED: 'conversation_synced',
+  CONVERSATION_SYNC_FINISHED: 'conversation_sync_finished',
   CONVERSATION_UNDISTURBED: 'conversation_undisturb',
   CONVERSATION_TOP: 'conversation_top',
   CONVERSATION_CLEARUNREAD: 'conversation_clearunead',

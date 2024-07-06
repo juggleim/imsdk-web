@@ -10,10 +10,7 @@ import common from "../../common/common";
 import Storage from "../../common/storage";
 import tools from "./tools";
 let init = ({ appkey, io, emitter, web, client }) => {
-  // 告知 IO 模块当前是 PC 端，做特殊处理，例如：同步会话列表
-  io.setConfig({
-    isPC: true
-  });
+
   let { SIGNAL_NAME } = ENUM;
   // 移除 Web 监听
   io.off(SIGNAL_NAME.CMD_CONVERSATION_CHANGED);
@@ -38,7 +35,13 @@ let init = ({ appkey, io, emitter, web, client }) => {
   let conversation = Conversation(pc.conversation, { webAgent: web.conversation, conversationUtils });
   let message = Message(pc.message, { webAgent: web.message });
   let chatroom = Chatroom(web.chatroom);
-  
+ 
+  // 告知 IO 模块当前是 PC 端，做特殊处理，例如：同步会话列表
+  io.setConfig({
+    isPC: true,
+    $conversation: pc.conversation
+  });
+
   return {
     socket,
     conversation,

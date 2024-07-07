@@ -32,5 +32,15 @@ export default function($conversation, { conversationUtils, webAgent }){
     });
   };
 
+  invokes.getConversation = (conversation) => {
+    return $conversation.getConversation(conversation).then((result) => {
+      let { conversation, groups, users, isNew } = result;
+      let _converation = {};
+      if(!isNew){
+        _converation = tools.formatConversation({ conversation, users, groups });
+      }
+      return { conversation: _conversation };
+    });
+  };
   return invokes;
 }

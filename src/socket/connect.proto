@@ -421,3 +421,7 @@ message DelHisMsgsReq{
     ChannelType channelType = 3;
     repeated SimpleMsg msgs = 4; 
 }
+message QryConverReq{
+  string targetId = 1;
+  ChannelType channelType = 2;
+}

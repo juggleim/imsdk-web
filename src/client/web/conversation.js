@@ -225,6 +225,25 @@ export default function(io, emitter){
       });
     });
   };
+  let getConversation = (conversation) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, conversation, FUNC_PARAM_CHECKER.GET_CONVERSATION);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let user = io.getCurrentUser();
+      let data = { topic: COMMAND_TOPICS.GET_CONVERSATION, conversation, userId: user.id };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, msg, conversation }) => {
+        if(code){
+          return reject({ code, msg })
+        }
+        if(!utils.isEmpty(conversation)){
+          conversationUtils.update(conversation);
+        }
+        resolve({ conversation });
+      });
+    });
+  };
   let disturbConversation = (conversations) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, conversations, FUNC_PARAM_CHECKER.MUTE_CONVERSATION);
@@ -496,6 +515,7 @@ export default function(io, emitter){
     getConversations,
     removeConversation,
     insertConversation,
+    getConversation,
     disturbConversation,
     undisturbConversation,
     topConversation,

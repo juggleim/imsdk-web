@@ -36,6 +36,18 @@ export default function getQueryBody({ data, callback, index }){
     buffer = codec.encode(message).finish();
   }
   
+  if(utils.isEqual(COMMAND_TOPICS.GET_CONVERSATION, topic)){
+    let {  conversation, userId } = data;
+    let { conversationId, conversationType } = conversation;
+    let codec = Proto.lookup('codec.QryConverReq');
+    let message = codec.create({ 
+      channelType: conversationType,
+      targetId: conversationId
+    });
+    targetId = userId;
+    buffer = codec.encode(message).finish();
+  }
+
   if(utils.isEqual(COMMAND_TOPICS.SYNC_CONVERSATIONS, topic)){
     let { count, syncTime } = data;
     targetId = userId;

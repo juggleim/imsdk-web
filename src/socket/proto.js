@@ -1269,6 +1269,18 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 4
           }
         }
+      },
+      QryConverReq: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 2
+          }
+        }
       }
     }
   }

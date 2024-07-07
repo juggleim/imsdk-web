@@ -78,6 +78,10 @@ export default function Decoder(cache, io){
     if(utils.isInclude([COMMAND_TOPICS.CONVERSATIONS, COMMAND_TOPICS.SYNC_CONVERSATIONS, COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS], topic)){
       result = getConversationsHandler(index, data);
     }
+    
+    if(utils.isEqual(topic, COMMAND_TOPICS.GET_CONVERSATION)){
+      result = getConversationHandler(index, data);
+    }
 
     if(utils.isEqual(topic, COMMAND_TOPICS.GET_UNREAD_TOTLAL_CONVERSATION)){
       result = getTotalUnread(index, data);
@@ -167,10 +171,8 @@ export default function Decoder(cache, io){
     };
   }
   
-  function getConversationsHandler(index, data){
-    let payload = Proto.lookup('codec.QryConversationsResp');
-    let { conversations, isFinished } = payload.decode(data);
-    conversations = conversations.map((conversation) => {
+  function formatConversations(conversations){
+    return conversations.map((conversation) => {
       let { msg, 
             targetId, 
             unreadCount, 
@@ -258,6 +260,23 @@ export default function Decoder(cache, io){
         isTop: !!isTop,
       };
     });
+  }
+  function getConversationHandler(index, data){
+    let payload = Proto.lookup('codec.Conversation');
+    let item = payload.decode(data);
+    let conversation = {};
+    if(!item.msg){
+      conversation = {}
+    }else{
+      let conversations = formatConversations([item]);
+      conversation = conversations[0] || conversation;
+    }
+    return { conversation, index };
+  }
+  function getConversationsHandler(index, data){
+    let payload = Proto.lookup('codec.QryConversationsResp');
+    let { conversations, isFinished } = payload.decode(data);
+    conversations = formatConversations(conversations);
     return { conversations, isFinished, index };
   }
   function getMessagesHandler(index, data){

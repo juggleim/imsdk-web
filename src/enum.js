@@ -105,6 +105,7 @@ export let FUNC_PARAM_CHECKER = {
   GET_DRAFT: [{ name: 'conversationType' }, { name: 'conversationId' }],
   REMOVECONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
   INSERTCONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
+  GET_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
   
   MUTE_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'undisturbType' } ],
   UNMUTE_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
@@ -134,6 +135,7 @@ export let COMMAND_TOPICS = {
   CLEAR_UNREAD: 'clear_unread',
   REMOVE_CONVERSATION: 'del_convers',
   INSERT_CONVERSATION: 'add_conver',
+  GET_CONVERSATION: 'qry_conver',
   MUTE_CONVERSATION: 'undisturb_convers',
   TOP_CONVERSATION: 'top_convers',
   GET_UNREAD_TOTLAL_CONVERSATION: 'qry_total_unread_count',

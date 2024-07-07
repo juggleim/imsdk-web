@@ -34,10 +34,10 @@ export default function($conversation, { conversationUtils, webAgent }){
 
   invokes.getConversation = (conversation) => {
     return $conversation.getConversation(conversation).then((result) => {
-      let { conversation, groups, users, isNew } = result;
-      let _converation = {};
-      if(!isNew){
-        _converation = tools.formatConversation({ conversation, users, groups });
+      let { conversation, groups, users } = result;
+      let _conversation = {};
+      if(!conversation.isNew){
+        _conversation = tools.formatConversation({ conversation, users, groups });
       }
       return { conversation: _conversation };
     });

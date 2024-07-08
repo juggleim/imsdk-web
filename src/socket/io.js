@@ -18,7 +18,7 @@ import Counter from "../common/counter";
 */
 export default function IO(config){
   let emitter = Emitter();
-  let { appkey, navList, isSync = true, connectTimeout = 1 * 90 * 1000 } = config;
+  let { appkey, navList, serverList = [], isSync = true, connectTimeout = 1 * 90 * 1000 } = config;
   if(!utils.isArray(navList)){
     navList = ['http://120.48.178.248:8083'];
   }
@@ -60,20 +60,7 @@ export default function IO(config){
       updateState({ state: CONNECT_STATE.CONNECTING, user: { id: userId } });
     }
 
-    return Network.getNavis(navList, { appkey, token, userId }, (result) => {
-      let { code, servers, userId } = result;
-
-      if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
-        let error = common.getError(code);
-        clearLocalServers(userId);
-        // 网络异常 code 为空，通过 code 检测是否为网络异常
-        if(!code){
-          error = ErrorType.IM_SERVER_CONNECT_ERROR;
-        }
-        updateState({ state: CONNECT_STATE.DISCONNECTED, code: error.code });
-        return callback({ error });
-      }
-      
+    function smack({ servers, userId }){
       setCurrentUser({ id: userId, token });
 
       cache.set(SIGNAL_NAME.S_CONNECT_ACK, callback);
@@ -84,6 +71,7 @@ export default function IO(config){
           clearLocalServers(userId);
           return reconnect({ token, userId, deviceId }, callback);
         }
+        domain = domain.replaceAll(/http:\/\/|https:\/\/|file:\/\/|wss:\/\/|ws:\/\//g, '');
         let { ws: protocol } = utils.getProtocol();
         let url = `${protocol}//${domain}/im`;
         ws = new WebSocket(url);
@@ -108,6 +96,24 @@ export default function IO(config){
           reader.readAsArrayBuffer(data);
         };
       });
+    }
+    if(!utils.isEmpty(serverList)){
+      return smack({ servers: serverList, userId })
+    }
+    return Network.getNavis(navList, { appkey, token, userId }, (result) => {
+      let { code, servers, userId } = result;
+
+      if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
+        let error = common.getError(code);
+        clearLocalServers(userId);
+        // 网络异常 code 为空，通过 code 检测是否为网络异常
+        if(!code){
+          error = ErrorType.IM_SERVER_CONNECT_ERROR;
+        }
+        updateState({ state: CONNECT_STATE.DISCONNECTED, code: error.code });
+        return callback({ error });
+      }
+      smack({ servers, userId });
     });
   };
   

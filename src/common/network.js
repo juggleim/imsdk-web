@@ -7,8 +7,9 @@ let detect = (urls, callback, option = {}) => {
   let requests = [], superior = '', errors = []; 
 
   utils.forEach(urls, (domain) => {
-    let { http } = utils.getProtocol(domain);
-
+    let { http } = utils.getProtocol();
+    
+    domain = domain.replaceAll(/http:\/\/|https:\/\/|file:\/\/|wss:\/\/|ws:\/\//g, '');
     let url = `${http}//${domain}/health`;
     let options = {};
     let xhr = utils.requestNormal(url, options, {

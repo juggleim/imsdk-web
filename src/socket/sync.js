@@ -126,7 +126,7 @@ export default function Syncer(send, emitter) {
           item = utils.extend(item, { time: newSyncTime});
         }
         $conversation._batchInsertConversations({ conversations, syncTime: newSyncTime }).then((result) => {
-          // emitter.emit(SIGNAL_NAME.CMD_SYNC_CONVERSATIONS_PROGRESS, result);
+          emitter.emit(SIGNAL_NAME.CMD_SYNC_CONVERSATIONS_PROGRESS, result);
           let isSyncing = !isFinished;
           if (isSyncing) {
             // 如果有未拉取，向队列下标最小位置插入消费对象，一次拉取执行完成后再处理它 ntf 或者 msg

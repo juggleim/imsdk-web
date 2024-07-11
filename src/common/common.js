@@ -434,11 +434,11 @@ function formatMediaMessage(message, url){
 }
 
 function uploadThumbnail(upload, option, callback){
-  let { type, token, domain, file } = option;
+  let { type, token, domain, file, url: uploadUrl } = option;
   let uploader = Uploader(upload, { type });
   uploader.compress(file, (tbFile, args) => {
     let content = { file: tbFile };
-    let opts = { token, domain };
+    let opts = { token, domain, url: uploadUrl };
     let callbacks = {
       onprogress: utils.noop,
       oncompleted: ({ url }) => {

@@ -76,7 +76,7 @@ export default function Decoder(cache, io){
     }
 
     if(utils.isInclude([COMMAND_TOPICS.CONVERSATIONS, COMMAND_TOPICS.SYNC_CONVERSATIONS, COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS], topic)){
-      result = getConversationsHandler(index, data);
+      result = getConversationsHandler(index, data, { topic });
     }
     
     if(utils.isEqual(topic, COMMAND_TOPICS.GET_CONVERSATION)){
@@ -171,12 +171,13 @@ export default function Decoder(cache, io){
     };
   }
   
-  function formatConversations(conversations){
+  function formatConversations(conversations, options = {}){
     return conversations.map((conversation) => {
       let { msg, 
             targetId, 
             unreadCount, 
             sortTime: _sortTime, 
+            topUpdatedTime,
             targetUserInfo, 
             groupInfo, 
             syncTime,
@@ -242,6 +243,10 @@ export default function Decoder(cache, io){
 
       let { conversationTitle, conversationPortrait, conversationExts, conversationUpdatedTime } = latestMessage;
 
+      let { topic } = options;
+      if(utils.isEqual(COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS, topic)){
+        _sortTime = topUpdatedTime;
+      }
       return {
         conversationType,
         conversationId: targetId,
@@ -273,10 +278,10 @@ export default function Decoder(cache, io){
     }
     return { conversation, index };
   }
-  function getConversationsHandler(index, data){
+  function getConversationsHandler(index, data, options = {}){
     let payload = Proto.lookup('codec.QryConversationsResp');
     let { conversations, isFinished } = payload.decode(data);
-    conversations = formatConversations(conversations);
+    conversations = formatConversations(conversations, options);
     return { conversations, isFinished, index };
   }
   function getMessagesHandler(index, data){

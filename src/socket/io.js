@@ -20,7 +20,7 @@ export default function IO(config){
   let emitter = Emitter();
   let { appkey, navList, serverList = [], isSync = true, connectTimeout = 1 * 90 * 1000 } = config;
   if(!utils.isArray(navList)){
-    navList = ['http://120.48.178.248:8083'];
+    navList = ['https://nav.juggleim.com'];
   }
   let ws = {};
   let io = {};

@@ -452,11 +452,11 @@ function uploadThumbnail(upload, option, callback){
 }
 
 function uploadFrame(upload, option, callback){
-  let { type, token, domain, file } = option;
+  let { type, token, domain, file, url: uploadUrl } = option;
   let uploader = Uploader(upload, { type });
   uploader.capture(file, (frameFile, args) => {
     let content = { file: frameFile };
-    let opts = { token, domain };
+    let opts = { token, domain, url: uploadUrl };
     let callbacks = {
       onprogress: utils.noop,
       oncompleted: ({ url }) => {

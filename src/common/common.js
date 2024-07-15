@@ -369,8 +369,6 @@ function ConversationUtils(){
         conversations[index].latestReadIndex = item.unreadIndex;
         conversations[index].unreadCount = 0;
         _list.push(conversations[index]);
-      }else{
-        _list.push(item);
       }
     });
     return _list;

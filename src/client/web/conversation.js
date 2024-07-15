@@ -114,7 +114,10 @@ export default function(io, emitter){
       let { conversations } = content;
       let list = conversationUtils.read(conversations);
       emitter.emit(EVENT.CONVERSATION_CLEARUNREAD, { conversations });
-      return emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations: list });
+      if(!utils.isEmpty(list)){
+        emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations: list });
+      }
+      return;
     }
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       let conversation = conversationUtils.getPer(message);

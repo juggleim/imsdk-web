@@ -108,9 +108,8 @@ export let FUNC_PARAM_CHECKER = {
   GET_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
   
   MUTE_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'undisturbType' } ],
-  UNMUTE_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
   
-  TOP_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
+  SET_TOP_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'isTop' }],
   UNTOP_CONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
 
   JOINCHATROOM: [{ name: 'id', type: 'String' }],

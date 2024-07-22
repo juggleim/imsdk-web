@@ -13,9 +13,7 @@ export default function($conversation, { conversationUtils, webAgent }){
     'removeDraft',
     'insertConversation',
     'disturbConversation',
-    'undisturbConversation',
-    'topConversation',
-    'untopConversation',
+    'setTopConversation',
     'getTopConversations',
     '_batchInsertConversations',
   ];

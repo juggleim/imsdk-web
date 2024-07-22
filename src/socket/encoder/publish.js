@@ -140,10 +140,10 @@ export default function({ data, callback, index }){
   }
   
   if(utils.isEqual(COMMAND_TOPICS.TOP_CONVERSATION, topic)){
-    let { userId, conversations, isTop } = data;
+    let { userId, conversations } = data;
     let items = utils.isArray(conversations) ? conversations : [conversations];
     items = utils.map(items, (item) => {
-      let { conversationType, conversationId } = item;
+      let { conversationType, conversationId, isTop } = item;
       return { targetId: conversationId, channelType: conversationType, isTop };
     });
     let codec = Proto.lookup('codec.ConversationsReq');

@@ -103,7 +103,7 @@ export default function Decoder(cache, io){
       result = getUserInfo(index, data);
     }
     
-    result = utils.extend(result, { code, timestamp });
+    result = utils.extend(result, { code, timestamp, index });
     return result;
   }
 

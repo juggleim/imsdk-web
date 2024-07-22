@@ -247,6 +247,7 @@ export default function(io, emitter){
       });
     });
   };
+ 
   let disturbConversation = (conversations) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, conversations, FUNC_PARAM_CHECKER.MUTE_CONVERSATION);
@@ -270,40 +271,14 @@ export default function(io, emitter){
       });
     });
   };
-  let undisturbConversation = (conversations) => {
+  let setTopConversation = (conversations) => {
     return utils.deferred((resolve, reject) => {
-      let error = common.check(io, conversations, FUNC_PARAM_CHECKER.UNMUTE_CONVERSATION);
+      let error = common.check(io, conversations, FUNC_PARAM_CHECKER.SET_TOP_CONVERSATION);
       if(!utils.isEmpty(error)){
         return reject(error);
       }
       let user = io.getCurrentUser();
-      let data = { topic: COMMAND_TOPICS.MUTE_CONVERSATION, conversations, userId: user.id, type: UNDISTURB_TYPE.UNDISTURB };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg, timestamp }) => {
-        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          return reject({ code, msg })
-        }
-        common.updateSyncTime({ isSender: true,  sentTime: timestamp });  
-        let config = io.getConfig();
-        if(!config.isPC){
-          let list = utils.isArray(conversations) ? conversations : [conversations];
-          list = utils.map(list, (item) => {
-            return { ...item, undisturbType: UNDISTURB_TYPE.UNDISTURB };
-          })
-          let msg = { name: MESSAGE_TYPE.COMMAND_UNDISTURB, content: { conversations: list } };
-          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
-        }
-        resolve();
-      });
-    });
-  };
-  let topConversation = (conversations) => {
-    return utils.deferred((resolve, reject) => {
-      let error = common.check(io, conversations, FUNC_PARAM_CHECKER.TOP_CONVERSATION);
-      if(!utils.isEmpty(error)){
-        return reject(error);
-      }
-      let user = io.getCurrentUser();
-      let data = { topic: COMMAND_TOPICS.TOP_CONVERSATION, conversations, userId: user.id, isTop: true };
+      let data = { topic: COMMAND_TOPICS.TOP_CONVERSATION, conversations, userId: user.id };
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg, timestamp }) => {
         if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           return reject({ code, msg })
@@ -311,43 +286,14 @@ export default function(io, emitter){
         common.updateSyncTime({ isSender: true,  sentTime: timestamp }); 
         let config = io.getConfig();
         if(!config.isPC){
-          let list = utils.isArray(conversations) ? conversations : [conversations];
-          list = utils.map(list, (item) => {
-            return { ...item, isTop: true };
-          });
-          let msg = { name: MESSAGE_TYPE.COMMAND_TOPCONVERS, content: { conversations: list } };
+          let msg = { name: MESSAGE_TYPE.COMMAND_TOPCONVERS, content: { conversations: conversations } };
           io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
         }
         resolve();
       });
     });
   };
-  let untopConversation = (conversations) => {
-    return utils.deferred((resolve, reject) => {
-      let error = common.check(io, conversations, FUNC_PARAM_CHECKER.UNTOP_CONVERSATION);
-      if(!utils.isEmpty(error)){
-        return reject(error);
-      }
-      let user = io.getCurrentUser();
-      let data = { topic: COMMAND_TOPICS.TOP_CONVERSATION, conversations, userId: user.id, isTop: false };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg, timestamp }) => {
-        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          return reject({ code, msg })
-        }
-        common.updateSyncTime({ isSender: true,  sentTime: timestamp }); 
-        let config = io.getConfig();
-        if(!config.isPC){
-          let list = utils.isArray(conversations) ? conversations : [conversations];
-          list = utils.map(list, (item) => {
-            return { ...item, isTop: false };
-          });
-          let msg = { name: MESSAGE_TYPE.COMMAND_TOPCONVERS, content: { conversations: list } };
-          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
-        }
-        resolve();
-      });
-    });
-  };
+
   let getTopConversations = (params) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, params, []);
@@ -520,9 +466,7 @@ export default function(io, emitter){
     insertConversation,
     getConversation,
     disturbConversation,
-    undisturbConversation,
-    topConversation,
-    untopConversation,
+    setTopConversation,
     getTopConversations,
     clearUnreadcount,
     getTotalUnreadcount,

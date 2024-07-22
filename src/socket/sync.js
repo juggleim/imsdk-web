@@ -4,7 +4,7 @@ import Storage from "../common/storage";
 import Consumer from "../common/consumer";
 import common from "../common/common";
 
-import { SIGNAL_CMD, COMMAND_TOPICS, STORAGE, NOTIFY_TYPE, SIGNAL_NAME } from "../enum";
+import { SIGNAL_CMD, COMMAND_TOPICS, STORAGE, NOTIFY_TYPE, SIGNAL_NAME, ErrorType } from "../enum";
 export default function Syncer(send, emitter) {
   let consumer = Consumer();
   let exec = (data) => {
@@ -117,7 +117,12 @@ export default function Syncer(send, emitter) {
         topic: COMMAND_TOPICS.SYNC_CONVERSATIONS,
         count: 200
       };
-      send(SIGNAL_CMD.QUERY, data, ({ isFinished, conversations }) => {
+      send(SIGNAL_CMD.QUERY, data, (qryResult) => {
+        let { isFinished, conversations, code } = qryResult;
+        if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
+          emitter.emit(SIGNAL_NAME.CMD_SYNC_CONVERSATION_FINISHED, {});
+          return next();
+        }
         let len = conversations.length;
         let conversation = conversations[len - 1] || { syncTime: 0 };
         let { syncTime: newSyncTime } = conversation;

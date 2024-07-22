@@ -70,7 +70,7 @@ export default function Decoder(cache, io){
     let { qryAckMsgBody: { index, data, code, timestamp } } = msg;
     let { topic, targetId } = cache.get(index);
 
-    let result = { index, code, timestamp };
+    let result = {};
     if(utils.isInclude([COMMAND_TOPICS.HISTORY_MESSAGES, COMMAND_TOPICS.SYNC_MESSAGES, COMMAND_TOPICS.SYNC_CHATROOM_MESSAGES, COMMAND_TOPICS.GET_MSG_BY_IDS, COMMAND_TOPICS.GET_MERGE_MSGS], topic)){
       result = getMessagesHandler(index, data);
     }
@@ -102,6 +102,8 @@ export default function Decoder(cache, io){
     if(utils.isEqual(topic, COMMAND_TOPICS.GET_USER_INFO)){
       result = getUserInfo(index, data);
     }
+    
+    result = utils.extend(result, { code, timestamp });
     return result;
   }
 

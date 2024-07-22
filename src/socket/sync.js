@@ -88,7 +88,11 @@ export default function Syncer(send, emitter) {
         sendBoxSyncTime: syncSentTime,
         topic: COMMAND_TOPICS.SYNC_MESSAGES
       };
-      send(SIGNAL_CMD.QUERY, data, ({ isFinished, messages }) => {
+      send(SIGNAL_CMD.QUERY, data, ({ isFinished, messages, code }) => {
+        if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
+          return next();
+        }
+
         utils.forEach(messages, (message, index) => {
           let isNewMsg = common.updateSyncTime(message);
           if (isNewMsg) {

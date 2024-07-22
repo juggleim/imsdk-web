@@ -221,8 +221,10 @@ export default function(io, emitter, logger){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      let user = io.getCurrentUser();
       let data = {
-        topic: COMMAND_TOPICS.GET_MSG_BY_IDS
+        topic: COMMAND_TOPICS.GET_MSG_BY_IDS,
+        userId: user.id,
       };
       data = utils.extend(data, params);
       io.sendCommand(SIGNAL_CMD.QUERY, data, ({ messages }) => {

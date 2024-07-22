@@ -80,13 +80,14 @@ export default function getQueryBody({ data, callback, index }){
   }
 
   if(utils.isEqual(COMMAND_TOPICS.GET_MSG_BY_IDS, topic)){
-    let { conversationId: targetId, conversationType: channelType, messageIds: msgIds } = data;
+    let { conversationId, conversationType: channelType, messageIds: msgIds, userId } = data;
     let codec = Proto.lookup('codec.QryHisMsgByIdsReq');
     let message = codec.create({
       channelType,
-      targetId,
+      targetId: conversationId,
       msgIds,
     });
+    targetId = userId;
     buffer = codec.encode(message).finish();
   }
 

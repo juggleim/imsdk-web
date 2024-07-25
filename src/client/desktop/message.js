@@ -44,9 +44,9 @@ export default function($message, { webAgent }){
         });
   
         let next = () => {
-          if(utils.isEqual(order, MESSAGE_ORDER.BACKWARD)){
-            messages.reverse();
-          }
+          // if(utils.isEqual(order, MESSAGE_ORDER.BACKWARD)){
+          //   messages.reverse();
+          // }
           let _msgs = tools.formatMsgs({ messages, senders, groups });
           resolve({ isFinished, messages: _msgs });
         };

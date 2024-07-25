@@ -492,13 +492,13 @@ export default function(io, emitter, logger){
         
         if(utils.isEqual(name, MESSAGE_TYPE.VIDEO)){
           // 业务层设置封面，传入优先，不再执行生成缩略图逻辑
-          let { poster } = content;
-          if(poster){
+          let { snapshotUrl } = content;
+          if(snapshotUrl){
             return uploadFile(auth, message);
           }
-          common.uploadFrame(upload, params, (error, poster, args) => {
+          common.uploadFrame(upload, params, (error, snapshotUrl, args) => {
             let { height, width, duration } = args;
-            utils.extend(message.content, { poster, height, width, duration});
+            utils.extend(message.content, { snapshotUrl, height, width, duration});
             uploadFile(auth, message);
           });
         }

@@ -15,7 +15,7 @@ const banner = [
 
 const getTarget = function(type){
   type = type || '';
-  return `dist/juggleim-${type}-${version}-beta.js`;
+  return `dist/juggleim-${type}-${version}.js`;
 };
 
 const genConfig = function(type){
@@ -63,6 +63,15 @@ const configs = {
   },
   es: () => {
     let config = genConfig('es');
+    const format = 'es';
+    utils.extend(config.output, {
+      banner,
+      format
+    });
+    return config;
+  },
+  es_min: () => {
+    let config = genConfig('es-min');
     const format = 'es';
     utils.extend(config.output, {
       banner,

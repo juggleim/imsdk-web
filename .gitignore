@@ -2,6 +2,7 @@ node_modules
 .DS_Store
 build
 dist
+release
 .vscode
 .nyc_output
 coverage

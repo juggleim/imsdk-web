@@ -66,7 +66,16 @@ const configs = {
     const format = 'es';
     utils.extend(config.output, {
       banner,
-      format
+      format,
+      plugins: [ 
+        minify({
+          removeConsole: true,
+          simplifyComparisons: false
+        }),
+        babel({
+          exclude: 'node_modules/**'
+        })
+      ]
     });
     return config;
   }

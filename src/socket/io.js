@@ -54,10 +54,10 @@ export default function IO(config){
     let key = common.getNaviStorageKey(appkey, userId);
     Storage.remove(key);
   };
-  let connect = ({ token, userId, deviceId, _isReconnect = false }, callback) => {
+  let connect = ({ token, deviceId, _isReconnect = false }, callback) => {
     if(!_isReconnect){
       cache.set(CONNECT_TOOL.START_TIME, Date.now());
-      updateState({ state: CONNECT_STATE.CONNECTING, user: { id: userId } });
+      updateState({ state: CONNECT_STATE.CONNECTING, user: { token } });
     }
 
     function smack({ servers, userId }){
@@ -98,9 +98,9 @@ export default function IO(config){
       });
     }
     if(!utils.isEmpty(serverList)){
-      return smack({ servers: serverList, userId })
+      return smack({ servers: serverList })
     }
-    return Network.getNavis(navList, { appkey, token, userId }, (result) => {
+    return Network.getNavis(navList, { appkey, token }, (result) => {
       let { code, servers, userId } = result;
 
       if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
@@ -215,6 +215,9 @@ export default function IO(config){
       if(utils.isEqual(code, ErrorType.CONNECT_SUCCESS.code)){
         state = CONNECT_STATE.CONNECTED;
         setCurrentUser({ id: userId });
+        // 兼容只设置 IM Server 列表的情况
+        Storage.setPrefix(`${appkey}_${userId}`);
+
         cache.remove(CONNECT_TOOL.RECONNECT_COUNT);
 
         return getUserInfo({ id: userId }, ({ user: _user }) => {

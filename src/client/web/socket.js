@@ -20,15 +20,17 @@ export default function(io, emitter, logger){
       }
       logger.info({ tag: LOG_MODULE.CON_CONNECT });
       // 通过 appkye_userid 隔离本地存储 Key
-      let config = io.getConfig();
-      let { appkey } = config;
-      let { userId } = user;
-      Storage.setPrefix(`${appkey}_${userId}`);
+      // let config = io.getConfig();
+      // let { appkey, token } = config;
+      // let key = common.getTokenKey(appkey, token);
+      // let userId = Storage.get(key);
+    
+      // Storage.setPrefix(`${appkey}_${userId}`);
 
-      let { syncConversationTime } = user;
-      if(utils.isNumber(syncConversationTime)){
-        Storage.set(STORAGE.SYNC_CONVERSATION_TIME,  { time: syncConversationTime })
-      }
+      // let { syncConversationTime } = user;
+      // if(utils.isNumber(syncConversationTime)){
+      //   Storage.set(STORAGE.SYNC_CONVERSATION_TIME,  { time: syncConversationTime })
+      // }
 
       io.connect(user, ({ error, user }) => {
         let { code, msg } = error;

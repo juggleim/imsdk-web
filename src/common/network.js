@@ -41,8 +41,15 @@ let detect = (urls, callback, option = {}) => {
 
 let getNavis = (urls, option, callback) => {
   let requests = [], isResponsed = false, errors = []; 
-  let { appkey, token, userId } = option;
+  let { appkey, token } = option;
 
+  // 通过 AppKey_Token 获取 userId
+  let tokenKey = common.getTokenKey(appkey, token);
+  let userId = Storage.get(tokenKey)
+
+  if(!utils.isEmpty(userId)){
+    Storage.setPrefix(`${appkey}_${userId}`)
+  }
   let key = common.getNaviStorageKey(appkey, userId);
   let navi = Storage.get(key);
   if(!utils.isEmpty(navi)){
@@ -70,7 +77,16 @@ let getNavis = (urls, option, callback) => {
           // 默认规则：导航和 CMP 的协议必须一致
           let nav = { servers, userId, code };
           if(!utils.isEmpty(servers)){
+            // 优先设置本地 AppKey 和 Token 缓存的 UserId
+            Storage.set(tokenKey, userId);
+            
+            // 设置全局存储前缀
+            Storage.setPrefix(`${appkey}_${userId}`);
+
+            // 设置导航缓存
+            key = common.getNaviStorageKey();
             Storage.set(key, nav);
+
           }
           callback(nav);
           abortAll();

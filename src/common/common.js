@@ -538,9 +538,13 @@ function getSessionId(){
     return v.toString(16);
   });
 };
+function getTokenKey(appkey, token){
+  return `${appkey}_${token}`
+}
 export default {
   check,
   getNum,
+  getTokenKey,
   getNaviStorageKey,
   updateSyncTime,
   updateChatroomSyncTime,

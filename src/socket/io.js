@@ -228,6 +228,11 @@ export default function IO(config){
           let exts = utils.toObject(_user.extFields);
           setCurrentUser({ name, portrait, exts, updatedTime: _user.updatedTime });
 
+          updateState({ state, user: currentUserInfo });
+
+          // 首先返回连接方法回调，确保 PC 端本地数据库同步信息时间戳优先更新至 localStorage 中
+          _callback({ user: currentUserInfo, error });
+
           // 同步会话和同步消息顺序不能调整，保证先同步会话再同步消息，规避会话列表最后一条消息不是最新的
           if(config.isPC){
             syncer.exec({
@@ -254,10 +259,6 @@ export default function IO(config){
               user: { id: currentUserInfo.id }
             });
           });
-
-          updateState({ state, user: currentUserInfo });
-          _callback({ user: currentUserInfo, error });
-
         });
       }
       updateState({ state, user: currentUserInfo });

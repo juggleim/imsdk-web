@@ -126,6 +126,20 @@ function updateSyncTime(message){
   }
   return isNewMsg;
 }
+
+// PC 端打开数据库后，将本地时间戳同步至 localStorage 中
+function initSyncTime(params){
+  let { appkey, userId, times } = params;
+  Storage.setPrefix(`${appkey}_${userId}`);
+  utils.forEach(times, (localTime, key) => {
+    if(utils.isInclude([STORAGE.SYNC_RECEIVED_MSG_TIME, STORAGE.SYNC_SENT_MSG_TIME, STORAGE.SYNC_CONVERSATION_TIME], key)){
+      let item = Storage.get(key);
+      if(localTime > item.time){
+        Storage.set(key, { time: localTime });
+      }
+    }
+  });
+}
 function updateChatroomSyncTime(message){
   let { sentTime } = message;
   let key =  STORAGE.SYNC_CHATROOM_RECEIVED_MSG_TIME;
@@ -563,4 +577,5 @@ export default {
   formatProvider,
   isDesktop,
   getSessionId,
+  initSyncTime,
 }

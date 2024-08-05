@@ -9,7 +9,7 @@ import MessageCacher from "../../common/msg-cacher";
 import common from "../../common/common";
 import Storage from "../../common/storage";
 import tools from "./tools";
-let init = ({ appkey, io, emitter, web, client }) => {
+let init = ({ appkey, io, emitter, web, client, logger }) => {
 
   let { SIGNAL_NAME } = ENUM;
   // 移除 Web 监听
@@ -42,6 +42,7 @@ let init = ({ appkey, io, emitter, web, client }) => {
     $conversation: pc.conversation,
     $socket: pc.socket,
     $message: pc.message,
+    logger: logger,
   });
 
   return {

@@ -7,6 +7,12 @@ let init = ({ io, emitter, logger }) => {
   let conversation = Conversation(io, emitter, logger);
   let message = Message(io, emitter, logger);
   let chatroom = Chatroom(io, emitter, logger);
+
+  io.setConfig({
+    logger: logger,
+  });
+
+
   return {
     socket,
     conversation,

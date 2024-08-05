@@ -114,7 +114,7 @@ let getNum = () => {
   return orderNum;
 };
 function updateSyncTime(message){
-  let { isSender, sentTime } = message;
+  let { isSender, sentTime, io } = message;
   let key =  STORAGE.SYNC_RECEIVED_MSG_TIME;
   if(isSender){
     key =  STORAGE.SYNC_SENT_MSG_TIME;
@@ -123,6 +123,12 @@ function updateSyncTime(message){
   let isNewMsg = sentTime > time;
   if(isNewMsg){
     Storage.set(key, { time: sentTime });
+    let config = io.getConfig();
+    if(config.isPC){
+      let times = {};
+      times[key] = sentTime;
+      config.$socket.updateSyncTime(times);
+    }
   }
   return isNewMsg;
 }
@@ -134,7 +140,8 @@ function initSyncTime(params){
   utils.forEach(times, (localTime, key) => {
     if(utils.isInclude([STORAGE.SYNC_RECEIVED_MSG_TIME, STORAGE.SYNC_SENT_MSG_TIME, STORAGE.SYNC_CONVERSATION_TIME], key)){
       let item = Storage.get(key);
-      if(localTime > item.time){
+      let time = item.time || 0
+      if(localTime > time){
         Storage.set(key, { time: localTime });
       }
     }
@@ -560,6 +567,7 @@ export default {
   getNum,
   getTokenKey,
   getNaviStorageKey,
+  initSyncTime,
   updateSyncTime,
   updateChatroomSyncTime,
   getError,
@@ -577,5 +585,4 @@ export default {
   formatProvider,
   isDesktop,
   getSessionId,
-  initSyncTime,
 }

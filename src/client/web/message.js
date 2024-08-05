@@ -247,7 +247,7 @@ export default function(io, emitter, logger){
 
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, timestamp }) => {
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          common.updateSyncTime({ isSender: true,  sentTime: timestamp });  
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });  
         }
         let config = io.getConfig();
         if(!config.isPC){
@@ -279,7 +279,7 @@ export default function(io, emitter, logger){
       };
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, timestamp }) => {
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          common.updateSyncTime({ isSender: true,  sentTime: timestamp });  
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });  
         }
         let config = io.getConfig();
         if(!config.isPC){
@@ -306,7 +306,7 @@ export default function(io, emitter, logger){
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let { code, timestamp } = result;
         if(utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
-          common.updateSyncTime({ isSender: true,  sentTime: timestamp });  
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });  
           
           let msg = utils.clone(message);
           let { messageId, sentTime, exts } = message;
@@ -348,7 +348,7 @@ export default function(io, emitter, logger){
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code,  timestamp }) => {
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          common.updateSyncTime({ isSender: true,  sentTime: timestamp });  
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });  
         }
         resolve();
       });

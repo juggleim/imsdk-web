@@ -173,7 +173,7 @@ export default function IO(config){
     }
   };
   
-  let syncer = Syncer(sendCommand, emitter);
+  let syncer = Syncer(sendCommand, emitter, io);
 
   let bufferHandler = (buffer) => {
     let { cmd, result, name } = decoder.decode(buffer);
@@ -198,7 +198,7 @@ export default function IO(config){
       let { conversationType } = data;
       // 单群聊和聊天室通知和拉取消息时间戳分开计算，只有发送单群聊消息更新发件箱
       if(!utils.isEqual(conversationType, CONVERATION_TYPE.CHATROOM)){
-        common.updateSyncTime(data);
+        common.updateSyncTime({ ...data, io});
       }
       callback(data);
     }

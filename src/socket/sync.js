@@ -5,7 +5,7 @@ import Consumer from "../common/consumer";
 import common from "../common/common";
 
 import { SIGNAL_CMD, COMMAND_TOPICS, STORAGE, NOTIFY_TYPE, SIGNAL_NAME, ErrorType } from "../enum";
-export default function Syncer(send, emitter) {
+export default function Syncer(send, emitter, io) {
   let consumer = Consumer();
   let exec = (data) => {
     consumer.produce(data);
@@ -24,7 +24,7 @@ export default function Syncer(send, emitter) {
 
     function publish(item, next) {
       let { msg } = item;
-      let isNewMsg = common.updateSyncTime(msg);
+      let isNewMsg = common.updateSyncTime({...msg, io});
       if (isNewMsg) {
         let { msgIndex, ackIndex } = msg;
         let data = { msgIndex, ackIndex };
@@ -94,7 +94,7 @@ export default function Syncer(send, emitter) {
         }
 
         utils.forEach(messages, (message, index) => {
-          let isNewMsg = common.updateSyncTime(message);
+          let isNewMsg = common.updateSyncTime({ ...message, io});
           if (isNewMsg) {
             let isFinishedAll = isFinished && utils.isEqual(messages.length - 1, index);
             emitter.emit(SIGNAL_NAME.CMD_RECEIVED, [message, isFinishedAll]);

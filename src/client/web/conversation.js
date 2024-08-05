@@ -195,7 +195,7 @@ export default function(io, emitter){
           return item;
         });
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          common.updateSyncTime({ isSender: true,  sentTime: timestamp });
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
         }
         if(!config.isPC){
           let msg = { name: MESSAGE_TYPE.COMMAND_REMOVE_CONVERS, content: { conversations: list } };
@@ -217,7 +217,7 @@ export default function(io, emitter){
         if(code){
           return reject({ code, msg })
         }
-        common.updateSyncTime({ isSender: true,  sentTime: timestamp });
+        common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
         let item = createConversation({
           ...conversation,
           sentTime: Date.now()
@@ -260,7 +260,7 @@ export default function(io, emitter){
         if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           return reject({ code, msg })
         }
-        common.updateSyncTime({ isSender: true,  sentTime: timestamp });  
+        common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });  
         let config = io.getConfig();
         if(!config.isPC){
           let list = utils.isArray(conversations) ? conversations : [conversations];
@@ -283,7 +283,7 @@ export default function(io, emitter){
         if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           return reject({ code, msg })
         }
-        common.updateSyncTime({ isSender: true,  sentTime: timestamp }); 
+        common.updateSyncTime({ isSender: true,  sentTime: timestamp, io }); 
         let config = io.getConfig();
         if(!config.isPC){
           let msg = { name: MESSAGE_TYPE.COMMAND_TOPCONVERS, content: { conversations: conversations } };
@@ -323,7 +323,7 @@ export default function(io, emitter){
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let { timestamp, code } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          common.updateSyncTime({ isSender: true,  sentTime: timestamp });  
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });  
         }
         let config = io.getConfig();
         if(!config.isPC){

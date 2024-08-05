@@ -39,7 +39,9 @@ let init = ({ appkey, io, emitter, web, client }) => {
   // 告知 IO 模块当前是 PC 端，做特殊处理，例如：同步会话列表
   io.setConfig({
     isPC: true,
-    $conversation: pc.conversation
+    $conversation: pc.conversation,
+    $socket: pc.socket,
+    $message: pc.message,
   });
 
   return {

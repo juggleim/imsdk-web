@@ -32,6 +32,9 @@ export default function(io, emitter, logger){
       //   Storage.set(STORAGE.SYNC_CONVERSATION_TIME,  { time: syncConversationTime })
       // }
 
+      let { token = '' } = user;
+      token = token.trim();
+      user = utils.extend(user, { token });
       io.connect(user, ({ error, user }) => {
         let { code, msg } = error;
         if(utils.isEqual(code, ErrorType.CONNECT_SUCCESS.code)){

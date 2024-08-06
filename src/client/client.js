@@ -13,14 +13,17 @@ import MessageCacher from "../common/msg-cacher";
 let init = (config) => {
   let emitter = Emitter();
   let provider = {};
-  let { upload, appkey, log = {} } = config;
+  let { upload, appkey = '', log = {} } = config;
   let uploadType = common.checkUploadType(upload);
  
   let io = IO(config);
 
   let sessionId = common.getSessionId();
-  let logger = Logger({ ...log, appkey, sessionId, io })
-  utils.extend(config, { uploadType, logger });
+  let logger = Logger({ ...log, appkey, sessionId, io });
+
+  // 移除 AppKey 前后空格
+  appkey = appkey.trim();
+  utils.extend(config, { uploadType, logger, appkey });
 
   let web = Web.init({ io, emitter, logger });
   provider = web;

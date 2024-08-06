@@ -2,7 +2,7 @@ import Emitter from "../common/emmit";
 import utils from "../utils";
 import Storage from "../common/storage";
 import Proto from "./proto";
-import { CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX, COMMAND_TOPICS, CONVERATION_TYPE, SYNC_MESSAGE_TIME, STORAGE, PLATFORM, CONNECT_TOOL } from "../enum";
+import { DISCONNECT_TYPE, CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX, COMMAND_TOPICS, CONVERATION_TYPE, SYNC_MESSAGE_TIME, STORAGE, PLATFORM, CONNECT_TOOL } from "../enum";
 import BufferEncoder from "./encoder/encoder";
 import BufferDecoder from "./decoder";
 import Network from "../common/network";
@@ -18,7 +18,7 @@ import Counter from "../common/counter";
 */
 export default function IO(config){
   let emitter = Emitter();
-  let { appkey, navList, serverList = [], isSync = true, connectTimeout = 1 * 90 * 1000 } = config;
+  let { appkey, navList, serverList = [], isSync = true, reconnectCount = 100 } = config;
   if(!utils.isArray(navList)){
     navList = ['https://nav.juggleim.com'];
   }
@@ -33,18 +33,43 @@ export default function IO(config){
   let syncTimer = Timer({ timeout: SYNC_MESSAGE_TIME });
 
   let connectionState = CONNECT_STATE.DISCONNECTED;
+  let reconnectErrors = [
+    ErrorType.CONNECT_APPKEY_IS_REQUIRE.code,
+    ErrorType.CONNECT_TOKEN_NOT_EXISTS.code,
+    ErrorType.CONNECT_APPKEY_NOT_EXISTS.code,
+    ErrorType.CONNECT_TOKEN_ILLEGAL.code,
+    ErrorType.CONNECT_TOKEN_UNAUTHORIZED.code,
+    ErrorType.CONNECT_TOKEN_EXPIRE.code,
+    ErrorType.CONNECT_APP_BLOCKED.code,
+    ErrorType.CONNECT_USER_BLOCKED.code,
+    ErrorType.CONNECT_USER_KICKED.code,
+    ErrorType.CONNECT_USER_LOGOUT.code,
+  ]
   let updateState = (result) => {
     connectionState = result.state;
     emitter.emit(SIGNAL_NAME.CONN_CHANGED, { ...result });
   }
-  let onDisconnect = (result = {}) => {
-    let state = CONNECT_STATE.DISCONNECTED;
-    if(!utils.isEqual(connectionState, CONNECT_STATE.DISCONNECTED)){
-      let user = getCurrentUser();
-      updateState({ state, ...result, user});
-    }
+
+  let clearHeart = () => {
     timer.pause();
     syncTimer.pause();
+  };
+
+  let isUserDisconnected = false;
+  let onDisconnect = (result = {}) => {
+    let { code } = result;
+    if(!isUserDisconnected && !utils.isInclude(reconnectErrors, code) && !utils.isEqual(connectionState, CONNECT_STATE.DISCONNECTED)){
+      let user = getCurrentUser();
+      updateState({ state: CONNECT_STATE.RECONNECTING});
+      clearHeart();
+      return reconnect(user, utils.noop);
+    }
+
+    if(!utils.isEqual(connectionState, CONNECT_STATE.DISCONNECTED)){
+      let user = getCurrentUser();
+      updateState({ state: CONNECT_STATE.DISCONNECTED, ...result, user});
+      clearHeart();
+    }
   };
   let currentUserInfo = {};
   let setCurrentUser = (user) => {
@@ -55,13 +80,8 @@ export default function IO(config){
     Storage.remove(key);
   };
   let connect = ({ token, deviceId, _isReconnect = false }, callback) => {
-    if(!_isReconnect){
-      cache.set(CONNECT_TOOL.START_TIME, Date.now());
-      updateState({ state: CONNECT_STATE.CONNECTING, user: { token } });
-    }
-
     function smack({ servers, userId }){
-      setCurrentUser({ id: userId, token });
+      setCurrentUser({ id: userId, token, deviceId });
 
       cache.set(SIGNAL_NAME.S_CONNECT_ACK, callback);
 
@@ -82,11 +102,11 @@ export default function IO(config){
           }
           sendCommand(SIGNAL_CMD.CONNECT, { appkey, token, deviceId, platform });
         };
-        ws.onclose = () => {
-          onDisconnect();
+        ws.onclose = (e) => {
+          onDisconnect({ type: DISCONNECT_TYPE.CLOSE });
         };
         ws.onerror = () => {
-          onDisconnect();
+          onDisconnect({ type: DISCONNECT_TYPE.ERROR });
         };
         ws.onmessage = function({ data }){
           let reader = new FileReader();
@@ -118,26 +138,33 @@ export default function IO(config){
   };
   
   let reconnect = ({ token, userId, deviceId }, callback) => {
-    let startTime = cache.get(CONNECT_TOOL.START_TIME);
-    let currentTime = Date.now();
-    let isTimeout = ( currentTime - startTime - connectTimeout ) > 0;
+    let rCountObj = cache.get(CONNECT_TOOL.RECONNECT_COUNT);
+    let count = rCountObj.count || 1;
+    let isTimeout = count > reconnectCount;
     if(isTimeout){
       cache.remove(CONNECT_TOOL.RECONNECT_COUNT);
-      return updateState({ state: CONNECT_STATE.DISCONNECTED, code: ErrorType.IM_SERVER_CONNECT_ERROR.code });
+      cache.remove(CONNECT_TOOL.RECONNECT_FREQUENCY);
+      return updateState({ state: CONNECT_STATE.DISCONNECTED, code: ErrorType.IM_SERVER_CONNECT_ERROR.code })
     }
-    let reconnectOpt = cache.get(CONNECT_TOOL.RECONNECT_COUNT);
-    
-    let count = reconnectOpt.count || 1;
-    let msec = count * 1000;
+
+    let reconnectOpt = cache.get(CONNECT_TOOL.RECONNECT_FREQUENCY);
+    let frequency = reconnectOpt.frequency || 1;
+    let msec = frequency * 1000;
     setTimeout(() => {
-      count = count * 2;
+      
+      count += 1;
       cache.set(CONNECT_TOOL.RECONNECT_COUNT, { count });
+
+      frequency = frequency * 2;
+      cache.set(CONNECT_TOOL.RECONNECT_FREQUENCY, { frequency });
+
       connect({ token, userId, deviceId, _isReconnect: true }, callback);
     }, msec)
   }
   let PingTimeouts = [];
 
   let disconnect = () => {
+    isUserDisconnected = true;
     if(ws){
       ws.close && ws.close();
     }
@@ -206,6 +233,9 @@ export default function IO(config){
       callback(result);
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.CONNECT_ACK)){
+      
+      isUserDisconnected = false;
+
       let _callback = cache.get(SIGNAL_NAME.S_CONNECT_ACK) || utils.noop;
 
       let { ack: { code, userId } } = result;
@@ -218,7 +248,7 @@ export default function IO(config){
         // 兼容只设置 IM Server 列表的情况
         Storage.setPrefix(`${appkey}_${userId}`);
 
-        cache.remove(CONNECT_TOOL.RECONNECT_COUNT);
+        cache.remove(CONNECT_TOOL.RECONNECT_FREQUENCY);
 
         return getUserInfo({ id: userId }, ({ user: _user }) => {
 
@@ -266,7 +296,7 @@ export default function IO(config){
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.DISCONNECT)){
       let { code, extra } = result;
-      onDisconnect({ code, extra });
+      onDisconnect({ code, extra, type: DISCONNECT_TYPE.SERVER });
     }
     cache.remove(index);
   }

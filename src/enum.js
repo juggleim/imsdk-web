@@ -161,7 +161,8 @@ export let NOTIFY_TYPE = {
 };
 export let CONNECT_TOOL = {
   START_TIME: 'connect_start_time',
-  RECONNECT_COUNT: 'reconnect_count'
+  RECONNECT_FREQUENCY: 'reconnect_frequency',
+  RECONNECT_COUNT: 'reconnect_count',
 };
 export let LOG_LEVEL = {
   NONE: 0,
@@ -249,7 +250,8 @@ export let CONNECT_STATE = {
   DISCONNECTED: 2,
   CONNECT_FAILED: 3,
   DB_OPENED: 4,
-  DB_CLOSED: 5
+  DB_CLOSED: 5,
+  RECONNECTING: 6
 };
 
 export let CONVERATION_TYPE = {
@@ -383,4 +385,11 @@ export let MESSAGE_SENT_STATE = {
   SUCCESS: 2,
   FAILED: 3,
   UPLOADING: 4,
+}
+
+export let DISCONNECT_TYPE = {
+  DISCONNECT: 1,
+  CLOSE: 2,
+  ERROR: 3,
+  SERVER: 4
 }

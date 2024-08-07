@@ -38,7 +38,7 @@ export default function($message, { webAgent }){
         conversationType: conversation.conversationType,
         conversationId: conversation.conversationId,
       };
-      return $message.getMessages(conversation).then(({ messages = [], isFinished, groups, senders }) => {
+      return $message.getMessages(params).then(({ messages = [], isFinished, groups, senders }) => {
         let list = utils.filter(messages, (msg) => {
           return utils.isEqual(msg.sentState, MESSAGE_SENT_STATE.SUCCESS)
         });

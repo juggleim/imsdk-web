@@ -265,12 +265,24 @@ export default function IO(config){
 
           // 同步会话和同步消息顺序不能调整，保证先同步会话再同步消息，规避会话列表最后一条消息不是最新的
           if(config.isPC){
-            syncer.exec({
-              time: Storage.get(STORAGE.SYNC_CONVERSATION_TIME).time || 0,
-              name: SIGNAL_NAME.S_SYNC_CONVERSATION_NTF,
-              user: { id: currentUserInfo.id },
-              $conversation: config.$conversation
-            });
+            let syncNext = () => {
+              syncer.exec({
+                time: Storage.get(STORAGE.SYNC_CONVERSATION_TIME).time || 0,
+                name: SIGNAL_NAME.S_SYNC_CONVERSATION_NTF,
+                user: { id: currentUserInfo.id },
+                $conversation: config.$conversation
+              });
+            };
+
+            // PC 中先连接后打开数据库，优先将本地数据库中的同步时间更新至 LocalStorage 中，避免换 Token 不换用户 Id 重复同步会话
+            let syncTime = Storage.get(STORAGE.SYNC_CONVERSATION_TIME).time || 0;
+            if(utils.isEqual(syncTime, 0)){
+              config.$socket.openDB({ appkey, userId, token: currentUserInfo.token }).then(() => {
+                syncNext();
+              });
+            }else{
+              syncNext();
+            }
           }
           if(isSync){
             syncer.exec({

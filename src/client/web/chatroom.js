@@ -1,9 +1,21 @@
-import { COMMAND_TOPICS, ErrorType, FUNC_PARAM_CHECKER, SIGNAL_CMD } from "../../enum";
+import { COMMAND_TOPICS, ErrorType, FUNC_PARAM_CHECKER, SIGNAL_CMD, SIGNAL_NAME } from "../../enum";
 import utils from "../../utils";
 import Storage from "../../common/storage";
 import common from "../../common/common";
 
-export default function(io){
+export default function(io, emitter, logger){
+ 
+  io.on(SIGNAL_NAME.CHATROOM_EVENT, (notify) => {
+
+    // 事件说明：
+    // 事件说明：
+    // USER_REJOIN: 当前用户断网重新加入
+    // MEMBER_CHANGED: 加入 、退出触发
+    // ATTRIBUTE_UPDATED: 属性变更
+    // ATTRIBUTE_REMOVED: 属性被删除
+    // CHATROOM_DESTROYED: 聊天室销毁
+
+  });
 
   let joinChatroom = (chatroom) =>{
     return utils.deferred((resolve, reject) => {
@@ -47,8 +59,64 @@ export default function(io){
     });
   };
 
+  /* 
+    let chatroom = {
+      id: 'chatroomId',
+      attributes: {
+        key1: 'value1',
+        key2: 'value2'
+      },
+      options: {
+        isNotify: false,
+        isForce: true,
+        isAutoDelete: true,
+        notifyContent: '',
+      }
+    }
+  */
+  let setChatroomAttributes = (chatroom) => {
+
+  };
+  
+  /* 
+    let chatroom = {
+      id: 'chatroomId',
+      attributes: ['key1', 'key2']
+    };
+  */
+  let getChatroomAttributes = (chatroom) => {
+
+  };
+
+  /* 
+    let chatroom = {
+      id: 'chatroomId',
+      attributes: ['key1', 'key2'],
+      options: {
+        isNotify: false,
+        notifyContent: '',
+      }
+    };
+  */
+  let removeChatroomAttributes = () => {
+
+  };
+
+    /* 
+    let chatroom = {
+      id: 'chatroomId',
+    };
+  */
+  let getAllChatRoomAttributes = (chatroom) => {
+
+  };
+
   return {
     joinChatroom,
-    quitChatroom
+    quitChatroom,
+    setChatroomAttributes,
+    getChatroomAttributes,
+    removeChatroomAttributes,
+    getAllChatRoomAttributes,
   }
 }

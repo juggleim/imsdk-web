@@ -3,10 +3,12 @@ import Proto from "./proto";
 import Storage from "../common/storage";
 import Consumer from "../common/consumer";
 import common from "../common/common";
+import Cacher from "../common/cache";
 
 import { SIGNAL_CMD, COMMAND_TOPICS, STORAGE, NOTIFY_TYPE, SIGNAL_NAME, ErrorType } from "../enum";
 export default function Syncer(send, emitter, io) {
   let consumer = Consumer();
+  let chatroomCacher = Cacher();
   let exec = (data) => {
     consumer.produce(data);
     consumer.consume(({ item }, next) => {
@@ -46,21 +48,25 @@ export default function Syncer(send, emitter, io) {
 
     function queryChatroom(item, next) {
       let { user, msg, name } = item;
-      let syncTime = Storage.get(STORAGE.SYNC_CHATROOM_RECEIVED_MSG_TIME).time || 0;
+      let chatroomId = msg.targetId;
+      let syncTime = getChatroomSyncTime(chatroomId);
       if (syncTime >= msg.receiveTime) {
-        return;
+        return next();
       }
 
       let data = {
         syncTime: syncTime,
-        chatroomId: msg.targetId,
+        chatroomId: chatroomId,
         topic: COMMAND_TOPICS.SYNC_CHATROOM_MESSAGES
       };
-      send(SIGNAL_CMD.QUERY, data, ({ isFinished, messages }) => {
+      send(SIGNAL_CMD.QUERY, data, ({ isFinished, messages, code }) => {
+        if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
+          return next();
+        }
+
         utils.forEach(messages, (message) => {
-          common.updateChatroomSyncTime(message);
-          let isFinishedAll = isFinished && utils.isEqual(messages.length - 1, index);
-          emitter.emit(SIGNAL_NAME.CMD_RECEIVED, [message, isFinishedAll]);
+          setChatRoomSyncTime(message.conversationId, message.sentTime);
+          emitter.emit(SIGNAL_NAME.CMD_RECEIVED, [message]);
         });
         let isSyncing = !isFinished;
         if (isSyncing) {
@@ -79,7 +85,7 @@ export default function Syncer(send, emitter, io) {
 
       // 如果本地记录时间戳大于 ntf 中的接收时间，认为消息已被当前端接收过，不再执行拉取动作
       if (syncReceiveTime >= msg.receiveTime) {
-        return;
+        return next();
       }
       let data = {
         userId: user.id,
@@ -146,6 +152,16 @@ export default function Syncer(send, emitter, io) {
           next();
         });
       })
+    }
+
+    function getChatroomSyncTime(chatroomId){
+      let key = `${STORAGE.SYNC_CHATROOM_RECEIVED_MSG_TIME}_${chatroomId}`;
+      let syncInfo = chatroomCacher.get(key);
+      return syncInfo.time || 0;
+    }
+    function setChatRoomSyncTime(chatroomId, time){
+      let key = `${STORAGE.SYNC_CHATROOM_RECEIVED_MSG_TIME}_${chatroomId}`;
+      chatroomCacher.set(key, { time });
     }
   }
   return {

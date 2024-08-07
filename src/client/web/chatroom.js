@@ -17,8 +17,12 @@ export default function(io){
         chatroom,
         conversationId: id
       };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
-        resolve();
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code }) => {
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return resolve();
+        }
+        let error = common.getError(code);
+        reject(error)
       });
     });
   };
@@ -33,8 +37,12 @@ export default function(io){
         topic: COMMAND_TOPICS.QUIT_CHATROOM,
         chatroom
       };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, () => {
-        resolve();
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code }) => {
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return resolve();
+        }
+        let error = common.getError(code);
+        reject(error)
       });
     });
   };

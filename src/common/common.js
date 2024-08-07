@@ -147,15 +147,7 @@ function initSyncTime(params){
     }
   });
 }
-function updateChatroomSyncTime(message){
-  let { sentTime } = message;
-  let key =  STORAGE.SYNC_CHATROOM_RECEIVED_MSG_TIME;
-  let time = Storage.get(key).time || 0;
-  let isNewMsg = sentTime > time;
-  if(isNewMsg){
-    Storage.set(key, { time: sentTime });
-  }
-}
+
 function getError(code) {
   let error = ErrorMessages.find(error => error.code == code) || { code, msg: '' };
   let { msg } = error;
@@ -569,7 +561,6 @@ export default {
   getNaviStorageKey,
   initSyncTime,
   updateSyncTime,
-  updateChatroomSyncTime,
   getError,
   ConversationUtils,
   checkUploadType,

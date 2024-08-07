@@ -24,8 +24,11 @@ export default function(io, emitter, logger){
       utils.extend(message, { content: newContent, messageId, sentTime });
     }
 
-    // 收到消息一定要更新会话列表
-    io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, utils.clone(message));
+    let isChatroom = utils.isEqual(message.conversationType, CONVERATION_TYPE.CHATROOM);
+    if(!isChatroom){
+      // 收到非消息一定要更新会话列表
+      io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, utils.clone(message));
+    }
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_DELETE_MSGS)){
       let { content: { conversationId, conversationType, messages } } = message;
@@ -137,7 +140,7 @@ export default function(io, emitter, logger){
         }
         utils.extend(message, { sentTime, messageId, messageIndex: msgIndex, sentState: MESSAGE_SENT_STATE.SUCCESS });
         let config = io.getConfig();
-        if(!config.isPC){
+        if(!config.isPC && !utils.isEqual(conversationType, CONVERATION_TYPE.CHATROOM)){
           io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);
         }
         resolve(message);

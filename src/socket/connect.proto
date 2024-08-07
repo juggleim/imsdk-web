@@ -261,10 +261,15 @@ message SyncMsgReq{
 }
 
 message SyncChatroomMsgReq{
-    int64 syncTime = 1;//收件箱同步时间
-    string chatroomId = 4;
+    string chatroomId = 1;
+    int64 syncTime = 2;//收件箱同步时间
+    int64 attSyncTime = 3; // 聊天室属性同步时间戳
+} 
+message SyncChatroomResp{
+    DownMsgSet msgs = 1;
+    ChatAtts atts = 2;
+    bool isFinished = 3;
 }
-
 message Notify{
     NotifyType type = 1;
     int64 syncTime = 2;
@@ -424,4 +429,22 @@ message DelHisMsgsReq{
 message QryConverReq{
   string targetId = 1;
   ChannelType channelType = 2;
+}
+message ChatAtts{
+    string chatId = 1;
+    repeated ChatAttItem atts = 2;
+    bool isComplete = 3;   // 是否同步的全量聊天室属性，如果是全量，需要以此列表替换本地该聊天室所有属性
+    bool isFinished = 4;
+}
+message ChatAttItem{
+    string key = 1;
+    string value = 2;
+    int64 attTime = 3;
+    string userId = 4;
+    ChatAttOptType optType = 5;
+}
+enum ChatAttOptType{
+    ChatAttOpt_Default = 0;
+    ChatAttOpt_Add = 1;
+    ChatAttOpt_Del = 2;
 }

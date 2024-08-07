@@ -304,7 +304,7 @@ export let ErrorMessages = [
   { code: 11010, msg: '用户已封禁', name: 'CONNECT_USER_BLOCKED' },
   { code: 11011, msg: '被踢下线', name: 'CONNECT_USER_KICKED' },
   { code: 11012, msg: '注销下线', name: 'CONNECT_USER_LOGOUT' },
-  { code: 11015, msg: '聊天室不存在', name: 'CHATROOM_NOT_EXISTS' },
+  { code: 14005, msg: '聊天室不存在', name: 'CHATROOM_NOT_EXISTS' },
   { code: 11100, msg: '入参pb解析失败', name: 'PB_ERROR' },
 
   { code: 13001, msg: '群组不存在', name: 'GROUP_NOT_EXISTS' },

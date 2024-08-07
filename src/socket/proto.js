@@ -797,13 +797,33 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
       },
       SyncChatroomMsgReq: {
         fields: {
-          syncTime: {
-            type: "int64",
-            id: 1
-          },
           chatroomId: {
             type: "string",
-            id: 4
+            id: 1
+          },
+          syncTime: {
+            type: "int64",
+            id: 2
+          },
+          attSyncTime: {
+            type: "int64",
+            id: 3
+          }
+        }
+      },
+      SyncChatroomResp: {
+        fields: {
+          msgs: {
+            type: "DownMsgSet",
+            id: 1
+          },
+          atts: {
+            type: "ChatAtts",
+            id: 2
+          },
+          isFinished: {
+            type: "bool",
+            id: 3
           }
         }
       },
@@ -1280,6 +1300,58 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "ChannelType",
             id: 2
           }
+        }
+      },
+      ChatAtts: {
+        fields: {
+          chatId: {
+            type: "string",
+            id: 1
+          },
+          atts: {
+            rule: "repeated",
+            type: "ChatAttItem",
+            id: 2
+          },
+          isComplete: {
+            type: "bool",
+            id: 3
+          },
+          isFinished: {
+            type: "bool",
+            id: 4
+          }
+        }
+      },
+      ChatAttItem: {
+        fields: {
+          key: {
+            type: "string",
+            id: 1
+          },
+          value: {
+            type: "string",
+            id: 2
+          },
+          attTime: {
+            type: "int64",
+            id: 3
+          },
+          userId: {
+            type: "string",
+            id: 4
+          },
+          optType: {
+            type: "ChatAttOptType",
+            id: 5
+          }
+        }
+      },
+      ChatAttOptType: {
+        values: {
+          ChatAttOpt_Default: 0,
+          ChatAttOpt_Add: 1,
+          ChatAttOpt_Del: 2
         }
       }
     }

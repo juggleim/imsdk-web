@@ -71,10 +71,13 @@ export default function Decoder(cache, io){
     let { topic, targetId } = cache.get(index);
 
     let result = {};
-    if(utils.isInclude([COMMAND_TOPICS.HISTORY_MESSAGES, COMMAND_TOPICS.SYNC_MESSAGES, COMMAND_TOPICS.SYNC_CHATROOM_MESSAGES, COMMAND_TOPICS.GET_MSG_BY_IDS, COMMAND_TOPICS.GET_MERGE_MSGS], topic)){
+    if(utils.isInclude([COMMAND_TOPICS.HISTORY_MESSAGES, COMMAND_TOPICS.SYNC_MESSAGES, COMMAND_TOPICS.GET_MSG_BY_IDS, COMMAND_TOPICS.GET_MERGE_MSGS], topic)){
       result = getMessagesHandler(index, data);
     }
 
+    if(utils.isEqual(topic, COMMAND_TOPICS.SYNC_CHATROOM_MESSAGES)){
+      result = getChatroomMsgsHandler(index, data);
+    }
     if(utils.isInclude([COMMAND_TOPICS.CONVERSATIONS, COMMAND_TOPICS.SYNC_CONVERSATIONS, COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS], topic)){
       result = getConversationsHandler(index, data, { topic });
     }
@@ -285,6 +288,15 @@ export default function Decoder(cache, io){
     let { conversations, isFinished } = payload.decode(data);
     conversations = formatConversations(conversations, options);
     return { conversations, isFinished, index };
+  }
+  function getChatroomMsgsHandler(index, data){
+    let payload = Proto.lookup('codec.SyncChatroomResp');
+    let result = payload.decode(data);
+    let { isFinished, msgs: { msgs } } = result;
+    let messages = utils.map(msgs, (msg) => {
+      return msgFormat(msg);
+    });
+    return { isFinished, messages, index };
   }
   function getMessagesHandler(index, data){
     let payload = Proto.lookup('codec.DownMsgSet');

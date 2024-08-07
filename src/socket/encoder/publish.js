@@ -7,7 +7,7 @@ export default function({ data, callback, index }){
   let { conversationId: targetId, conversationType, topic } = data;
   let buffer = [];
 
-  if(utils.isInclude([COMMAND_TOPICS.SEND_GROUP, COMMAND_TOPICS.SEND_PRIVATE], topic)){
+  if(utils.isInclude([COMMAND_TOPICS.SEND_GROUP, COMMAND_TOPICS.SEND_PRIVATE, COMMAND_TOPICS.SEND_CHATROOM], topic)){
     let { name, content, mentionInfo, flag, mergeMsg, referMsg } = data;
     content  = utils.toJSON(content);
     let codec = Proto.lookup('codec.UpMsg');
@@ -101,6 +101,7 @@ export default function({ data, callback, index }){
     let { chatroom: { id: chatId  } } = data;
     let codec = Proto.lookup('codec.ChatRoomReq');
     let message = codec.create({ chatId });
+    targetId = chatId;
     buffer = codec.encode(message).finish();
   }
 
@@ -108,6 +109,7 @@ export default function({ data, callback, index }){
     let { chatroom: { id: chatId  } } = data;
     let codec = Proto.lookup('codec.ChatRoomReq');
     let message = codec.create({ chatId });
+    targetId = chatId;
     buffer = codec.encode(message).finish();
   }
 

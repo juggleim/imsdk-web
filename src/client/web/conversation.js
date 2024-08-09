@@ -460,6 +460,84 @@ export default function(io, emitter){
     return $conversation;
   }
 
+  /* 
+    let params = {
+      type: UNDISTURB_TYPE.UNDISTURB,
+      timezone: 'Asia/Shanghai',
+      times: [
+        { start: 'HH:mm', end: 'HH:mm' }
+      ]
+    };
+  */
+  let setAllDisturb = (params) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, params, FUNC_PARAM_CHECKER.SET_ALL_DISTURB);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { code } = ErrorType.ILLEGAL_TYPE_PARAMS;
+      let _params = { timezone: '', times: [] };
+      
+      let { type, timezone, times } = params;
+      let isUndisturb = utils.isEqual(type, UNDISTURB_TYPE.UNDISTURB);
+      if(isUndisturb && !utils.isString(timezone)){
+        let msg = 'timezone 参数不合法，请检查，格式示例：Asia/Shanghai';
+        return reject({ msg, code });
+      }
+
+      if(isUndisturb && !utils.isArray(times)){
+        let msg = "times 参数不合法，请检查，格式示例：[{ start: '12:00', end: '13:00' }]";
+        return reject({ msg, code });
+      }
+
+      let isValid = true;
+      let timeIndex = 0;
+      times = times || [];
+      for(let i = 0; i < times.length; i++){
+        let time = times[i];
+        if(!utils.isObject(time)){
+          isValid = false;
+          timeIndex = i;
+          break;
+        }
+        let { start, end } = time;
+        if(!utils.isValidHMTime(start) || !utils.isValidHMTime(end)){
+          isValid = false;
+          timeIndex = i;
+          break;
+        }
+      }
+      if(!isValid){
+        let msg = `times 下标 ${timeIndex} 参数，时间格式不正确`
+        return reject({ msg, code });
+      }
+
+      _params = utils.extend(_params, params);
+      let { id: userId } = io.getCurrentUser();
+      let data = { topic: COMMAND_TOPICS.SET_ALL_DISTURB, userId, ..._params };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, () => {
+        resolve();
+      });
+    });
+  };
+  let getAllDisturb = () => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, {}, {});
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { id: userId } = io.getCurrentUser();
+      let data = { topic: COMMAND_TOPICS.GET_ALL_DISTURB, userId };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { timezone, times, type, code } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({ code, msg: '' });
+        }
+        resolve({ timezone, times, type });
+      });
+    });
+  };
+
   return {
     getConversations,
     removeConversation,
@@ -474,5 +552,7 @@ export default function(io, emitter){
     setDraft,
     getDraft,
     removeDraft,
+    setAllDisturb,
+    getAllDisturb,
   };
 }

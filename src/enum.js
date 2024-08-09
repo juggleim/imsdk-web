@@ -101,6 +101,18 @@ export let FUNC_PARAM_CHECKER = {
       { name: 'conversationId' },
     ] },
   ],
+  SET_ALL_DISTURB: [
+    { name: 'type' }, 
+    // { name: 'timezone' }, 
+    // { 
+    //   name: 'times', 
+    //   type: 'Array',
+    //   children: [
+    //     { name: 'start', type: 'String' },
+    //     { name: 'end', type: 'String' },
+    //   ]
+    // }
+  ],
 
   CLEARUNREADCOUNT: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'unreadIndex' }],
   SET_DRAFT: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'draft' }],
@@ -141,6 +153,9 @@ export let COMMAND_TOPICS = {
   TOP_CONVERSATION: 'top_convers',
   GET_UNREAD_TOTLAL_CONVERSATION: 'qry_total_unread_count',
   CLEAR_UNREAD_TOTLAL_CONVERSATION: 'clear_total_unread',
+
+  SET_ALL_DISTURB: 'set_user_undisturb',
+  GET_ALL_DISTURB: 'get_user_undisturb',
 
   READ_MESSAGE: 'mark_read',
   GET_READ_MESSAGE_DETAIL: 'qry_read_detail',

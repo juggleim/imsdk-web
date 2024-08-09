@@ -1353,6 +1353,38 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           ChatAttOpt_Add: 1,
           ChatAttOpt_Del: 2
         }
+      },
+      UserUndisturb: {
+        fields: {
+          "switch": {
+            type: "bool",
+            id: 1
+          },
+          timezone: {
+            type: "string",
+            id: 2
+          },
+          rules: {
+            rule: "repeated",
+            type: "UserUndisturbItem",
+            id: 3
+          }
+        }
+      },
+      UserUndisturbItem: {
+        fields: {
+          start: {
+            type: "string",
+            id: 1
+          },
+          end: {
+            type: "string",
+            id: 2
+          }
+        }
+      },
+      Nil: {
+        fields: {}
       }
     }
   }

@@ -15,6 +15,8 @@ export default function($conversation, { conversationUtils, webAgent }){
     'disturbConversation',
     'setTopConversation',
     'getTopConversations',
+    'setAllDisturb',
+    'getAllDisturb',
     '_batchInsertConversations',
   ];
   let invokes = common.formatProvider(funcs, $conversation);

@@ -448,3 +448,15 @@ enum ChatAttOptType{
     ChatAttOpt_Add = 1;
     ChatAttOpt_Del = 2;
 }
+message UserUndisturb{
+  bool switch = 1;
+  string timezone = 2;
+  repeated UserUndisturbItem rules = 3;
+}
+
+message UserUndisturbItem {
+  string start = 1;
+  string end = 2;
+}
+message Nil{
+}

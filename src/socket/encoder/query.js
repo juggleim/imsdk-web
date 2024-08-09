@@ -1,4 +1,4 @@
-import { COMMAND_TOPICS, CONVERATION_TYPE } from "../../enum";
+import { COMMAND_TOPICS, CONVERATION_TYPE, UNDISTURB_TYPE } from "../../enum";
 import utils from "../../utils";
 import Proto from "../proto";
 
@@ -236,6 +236,27 @@ export default function getQueryBody({ data, callback, index }){
     let message = codec.create({
       conversations: list
     });
+    targetId = userId;
+    buffer = codec.encode(message).finish();
+  }
+
+  if(utils.isEqual(COMMAND_TOPICS.SET_ALL_DISTURB, topic)){
+    let { userId, times, timezone, type } = data;
+    let codec = Proto.lookup('codec.UserUndisturb');
+    let isSwitch = utils.isEqual(UNDISTURB_TYPE.UNDISTURB, type);
+    let message = codec.create({
+      switch: isSwitch,
+      timezone: timezone,
+      rules: times,
+    });
+    targetId = userId;
+    buffer = codec.encode(message).finish();
+  }
+  
+  if(utils.isEqual(COMMAND_TOPICS.GET_ALL_DISTURB, topic)){
+    let { userId } = data;
+    let codec = Proto.lookup('codec.Nil');
+    let message = codec.create({});
     targetId = userId;
     buffer = codec.encode(message).finish();
   }

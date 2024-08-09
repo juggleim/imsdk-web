@@ -1,7 +1,7 @@
 import Emitter from "../common/emmit";
 import utils from "../utils";
 import Proto from "./proto";
-import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, CONNECT_ACK_INDEX, PONG_INDEX, UPLOAD_TYPE, CONVERATION_TYPE, MESSAGE_SENT_STATE } from "../enum";
+import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, CONNECT_ACK_INDEX, PONG_INDEX, UPLOAD_TYPE, CONVERATION_TYPE, MESSAGE_SENT_STATE, UNDISTURB_TYPE } from "../enum";
 import GroupCacher from "../common/group-cacher";
 import UserCacher from "../common/user-cacher";
 import common from "../common/common";
@@ -105,6 +105,10 @@ export default function Decoder(cache, io){
     if(utils.isEqual(topic, COMMAND_TOPICS.GET_USER_INFO)){
       result = getUserInfo(index, data);
     }
+
+    if(utils.isEqual(topic, COMMAND_TOPICS.GET_ALL_DISTURB)){
+      result = getAllDisturb(index, data);
+    }
     
     result = utils.extend(result, { code, timestamp, index });
     return result;
@@ -146,6 +150,18 @@ export default function Decoder(cache, io){
     return {
       index, user
     };
+  }
+
+  function getAllDisturb(index, data){
+    let payload = Proto.lookup('codec.UserUndisturb');
+    let params = payload.decode(data);
+    let { timezone, rules = [] } = params;
+    let type = params.switch ? UNDISTURB_TYPE.UNDISTURB : UNDISTURB_TYPE.DISTURB;
+    let times = [];
+    utils.forEach(rules, ({ start, end }) => {
+      times.push({ start, end });
+    });
+    return { index, type, timezone, times };
   }
 
   function getMessageReadDetails(index, data){

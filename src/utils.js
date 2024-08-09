@@ -473,6 +473,11 @@ function formatTime(time, fmt = 'yyyy-MM-dd hh:mm:ss') {
   return fmt;
 }
 
+function isValidHMTime(timeStr) {
+  const regex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+  return regex.test(timeStr);
+}
+
 export default {
   Prosumer,
   Observer,
@@ -520,4 +525,5 @@ export default {
   isBase64,
   iterator,
   formatTime,
+  isValidHMTime,
 }

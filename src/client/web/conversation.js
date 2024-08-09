@@ -462,7 +462,7 @@ export default function(io, emitter){
 
   /* 
     let params = {
-      type: UNDISTURB_TYPE.UNDISTURB,
+      type: UNDISTURB_TYPE.DISTURB,
       timezone: 'Asia/Shanghai',
       times: [
         { start: 'HH:mm', end: 'HH:mm' }
@@ -479,13 +479,13 @@ export default function(io, emitter){
       let _params = { timezone: '', times: [] };
       
       let { type, timezone, times } = params;
-      let isUndisturb = utils.isEqual(type, UNDISTURB_TYPE.UNDISTURB);
-      if(isUndisturb && !utils.isString(timezone)){
+      let isDisturb = utils.isEqual(type, UNDISTURB_TYPE.DISTURB);
+      if(isDisturb && !utils.isString(timezone)){
         let msg = 'timezone 参数不合法，请检查，格式示例：Asia/Shanghai';
         return reject({ msg, code });
       }
 
-      if(isUndisturb && !utils.isArray(times)){
+      if(isDisturb && !utils.isArray(times)){
         let msg = "times 参数不合法，请检查，格式示例：[{ start: '12:00', end: '13:00' }]";
         return reject({ msg, code });
       }

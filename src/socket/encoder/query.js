@@ -243,7 +243,7 @@ export default function getQueryBody({ data, callback, index }){
   if(utils.isEqual(COMMAND_TOPICS.SET_ALL_DISTURB, topic)){
     let { userId, times, timezone, type } = data;
     let codec = Proto.lookup('codec.UserUndisturb');
-    let isSwitch = utils.isEqual(UNDISTURB_TYPE.UNDISTURB, type);
+    let isSwitch = utils.isEqual(UNDISTURB_TYPE.DISTURB, type);
     let message = codec.create({
       switch: isSwitch,
       timezone: timezone,

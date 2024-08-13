@@ -554,6 +554,21 @@ function getSessionId(){
 function getTokenKey(appkey, token){
   return `${appkey}_${token}`
 }
+
+function genUId(){
+  return 'xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+function getClientSession(){
+  let clientSession = sessionStorage.getItem(STORAGE.CLIENT_SESSION);
+  if(!clientSession){
+    clientSession = genUId();
+    sessionStorage.setItem(STORAGE.CLIENT_SESSION, clientSession);
+  }
+  return clientSession;
+}
 export default {
   check,
   getNum,
@@ -576,4 +591,5 @@ export default {
   formatProvider,
   isDesktop,
   getSessionId,
+  getClientSession,
 }

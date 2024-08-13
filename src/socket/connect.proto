@@ -19,6 +19,11 @@ message ConnectMsgBody{
     string networkId = 11;//网络类型；4G/wifi
     string isp_num = 12;//网络运营商编号
     string clientIp = 13;
+
+    string.packageName =14;
+    string pushChannel =15;
+    string ext = 16;
+    string clientSession = 17;
 }
 
 message ConnectAckMsgBody{

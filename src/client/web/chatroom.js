@@ -6,15 +6,15 @@ import common from "../../common/common";
 export default function(io, emitter, logger){
  
   io.on(SIGNAL_NAME.CHATROOM_EVENT, (notify) => {
-
     // 事件说明：
-    // 事件说明：
-    // USER_REJOIN: 当前用户断网重新加入
-    // MEMBER_CHANGED: 加入 、退出触发
+    // USER_REJOINED: 当前用户断网重新加入
+    // USER_JOINED: 当前用户断网重新加入
+    // USER_QUIT: 当前用户退出 
+    // MEMBER_JOINED: 成员加入
+    // MEMBER_QUIT: 成员退出
     // ATTRIBUTE_UPDATED: 属性变更
     // ATTRIBUTE_REMOVED: 属性被删除
     // CHATROOM_DESTROYED: 聊天室销毁
-
   });
 
   let joinChatroom = (chatroom) =>{
@@ -75,31 +75,90 @@ export default function(io, emitter, logger){
     }
   */
   let setChatroomAttributes = (chatroom) => {
-
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, chatroom, FUNC_PARAM_CHECKER.SET_CHATROOM_ATTRS);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { options } = chatroom;
+      if(!utils.isObject(options)){
+        options = {};
+      }
+      chatroom = utils.extend(chatroom, { options });
+      let data = {
+        topic: COMMAND_TOPICS.REMOVE_CHATROOM_ATTRIBUTES,
+        chatroom
+      };
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code }) => {
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return resolve();
+        }
+        let error = common.getError(code);
+        reject(error)
+      });
+    });
   };
   
   /* 
     let chatroom = {
       id: 'chatroomId',
-      attributes: ['key1', 'key2']
+      attributeKeys: ['key1', 'key2'],
     };
   */
   let getChatroomAttributes = (chatroom) => {
-
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, chatroom, FUNC_PARAM_CHECKER.GET_CHATROOM_ATTRS);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let data = {
+        topic: COMMAND_TOPICS.GET_CHATROOM_ATTRIBUTES,
+        chatroom
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, attributes }) => {
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return resolve(attributes);
+        }
+        let error = common.getError(code);
+        reject(error)
+      });
+    });
   };
 
   /* 
     let chatroom = {
       id: 'chatroomId',
-      attributes: ['key1', 'key2'],
+      attributeKeys: ['key1', 'key2'],
       options: {
         isNotify: false,
         notifyContent: '',
       }
     };
   */
-  let removeChatroomAttributes = () => {
-
+  let removeChatroomAttributes = (chatroom) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, chatroom, FUNC_PARAM_CHECKER.REMOVE_CHATROOM_ATTRS);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { options } = chatroom;
+      if(!utils.isObject(options)){
+        options = {};
+      }
+      chatroom = utils.extend(chatroom, { options });
+      
+      let data = {
+        topic: COMMAND_TOPICS.REMOVE_CHATROOM_ATTRIBUTES,
+        chatroom
+      };
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code }) => {
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return resolve();
+        }
+        let error = common.getError(code);
+        reject(error)
+      });
+    });
   };
 
     /* 
@@ -108,7 +167,23 @@ export default function(io, emitter, logger){
     };
   */
   let getAllChatRoomAttributes = (chatroom) => {
-
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, chatroom, FUNC_PARAM_CHECKER.GET_ALL_CHATROOM_ATTRS);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let data = {
+        topic: COMMAND_TOPICS.GET_ALL_CHATROOM_ATTRIBUTES,
+        chatroom
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, attributes }) => {
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return resolve(attributes);
+        }
+        let error = common.getError(code);
+        reject(error)
+      });
+    });
   };
 
   return {

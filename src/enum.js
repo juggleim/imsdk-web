@@ -128,6 +128,19 @@ export let FUNC_PARAM_CHECKER = {
 
   JOINCHATROOM: [{ name: 'id', type: 'String' }],
   QUITCHATROOM: [{ name: 'id', type: 'String' }],
+  SET_CHATROOM_ATTRS: [
+    { name: 'id', type: 'String' }, 
+    { name: 'attributes', type: 'Object' }
+  ],
+  REMOVE_CHATROOM_ATTRS: [
+    { name: 'id', type: 'String' }, 
+    { name: 'attributeKeys', type: 'Array' }
+  ],
+  GET_CHATROOM_ATTRS: [
+    { name: 'id', type: 'String' }, 
+    { name: 'attributeKeys', type: 'Array' }
+  ],
+  GET_ALL_CHATROOM_ATTRS: [{ name: 'id', type: 'String' }],
 };
 export let COMMAND_TOPICS = {
   HISTORY_MESSAGES: 'qry_hismsgs',
@@ -170,6 +183,10 @@ export let COMMAND_TOPICS = {
   JOIN_CHATROOM: 'c_join',
   QUIT_CHATROOM: 'c_quit',
   SYNC_CHATROOM_MESSAGES: 'c_sync_msgs',
+  SET_CHATROOM_ATTRIBUTES: 'c_add_att',
+  REMOVE_CHATROOM_ATTRIBUTES: 'c_del_att',
+  GET_CHATROOM_ATTRIBUTES: '',
+  GET_ALL_CHATROOM_ATTRIBUTES: '',
 };
 export let NOTIFY_TYPE = {
   DEFAULT: 0,

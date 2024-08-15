@@ -381,6 +381,7 @@ function ConversationUtils(){
       if(index > -1){
         conversations[index].latestReadIndex = item.unreadIndex;
         conversations[index].unreadCount = 0;
+        conversations[index].mentions = {};
         _list.push(conversations[index]);
       }
     });

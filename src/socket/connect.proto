@@ -20,7 +20,7 @@ message ConnectMsgBody{
     string isp_num = 12;//网络运营商编号
     string clientIp = 13;
 
-    string.packageName =14;
+    string packageName =14;
     string pushChannel =15;
     string ext = 16;
     string clientSession = 17;
@@ -350,6 +350,7 @@ message QryMentionMsgsReq{
     int64 startIndex = 3;
     int32 count = 4;
     int32 order = 5;  //0：倒序；1：正序
+    int64 latestReadIndex = 6;
 }
 message QryMentionMsgsResp{
     repeated QMentionMsg mentionMsgs = 1;

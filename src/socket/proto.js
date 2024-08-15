@@ -58,6 +58,22 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           clientIp: {
             type: "string",
             id: 13
+          },
+          packageName: {
+            type: "string",
+            id: 14
+          },
+          pushChannel: {
+            type: "string",
+            id: 15
+          },
+          ext: {
+            type: "string",
+            id: 16
+          },
+          clientSession: {
+            type: "string",
+            id: 17
           }
         }
       },
@@ -1060,6 +1076,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           order: {
             type: "int32",
             id: 5
+          },
+          latestReadIndex: {
+            type: "int64",
+            id: 6
           }
         }
       },

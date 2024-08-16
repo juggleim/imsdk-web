@@ -1,4 +1,4 @@
-import { CONVERATION_TYPE, MENTION_TYPE  } from '../../enum';
+import { CONVERATION_TYPE, MENTION_TYPE, UNREAD_TAG  } from '../../enum';
 import utils from '../../utils';
 
 let isGroup = (type) => {
@@ -77,6 +77,7 @@ let formatConversation = ({conversation, users, groups}) => {
     latestReadIndex, 
     latestUnreadIndex,
     latestMentionInfo,
+    unreadTag
   } = conversation;
 
   mentions = mentions || '{}';
@@ -131,7 +132,8 @@ let formatConversation = ({conversation, users, groups}) => {
     },
     sortTime: Number(sortTime) || 0,
     unreadCount: unreadCount || 0,
-    mentions: utils.parse(mentions)
+    mentions: utils.parse(mentions),
+    unreadTag: unreadTag || UNREAD_TAG.READ,
   };
   if(utils.isEmpty(latestMessageId)){
     _conversation.latestMessage = {};

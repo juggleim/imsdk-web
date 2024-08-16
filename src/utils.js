@@ -65,7 +65,7 @@ const isEmpty = (obj) => {
     result = obj.length === 0;
   }
   if (isNumber(obj)) {
-    result = obj === 0;
+    result = obj === -1;
   }
   return result;
 };

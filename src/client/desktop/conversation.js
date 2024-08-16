@@ -8,6 +8,7 @@ export default function($conversation, { conversationUtils, webAgent }){
     'clearUnreadcount',
     'getTotalUnreadcount',
     'clearTotalUnreadcount',
+    'markUnread',
     'setDraft',
     'getDraft',
     'removeDraft',
@@ -16,6 +17,7 @@ export default function($conversation, { conversationUtils, webAgent }){
     'setTopConversation',
     'getTopConversations',
     'setAllDisturb',
+    'getAllDisturb',
     'getAllDisturb',
     '_batchInsertConversations',
   ];

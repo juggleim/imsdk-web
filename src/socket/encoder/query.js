@@ -260,6 +260,22 @@ export default function getQueryBody({ data, callback, index }){
     targetId = userId;
     buffer = codec.encode(message).finish();
   }
+
+  if(utils.isEqual(COMMAND_TOPICS.MARK_CONVERSATION_UNREAD, topic)){
+    let { userId, conversations } = data;
+    conversations = utils.map(conversations, (item) => {
+      let { conversationId, conversationType, unreadTag } = item;
+      return {
+        channelType: conversationType,
+        targetId: conversationId,
+        unreadTag,
+      }
+    })
+    let codec = Proto.lookup('codec.ConversationsReq');
+    let message = codec.create({ conversations });
+    targetId = userId;
+    buffer = codec.encode(message).finish();
+  }
   
   let codec = Proto.lookup('codec.QueryMsgBody');
   let message = codec.create({ index, topic, targetId, data: buffer });

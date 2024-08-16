@@ -220,10 +220,11 @@ export default function Decoder(cache, io){
             latestReadIndex,
             latestUnreadIndex,
             isTop,
+            unreadTag,
           } = conversation;
       utils.extend(msg, { targetId });
       unreadCount = unreadCount || 0;
-
+      unreadTag = unreadTag || 0;
       mentions = mentions || {};
       if(!utils.isEmpty(mentions)){
         let { isMentioned, senders, mentionMsgs } = mentions;
@@ -295,6 +296,7 @@ export default function Decoder(cache, io){
         undisturbType: undisturbType || 0,
         latestReadIndex,
         latestUnreadIndex,
+        unreadTag,
         isTop: !!isTop,
       };
     });
@@ -585,6 +587,19 @@ export default function Decoder(cache, io){
       content = {
         clearTime: content.clear_time
       };
+    }
+    
+    if(utils.isEqual(MESSAGE_TYPE.COMMAND_MARK_UNREAD, msgType)){
+      let list = content.conversations;
+      let conversations = utils.map(list, (item) => {
+        let { unread_tag, channel_type, target_id } = item; 
+        return {
+          conversationId: target_id,
+          conversationType: channel_type,
+          unreadTag: unread_tag
+        }
+      })
+      content = { conversations };
     }
 
     utils.extend(_message, { content })

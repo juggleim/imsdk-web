@@ -754,6 +754,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           latestUnreadIndex: {
             type: "int64",
             id: 16
+          },
+          unreadTag: {
+            type: "int32",
+            id: 17
           }
         }
       },

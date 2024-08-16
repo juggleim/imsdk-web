@@ -97,6 +97,12 @@ export let FUNC_PARAM_CHECKER = {
   GETCONVERSATIONS: [{ name: 'limit' }],
   GETCONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
   
+  MARK_UNREAD: [
+    { name: 'conversationType' }, 
+    { name: 'conversationId' }, 
+    { name: 'unreadTag', type: 'Number' }, 
+  ],
+
   GET_TOTAL_UNREADCOUNT: [
     { name: 'ignoreConversations', type: 'Array', children: [
       { name: 'conversationType' },
@@ -168,6 +174,7 @@ export let COMMAND_TOPICS = {
   TOP_CONVERSATION: 'top_convers',
   GET_UNREAD_TOTLAL_CONVERSATION: 'qry_total_unread_count',
   CLEAR_UNREAD_TOTLAL_CONVERSATION: 'clear_total_unread',
+  MARK_CONVERSATION_UNREAD: 'mark_unread',
 
   SET_ALL_DISTURB: 'set_user_undisturb',
   GET_ALL_DISTURB: 'get_user_undisturb',
@@ -396,11 +403,13 @@ export let MESSAGE_TYPE = {
   COMMAND_REMOVE_CONVERS: 'jg:delconvers',
   COMMAND_ADD_CONVER: 'jg:addconver',
   COMMAND_CLEAR_TOTALUNREAD: 'jg:cleartotalunread',
+  COMMAND_MARK_UNREAD: 'jg:markunread',
   
   // CLIENT_* 约定为客户端定义适用
   CLIENT_REMOVE_MSGS: 'jgc:removemsgs',
   CLIENT_REMOVE_CONVERS: 'jgc:removeconvers',
   CLIENT_RECALL_MSG: 'jgc:recallmsg',
+  CLIENT_MARK_UNREAD: 'jgc:markunread',
 }
 
 export let MENTION_TYPE = {
@@ -430,3 +439,8 @@ export let DISCONNECT_TYPE = {
   ERROR: 3,
   SERVER: 4
 }
+
+export let UNREAD_TAG = {
+  READ: 0,
+  UNREAD: 1,
+};

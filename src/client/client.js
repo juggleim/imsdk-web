@@ -5,7 +5,7 @@ import Desktop from "./desktop/index";
 import Logger from "../logger/logger";
 import Emitter from "../common/emmit";
 import common from "../common/common";
-import { MESSAGE_SENT_STATE, EVENT, CONNECT_STATE, UNDISTURB_TYPE, CONVERATION_TYPE, MESSAGE_TYPE, ErrorType, CONVERSATION_ORDER, MESSAGE_ORDER, MENTION_TYPE, FILE_TYPE, MENTION_ORDER, SIGNAL_NAME } from "../enum";
+import { MESSAGE_SENT_STATE, EVENT, CONNECT_STATE, UNDISTURB_TYPE, CONVERATION_TYPE, MESSAGE_TYPE, ErrorType, CONVERSATION_ORDER, MESSAGE_ORDER, MENTION_TYPE, FILE_TYPE, MENTION_ORDER, SIGNAL_NAME, UNREAD_TAG } from "../enum";
 import * as ENUM from "../enum";
 import utils from "../utils";
 import MessageCacher from "../common/msg-cacher";
@@ -54,6 +54,7 @@ let init = (config) => {
     FileType: FILE_TYPE,
     UndisturbType: UNDISTURB_TYPE,
     SentState: MESSAGE_SENT_STATE,
+    UnreadTag: UNREAD_TAG,
   }
 }
 
@@ -71,4 +72,5 @@ export default {
   FileType: FILE_TYPE,
   UndisturbType: UNDISTURB_TYPE,
   SentState: MESSAGE_SENT_STATE,
+  UnreadTag: UNREAD_TAG,
 }

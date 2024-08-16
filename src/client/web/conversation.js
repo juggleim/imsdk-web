@@ -119,6 +119,13 @@ export default function(io, emitter){
       }
       return;
     }
+
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_MARK_UNREAD)){
+      let { content: { conversations } } = message;
+      let list = conversationUtils.modify(conversations);
+      return emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations: list });
+    }
+
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       let conversation = conversationUtils.getPer(message);
       let { latestMessage } = conversation || {};
@@ -538,11 +545,39 @@ export default function(io, emitter){
     });
   };
 
+  let markUnread = (conversation) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, conversation, FUNC_PARAM_CHECKER.MARK_UNREAD);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      conversation = utils.clone(conversation);
+      let { id: userId } = io.getCurrentUser();
+      let conversations = utils.isArray(conversation) ? conversation : [conversation];
+      let data = { topic: COMMAND_TOPICS.MARK_CONVERSATION_UNREAD, userId, conversations };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { timestamp, code } = result;
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
+          let config = io.getConfig();
+          if(!config.isPC){
+            let msg = { name: MESSAGE_TYPE.COMMAND_MARK_UNREAD, content: { conversations } };
+            io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
+          }
+          resolve();
+        }else{
+          reject({ code });
+        }        
+      });
+    });
+  };
+
   return {
     getConversations,
     removeConversation,
     insertConversation,
     getConversation,
+    markUnread,
     disturbConversation,
     setTopConversation,
     getTopConversations,

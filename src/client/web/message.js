@@ -34,6 +34,11 @@ export default function(io, emitter, logger){
       let { content: { conversationId, conversationType, messages } } = message;
       return emitter.emit(EVENT.MESSAGE_REMOVED, { conversationId, conversationType, messages });
     }
+    
+    // 消息监听无需处理标记未读消息
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_MARK_UNREAD)){
+      return;
+    }
     // 消息监听无需处理清理总数消息
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CLEAR_TOTALUNREAD)){
       return;

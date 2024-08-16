@@ -1,5 +1,5 @@
 import utils from "../utils";
-import { ErrorType, STORAGE, ErrorMessages, MESSAGE_TYPE, UPLOAD_TYPE } from "../enum";
+import { ErrorType, STORAGE, ErrorMessages, MESSAGE_TYPE, UPLOAD_TYPE, UNREAD_TAG } from "../enum";
 import Storage from "./storage";
 import Uploader from "./uploader";
 
@@ -344,13 +344,16 @@ function ConversationUtils(){
     }
     return conversations[index] || {};
   };
-  let modify = (_conversations, props) => {
+  let modify = (_conversations, props = {}) => {
     let list = [];
     _conversations = utils.isArray(_conversations) ? _conversations : [_conversations];
     utils.forEach(_conversations, (item) => {
       let conversation = getPer(item);
       if(!utils.isEmpty(conversation)){
         utils.extend(conversation, props);
+        if(utils.isEmpty(props)){
+          utils.extend(conversation, item);
+        }
         let conver = relpace(conversation);
         list.push(conver);
       }else{
@@ -382,6 +385,7 @@ function ConversationUtils(){
         conversations[index].latestReadIndex = item.unreadIndex;
         conversations[index].unreadCount = 0;
         conversations[index].mentions = {};
+        conversations[index].unreadTag = UNREAD_TAG.READ;
         _list.push(conversations[index]);
       }
     });

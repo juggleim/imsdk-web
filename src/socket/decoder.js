@@ -52,7 +52,7 @@ export default function Decoder(cache, io){
     };
   };
  
-  function publishHandler(msg){
+  function publishHandler(stream){
     let codec = Proto.lookup('codec.PublishMsgBody');
     let publishMsgBody = codec.decode(stream);
     let { targetId, data, topic, timestamp, index } = publishMsgBody;

@@ -478,6 +478,9 @@ function isValidHMTime(timeStr) {
   return regex.test(timeStr);
 }
 
+function getRandoms(len){
+  return Array(len).fill(0).map(() => Math.floor(Math.random()*10));
+}
 export default {
   Prosumer,
   Observer,
@@ -526,4 +529,5 @@ export default {
   iterator,
   formatTime,
   isValidHMTime,
+  getRandoms,
 }

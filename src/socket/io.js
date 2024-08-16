@@ -26,6 +26,7 @@ export default function IO(config){
   let io = {};
   
   let cache = Cache();
+
   let decoder = BufferDecoder(cache, io);
   let encoder = BufferEncoder(cache);
 
@@ -80,6 +81,8 @@ export default function IO(config){
     Storage.remove(key);
   };
   let connect = ({ token, deviceId, _isReconnect = false }, callback) => {
+    cache.set(STORAGE.CRYPTO_RANDOM, utils.getRandoms(8));
+
     function smack({ servers, userId }){
       setCurrentUser({ id: userId, token, deviceId });
 

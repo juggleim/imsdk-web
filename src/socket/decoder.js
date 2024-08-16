@@ -1,7 +1,7 @@
 import Emitter from "../common/emmit";
 import utils from "../utils";
 import Proto from "./proto";
-import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, CONNECT_ACK_INDEX, PONG_INDEX, UPLOAD_TYPE, CONVERATION_TYPE, MESSAGE_SENT_STATE, UNDISTURB_TYPE } from "../enum";
+import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, CONNECT_ACK_INDEX, PONG_INDEX, UPLOAD_TYPE, CONVERATION_TYPE, MESSAGE_SENT_STATE, UNDISTURB_TYPE, STORAGE } from "../enum";
 import GroupCacher from "../common/group-cacher";
 import UserCacher from "../common/user-cacher";
 import common from "../common/common";
@@ -11,24 +11,30 @@ export default function Decoder(cache, io){
   let decode = (buffer) => {
     let msg = imsocket.decode(new Uint8Array(buffer));
     let result = {}, name = '';
-    let { cmd } = msg;
+    let { cmd, payload } = msg;
+    let xors = cache.get(STORAGE.CRYPTO_RANDOM);
+    let stream = common.decrypto(msg.payload, xors);
+    let codec = null;
     switch(cmd){
       case SIGNAL_CMD.CONNECT_ACK:
-        let { ConnectAckMsgBody } = msg;
-        result = utils.extend(result, { ack: ConnectAckMsgBody, index: CONNECT_ACK_INDEX, extra: ConnectAckMsgBody.ext });
+        codec = Proto.lookup('codec.ConnectAckMsgBody');
+        let connectAckMsg = codec.decode(stream);
+        result = utils.extend(result, { ack: connectAckMsg, index: CONNECT_ACK_INDEX, extra: connectAckMsg.ext });
         name = SIGNAL_NAME.S_CONNECT_ACK;
         break;
       case SIGNAL_CMD.PUBLISH_ACK:
-        let { pubAckMsgBody: { index, msgId: messageId, timestamp: sentTime, code, msgIndex } } = msg;
+        codec = Proto.lookup('codec.PublishAckMsgBody');
+        let pubAckMsgBody = codec.decode(stream);
+        let { index, msgId: messageId, timestamp: sentTime, code, msgIndex } = pubAckMsgBody;
         result = { messageId, sentTime, index, isSender: true, code, msgIndex };
         break;
       case SIGNAL_CMD.PUBLISH:
-        let {_msg, _name } = publishHandler(msg);
+        let {_msg, _name } = publishHandler(stream);
         name = _name;
         result = _msg;
         break;
       case SIGNAL_CMD.QUERY_ACK:
-        result = queryAckHandler(msg);
+        result = queryAckHandler(stream);
         name = SIGNAL_NAME.S_QUERY_ACK;
         break;
       case SIGNAL_CMD.PONG:
@@ -36,7 +42,8 @@ export default function Decoder(cache, io){
         name = SIGNAL_NAME.S_PONG;
         break;
       case SIGNAL_CMD.DISCONNECT:
-        let { disconnectMsgBody } = msg;
+        codec = Proto.lookup('codec.DisconnectMsgBody');
+        let disconnectMsgBody = codec.decode(stream);
         result = utils.extend(result, { extra: disconnectMsgBody.ext, code: disconnectMsgBody.code });
         break;
     }
@@ -46,7 +53,10 @@ export default function Decoder(cache, io){
   };
  
   function publishHandler(msg){
-    let {  publishMsgBody: { targetId, data, topic, timestamp, index } } = msg;
+    let codec = Proto.lookup('codec.PublishMsgBody');
+    let publishMsgBody = codec.decode(stream);
+    let { targetId, data, topic, timestamp, index } = publishMsgBody;
+    
     let _msg = {};
     let _name = SIGNAL_NAME.CMD_RECEIVED;
 
@@ -65,9 +75,11 @@ export default function Decoder(cache, io){
     utils.extend(_msg, { ackIndex: index });
     return { _msg, _name };
   }
-  function queryAckHandler(msg){
+  function queryAckHandler(stream){
+    let codec = Proto.lookup('codec.QueryAckMsgBody');
+    let qryAckMsgBody = codec.decode(stream);
+    let { index, data, code, timestamp } = qryAckMsgBody;
 
-    let { qryAckMsgBody: { index, data, code, timestamp } } = msg;
     let { topic, targetId } = cache.get(index);
 
     let result = {};

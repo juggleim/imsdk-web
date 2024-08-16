@@ -245,6 +245,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "int32",
             id: 3
           },
+          payload: {
+            type: "bytes",
+            id: 4
+          },
           connectMsgBody: {
             type: "ConnectMsgBody",
             id: 11

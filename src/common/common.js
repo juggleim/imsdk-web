@@ -570,6 +570,25 @@ function getClientSession(){
   }
   return clientSession;
 }
+function encrypto(arrs, xors){
+  let list = [];
+  arrs.forEach((v, index) => {
+    let i = index % 8;
+    let _v = v ^ xors[i];
+    list.push(_v);
+  });
+  return new Uint8Array(list);
+}
+
+function decrypto(arrs, xors){
+  let list = [];
+  arrs.forEach((v, index) => {
+    let i = index % 8;
+    let _v = v ^ xors[i];
+    list.push(_v);
+  });
+  return new Uint8Array(list);
+}
 export default {
   check,
   getNum,
@@ -593,4 +612,6 @@ export default {
   isDesktop,
   getSessionId,
   getClientSession,
+  encrypto,
+  decrypto,
 }

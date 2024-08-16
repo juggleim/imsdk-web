@@ -261,12 +261,8 @@ export default function getQueryBody({ data, callback, index }){
     buffer = codec.encode(message).finish();
   }
   
-  return {
-    qryMsgBody: {
-      index,
-      topic,
-      targetId,
-      data: buffer
-    }
-  }
+  let codec = Proto.lookup('codec.QueryMsgBody');
+  let message = codec.create({ index, topic, targetId, data: buffer });
+  let _buffer = codec.encode(message).finish();
+  return { buffer: _buffer };
 }

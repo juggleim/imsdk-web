@@ -194,12 +194,8 @@ export default function({ data, callback, index }){
     buffer = codec.encode(message).finish();
   }
 
-  return {
-    publishMsgBody: {
-      index,
-      targetId,
-      topic,
-      data: buffer
-    }
-  };
+  let codec = Proto.lookup('codec.PublishMsgBody');
+  let message = codec.create({ index, targetId, topic, data: buffer });
+  let _buffer = codec.encode(message).finish();
+  return { buffer: _buffer };
 }

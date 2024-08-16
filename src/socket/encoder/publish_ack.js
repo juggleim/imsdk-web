@@ -1,3 +1,5 @@
+import Proto from "../proto";
+
 export default  function({ data }){
   let { msgIndex, ackIndex } = data;
 

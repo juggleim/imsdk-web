@@ -35,10 +35,17 @@ export default function(io, emitter, logger){
       let { token = '' } = user;
       token = token.trim();
       user = utils.extend(user, { token });
-      io.connect(user, ({ error, user }) => {
+      io.connect(user, ({ error, user, next }) => {
         let { code, msg } = error;
         if(utils.isEqual(code, ErrorType.CONNECT_SUCCESS.code)){
-          utils.extend(user, { code });
+          let config = io.getConfig();
+          if(!config.isPC){
+            next();
+            let { id, name, exts, updatedTime, portrait, token } = user;
+            return resolve(user)
+          }
+          
+          utils.extend(user, { code, next });
           return resolve(user);
         }
         reject({ code, msg });

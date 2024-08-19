@@ -61,9 +61,10 @@ export default function IO(config){
     let { code } = result;
     if(!isUserDisconnected && !utils.isInclude(reconnectErrors, code) && !utils.isEqual(connectionState, CONNECT_STATE.DISCONNECTED)){
       let user = getCurrentUser();
-      updateState({ state: CONNECT_STATE.RECONNECTING});
       clearHeart();
-      return reconnect(user, utils.noop);
+      return reconnect(user, ({ next }) => {
+        next();
+      });
     }
 
     if(!utils.isEqual(connectionState, CONNECT_STATE.DISCONNECTED)){
@@ -82,7 +83,8 @@ export default function IO(config){
   };
   let connect = ({ token, deviceId, _isReconnect = false }, callback) => {
     cache.set(STORAGE.CRYPTO_RANDOM, utils.getRandoms(8));
-
+    let _state = _isReconnect ?  CONNECT_STATE.RECONNECTING : CONNECT_STATE.CONNECTING;
+    updateState({ state: _state });
     function smack({ servers, userId }){
       setCurrentUser({ id: userId, token, deviceId });
 
@@ -262,10 +264,10 @@ export default function IO(config){
           let exts = utils.toObject(_user.extFields);
           setCurrentUser({ name, portrait, exts, updatedTime: _user.updatedTime });
 
-          updateState({ state, user: currentUserInfo });
-
           // 首先返回连接方法回调，确保 PC 端本地数据库同步信息时间戳优先更新至 localStorage 中
-          _callback({ user: currentUserInfo, error });
+          _callback({ user: currentUserInfo, error, next: () => {
+            updateState({ state, user: currentUserInfo });
+          } });
 
           // 同步会话和同步消息顺序不能调整，保证先同步会话再同步消息，规避会话列表最后一条消息不是最新的
           if(config.isPC){

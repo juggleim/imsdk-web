@@ -113,22 +113,6 @@ export default function({ data, callback, index }){
     buffer = codec.encode(message).finish();
   }
 
-  if(utils.isEqual(COMMAND_TOPICS.SET_CHATROOM_ATTRIBUTES, topic)){
-    let { chatroom: { id: chatId, attributes, option  } } = data;
-  }
-  
-  if(utils.isEqual(COMMAND_TOPICS.REMOVE_CHATROOM_ATTRIBUTES, topic)){
-    let { chatroom: { id: chatId, attributeKeys, option  } } = data;
-  }
-
-  if(utils.isEqual(COMMAND_TOPICS.GET_ALL_CHATROOM_ATTRIBUTES, topic)){
-    let { chatroom: { id: chatId  } } = data;
-  }
-  
-  if(utils.isEqual(COMMAND_TOPICS.GET_CHATROOM_ATTRIBUTES, topic)){
-    let { chatroom: { id: chatId, attributeKeys  } } = data;
-  }
-
   if(utils.isEqual(COMMAND_TOPICS.INSERT_CONVERSATION, topic)){
     let {  conversation, userId } = data;
     let { conversationId, conversationType } = conversation;

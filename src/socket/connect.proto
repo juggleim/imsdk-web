@@ -267,15 +267,14 @@ message SyncMsgReq{
     string chatroomId = 4;
 }
 
-message SyncChatroomMsgReq{
-    string chatroomId = 1;
-    int64 syncTime = 2;//收件箱同步时间
-    int64 attSyncTime = 3; // 聊天室属性同步时间戳
-} 
-message SyncChatroomResp{
-    DownMsgSet msgs = 1;
-    ChatAtts atts = 2;
-    bool isFinished = 3;
+
+message SyncChatroomReq{
+  string chatroomId = 1;//聊天室id
+  int64 syncTime = 2; // 聊天室消息同步时间戳
+}
+
+message SyncChatroomMsgResp{
+  repeated DownMsg msgs = 1;
 }
 message Notify{
     NotifyType type = 1;
@@ -438,6 +437,11 @@ message QryConverReq{
   string targetId = 1;
   ChannelType channelType = 2;
 }
+
+message SyncChatroomAttResp{
+  repeated ChatAttItem atts = 1;
+}
+
 message ChatAtts{
     string chatId = 1;
     repeated ChatAttItem atts = 2;
@@ -445,11 +449,11 @@ message ChatAtts{
     bool isFinished = 4;
 }
 message ChatAttItem{
-    string key = 1;
-    string value = 2;
-    int64 attTime = 3;
-    string userId = 4;
-    ChatAttOptType optType = 5;
+  string key = 1;
+  string value = 2;
+  int64 attTime = 3;
+  string userId = 4;
+  ChatAttOptType optType = 5;
 }
 enum ChatAttOptType{
     ChatAttOpt_Default = 0;
@@ -467,4 +471,29 @@ message UserUndisturbItem {
   string end = 2;
 }
 message Nil{
+}
+message ChatAttBatchReq{
+  repeated ChatAttReq atts = 1;
+}
+message ChatAttBatchResp{
+  repeated ChatAttResp attResps = 1;
+}
+
+message ChatAttReq{
+  string key = 1;
+  string value = 2;
+  bool isForce = 3;  //是否强制覆盖，否：则该key已有值时，不覆盖
+  bool isAutoDel = 4; //是否在该属性所有者离开房间时自动删除；否：则不自动删除；
+  UpMsg msg = 5; //设置属性时，同时发送一条聊天室消息；
+}
+message ChatAttResp{
+  string key = 1;  
+  int32 code = 2; // 设置属性时的返回码
+  int64 attTime = 3;  //属性的设置时间
+
+  //当设置属性时，附带发送消息时，下列属性有效
+  int32 msgCode = 11; // 消息发送的响应码
+  string msgId = 12;  //消息的id
+  int64 msgTime = 13; //消息的时间戳
+  int64 msgSeq = 14; //消息的序号
 }

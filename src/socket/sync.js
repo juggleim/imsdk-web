@@ -41,9 +41,39 @@ export default function Syncer(send, emitter, io) {
         queryNormal(item, next);
       } else if (utils.isEqual(msg.type, NOTIFY_TYPE.CHATROOM)) {
         queryChatroom(item, next);
-      } else {
+      } else if(utils.isEqual(msg.type, NOTIFY_TYPE.CHATROOM_ATTR)){
+        queryChatroomAttr(item, next);
+      }else {
         next();
       }
+    }
+
+    function queryChatroomAttr(item, next) {
+      let { user, msg, name } = item;
+      let chatroomId = msg.targetId;
+      let syncTime = getChatroomAttrSyncTime(chatroomId);
+      if (syncTime >= msg.receiveTime) {
+        return next();
+      }
+
+      let data = {
+        syncTime: syncTime,
+        chatroomId: chatroomId,
+        topic: COMMAND_TOPICS.SYNC_CHATROOM_ATTRS
+      };
+      //TODO: 解析&存储
+      send(SIGNAL_CMD.QUERY, data, ({ attrs, code }) => {
+        if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
+          return next();
+        }
+
+        utils.forEach(messages, (message) => {
+          setChatRoomSyncTime(message.conversationId, message.sentTime);
+          emitter.emit(SIGNAL_NAME.CMD_RECEIVED, [message]);
+        });
+        
+        next();
+      });
     }
 
     function queryChatroom(item, next) {
@@ -161,6 +191,16 @@ export default function Syncer(send, emitter, io) {
     }
     function setChatRoomSyncTime(chatroomId, time){
       let key = `${STORAGE.SYNC_CHATROOM_RECEIVED_MSG_TIME}_${chatroomId}`;
+      chatroomCacher.set(key, { time });
+    }
+
+    function getChatroomAttrSyncTime(chatroomId){
+      let key = `${STORAGE.SYNC_CHATROOM_ATTR_TIME}_${chatroomId}`;
+      let syncInfo = chatroomCacher.get(key);
+      return syncInfo.time || 0;
+    }
+    function setChatRoomAttrSyncTime(chatroomId, time){
+      let key = `${STORAGE.SYNC_CHATROOM_ATTR_TIME}_${chatroomId}`;
       chatroomCacher.set(key, { time });
     }
   }

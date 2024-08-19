@@ -819,7 +819,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           }
         }
       },
-      SyncChatroomMsgReq: {
+      SyncChatroomReq: {
         fields: {
           chatroomId: {
             type: "string",
@@ -828,26 +828,15 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           syncTime: {
             type: "int64",
             id: 2
-          },
-          attSyncTime: {
-            type: "int64",
-            id: 3
           }
         }
       },
-      SyncChatroomResp: {
+      SyncChatroomMsgResp: {
         fields: {
           msgs: {
-            type: "DownMsgSet",
+            rule: "repeated",
+            type: "DownMsg",
             id: 1
-          },
-          atts: {
-            type: "ChatAtts",
-            id: 2
-          },
-          isFinished: {
-            type: "bool",
-            id: 3
           }
         }
       },
@@ -1330,6 +1319,15 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           }
         }
       },
+      SyncChatroomAttResp: {
+        fields: {
+          atts: {
+            rule: "repeated",
+            type: "ChatAttItem",
+            id: 1
+          }
+        }
+      },
       ChatAtts: {
         fields: {
           chatId: {
@@ -1413,6 +1411,80 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
       },
       Nil: {
         fields: {}
+      },
+      ChatAttBatchReq: {
+        fields: {
+          atts: {
+            rule: "repeated",
+            type: "ChatAttReq",
+            id: 1
+          }
+        }
+      },
+      ChatAttBatchResp: {
+        fields: {
+          attResps: {
+            rule: "repeated",
+            type: "ChatAttResp",
+            id: 1
+          }
+        }
+      },
+      ChatAttReq: {
+        fields: {
+          key: {
+            type: "string",
+            id: 1
+          },
+          value: {
+            type: "string",
+            id: 2
+          },
+          isForce: {
+            type: "bool",
+            id: 3
+          },
+          isAutoDel: {
+            type: "bool",
+            id: 4
+          },
+          msg: {
+            type: "UpMsg",
+            id: 5
+          }
+        }
+      },
+      ChatAttResp: {
+        fields: {
+          key: {
+            type: "string",
+            id: 1
+          },
+          code: {
+            type: "int32",
+            id: 2
+          },
+          attTime: {
+            type: "int64",
+            id: 3
+          },
+          msgCode: {
+            type: "int32",
+            id: 11
+          },
+          msgId: {
+            type: "string",
+            id: 12
+          },
+          msgTime: {
+            type: "int64",
+            id: 13
+          },
+          msgSeq: {
+            type: "int64",
+            id: 14
+          }
+        }
       }
     }
   }

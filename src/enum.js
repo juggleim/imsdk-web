@@ -3,6 +3,7 @@ export let STORAGE = {
   PREFIX: 'suprjj_im',
   NAVI: 'navi',
   SYNC_CHATROOM_RECEIVED_MSG_TIME: 'sync_chatroom_received_msg_time',
+  SYNC_CHATROOM_ATTR_TIME: 'sync_chatroom_attr_time',
   CLIENT_SESSION: 'jgim_client_session',
   CRYPTO_RANDOM: 'jg_crypto_randowm',
 
@@ -138,15 +139,34 @@ export let FUNC_PARAM_CHECKER = {
   QUITCHATROOM: [{ name: 'id', type: 'String' }],
   SET_CHATROOM_ATTRS: [
     { name: 'id', type: 'String' }, 
-    { name: 'attributes', type: 'Object' }
+    { 
+      name: 'attributes', 
+      type: 'Array',
+      children: [
+        { name: 'key' },
+        { name: 'value' },
+      ]
+    }
   ],
   REMOVE_CHATROOM_ATTRS: [
     { name: 'id', type: 'String' }, 
-    { name: 'attributeKeys', type: 'Array' }
+    { 
+      name: 'attributes', 
+      type: 'Array',
+      children: [
+        { name: 'key' },
+      ]
+    }
   ],
   GET_CHATROOM_ATTRS: [
     { name: 'id', type: 'String' }, 
-    { name: 'attributeKeys', type: 'Array' }
+    { 
+      name: 'attributes', 
+      type: 'Array',
+      children: [
+        { name: 'key' },
+      ]
+    }
   ],
   GET_ALL_CHATROOM_ATTRS: [{ name: 'id', type: 'String' }],
 };
@@ -192,15 +212,17 @@ export let COMMAND_TOPICS = {
   JOIN_CHATROOM: 'c_join',
   QUIT_CHATROOM: 'c_quit',
   SYNC_CHATROOM_MESSAGES: 'c_sync_msgs',
-  SET_CHATROOM_ATTRIBUTES: 'c_add_att',
-  REMOVE_CHATROOM_ATTRIBUTES: 'c_del_att',
-  GET_CHATROOM_ATTRIBUTES: '',
-  GET_ALL_CHATROOM_ATTRIBUTES: '',
+  SYNC_CHATROOM_ATTRS: 'c_sync_atts',
+  SET_CHATROOM_ATTRIBUTES: 'c_batch_add_att',
+  REMOVE_CHATROOM_ATTRIBUTES: 'c_batch_del_att',
+  GET_CHATROOM_ATTRIBUTES: 'fake_c_get_one',
+  GET_ALL_CHATROOM_ATTRIBUTES: 'fake_c_get_all',
 };
 export let NOTIFY_TYPE = {
   DEFAULT: 0,
   MSG: 1,
   CHATROOM: 2,
+  CHATROOM_ATTR: 3,
 };
 export let CONNECT_TOOL = {
   START_TIME: 'connect_start_time',
@@ -347,6 +369,9 @@ export let ErrorMessages = [
   { code: 11010, msg: '用户已封禁', name: 'CONNECT_USER_BLOCKED' },
   { code: 11011, msg: '被踢下线', name: 'CONNECT_USER_KICKED' },
   { code: 11012, msg: '注销下线', name: 'CONNECT_USER_LOGOUT' },
+  { code: 14001, msg: '未加入聊天室', name: 'CHATROOM_NOT_JOIN' },
+  { code: 14002, msg: '聊天室属性个数超限制', name: 'CHATROOM_ATTR_EXCEED_LIMIT' },
+  { code: 14003, msg: '聊天室属性已存在，如需覆盖设置请设置 isForce 为 true', name: 'CHATROOM_ATTR_EXISTS' },
   { code: 14005, msg: '聊天室不存在', name: 'CHATROOM_NOT_EXISTS' },
   { code: 11100, msg: '入参pb解析失败', name: 'PB_ERROR' },
 

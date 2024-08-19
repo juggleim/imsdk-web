@@ -121,11 +121,34 @@ export default function Decoder(cache, io){
     if(utils.isEqual(topic, COMMAND_TOPICS.GET_ALL_DISTURB)){
       result = getAllDisturb(index, data);
     }
+
+    if(utils.isEqual(topic, COMMAND_TOPICS.SET_CHATROOM_ATTRIBUTES)){
+      result = getChatroomSetAttrs(index, data);
+    }
     
     result = utils.extend(result, { code, timestamp, index });
     return result;
   }
 
+  function getChatroomSetAttrs(index, data){
+    let payload = Proto.lookup('codec.ChatAttBatchResp');
+    let { attResps } = payload.decode(data);
+    let success = [], fail = [];
+    utils.forEach(attResps, (attr) => {
+      let { code = 0, key, attTime: updateTime, msgTime: messageTime } = attr;
+      let _attr = { code, key, updateTime, messageTime };
+      if(utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
+        success.push(_attr)
+      }else{
+        let error = common.getError(code);
+        utils.extend(_attr, error);
+        fail.push(_attr)
+      }
+    })
+    return {
+      index, success, fail
+    }
+  }
   function getMentionMessages(index, data){
     let payload = Proto.lookup('codec.QryMentionMsgsResp');
     let { mentionMsgs, isFinished } = payload.decode(data);
@@ -320,7 +343,7 @@ export default function Decoder(cache, io){
     return { conversations, isFinished, index };
   }
   function getChatroomMsgsHandler(index, data){
-    let payload = Proto.lookup('codec.SyncChatroomResp');
+    let payload = Proto.lookup('codec.SyncChatroomMsgResp');
     let result = payload.decode(data);
     let { isFinished, msgs: { msgs } } = result;
     let messages = utils.map(msgs, (msg) => {

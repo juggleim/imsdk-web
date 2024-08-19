@@ -62,19 +62,16 @@ export default function(io, emitter, logger){
   /* 
     let chatroom = {
       id: 'chatroomId',
-      attributes: {
-        key1: 'value1',
-        key2: 'value2'
-      },
+      attributes: [
+        { key: 'name', value: 'xiaoshan', isForce: true, isAutoDel: true },
+      ],
       options: {
-        isNotify: false,
-        isForce: true,
-        isAutoDelete: true,
-        notifyContent: '',
+        notify: '',
       }
     }
   */
   let setChatroomAttributes = (chatroom) => {
+    chatroom = utils.clone(chatroom);
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, chatroom, FUNC_PARAM_CHECKER.SET_CHATROOM_ATTRS);
       if(!utils.isEmpty(error)){
@@ -84,14 +81,20 @@ export default function(io, emitter, logger){
       if(!utils.isObject(options)){
         options = {};
       }
+      let { notify } = options;
+      if(!utils.isUndefined(notify) && !utils.isString(notify)){
+        let _error = ErrorType.ILLEGAL_TYPE_PARAMS;
+        return reject({ code: _error.code, msg: `notify ${_error.msg}，必须是 String 类型` })
+      }
       chatroom = utils.extend(chatroom, { options });
       let data = {
-        topic: COMMAND_TOPICS.REMOVE_CHATROOM_ATTRIBUTES,
+        topic: COMMAND_TOPICS.SET_CHATROOM_ATTRIBUTES,
         chatroom
       };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code }) => {
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code, success, fail } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          return resolve();
+          return resolve({ success, fail });
         }
         let error = common.getError(code);
         reject(error)
@@ -99,10 +102,45 @@ export default function(io, emitter, logger){
     });
   };
   
+   /* 
+    let chatroom = {
+      id: 'chatroomId',
+      attributeKeys: [{ key: 'key1' }],
+      options: {
+        notify: ''
+      }
+    };
+  */
+    let removeChatroomAttributes = (chatroom) => {
+      return utils.deferred((resolve, reject) => {
+        let error = common.check(io, chatroom, FUNC_PARAM_CHECKER.REMOVE_CHATROOM_ATTRS);
+        if(!utils.isEmpty(error)){
+          return reject(error);
+        }
+        let { options } = chatroom;
+        if(!utils.isObject(options)){
+          options = {};
+        }
+        chatroom = utils.extend(chatroom, { options });
+        
+        let data = {
+          topic: COMMAND_TOPICS.REMOVE_CHATROOM_ATTRIBUTES,
+          chatroom
+        };
+        io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code }) => {
+          if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+            return resolve();
+          }
+          let error = common.getError(code);
+          reject(error)
+        });
+      });
+    };
+
   /* 
     let chatroom = {
       id: 'chatroomId',
-      attributeKeys: ['key1', 'key2'],
+      attributeKeys: [{ key: 'key1' }],
     };
   */
   let getChatroomAttributes = (chatroom) => {
@@ -124,43 +162,6 @@ export default function(io, emitter, logger){
       });
     });
   };
-
-  /* 
-    let chatroom = {
-      id: 'chatroomId',
-      attributeKeys: ['key1', 'key2'],
-      options: {
-        isNotify: false,
-        notifyContent: '',
-      }
-    };
-  */
-  let removeChatroomAttributes = (chatroom) => {
-    return utils.deferred((resolve, reject) => {
-      let error = common.check(io, chatroom, FUNC_PARAM_CHECKER.REMOVE_CHATROOM_ATTRS);
-      if(!utils.isEmpty(error)){
-        return reject(error);
-      }
-      let { options } = chatroom;
-      if(!utils.isObject(options)){
-        options = {};
-      }
-      chatroom = utils.extend(chatroom, { options });
-      
-      let data = {
-        topic: COMMAND_TOPICS.REMOVE_CHATROOM_ATTRIBUTES,
-        chatroom
-      };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code }) => {
-        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          return resolve();
-        }
-        let error = common.getError(code);
-        reject(error)
-      });
-    });
-  };
-
     /* 
     let chatroom = {
       id: 'chatroomId',

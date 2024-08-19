@@ -70,7 +70,7 @@ export default function getQueryBody({ data, callback, index }){
 
   if(utils.isEqual(topic, COMMAND_TOPICS.SYNC_CHATROOM_MESSAGES)){
     let { syncTime, chatroomId } = data;
-    let codec = Proto.lookup('codec.SyncChatroomMsgReq');
+    let codec = Proto.lookup('codec.SyncChatroomReq');
     let message = codec.create({
       syncTime,
       chatroomId
@@ -275,6 +275,25 @@ export default function getQueryBody({ data, callback, index }){
     let message = codec.create({ conversations });
     targetId = userId;
     buffer = codec.encode(message).finish();
+  }
+
+  if(utils.isEqual(COMMAND_TOPICS.SET_CHATROOM_ATTRIBUTES, topic)){
+    let { chatroom: { id: chatId, attributes, options  } } = data;
+    let { notify } = options;
+    let codec = Proto.lookup('codec.ChatAttBatchReq');
+    let _msg = { 
+      atts: attributes,
+    };
+    if(!utils.isUndefined(notify)){
+      utils.extend(_msg, { msg: new TextEncoder().encode(notify)})
+    }
+    let message = codec.create(_msg);
+    targetId = chatId;
+    buffer = codec.encode(message).finish();
+  }
+  
+  if(utils.isEqual(COMMAND_TOPICS.REMOVE_CHATROOM_ATTRIBUTES, topic)){
+    let { chatroom: { id: chatId, attributeKeys, option  } } = data;
   }
   
   let codec = Proto.lookup('codec.QueryMsgBody');

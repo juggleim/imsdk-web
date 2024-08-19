@@ -122,7 +122,7 @@ export default function Decoder(cache, io){
       result = getAllDisturb(index, data);
     }
 
-    if(utils.isEqual(topic, COMMAND_TOPICS.SET_CHATROOM_ATTRIBUTES)){
+    if(utils.isInclude([COMMAND_TOPICS.REMOVE_CHATROOM_ATTRIBUTES, COMMAND_TOPICS.SET_CHATROOM_ATTRIBUTES], topic)){
       result = getChatroomSetAttrs(index, data);
     }
     

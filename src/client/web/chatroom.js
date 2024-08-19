@@ -121,15 +121,22 @@ export default function(io, emitter, logger){
         if(!utils.isObject(options)){
           options = {};
         }
+        let { notify } = options;
+        if(!utils.isUndefined(notify) && !utils.isString(notify)){
+          let _error = ErrorType.ILLEGAL_TYPE_PARAMS;
+          return reject({ code: _error.code, msg: `notify ${_error.msg}，必须是 String 类型` })
+        }
+
         chatroom = utils.extend(chatroom, { options });
         
         let data = {
           topic: COMMAND_TOPICS.REMOVE_CHATROOM_ATTRIBUTES,
           chatroom
         };
-        io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code }) => {
+        io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+          let { code, success, fail } = result;
           if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-            return resolve();
+            return resolve({ success, fail });
           }
           let error = common.getError(code);
           reject(error)

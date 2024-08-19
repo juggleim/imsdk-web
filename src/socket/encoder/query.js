@@ -277,7 +277,7 @@ export default function getQueryBody({ data, callback, index }){
     buffer = codec.encode(message).finish();
   }
 
-  if(utils.isEqual(COMMAND_TOPICS.SET_CHATROOM_ATTRIBUTES, topic)){
+  if(utils.isInclude([COMMAND_TOPICS.SET_CHATROOM_ATTRIBUTES, COMMAND_TOPICS.REMOVE_CHATROOM_ATTRIBUTES], topic)){
     let { chatroom: { id: chatId, attributes, options  } } = data;
     let { notify } = options;
     let codec = Proto.lookup('codec.ChatAttBatchReq');
@@ -290,10 +290,6 @@ export default function getQueryBody({ data, callback, index }){
     let message = codec.create(_msg);
     targetId = chatId;
     buffer = codec.encode(message).finish();
-  }
-  
-  if(utils.isEqual(COMMAND_TOPICS.REMOVE_CHATROOM_ATTRIBUTES, topic)){
-    let { chatroom: { id: chatId, attributeKeys, option  } } = data;
   }
   
   let codec = Proto.lookup('codec.QueryMsgBody');

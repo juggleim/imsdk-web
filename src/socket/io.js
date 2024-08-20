@@ -170,7 +170,6 @@ export default function IO(config){
   let PingTimeouts = [];
 
   let disconnect = () => {
-    isUserDisconnected = true;
     if(ws){
       ws.close && ws.close();
     }
@@ -178,6 +177,11 @@ export default function IO(config){
     syncTimer.pause();
     
     PingTimeouts.length = 0;
+  };
+
+  let userDisconnect = () => {
+    isUserDisconnected = true;
+    disconnect();
   };
 
   let sendCommand = (cmd, data, callback) => {
@@ -346,7 +350,7 @@ export default function IO(config){
     getConfig,
     setConfig,
     connect,
-    disconnect,
+    disconnect: userDisconnect,
     sendCommand,
     isConnected,
     getCurrentUser,

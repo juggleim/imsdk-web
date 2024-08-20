@@ -92,7 +92,16 @@ export default function($message, { webAgent }){
       list = utils.map(list, (item) => {
         let { matchedList, matchedCount, conversationType, conversationId } = item;
         let _msgs = tools.formatMsgs({ messages: matchedList, senders, groups });
-        return { matchedList: _msgs, matchedCount, conversationType, conversationId };
+        let params = { 
+          conversation: { 
+            id: conversationId, type: conversationType 
+          }, 
+          users: senders, 
+          groups 
+        };
+        let _conversation = tools.formatConversation(params);
+        let { conversationTitle, conversationPortrait, conversationExts } = _conversation;
+        return { matchedList: _msgs, matchedCount, conversationType, conversationId, conversationTitle, conversationPortrait, conversationExts };
       });
       return { total, list, isFinished };
     });

@@ -90,6 +90,11 @@ export default function Decoder(cache, io){
     if(utils.isEqual(topic, COMMAND_TOPICS.SYNC_CHATROOM_MESSAGES)){
       result = getChatroomMsgsHandler(index, data);
     }
+
+    if(utils.isEqual(topic, COMMAND_TOPICS.SYNC_CHATROOM_ATTRS)){
+      result = getChatroomAttrsHandler(index, data, { targetId });
+    }
+    
     if(utils.isInclude([COMMAND_TOPICS.CONVERSATIONS, COMMAND_TOPICS.SYNC_CONVERSATIONS, COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS], topic)){
       result = getConversationsHandler(index, data, { topic });
     }
@@ -342,14 +347,24 @@ export default function Decoder(cache, io){
     conversations = formatConversations(conversations, options);
     return { conversations, isFinished, index };
   }
+  function getChatroomAttrsHandler(index, data, { targetId }){
+    let payload = Proto.lookup('codec.SyncChatroomAttResp');
+    let result = payload.decode(data);
+    let { atts } = result;
+    atts = utils.map(atts, (attr) => {
+      let { key, value, attTime: updateTime, userId, optType: type,  } = attr;
+      return { key, value, updateTime, userId, type };
+    });
+    return { attrs: atts, chatroomId: targetId, index };
+  }
   function getChatroomMsgsHandler(index, data){
     let payload = Proto.lookup('codec.SyncChatroomMsgResp');
     let result = payload.decode(data);
-    let { isFinished, msgs: { msgs } } = result;
+    let { msgs: { msgs } } = result;
     let messages = utils.map(msgs, (msg) => {
       return msgFormat(msg);
     });
-    return { isFinished, messages, index };
+    return { messages, index };
   }
   function getMessagesHandler(index, data){
     let payload = Proto.lookup('codec.DownMsgSet');

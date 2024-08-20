@@ -20,6 +20,7 @@ export let PONG_INDEX = 'c_pong_index';
 
 export let SIGNAL_NAME = {
   CMD_RECEIVED: 'cmd_inner_receive',
+  CMD_CHATROOM_ATTR_RECEIVED: 'cmd_inner_chatroom_attr_receive',
   CMD_SYNC_CONVERSATIONS_PROGRESS: 'cmd_inner_sync_conversations_progress',
   CMD_SYNC_CONVERSATION_FINISHED: 'cmd_inner_sync_conversations_finished',
   CMD_CONVERSATION_CHANGED: 'cmd_inner_conversation_changed',
@@ -287,6 +288,12 @@ export let LOG_MODULE = {
   CONV_TOP: 'CONV-Top'
 };
 
+export let CHATROOM_ATTR_OP_TYPE = {
+  NONE: 0,
+  ADD: 1,
+  DEL: 2,
+};
+
 // 以下是对外暴露枚举
 export let EVENT = {
   STATE_CHANGED: 'state_changed',
@@ -307,6 +314,9 @@ export let EVENT = {
   CONVERSATION_CHANGED: 'conversation_changed',
   CONVERSATION_ADDED: 'conversation_added',
   CONVERSATION_REMOVED: 'conversation_removed',
+
+  CHATROOM_ATTRIBUTE_UPDATED: 'chatroom_attr_updated',
+  CHATROOM_ATTRIBUTE_DELETED: 'chatroom_attr_deleted'
 
 };
 export let CONNECT_STATE = {

@@ -59,19 +59,18 @@ export default function Syncer(send, emitter, io) {
       let data = {
         syncTime: syncTime,
         chatroomId: chatroomId,
+        targetId: chatroomId,
         topic: COMMAND_TOPICS.SYNC_CHATROOM_ATTRS
       };
-      //TODO: 解析&存储
-      send(SIGNAL_CMD.QUERY, data, ({ attrs, code }) => {
+      send(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code, attrs, chatroomId: _chatroomId } = result;
         if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
           return next();
         }
-
-        utils.forEach(messages, (message) => {
-          setChatRoomSyncTime(message.conversationId, message.sentTime);
-          emitter.emit(SIGNAL_NAME.CMD_RECEIVED, [message]);
+        utils.forEach(attrs, (message) => {
+          setChatRoomAttrSyncTime(message.conversationId, message.updateTime);
         });
-        
+        emitter.emit(SIGNAL_NAME.CMD_CHATROOM_ATTR_RECEIVED, { attrs, chatroomId: _chatroomId });
         next();
       });
     }
@@ -89,20 +88,14 @@ export default function Syncer(send, emitter, io) {
         chatroomId: chatroomId,
         topic: COMMAND_TOPICS.SYNC_CHATROOM_MESSAGES
       };
-      send(SIGNAL_CMD.QUERY, data, ({ isFinished, messages, code }) => {
+      send(SIGNAL_CMD.QUERY, data, ({ messages, code }) => {
         if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
           return next();
         }
-
         utils.forEach(messages, (message) => {
           setChatRoomSyncTime(message.conversationId, message.sentTime);
           emitter.emit(SIGNAL_NAME.CMD_RECEIVED, [message]);
         });
-        let isSyncing = !isFinished;
-        if (isSyncing) {
-          // 如果有未拉取，向队列下标最小位置插入消费对象，一次拉取执行完成后再处理它 ntf 或者 msg
-          consumer.produce(item, isSyncing);
-        }
         next();
       });
     }
@@ -192,7 +185,10 @@ export default function Syncer(send, emitter, io) {
     }
     function setChatRoomSyncTime(chatroomId, time){
       let key = `${STORAGE.SYNC_CHATROOM_RECEIVED_MSG_TIME}_${chatroomId}`;
-      chatroomCacher.set(key, { time });
+      let currentTime = getChatroomSyncTime(chatroomId);
+      if(time > currentTime){
+        chatroomCacher.set(key, { time });
+      }
     }
 
     function getChatroomAttrSyncTime(chatroomId){
@@ -202,7 +198,10 @@ export default function Syncer(send, emitter, io) {
     }
     function setChatRoomAttrSyncTime(chatroomId, time){
       let key = `${STORAGE.SYNC_CHATROOM_ATTR_TIME}_${chatroomId}`;
-      chatroomCacher.set(key, { time });
+      let currentTime = getChatroomAttrSyncTime(chatroomId);
+      if(time > currentTime){
+        chatroomCacher.set(key, { time });
+      }
     }
   }
   return {

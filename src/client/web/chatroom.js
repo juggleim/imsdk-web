@@ -1,19 +1,34 @@
-import { COMMAND_TOPICS, ErrorType, FUNC_PARAM_CHECKER, SIGNAL_CMD, SIGNAL_NAME } from "../../enum";
+import { COMMAND_TOPICS, ErrorType, FUNC_PARAM_CHECKER, SIGNAL_CMD, SIGNAL_NAME, EVENT } from "../../enum";
 import utils from "../../utils";
 import Storage from "../../common/storage";
 import common from "../../common/common";
+import AttrCacher from "../../common/attr-cacher";
 
 export default function(io, emitter, logger){
- 
-  io.on(SIGNAL_NAME.CHATROOM_EVENT, (notify) => {
+  let attrCaher = AttrCacher();
+
+  io.on(SIGNAL_NAME.CMD_CHATROOM_ATTR_RECEIVED, (result) => {
+    let { dels, updates } = attrCaher.heap(result);
+    let { chatroomId } = result;
+    if(!utils.isEmpty(dels)){
+      emitter.emit(EVENT.CHATROOM_ATTRIBUTE_DELETED, { id: chatroomId, attributes: dels });
+    }
+    
+    if(!utils.isEmpty(updates)){
+      emitter.emit(EVENT.CHATROOM_ATTRIBUTE_UPDATED, { id: chatroomId, attributes: updates });
+    }
+
     // 事件说明：
     // USER_REJOINED: 当前用户断网重新加入
     // USER_JOINED: 当前用户断网重新加入
     // USER_QUIT: 当前用户退出 
+    
     // MEMBER_JOINED: 成员加入
     // MEMBER_QUIT: 成员退出
+    
     // ATTRIBUTE_UPDATED: 属性变更
     // ATTRIBUTE_REMOVED: 属性被删除
+
     // CHATROOM_DESTROYED: 聊天室销毁
   });
 
@@ -147,7 +162,7 @@ export default function(io, emitter, logger){
   /* 
     let chatroom = {
       id: 'chatroomId',
-      attributeKeys: [{ key: 'key1' }],
+      attributes: [{ key: 'key1' }],
     };
   */
   let getChatroomAttributes = (chatroom) => {

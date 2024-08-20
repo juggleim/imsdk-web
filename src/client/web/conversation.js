@@ -170,6 +170,10 @@ export default function(io, emitter){
       let _params = { topic: COMMAND_TOPICS.CONVERSATIONS, time: 0, count, order, userId: user.id, conversationType };
       utils.extend(_params, params);
       io.sendCommand(SIGNAL_CMD.QUERY, _params, (result) => {
+        let { code, msg } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
         if(!utils.isUndefined(conversationType)){
           let list = utils.map(result.conversations, (item) => {
             let { unreadCount } = item;

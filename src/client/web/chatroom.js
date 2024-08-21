@@ -106,6 +106,7 @@ export default function(io, emitter, logger){
         topic: COMMAND_TOPICS.SET_CHATROOM_ATTRIBUTES,
         chatroom
       };
+      attrCaher.removeAttrs(chatroom);
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let { code, success, fail } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
@@ -151,6 +152,7 @@ export default function(io, emitter, logger){
         io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
           let { code, success, fail } = result;
           if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+            attrCaher.removeAttrs({ id: chatroom.id, attributes: success });
             return resolve({ success, fail });
           }
           let error = common.getError(code);
@@ -171,17 +173,7 @@ export default function(io, emitter, logger){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-      let data = {
-        topic: COMMAND_TOPICS.GET_CHATROOM_ATTRIBUTES,
-        chatroom
-      };
-      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, attributes }) => {
-        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          return resolve(attributes);
-        }
-        let error = common.getError(code);
-        reject(error)
-      });
+      
     });
   };
     /* 
@@ -195,17 +187,6 @@ export default function(io, emitter, logger){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-      let data = {
-        topic: COMMAND_TOPICS.GET_ALL_CHATROOM_ATTRIBUTES,
-        chatroom
-      };
-      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, attributes }) => {
-        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          return resolve(attributes);
-        }
-        let error = common.getError(code);
-        reject(error)
-      });
     });
   };
 

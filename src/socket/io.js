@@ -354,6 +354,12 @@ export default function IO(config){
     sendCommand,
     isConnected,
     getCurrentUser,
+    sync: (syncers) => {
+      syncers = utils.isArray(syncers) ? syncers : [syncers];
+      utils.forEach(syncers, (item) => {
+        syncer.exec(item);
+      });
+    },
     ...emitter
   });
   return io;

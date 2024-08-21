@@ -49,10 +49,10 @@ export default function Syncer(send, emitter, io) {
     }
 
     function queryChatroomAttr(item, next) {
-      let { user, msg, name } = item;
+      let { msg } = item;
       let chatroomId = msg.targetId;
       let syncTime = getChatroomAttrSyncTime(chatroomId);
-      if (syncTime >= msg.receiveTime) {
+      if (syncTime >= msg.receiveTime && msg.receiveTime > 0) {
         return next();
       }
 
@@ -76,10 +76,10 @@ export default function Syncer(send, emitter, io) {
     }
 
     function queryChatroom(item, next) {
-      let { user, msg, name } = item;
+      let {  msg } = item;
       let chatroomId = msg.targetId;
       let syncTime = getChatroomSyncTime(chatroomId);
-      if (syncTime >= msg.receiveTime) {
+      if (syncTime >= msg.receiveTime && msg.receiveTime > 0) {
         return next();
       }
 

@@ -1,4 +1,4 @@
-import { COMMAND_TOPICS, ErrorType, FUNC_PARAM_CHECKER, SIGNAL_CMD, SIGNAL_NAME, EVENT } from "../../enum";
+import { COMMAND_TOPICS, ErrorType, FUNC_PARAM_CHECKER, SIGNAL_CMD, SIGNAL_NAME, EVENT, NOTIFY_TYPE } from "../../enum";
 import utils from "../../utils";
 import Storage from "../../common/storage";
 import common from "../../common/common";
@@ -46,6 +46,11 @@ export default function(io, emitter, logger){
       };
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code }) => {
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          let syncers = [
+            { name: SIGNAL_NAME.S_NTF, msg: { receiveTime: 0, type: NOTIFY_TYPE.CHATROOM, targetId: id } },
+            { name: SIGNAL_NAME.S_NTF, msg: { receiveTime: 0, type: NOTIFY_TYPE.CHATROOM_ATTR, targetId: id } },
+          ];
+          io.sync(syncers);
           return resolve();
         }
         let error = common.getError(code);
@@ -173,7 +178,8 @@ export default function(io, emitter, logger){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-      
+      let result = attrCaher.getAttrs(chatroom);
+      resolve(result);
     });
   };
     /* 
@@ -187,6 +193,8 @@ export default function(io, emitter, logger){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      let result = attrCaher.getAll(chatroom);
+      resolve(result);
     });
   };
 

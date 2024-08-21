@@ -360,7 +360,7 @@ export default function Decoder(cache, io){
   function getChatroomMsgsHandler(index, data){
     let payload = Proto.lookup('codec.SyncChatroomMsgResp');
     let result = payload.decode(data);
-    let { msgs: { msgs } } = result;
+    let { msgs } = result;
     let messages = utils.map(msgs, (msg) => {
       return msgFormat(msg);
     });

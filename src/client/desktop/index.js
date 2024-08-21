@@ -34,7 +34,7 @@ let init = ({ appkey, io, emitter, web, client, logger }) => {
   let socket = Socket(pc.socket);
   let conversation = Conversation(pc.conversation, { webAgent: web.conversation, conversationUtils });
   let message = Message(pc.message, { webAgent: web.message });
-  let chatroom = Chatroom(web.chatroom);
+  let chatroom = Chatroom(web.chatroom, { io, emitter });
  
   // 告知 IO 模块当前是 PC 端，做特殊处理，例如：同步会话列表
   io.setConfig({

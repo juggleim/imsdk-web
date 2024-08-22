@@ -126,7 +126,7 @@ export default function(io, emitter, logger){
    /* 
     let chatroom = {
       id: 'chatroomId',
-      attributeKeys: [{ key: 'key1' }],
+      attributes: [{ key: 'key1' }],
       options: {
         notify: ''
       }

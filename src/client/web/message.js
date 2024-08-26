@@ -739,6 +739,16 @@ export default function(io, emitter, logger){
     });
   };
 
+  let setSearchContent = (message) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.SET_MESSAGE_SEARCH_CONTENT);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      return reject(ErrorType.SDK_FUNC_NOT_DEFINED);
+    });
+  };
+
   let insertMessage = (message) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, message, FUNC_PARAM_CHECKER.INSERT_MESSAGE);
@@ -766,6 +776,7 @@ export default function(io, emitter, logger){
     updateMessage,
     insertMessage,
     updateMessageAttr,
+    setSearchContent,
     getMentionMessages,
     getFileToken,
     sendFileMessage,

@@ -79,6 +79,7 @@ export let FUNC_PARAM_CHECKER = {
   GET_MENTIOIN_MESSAGES: [{ name: 'conversationType' }, { name: 'conversationId' }],
   SEARCH_MESSAGES: [{ name: 'keywords', type: 'Array' }],
   UPDATE_MESSAGE_ATTR: [{ name: 'tid' }, { name: 'attribute', type: 'String' }],
+  SET_MESSAGE_SEARCH_CONTENT: [{ name: 'tid' }, { name: 'content', type: 'String' }],
   GET_FILE_TOKEN: [{ name: 'type' }],
   
   SEND_FILE_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'content', type: 'Object' }],
@@ -397,7 +398,7 @@ export let ErrorMessages = [
   { code: 25007, msg: '文件上传失败，请重试', name: 'UPLOADING_FILE_ERROR' },
   { code: 25008, msg: '单次合并转发消息条数上限为 20 条', name: 'TRANSFER_MESSAGE_COUNT_EXCEED' },
   { code: 25009, msg: '未建立本地数据库连接，请优先调用连接方法', name: 'DATABASE_NOT_OPENED' },
-  { code: 25010, msg: '方法未实现，请确定 SDK 版本', name: 'SDK_FUNC_NOT_DEFINED' },
+  { code: 25010, msg: 'Web SDK 方法未实现，请确定使用 PC SDK 调用', name: 'SDK_FUNC_NOT_DEFINED' },
   { code: 25011, msg: '引用消息必须传入完成的 Message 对象', name: 'SEND_REFER_MESSAGE_ERROR' },
   { code: 25012, msg: 'IM 服务连接失败，请检查当前设备网络是否可用', name: 'IM_SERVER_CONNECT_ERROR' },
   { code: 25013, msg: '参数不可为空，请检查传入参数', name: 'ILLEGAL_PARAMS_EMPTY' },
@@ -478,4 +479,9 @@ export let DISCONNECT_TYPE = {
 export let UNREAD_TAG = {
   READ: 0,
   UNREAD: 1,
+};
+
+export let SET_SEARCH_CONTENT_TYPE = {
+  APPEND: 1,
+  REPLACE: 2
 };

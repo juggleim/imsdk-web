@@ -24,6 +24,7 @@ export default function($message, { webAgent }){
     'sendVideoMessage',
     'sendMergeMessage',
     'getMergeMessages',
+    'setSearchContent',
   ];
   let invokes = common.formatProvider(funcs, $message);
 

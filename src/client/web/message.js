@@ -719,6 +719,25 @@ export default function(io, emitter, logger){
     });
   };
 
+  let getFirstUnreadMessage = (conversation) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, conversation, FUNC_PARAM_CHECKER.GET_FIRST_UNREAD_MSG);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let data = {
+        ...conversation,
+        topic: COMMAND_TOPICS.GET_FIRST_UNREAD_MSG,
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, msg }) => {
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({ code });
+        }
+        resolve({ message: msg });
+      });
+    });
+  };
+
   let searchMessages = (params) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, params, FUNC_PARAM_CHECKER.SEARCH_MESSAGES);
@@ -785,6 +804,7 @@ export default function(io, emitter, logger){
     sendVideoMessage,
     sendMergeMessage,
     getMergeMessages,
+    getFirstUnreadMessage,
     searchMessages,
     _uploadFile,
   };

@@ -206,6 +206,14 @@ export default function getQueryBody({ data, callback, index }){
     buffer = codec.encode(message).finish();
   }
 
+  if(utils.isEqual(COMMAND_TOPICS.GET_FIRST_UNREAD_MSG, topic)){
+    let { conversationType, conversationId } = data;
+    targetId = conversationId;
+    let codec = Proto.lookup('codec.QryFirstUnreadMsgReq');
+    let message = codec.create({ channelType: conversationType, targetId: conversationId });
+    buffer = codec.encode(message).finish();
+  }
+
   if(utils.isEqual(COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS, topic)){
     let { time, userId } = data;
     let codec = Proto.lookup('codec.QryTopConversReq');

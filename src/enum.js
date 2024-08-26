@@ -97,6 +97,8 @@ export let FUNC_PARAM_CHECKER = {
     ] }],
   GET_MERGE_MESSAGES: [{ name: 'messageId' }],
 
+  GET_FIRST_UNREAD_MSG: [{ name: 'conversationType' }, { name: 'conversationId' }],
+
   GETCONVERSATIONS: [{ name: 'limit' }],
   GETCONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],
   
@@ -187,6 +189,8 @@ export let COMMAND_TOPICS = {
   SEND_CHATROOM: 'c_msg',
   
   GET_MERGE_MSGS: 'qry_merged_msgs',
+  
+  GET_FIRST_UNREAD_MSG: 'qry_first_unread_msg',
 
   CLEAR_UNREAD: 'clear_unread',
   REMOVE_CONVERSATION: 'del_convers',

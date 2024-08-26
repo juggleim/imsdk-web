@@ -131,6 +131,10 @@ export default function Decoder(cache, io){
       result = getChatroomSetAttrs(index, data);
     }
     
+    if(utils.isEqual(topic, COMMAND_TOPICS.GET_FIRST_UNREAD_MSG)){
+      result = getMessage(index, data);
+    }
+
     result = utils.extend(result, { code, timestamp, index });
     return result;
   }
@@ -365,6 +369,15 @@ export default function Decoder(cache, io){
       return msgFormat(msg);
     });
     return { messages, index };
+  }
+  function getMessage(index, data){
+    let payload = Proto.lookup('codec.DownMsg');
+    let _msg = payload.decode(data);
+    if(!_msg.msgId){
+      return { index, msg: {} };
+    }
+    let msg =  msgFormat(_msg);
+    return { index, msg };
   }
   function getMessagesHandler(index, data){
     let payload = Proto.lookup('codec.DownMsgSet');

@@ -497,3 +497,7 @@ message ChatAttResp{
   int64 msgTime = 13; //消息的时间戳
   int64 msgSeq = 14; //消息的序号
 }
+message QryFirstUnreadMsgReq{
+  string targetId = 1;
+  ChannelType channelType = 2;
+}

@@ -8,6 +8,7 @@ import utils from "../../utils";
 import common from "../../common/common";
 import Uploder from "../../common/uploader";
 import MessageCacher from "../../common/msg-cacher";
+import chatroomCacher from "../../common/chatroom-cacher";
 
 export default function(io, emitter, logger){
   let messageCacher = MessageCacher();
@@ -15,6 +16,12 @@ export default function(io, emitter, logger){
   io.on(SIGNAL_NAME.CMD_RECEIVED, (message, isPullFinished = true) => {
 
     logger.info({ tag: LOG_MODULE.MSG_RECEIVE, messageId: message.messageId });
+
+    let isChatroom = utils.isEqual(message.conversationType, CONVERATION_TYPE.CHATROOM);
+    if(isChatroom){
+      let _chatroomResult = chatroomCacher.get(message.conversationId);
+      return _chatroomResult.isJoined && emitter.emit(EVENT.MESSAGE_RECEIVED, [message, true]);
+    }
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       let { content: { content, messageId, sentTime } } = message;
@@ -24,11 +31,8 @@ export default function(io, emitter, logger){
       utils.extend(message, { content: newContent, messageId, sentTime });
     }
 
-    let isChatroom = utils.isEqual(message.conversationType, CONVERATION_TYPE.CHATROOM);
-    if(!isChatroom){
-      // 收到非消息一定要更新会话列表
-      io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, utils.clone(message));
-    }
+    // 收到非聊天室消息一定要更新会话列表
+    io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, utils.clone(message));
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_DELETE_MSGS)){
       let { content: { conversationId, conversationType, messages } } = message;
@@ -147,6 +151,13 @@ export default function(io, emitter, logger){
         let config = io.getConfig();
         if(!config.isPC && !utils.isEqual(conversationType, CONVERATION_TYPE.CHATROOM)){
           io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);
+        }
+        let isChatroom = utils.isEqual(message.conversationType, CONVERATION_TYPE.CHATROOM)
+        if(isChatroom){
+          let { conversationId } = message;
+          let { msgs = [] } = chatroomCacher.get(conversationId);
+          msgs.push(message.messageId);
+          chatroomCacher.set(conversationId, { msgs });
         }
         resolve(message);
       });

@@ -184,6 +184,8 @@ export let COMMAND_TOPICS = {
   GET_MENTION_MSGS: 'qry_mention_msgs',
   
   NTF: 'ntf',
+  MSG: 'msg',
+  
   SEND_GROUP: 'g_msg',
   SEND_PRIVATE: 'p_msg',
   SEND_CHATROOM: 'c_msg',
@@ -386,7 +388,7 @@ export let ErrorMessages = [
   { code: 11012, msg: '注销下线', name: 'CONNECT_USER_LOGOUT' },
   { code: 14001, msg: '未加入聊天室', name: 'CHATROOM_NOT_JOIN' },
   { code: 14002, msg: '聊天室属性个数超限制', name: 'CHATROOM_ATTR_EXCEED_LIMIT' },
-  { code: 14003, msg: '聊天室属性已存在，如需覆盖设置请设置 isForce 为 true', name: 'CHATROOM_ATTR_EXISTS' },
+  { code: 14003, msg: '不可操作其它成员设置的聊天室属性', name: 'CHATROOM_ATTR_EXISTS' },
   { code: 14005, msg: '聊天室不存在', name: 'CHATROOM_NOT_EXISTS' },
   { code: 11100, msg: '入参pb解析失败', name: 'PB_ERROR' },
 

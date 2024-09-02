@@ -1,9 +1,9 @@
 import { SIGNAL_NAME, EVENT } from "../../enum";
 import utils from "../../utils";
-import AttrCacher from "../../common/attr-cacher";
+import attrCaher from "../../common/attr-cacher";
+import chatroomCacher from "../../common/chatroom-cacher";
 
 export default function($chatroom, { io, emitter }){
-  let attrCaher = AttrCacher();
 
   io.on(SIGNAL_NAME.CMD_CHATROOM_ATTR_RECEIVED, (result) => {
     let { dels, updates } = attrCaher.heap(result);
@@ -17,9 +17,12 @@ export default function($chatroom, { io, emitter }){
   });
 
   let joinChatroom = (chatroom) =>{
+    chatroomCacher.set(chatroom.id, { isJoined: true });
     return $chatroom.joinChatroom(chatroom);
   };
   let quitChatroom = (chatroom) => {
+    chatroomCacher.remove(chatroom.id);
+    attrCaher.removeAll(chatroom.id);
     return $chatroom.quitChatroom(chatroom);
   };
 

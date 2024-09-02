@@ -2,10 +2,10 @@ import { COMMAND_TOPICS, ErrorType, FUNC_PARAM_CHECKER, SIGNAL_CMD, SIGNAL_NAME,
 import utils from "../../utils";
 import Storage from "../../common/storage";
 import common from "../../common/common";
-import AttrCacher from "../../common/attr-cacher";
+import attrCaher from "../../common/attr-cacher";
+import chatroomCacher from "../../common/chatroom-cacher";
 
 export default function(io, emitter, logger){
-  let attrCaher = AttrCacher();
 
   io.on(SIGNAL_NAME.CMD_CHATROOM_ATTR_RECEIVED, (result) => {
     let { dels, updates } = attrCaher.heap(result);
@@ -25,11 +25,6 @@ export default function(io, emitter, logger){
     
     // MEMBER_JOINED: 成员加入
     // MEMBER_QUIT: 成员退出
-    
-    // ATTRIBUTE_UPDATED: 属性变更
-    // ATTRIBUTE_REMOVED: 属性被删除
-
-    // CHATROOM_DESTROYED: 聊天室销毁
   });
 
   let joinChatroom = (chatroom) =>{
@@ -46,6 +41,7 @@ export default function(io, emitter, logger){
       };
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code }) => {
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          chatroomCacher.set(chatroom.id, { isJoined: true });
           let syncers = [
             { name: SIGNAL_NAME.S_NTF, msg: { receiveTime: 0, type: NOTIFY_TYPE.CHATROOM, targetId: id } },
             { name: SIGNAL_NAME.S_NTF, msg: { receiveTime: 0, type: NOTIFY_TYPE.CHATROOM_ATTR, targetId: id } },
@@ -71,6 +67,8 @@ export default function(io, emitter, logger){
       };
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code }) => {
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          chatroomCacher.remove(chatroom.id);
+          attrCaher.removeAll(chatroom.id);
           return resolve();
         }
         let error = common.getError(code);

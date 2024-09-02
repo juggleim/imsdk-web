@@ -67,10 +67,12 @@ export default function Decoder(cache, io){
       let { syncTime: receiveTime, type, chatroomId } = message;
       _msg = { topic, receiveTime, type, targetId: chatroomId};
       _name = SIGNAL_NAME.S_NTF;
-    }else {
+    } else if(utils.isEqual(topic, COMMAND_TOPICS.MSG)){
       let payload = Proto.lookup('codec.DownMsg');
       let message = payload.decode(data);
       _msg = msgFormat(message);
+    }else{
+      console.log('unkown topic', topic);
     }
     utils.extend(_msg, { ackIndex: index });
     return { _msg, _name };

@@ -859,7 +859,11 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
       NotifyType: {
         values: {
           Default: 0,
-          Msg: 1
+          Msg: 1,
+          ChatroomMsg: 2,
+          ChatroomAtt: 3,
+          ChatroomEvent: 4,
+          ChatroomDestroy: 5
         }
       },
       RecallMsgReq: {

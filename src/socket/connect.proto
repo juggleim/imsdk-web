@@ -284,6 +284,10 @@ message Notify{
 enum NotifyType {
     Default = 0;
     Msg = 1;
+    ChatroomMsg = 2;  // 聊天室消息通知
+    ChatroomAtt = 3;  // 聊天室属性变更通知
+    ChatroomEvent = 4;  // 聊天室事件通知，如有人加入/退出
+    ChatroomDestroy = 5; // 聊天室销毁
 }
 message RecallMsgReq{
     string targetId = 1;   //单聊是为对方userid，群聊时为groupid

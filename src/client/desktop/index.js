@@ -9,6 +9,8 @@ import MessageCacher from "../../common/msg-cacher";
 import common from "../../common/common";
 import Storage from "../../common/storage";
 import tools from "./tools";
+import chatroomCacher from "../../common/chatroom-cacher";
+
 let init = ({ appkey, io, emitter, web, client, logger }) => {
 
   let { SIGNAL_NAME } = ENUM;
@@ -28,6 +30,7 @@ let init = ({ appkey, io, emitter, web, client, logger }) => {
     common,
     MessageCacher,
     conversationUtils,
+    chatroomCacher,
     tools,
     Storage
   });

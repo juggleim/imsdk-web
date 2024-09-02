@@ -13,10 +13,14 @@ export default function () {
   let clear = () => {
     caches = {};
   };
+  let getAll = () => {
+    return caches;
+  };
   return {
     set,
     get,
     remove,
-    clear
+    clear,
+    getAll
   }
 }

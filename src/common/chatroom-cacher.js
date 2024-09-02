@@ -5,6 +5,11 @@ let chatroomCacher = ChatRoomCacher();
 export default {
   set: (id, value) => {
     let result = chatroomCacher.get(id);
+    let { msgs = [] } = value;
+    if(msgs.length >= 200){
+      msgs.shift(0);
+      value = utils.extend(value, { msgs });
+    }
     result = utils.extend(result, value);
     chatroomCacher.set(id, result);
   },

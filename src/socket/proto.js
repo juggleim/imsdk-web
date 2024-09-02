@@ -1501,6 +1501,34 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 2
           }
         }
+      },
+      ChrmEvent: {
+        fields: {
+          eventType: {
+            type: "ChrmEventType",
+            id: 1
+          },
+          chatId: {
+            type: "string",
+            id: 2
+          },
+          userId: {
+            type: "string",
+            id: 3
+          },
+          eventTime: {
+            type: "int64",
+            id: 4
+          }
+        }
+      },
+      ChrmEventType: {
+        values: {
+          Join: 0,
+          Quit: 1,
+          Kick: 2,
+          Fallout: 3
+        }
       }
     }
   }

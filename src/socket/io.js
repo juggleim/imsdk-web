@@ -221,6 +221,10 @@ export default function IO(config){
       counter.clear();
       PingTimeouts.length = 0;
     }
+    if(utils.isEqual(name, SIGNAL_NAME.S_CHATROOM_USER_NTF)){
+      let { chatroomId, time, type } = result;
+      emitter.emit(SIGNAL_NAME.CMD_CHATROOM_EVENT, { chatroomId, time, type });
+    }
     if(utils.isEqual(name, SIGNAL_NAME.S_NTF) || utils.isEqual(name, SIGNAL_NAME.CMD_RECEIVED) ){
       syncer.exec({
         msg: result,

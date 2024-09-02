@@ -71,6 +71,12 @@ export default function Decoder(cache, io){
       let payload = Proto.lookup('codec.DownMsg');
       let message = payload.decode(data);
       _msg = msgFormat(message);
+    } else if(utils.isEqual(topic, COMMAND_TOPICS.CHATROOM_USER_NTF)){
+      let payload = Proto.lookup('codec.ChrmEvent');
+      let message = payload.decode(data);
+      let { chatId, eventTime, eventType } = message;
+      _msg = { chatroomId: chatId, time: eventTime, type: eventType };
+      _name = SIGNAL_NAME.S_CHATROOM_USER_NTF;
     }else{
       console.log('unkown topic', topic);
     }

@@ -21,12 +21,13 @@ export let PONG_INDEX = 'c_pong_index';
 export let SIGNAL_NAME = {
   CMD_RECEIVED: 'cmd_inner_receive',
   CMD_CHATROOM_ATTR_RECEIVED: 'cmd_inner_chatroom_attr_receive',
+  CMD_CHATROOM_DESTROY: 'cmd_inner_chatroom_destroy',
   CMD_SYNC_CONVERSATIONS_PROGRESS: 'cmd_inner_sync_conversations_progress',
   CMD_SYNC_CONVERSATION_FINISHED: 'cmd_inner_sync_conversations_finished',
   CMD_CONVERSATION_CHANGED: 'cmd_inner_conversation_changed',
   CONN_CHANGED: 'conn_inner_changed',
 
-  CHATROOM_EVENT: 'cmd_inner_chatroom_event',
+  CMD_CHATROOM_EVENT: 'cmd_inner_chatroom_event',
 
   // 与下行信令进行匹配，在 io.js 中进行派发
   S_CONNECT_ACK: 's_connect_ack',
@@ -34,6 +35,7 @@ export let SIGNAL_NAME = {
   S_PUBLICH_ACK: 's_publish_ack',
   S_QUERY_ACK: 's_query_ack',
   S_NTF: 's_ntf',
+  S_CHATROOM_USER_NTF: 's_c_user_ntf',
   // PC 端自定义通知
   S_SYNC_CONVERSATION_NTF: 's_sync_conversation_ntf',
   S_PONG: 's_pong',
@@ -185,6 +187,7 @@ export let COMMAND_TOPICS = {
   
   NTF: 'ntf',
   MSG: 'msg',
+  CHATROOM_USER_NTF: 'c_user_ntf',
   
   SEND_GROUP: 'g_msg',
   SEND_PRIVATE: 'p_msg',
@@ -231,6 +234,8 @@ export let NOTIFY_TYPE = {
   MSG: 1,
   CHATROOM: 2,
   CHATROOM_ATTR: 3,
+  CHATROOM_EVENT: 4,
+  CHATROOM_DESTORY: 5,
 };
 export let CONNECT_TOOL = {
   START_TIME: 'connect_start_time',
@@ -301,6 +306,13 @@ export let CHATROOM_ATTR_OP_TYPE = {
   DEL: 2,
 };
 
+export let CHATROOM_EVENT_TYPE = {
+  JOIN: 0,
+  QUIT: 1,
+  KICK: 2,
+  FALLOUT: 3,
+};
+
 // 以下是对外暴露枚举
 export let EVENT = {
   STATE_CHANGED: 'state_changed',
@@ -323,7 +335,11 @@ export let EVENT = {
   CONVERSATION_REMOVED: 'conversation_removed',
 
   CHATROOM_ATTRIBUTE_UPDATED: 'chatroom_attr_updated',
-  CHATROOM_ATTRIBUTE_DELETED: 'chatroom_attr_deleted'
+  CHATROOM_ATTRIBUTE_DELETED: 'chatroom_attr_deleted',
+  CHATROOM_DESTROYED: 'chatroom_destroyed',
+
+  CHATROOM_USER_QUIT: 'chatroom_user_quit',
+  CHATROOM_USER_KICKED: 'chatroom_user_kicked'
 
 };
 export let CONNECT_STATE = {

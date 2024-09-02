@@ -1,4 +1,4 @@
-import { COMMAND_TOPICS, ErrorType, FUNC_PARAM_CHECKER, SIGNAL_CMD, SIGNAL_NAME, EVENT, NOTIFY_TYPE } from "../../enum";
+import { COMMAND_TOPICS, ErrorType, FUNC_PARAM_CHECKER, SIGNAL_CMD, SIGNAL_NAME, EVENT, NOTIFY_TYPE, CHATROOM_EVENT_TYPE } from "../../enum";
 import utils from "../../utils";
 import Storage from "../../common/storage";
 import common from "../../common/common";
@@ -27,6 +27,26 @@ export default function(io, emitter, logger){
     // MEMBER_QUIT: 成员退出
   });
 
+  io.on(SIGNAL_NAME.CMD_CHATROOM_DESTROY, (chatroom) => {
+    emitter.emit(EVENT.CHATROOM_DESTROYED, chatroom);
+  });
+
+  io.on(SIGNAL_NAME.CMD_CHATROOM_EVENT, (notify) => {
+    let { type, chatroomId } = notify;
+    if(utils.isEqual(CHATROOM_EVENT_TYPE.FALLOUT, type) || utils.isEqual(CHATROOM_EVENT_TYPE.QUIT, type)){
+      clearChatroomCache(chatroomId);
+      emitter.emit(EVENT.CHATROOM_USER_QUIT, notify);
+    }
+    if(utils.isEqual(CHATROOM_EVENT_TYPE.KICK, type)){
+      clearChatroomCache(chatroomId);
+      emitter.emit(EVENT.CHATROOM_USER_KICKED, notify);
+    }
+  });
+
+  function clearChatroomCache(chatroomId){
+    chatroomCacher.remove(chatroomId);
+    attrCaher.removeAll(chatroomId);
+  };
   let joinChatroom = (chatroom) =>{
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, chatroom, FUNC_PARAM_CHECKER.JOINCHATROOM);
@@ -67,8 +87,7 @@ export default function(io, emitter, logger){
       };
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code }) => {
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          chatroomCacher.remove(chatroom.id);
-          attrCaher.removeAll(chatroom.id);
+          clearChatroomCache(chatroom.id);
           return resolve();
         }
         let error = common.getError(code);

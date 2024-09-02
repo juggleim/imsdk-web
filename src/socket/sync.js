@@ -45,11 +45,19 @@ export default function Syncer(send, emitter, io) {
         isJoined && queryChatroom(item, next);
       } else if(utils.isEqual(msg.type, NOTIFY_TYPE.CHATROOM_ATTR)){
         isJoined && queryChatroomAttr(item, next);
-      }else {
+      } else if(utils.isEqual(msg.type, NOTIFY_TYPE.CHATROOM_DESTORY)){
+        isJoined && broadcastChatroomDestory(item, next);
+      } else {
         next();
       }
     }
 
+    function broadcastChatroomDestory(item, next){
+      let { msg } = item;
+      let chatroomId = msg.targetId;
+      emitter.emit(SIGNAL_NAME.CMD_CHATROOM_DESTROY, { id: chatroomId });
+      next();
+    }
     function queryChatroomAttr(item, next) {
       let { msg } = item;
       let chatroomId = msg.targetId;

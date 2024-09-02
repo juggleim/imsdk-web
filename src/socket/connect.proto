@@ -505,3 +505,15 @@ message QryFirstUnreadMsgReq{
   string targetId = 1;
   ChannelType channelType = 2;
 }
+message ChrmEvent{
+    ChrmEventType eventType = 1;
+    string chatId = 2;
+    string userId = 3;
+    int64 eventTime = 4;
+  }
+  enum ChrmEventType{
+    Join = 0;  //加入聊天室通知
+    Quit = 1;  // 主动退出聊天室通知
+    Kick = 2;   // 踢出聊天室通知
+    Fallout = 3;  // 自动掉出聊天室通知
+  }

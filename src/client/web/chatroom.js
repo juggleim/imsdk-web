@@ -54,6 +54,11 @@ export default function(io, emitter, logger){
         return reject(error);
       }
       let { id } = chatroom;
+      let chatroomResult = chatroomCacher.get(id);
+      if(chatroomResult.isJoined){
+        return resolve();
+      }
+
       let data = {
         topic: COMMAND_TOPICS.JOIN_CHATROOM,
         chatroom,
@@ -80,6 +85,10 @@ export default function(io, emitter, logger){
       let error = common.check(io, chatroom, FUNC_PARAM_CHECKER.QUITCHATROOM);
       if(!utils.isEmpty(error)){
         return reject(error);
+      }
+      let chatroomResult = chatroomCacher.get(chatroom.id);
+      if(!chatroomResult.isJoined){
+        return resolve();
       }
       let data = {
         topic: COMMAND_TOPICS.QUIT_CHATROOM,

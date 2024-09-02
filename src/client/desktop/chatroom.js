@@ -38,11 +38,9 @@ export default function($chatroom, { io, emitter }){
   };
 
   let joinChatroom = (chatroom) =>{
-    chatroomCacher.set(chatroom.id, { isJoined: true });
     return $chatroom.joinChatroom(chatroom);
   };
   let quitChatroom = (chatroom) => {
-    clearChatroomCache(chatroom.id);
     return $chatroom.quitChatroom(chatroom);
   };
 

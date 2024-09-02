@@ -46,16 +46,14 @@ export default function($message, { webAgent }){
         });
   
         let next = () => {
-          // if(utils.isEqual(order, MESSAGE_ORDER.BACKWARD)){
-          //   messages.reverse();
-          // }
           let _msgs = tools.formatMsgs({ messages, senders, groups });
           resolve({ isFinished, messages: _msgs });
         };
         let isCon = utils.isContinuous(list, 'messageIndex');
         let len = messages.length;
         let isFetch = isFinished && params.count > len;
-        if(isFetch || !isCon){
+        // 如果首次获取历史消息，从远端拉取历史消息
+        if(isFetch || !isCon || utils.isEqual(params.time, 0)){
           // 按类型获取历史消息，不再从远端获取，方式 index 断续
           if(!utils.isEmpty(params.names)){
             return next();

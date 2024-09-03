@@ -11,6 +11,8 @@ import common from "../common/common";
 import Syncer from "./sync";
 import Timer from "../common/timer";
 import Counter from "../common/counter";
+import { VERSION } from "./version";
+
 /* 
   fileCompressLimit: 图片缩略图压缩限制，小于设置数值将不执行压缩，单位 KB
   config = { appkey, nav, isSync, upload, uploadType, fileCompressLimit }
@@ -384,6 +386,9 @@ export default function IO(config){
     isConnected,
     isNeedConnect,
     getCurrentUser,
+    getVersion: () => {
+      return VERSION;
+    },
     sync: (syncers) => {
       syncers = utils.isArray(syncers) ? syncers : [syncers];
       utils.forEach(syncers, (item) => {

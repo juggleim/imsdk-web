@@ -11,7 +11,7 @@ export default function Logger(option = {}){
     LEVEL: 'level',
     T_L_GROUP: 'time_level'
   };
-  let { isConsole = true, appkey, sessionId, getCurrentUser } = option;
+  let { isConsole = true, appkey, sessionId, getCurrentUser, getVersion } = option;
 
   let $db = DB({
     name: `JUGGLEIM_${appkey}`,

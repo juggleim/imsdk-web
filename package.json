@@ -11,6 +11,7 @@
     "release:es:min": "rollup -c ./scripts/rollup.config.js --environment TAG:es_min",
     "publish": "npm run release:es:min && node ./scripts/prod.js && cd release && npm publish",
     "zip": "node ./scripts/zip.js",
+    "update:version": "node ./scripts/update-version.js",
     "build:pb": "npx pbjs -t json-module -w es6 -o ./src/socket/proto.js ./src/socket/connect.proto && node ./scripts/repair-pb.js"
   },
   "keywords": [

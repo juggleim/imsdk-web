@@ -17,7 +17,7 @@ let init = (config) => {
   let uploadType = common.checkUploadType(upload);
  
   let sessionId = common.getSessionId();
-  let logger = Logger({ ...log, appkey, sessionId, getCurrentUser: getCurrentUser });
+  let logger = Logger({ ...log, appkey, sessionId, getCurrentUser: getCurrentUser, getVersion: getVersion });
 
   // 移除 AppKey 前后空格
   appkey = appkey.trim();
@@ -26,6 +26,10 @@ let init = (config) => {
 
   function getCurrentUser(){
     return io.getCurrentUser();
+  }
+
+  function getVersion(){
+    return io.getVersion();
   }
 
   let web = Web.init({ io, emitter, logger });

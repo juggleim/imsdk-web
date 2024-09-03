@@ -11,7 +11,6 @@ import common from "../common/common";
 import Syncer from "./sync";
 import Timer from "../common/timer";
 import Counter from "../common/counter";
-
 /* 
   fileCompressLimit: 图片缩略图压缩限制，小于设置数值将不执行压缩，单位 KB
   config = { appkey, nav, isSync, upload, uploadType, fileCompressLimit }
@@ -164,7 +163,13 @@ export default function IO(config){
       frequency = frequency * 2;
       cache.set(CONNECT_TOOL.RECONNECT_FREQUENCY, { frequency });
 
-      connect({ token, userId, deviceId, _isReconnect: true }, callback);
+      connect({ token, userId, deviceId, _isReconnect: true }, (result) => {
+        let { error } = result;
+        if(utils.isEqual(error.code, ErrorType.COMMAND_SUCCESS.code)){
+          emitter.emit(SIGNAL_NAME.CMD_CHATROOM_REJOIN, {});
+        }
+        callback(result);
+      });
     }, msec)
   }
   let PingTimeouts = [];

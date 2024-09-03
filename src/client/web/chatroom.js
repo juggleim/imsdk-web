@@ -42,6 +42,27 @@ export default function(io, emitter, logger){
       emitter.emit(EVENT.CHATROOM_USER_KICKED, notify);
     }
   });
+  
+  // 和 desktop/chatroom.js 复用断网重复加入事件，由于不涉及对外暴露 emitter，SDK 所以内部可共享 io.emit 事件
+  io.on(SIGNAL_NAME.CMD_CHATROOM_REJOIN, () => {
+    let chatrooms = chatroomCacher.getAll();
+    let chatroomIds = [];
+    utils.forEach(chatrooms, (value, chatroomId) => {
+      chatroomIds.push(chatroomId);
+    });
+    utils.iterator(chatroomIds, (id, next, isFinished) => {
+      let chatroom = { id };
+      let _next = () => {
+        if(!isFinished){
+          next();
+        }
+      }
+      _joinChatroom(chatroom, {
+        success: _next,
+        fail: _next,
+      });
+    })
+  });
 
   function clearChatroomCache(chatroomId){
     chatroomCacher.remove(chatroomId);
@@ -58,28 +79,33 @@ export default function(io, emitter, logger){
       if(chatroomResult.isJoined){
         return resolve();
       }
-
-      let data = {
-        topic: COMMAND_TOPICS.JOIN_CHATROOM,
-        chatroom,
-        conversationId: id
-      };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code }) => {
-        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          chatroomCacher.set(chatroom.id, { isJoined: true });
-          let syncers = [
-            { name: SIGNAL_NAME.S_NTF, msg: { receiveTime: 0, type: NOTIFY_TYPE.CHATROOM, targetId: id } },
-            { name: SIGNAL_NAME.S_NTF, msg: { receiveTime: 0, type: NOTIFY_TYPE.CHATROOM_ATTR, targetId: id } },
-          ];
-          io.sync(syncers);
-          return resolve();
-        }
-        let error = common.getError(code);
-        reject(error)
+      _joinChatroom(chatroom, {
+        success: resolve,
+        fail: reject,
       });
     });
   };
-
+  function _joinChatroom(chatroom, callbacks){
+    let { id } = chatroom;
+    let data = {
+      topic: COMMAND_TOPICS.JOIN_CHATROOM,
+      chatroom,
+      conversationId: id
+    };
+    io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code }) => {
+      if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+        chatroomCacher.set(chatroom.id, { isJoined: true });
+        let syncers = [
+          { name: SIGNAL_NAME.S_NTF, msg: { receiveTime: 0, type: NOTIFY_TYPE.CHATROOM, targetId: id } },
+          { name: SIGNAL_NAME.S_NTF, msg: { receiveTime: 0, type: NOTIFY_TYPE.CHATROOM_ATTR, targetId: id } },
+        ];
+        io.sync(syncers);
+        return callbacks.success();
+      }
+      let error = common.getError(code);
+      callbacks.fail(error)
+    });
+  }
   let quitChatroom = (chatroom) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, chatroom, FUNC_PARAM_CHECKER.QUITCHATROOM);

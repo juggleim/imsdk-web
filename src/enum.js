@@ -28,6 +28,7 @@ export let SIGNAL_NAME = {
   CONN_CHANGED: 'conn_inner_changed',
 
   CMD_CHATROOM_EVENT: 'cmd_inner_chatroom_event',
+  CMD_CHATROOM_REJOIN: 'cmd_inner_chatroom_rejoin',
 
   // 与下行信令进行匹配，在 io.js 中进行派发
   S_CONNECT_ACK: 's_connect_ack',

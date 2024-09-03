@@ -90,7 +90,7 @@ export default function Logger(option = {}){
           'x-appkey': appkey,
           'x-token': token
         },
-        body: utils.toJSON({ message_id: messageId, log: utils.toJSON(result.list) })
+        body: utils.toJSON({ msg_id: messageId, log: utils.toJSON(result.list) })
       });
     });
   };

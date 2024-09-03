@@ -18,23 +18,17 @@ export default function(io, emitter, logger){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-      logger.info({ tag: LOG_MODULE.CON_CONNECT });
-      // 通过 appkye_userid 隔离本地存储 Key
-      // let config = io.getConfig();
-      // let { appkey, token } = config;
-      // let key = common.getTokenKey(appkey, token);
-      // let userId = Storage.get(key);
-    
-      // Storage.setPrefix(`${appkey}_${userId}`);
-
-      // let { syncConversationTime } = user;
-      // if(utils.isNumber(syncConversationTime)){
-      //   Storage.set(STORAGE.SYNC_CONVERSATION_TIME,  { time: syncConversationTime })
-      // }
-
+     
       let { token = '' } = user;
       token = token.trim();
       user = utils.extend(user, { token });
+
+      if(!io.isNeedConnect()){
+        return reject(ErrorType.REPREAT_CONNECTION);
+      }
+      
+      logger.info({ tag: LOG_MODULE.CON_CONNECT });
+
       io.connect(user, ({ error, user, next }) => {
         let { code, msg } = error;
         if(utils.isEqual(code, ErrorType.CONNECT_SUCCESS.code)){

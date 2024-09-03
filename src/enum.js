@@ -434,6 +434,7 @@ export let ErrorMessages = [
   { code: 25011, msg: '引用消息必须传入完成的 Message 对象', name: 'SEND_REFER_MESSAGE_ERROR' },
   { code: 25012, msg: 'IM 服务连接失败，请检查当前设备网络是否可用', name: 'IM_SERVER_CONNECT_ERROR' },
   { code: 25013, msg: '参数不可为空，请检查传入参数', name: 'ILLEGAL_PARAMS_EMPTY' },
+  { code: 25014, msg: 'SDK 内部正在连接，无需重复调用 connect 方法', name: 'REPREAT_CONNECTION' },
 
   { code: 21200, msg: '消息撤回成功', name: 'MESSAGE_RECALL_SUCCESS' },
   

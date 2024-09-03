@@ -350,6 +350,11 @@ export default function IO(config){
   let isConnected = () => {
     return utils.isEqual(connectionState, CONNECT_STATE.CONNECTED)
   };
+
+  let isNeedConnect = () => {
+    return utils.isEqual(connectionState, CONNECT_STATE.DISCONNECTED)
+  }
+
   function getCurrentUser(){
     return currentUserInfo;
   };
@@ -377,6 +382,7 @@ export default function IO(config){
     disconnect: userDisconnect,
     sendCommand,
     isConnected,
+    isNeedConnect,
     getCurrentUser,
     sync: (syncers) => {
       syncers = utils.isArray(syncers) ? syncers : [syncers];

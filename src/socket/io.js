@@ -2,7 +2,7 @@ import Emitter from "../common/emmit";
 import utils from "../utils";
 import Storage from "../common/storage";
 import Proto from "./proto";
-import { DISCONNECT_TYPE, CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX, COMMAND_TOPICS, CONVERATION_TYPE, SYNC_MESSAGE_TIME, STORAGE, PLATFORM, CONNECT_TOOL } from "../enum";
+import { DISCONNECT_TYPE, CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX, COMMAND_TOPICS, CONVERATION_TYPE, SYNC_MESSAGE_TIME, STORAGE, PLATFORM, CONNECT_TOOL, LOG_MODULE } from "../enum";
 import BufferEncoder from "./encoder/encoder";
 import BufferDecoder from "./decoder";
 import Network from "../common/network";
@@ -17,10 +17,11 @@ import Counter from "../common/counter";
 */
 export default function IO(config){
   let emitter = Emitter();
-  let { appkey, navList, serverList = [], isSync = true, reconnectCount = 100 } = config;
+  let { appkey, navList, serverList = [], isSync = true, reconnectCount = 100, logger } = config;
   if(!utils.isArray(navList)){
     navList = ['https://nav.juggleim.com'];
   }
+  
   let ws = {};
   let io = {};
   
@@ -99,6 +100,9 @@ export default function IO(config){
         let { ws: protocol } = utils.getProtocol();
         let url = `${protocol}//${domain}/im`;
         ws = new WebSocket(url);
+
+        logger.info({ tag: LOG_MODULE.WS_CONNECT });
+
         ws.onopen = function(){
           let platform = PLATFORM.WEB;
           if(common.isDesktop()){
@@ -125,7 +129,7 @@ export default function IO(config){
     if(!utils.isEmpty(serverList)){
       return smack({ servers: serverList })
     }
-    return Network.getNavis(navList, { appkey, token }, (result) => {
+    return Network.getNavis(navList, { appkey, token, logger }, (result) => {
       let { code, servers, userId } = result;
 
       if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
@@ -143,6 +147,9 @@ export default function IO(config){
   };
   
   let reconnect = ({ token, userId, deviceId }, callback) => {
+
+    logger.info({ tag: LOG_MODULE.CON_RECONNECT, userId, deviceId });
+
     let rCountObj = cache.get(CONNECT_TOOL.RECONNECT_COUNT);
     let count = rCountObj.count || 1;
     let isTimeout = count > reconnectCount;
@@ -201,7 +208,8 @@ export default function IO(config){
     let counter = Counter({ cmd });
     let buffer = encoder.encode(cmd, { callback, data, index, counter });
     ws.send(buffer);
-    
+    logger.info({ tag: LOG_MODULE.WS_SEND, cmd, ...data });
+
     if(!utils.isEqual(SIGNAL_CMD.PUBLISH_ACK, cmd)){
       // 请求发出后开始计时，一定时间内中未响应认为连接异常，断开连接，counter 定时器在收到 ack 后清除
       counter.start(({ cmd: _cmd }) => {
@@ -215,10 +223,13 @@ export default function IO(config){
     }
   };
   
-  let syncer = Syncer(sendCommand, emitter, io);
+  let syncer = Syncer(sendCommand, emitter, io, { logger });
 
   let bufferHandler = (buffer) => {
     let { cmd, result, name } = decoder.decode(buffer);
+    
+    logger.info({ tag: LOG_MODULE.WS_RECEIVE, cmd, code: result.code });
+    
     let { index } = result;
     let { callback, data, counter } = cache.get(index);
     // 清空计时器，与 counter.start 对应
@@ -312,6 +323,7 @@ export default function IO(config){
           }
           timer.resume(() => {
             sendCommand(SIGNAL_CMD.PING, {});
+            logger.info({ tag: LOG_MODULE.HB_START });
           });
           syncTimer.resume(() => {
             syncer.exec({
@@ -328,6 +340,9 @@ export default function IO(config){
     if(utils.isEqual(cmd, SIGNAL_CMD.DISCONNECT)){
       let { code, extra } = result;
       onDisconnect({ code, extra, type: DISCONNECT_TYPE.SERVER });
+    }
+    if(utils.isEqual(name, SIGNAL_NAME.S_PONG)){
+      logger.info({ tag: LOG_MODULE.HB_STOP });
     }
     cache.remove(index);
   }

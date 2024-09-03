@@ -1,6 +1,6 @@
 import utils from "../utils";
 import Storage from "../common/storage";
-import { STORAGE, ErrorType } from "../enum";
+import { STORAGE, ErrorType, LOG_MODULE } from "../enum";
 import common from "./common";
 
 let detect = (urls, callback, option = {}) => {
@@ -40,6 +40,10 @@ let detect = (urls, callback, option = {}) => {
 };
 
 let getNavis = (urls, option, callback) => {
+  let { logger } = option;
+  
+  logger.info({ tag: LOG_MODULE.NAV_START, urls });
+  
   let requests = [], isResponsed = false, errors = []; 
   let { appkey, token } = option;
 
@@ -53,6 +57,7 @@ let getNavis = (urls, option, callback) => {
   let key = common.getNaviStorageKey(appkey, userId);
   let navi = Storage.get(key);
   if(!utils.isEmpty(navi)){
+    logger.info({ tag: LOG_MODULE.NAV_REQEST, local: navi });
     return callback(navi);
   }
 
@@ -87,6 +92,7 @@ let getNavis = (urls, option, callback) => {
             key = common.getNaviStorageKey();
             Storage.set(key, nav);
 
+            logger.info({ tag: LOG_MODULE.NAV_REQEST, remote: nav });
           }
           callback(nav);
           abortAll();

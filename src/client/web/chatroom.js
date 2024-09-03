@@ -1,4 +1,4 @@
-import { COMMAND_TOPICS, ErrorType, FUNC_PARAM_CHECKER, SIGNAL_CMD, SIGNAL_NAME, EVENT, NOTIFY_TYPE, CHATROOM_EVENT_TYPE } from "../../enum";
+import { COMMAND_TOPICS, ErrorType, FUNC_PARAM_CHECKER, SIGNAL_CMD, SIGNAL_NAME, EVENT, NOTIFY_TYPE, CHATROOM_EVENT_TYPE, LOG_MODULE } from "../../enum";
 import utils from "../../utils";
 import Storage from "../../common/storage";
 import common from "../../common/common";
@@ -7,7 +7,11 @@ import chatroomCacher from "../../common/chatroom-cacher";
 
 export default function(io, emitter, logger){
 
+  // 聊天室全以 Web 通信为主，PC 端只做接口透传，所以未在 desktop/index.js init 方法中卸载 io 相关事件，直接在 Web 端复用 
   io.on(SIGNAL_NAME.CMD_CHATROOM_ATTR_RECEIVED, (result) => {
+
+    logger.info({ tag: LOG_MODULE.CHATROOM_ATTR_RECEIVE, ...result });
+
     let { dels, updates } = attrCaher.heap(result);
     let { chatroomId } = result;
     if(!utils.isEmpty(dels)){
@@ -17,22 +21,16 @@ export default function(io, emitter, logger){
     if(!utils.isEmpty(updates)){
       emitter.emit(EVENT.CHATROOM_ATTRIBUTE_UPDATED, { id: chatroomId, attributes: updates });
     }
-
-    // 事件说明：
-    // USER_REJOINED: 当前用户断网重新加入
-    // USER_JOINED: 当前用户断网重新加入
-    // USER_QUIT: 当前用户退出 
-    
-    // MEMBER_JOINED: 成员加入
-    // MEMBER_QUIT: 成员退出
   });
 
   io.on(SIGNAL_NAME.CMD_CHATROOM_DESTROY, (chatroom) => {
+    logger.info({ tag: LOG_MODULE.CHATROOM_DESTORYED, ...chatroom });
     emitter.emit(EVENT.CHATROOM_DESTROYED, chatroom);
   });
 
   io.on(SIGNAL_NAME.CMD_CHATROOM_EVENT, (notify) => {
     let { type, chatroomId } = notify;
+    logger.info({ tag: LOG_MODULE.CHATROOM_SERVER_EVENT, ...notify });
     if(utils.isEqual(CHATROOM_EVENT_TYPE.FALLOUT, type) || utils.isEqual(CHATROOM_EVENT_TYPE.QUIT, type)){
       clearChatroomCache(chatroomId);
       emitter.emit(EVENT.CHATROOM_USER_QUIT, notify);
@@ -50,6 +48,7 @@ export default function(io, emitter, logger){
     utils.forEach(chatrooms, (value, chatroomId) => {
       chatroomIds.push(chatroomId);
     });
+    logger.info({ tag: LOG_MODULE.CHATROOM_USER_REJOIN, chatroomIds });
     utils.iterator(chatroomIds, (id, next, isFinished) => {
       let chatroom = { id };
       let _next = () => {
@@ -79,6 +78,7 @@ export default function(io, emitter, logger){
       if(chatroomResult.isJoined){
         return resolve();
       }
+      logger.info({ tag: LOG_MODULE.CHATROOM_USER_JOIN, ...chatroom  });
       _joinChatroom(chatroom, {
         success: resolve,
         fail: reject,
@@ -93,6 +93,7 @@ export default function(io, emitter, logger){
       conversationId: id
     };
     io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code }) => {
+      logger.info({ tag: LOG_MODULE.CHATROOM_USER_JOIN, ...chatroom, code });
       if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
         chatroomCacher.set(chatroom.id, { isJoined: true });
         let syncers = [
@@ -116,11 +117,13 @@ export default function(io, emitter, logger){
       if(!chatroomResult.isJoined){
         return resolve();
       }
+      logger.info({ tag: LOG_MODULE.CHATROOM_USER_QUIT, ...chatroom });
       let data = {
         topic: COMMAND_TOPICS.QUIT_CHATROOM,
         chatroom
       };
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code }) => {
+        logger.info({ tag: LOG_MODULE.CHATROOM_USER_QUIT, ...chatroom, code });
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           clearChatroomCache(chatroom.id);
           return resolve();

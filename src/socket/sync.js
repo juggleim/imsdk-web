@@ -6,8 +6,9 @@ import common from "../common/common";
 import Cacher from "../common/cache";
 import chatroomCacher from "../common/chatroom-cacher";
 
-import { SIGNAL_CMD, COMMAND_TOPICS, STORAGE, NOTIFY_TYPE, SIGNAL_NAME, ErrorType } from "../enum";
-export default function Syncer(send, emitter, io) {
+import { SIGNAL_CMD, COMMAND_TOPICS, STORAGE, NOTIFY_TYPE, SIGNAL_NAME, ErrorType, LOG_MODULE } from "../enum";
+export default function Syncer(send, emitter, io, { logger }) {
+
   let consumer = Consumer();
   let exec = (data) => {
     consumer.produce(data);
@@ -36,6 +37,7 @@ export default function Syncer(send, emitter, io) {
       next();
     }
     function query(item, next) {
+      logger.info({ tag: LOG_MODULE.MSG_SYNC, ...item });
       let { msg } = item;
       let _chatroomResult = chatroomCacher.get(msg.targetId);
       let { isJoined } = _chatroomResult;
@@ -74,6 +76,7 @@ export default function Syncer(send, emitter, io) {
       };
       send(SIGNAL_CMD.QUERY, data, (result) => {
         let { code, attrs, chatroomId: _chatroomId } = result;
+        logger.info({ tag: LOG_MODULE.MSG_SYNC, data, msg, code, count: attrs.length });
         if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
           return next();
         }
@@ -90,6 +93,7 @@ export default function Syncer(send, emitter, io) {
       let chatroomId = msg.targetId;
       let syncTime = getChatroomSyncTime(chatroomId);
       if (syncTime >= msg.receiveTime && msg.receiveTime > 0) {
+        logger.info({ tag: LOG_MODULE.MSG_SYNC, syncTime, msg });
         return next();
       }
 
@@ -99,6 +103,7 @@ export default function Syncer(send, emitter, io) {
         topic: COMMAND_TOPICS.SYNC_CHATROOM_MESSAGES
       };
       send(SIGNAL_CMD.QUERY, data, ({ messages, code }) => {
+        logger.info({ tag: LOG_MODULE.MSG_SYNC, data, msg, code, count: messages.length });
         if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
           return next();
         }
@@ -125,6 +130,7 @@ export default function Syncer(send, emitter, io) {
 
       // 如果本地记录时间戳大于 ntf 中的接收时间，认为消息已被当前端接收过，不再执行拉取动作
       if (syncReceiveTime >= msg.receiveTime) {
+        logger.info({ tag: LOG_MODULE.MSG_SYNC, syncReceiveTime, msg });
         return next();
       }
       let data = {
@@ -135,6 +141,9 @@ export default function Syncer(send, emitter, io) {
         topic: COMMAND_TOPICS.SYNC_MESSAGES
       };
       send(SIGNAL_CMD.QUERY, data, ({ isFinished, messages, code }) => {
+        
+        logger.info({ tag: LOG_MODULE.MSG_SYNC, data, msg, code, count: messages.length });
+
         if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
           return next();
         }
@@ -159,6 +168,7 @@ export default function Syncer(send, emitter, io) {
       let { user, name, time, $conversation } = item;
       let syncTime = Storage.get(STORAGE.SYNC_CONVERSATION_TIME).time || 0;
       if(syncTime > time){
+        logger.info({ tag: LOG_MODULE.CONV_SYNC, syncTime, time });
         return;
       }
       let data = {
@@ -169,6 +179,9 @@ export default function Syncer(send, emitter, io) {
       };
       send(SIGNAL_CMD.QUERY, data, (qryResult) => {
         let { isFinished, conversations, code } = qryResult;
+        
+        logger.info({ tag: LOG_MODULE.CONV_SYNC, data, code, count: conversations.length });
+
         if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
           emitter.emit(SIGNAL_NAME.CMD_SYNC_CONVERSATION_FINISHED, {});
           return next();

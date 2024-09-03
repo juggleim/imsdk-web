@@ -1,11 +1,14 @@
-import { SIGNAL_NAME, EVENT, CHATROOM_EVENT_TYPE } from "../../enum";
+import { SIGNAL_NAME, EVENT, CHATROOM_EVENT_TYPE, LOG_MODULE } from "../../enum";
 import utils from "../../utils";
 import attrCaher from "../../common/attr-cacher";
 import chatroomCacher from "../../common/chatroom-cacher";
 
-export default function($chatroom, { io, emitter }){
+export default function($chatroom, { io, emitter, logger }){
 
   io.on(SIGNAL_NAME.CMD_CHATROOM_ATTR_RECEIVED, (result) => {
+    
+    logger.info({ tag: LOG_MODULE.CHATROOM_ATTR_RECEIVE, ...result });
+
     let { dels, updates } = attrCaher.heap(result);
     let { chatroomId } = result;
     if(!utils.isEmpty(dels)){

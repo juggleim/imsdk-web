@@ -16,14 +16,17 @@ let init = (config) => {
   let { upload, appkey = '', log = {} } = config;
   let uploadType = common.checkUploadType(upload);
  
-  let io = IO(config);
-
   let sessionId = common.getSessionId();
-  let logger = Logger({ ...log, appkey, sessionId, io });
+  let logger = Logger({ ...log, appkey, sessionId, getCurrentUser: getCurrentUser });
 
   // 移除 AppKey 前后空格
   appkey = appkey.trim();
   utils.extend(config, { uploadType, logger, appkey });
+  let io = IO(config);
+
+  function getCurrentUser(){
+    return io.getCurrentUser();
+  }
 
   let web = Web.init({ io, emitter, logger });
   provider = web;

@@ -11,7 +11,7 @@ export default function Logger(option = {}){
     LEVEL: 'level',
     T_L_GROUP: 'time_level'
   };
-  let { isConsole = true, appkey, sessionId, io } = option;
+  let { isConsole = true, appkey, sessionId, getCurrentUser } = option;
 
   let $db = DB({
     name: `JUGGLEIM_${appkey}`,
@@ -77,13 +77,13 @@ export default function Logger(option = {}){
         values: [starTime, endTime, false, false]
       }
     };
-    let user = io.getCurrentUser();
-    let key = common.getNaviStorageKey(appkey, user.id);
+    let key = common.getNaviStorageKey();
     let navi = Storage.get(key);
 
     $db.search(params, (result) => {
+      let user = getCurrentUser();
       let { token } = user;
-      let api = navi.logAPI || 'https://imlog.gxjipei.com';
+      let api = navi.logAPI || '';
       let url = `${api}/api/upload-log-plain`;
       utils.requestNormal(url, {
         method: 'POST',

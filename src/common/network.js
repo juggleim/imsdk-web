@@ -75,12 +75,13 @@ let getNavis = (urls, option, callback) => {
       success: function(result, $xhr){
         if(!isResponsed){
           let { responseURL } = $xhr;
+          let goodUrl = responseURL.replace(/(\/navigator\/general)/g, '');
           isResponsed = true;
           let { code, data = {} } = result;
           let { servers, user_id: userId } = data;
           
           // 默认规则：导航和 CMP 的协议必须一致
-          let nav = { servers, userId, code };
+          let nav = { servers, userId, code, url: goodUrl };
           if(!utils.isEmpty(servers)){
             // 优先设置本地 AppKey 和 Token 缓存的 UserId
             Storage.set(tokenKey, userId);

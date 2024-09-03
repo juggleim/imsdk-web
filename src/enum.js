@@ -473,6 +473,7 @@ export let MESSAGE_TYPE = {
   COMMAND_ADD_CONVER: 'jg:addconver',
   COMMAND_CLEAR_TOTALUNREAD: 'jg:cleartotalunread',
   COMMAND_MARK_UNREAD: 'jg:markunread',
+  COMMAND_LOG_REPORT: 'jg:logcmd',
   
   // CLIENT_* 约定为客户端定义适用
   CLIENT_REMOVE_MSGS: 'jgc:removemsgs',

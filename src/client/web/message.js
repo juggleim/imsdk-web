@@ -23,6 +23,11 @@ export default function(io, emitter, logger){
       return _chatroomResult.isJoined && emitter.emit(EVENT.MESSAGE_RECEIVED, [message, true]);
     }
 
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_LOG_REPORT)){
+      let { content, messageId } = message;
+      return common.reportLogs({ logger, params: { ...content, messageId } });
+    }
+
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       let { content: { content, messageId, sentTime } } = message;
       let str = utils.decodeBase64(content);

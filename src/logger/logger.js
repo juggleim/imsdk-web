@@ -66,15 +66,13 @@ export default function Logger(option = {}){
   let info = (content) => {
     log(LOG_LEVEL.INFO, content);
   };
-  let report = () => {
-    let starTime = Date.now() - 10000;
-    let endTime = Date.now();
+  let report = ({ start, end, messageId }) => {
     let params = { 
       name: TABLE_NAME, 
       index: { 
         name: INDEX.TIME,
         type: 'bound',
-        values: [starTime, endTime, false, false]
+        values: [start, end, false, false]
       }
     };
     let key = common.getNaviStorageKey();
@@ -83,8 +81,8 @@ export default function Logger(option = {}){
     $db.search(params, (result) => {
       let user = getCurrentUser();
       let { token } = user;
-      let api = navi.logAPI || '';
-      let url = `${api}/api/upload-log-plain`;
+      let api = navi.url || '';
+      let url = `${api}/navigator/upload-log-plain`;
       utils.requestNormal(url, {
         method: 'POST',
         headers: {
@@ -92,7 +90,7 @@ export default function Logger(option = {}){
           'x-appkey': appkey,
           'x-token': token
         },
-        body: utils.toJSON({ log: utils.toJSON(result.list) })
+        body: utils.toJSON({ message_id: messageId, log: utils.toJSON(result.list) })
       });
     });
   };

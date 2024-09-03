@@ -593,6 +593,11 @@ function decrypto(arrs, xors){
   });
   return new Uint8Array(list);
 }
+
+function reportLogs({ logger, params }){
+  return logger.report({ ...params });
+}
+
 export default {
   check,
   getNum,
@@ -618,4 +623,5 @@ export default {
   getClientSession,
   encrypto,
   decrypto,
+  reportLogs,
 }

@@ -48,6 +48,7 @@ export default function DB(option){
       request.onerror = function (e) {
         reject(e);
       };
+      record = utils.clone(record);
       store.add(record);
     });
   };

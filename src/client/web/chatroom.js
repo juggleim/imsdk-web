@@ -92,7 +92,7 @@ export default function(io, emitter, logger){
       chatroom,
       conversationId: id
     };
-    io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code }) => {
+    io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code }) => {
       logger.info({ tag: LOG_MODULE.CHATROOM_USER_JOIN, ...chatroom, code });
       if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
         chatroomCacher.set(chatroom.id, { isJoined: true });
@@ -122,7 +122,7 @@ export default function(io, emitter, logger){
         topic: COMMAND_TOPICS.QUIT_CHATROOM,
         chatroom
       };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code }) => {
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code }) => {
         logger.info({ tag: LOG_MODULE.CHATROOM_USER_QUIT, ...chatroom, code });
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           clearChatroomCache(chatroom.id);

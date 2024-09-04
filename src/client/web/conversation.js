@@ -197,7 +197,7 @@ export default function(io, emitter){
       }
       let user = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.REMOVE_CONVERSATION, conversations, userId: user.id };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, (result) => {
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let list = utils.isArray(conversations) ? conversations : [conversations];
         let config = io.getConfig();
         let { timestamp, code } = result;
@@ -224,7 +224,7 @@ export default function(io, emitter){
       }
       let user = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.INSERT_CONVERSATION, conversation, userId: user.id };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg, timestamp }) => {
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, msg, timestamp }) => {
         if(code){
           return reject({ code, msg })
         }
@@ -267,7 +267,7 @@ export default function(io, emitter){
       }
       let user = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.MUTE_CONVERSATION, conversations, userId: user.id };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg, timestamp }) => {
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, msg, timestamp }) => {
         if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           return reject({ code, msg })
         }
@@ -290,7 +290,7 @@ export default function(io, emitter){
       }
       let user = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.TOP_CONVERSATION, conversations, userId: user.id };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, msg, timestamp }) => {
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, msg, timestamp }) => {
         if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           return reject({ code, msg })
         }

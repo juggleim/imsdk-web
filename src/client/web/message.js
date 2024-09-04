@@ -269,7 +269,7 @@ export default function(io, emitter, logger){
       };
       utils.extend(data, params);
 
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, timestamp }) => {
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, timestamp }) => {
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });  
         }
@@ -301,7 +301,7 @@ export default function(io, emitter, logger){
         messages,
         userId: user.id
       };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ code, timestamp }) => {
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, timestamp }) => {
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });  
         }
@@ -422,7 +422,7 @@ export default function(io, emitter, logger){
         topic: COMMAND_TOPICS.UPDATE_MESSAGE,
         ...message
       };
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, (result) => {
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let sender = io.getCurrentUser();
         
         notify({

@@ -358,7 +358,7 @@ message QryMentionMsgsReq{
     int64 latestReadIndex = 6;
 }
 message QryMentionMsgsResp{
-    repeated QMentionMsg mentionMsgs = 1;
+    repeated DownMsg mentionMsgs = 1;
     bool isFinished = 2;
 }
 message QMentionMsg{

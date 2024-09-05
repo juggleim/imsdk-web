@@ -1088,7 +1088,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
         fields: {
           mentionMsgs: {
             rule: "repeated",
-            type: "QMentionMsg",
+            type: "DownMsg",
             id: 1
           },
           isFinished: {

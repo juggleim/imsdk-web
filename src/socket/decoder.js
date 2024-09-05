@@ -169,10 +169,11 @@ export default function Decoder(cache, io){
   function getMentionMessages(index, data){
     let payload = Proto.lookup('codec.QryMentionMsgsResp');
     let { mentionMsgs, isFinished } = payload.decode(data);
+
     let msgs = utils.map(mentionMsgs, (msg) => {
-      let { mentionType, senderId: senderUserId, msgId: messageId, msgTime: sentTime, msgIndex: messageIndex } = msg;
-      return { mentionType, senderUserId, messageId, sentTime, messageIndex };
+      return msgFormat(msg);
     });
+
     return {
       index, msgs, isFinished
     };
@@ -408,8 +409,11 @@ export default function Decoder(cache, io){
   }
   function msgFormat(msg){
     let { undisturbType, senderId, unreadIndex, memberCount, referMsg, readCount, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo } = msg;
-    let content = new TextDecoder().decode(msgContent);
-    content = utils.parse(content);
+    let content = '';
+    if(msgContent && msgContent.length > 0){
+      content = new TextDecoder().decode(msgContent);
+      content = utils.parse(content);
+    }
 
     // 服务端返回数据有 targetUserInfo 和 groupInfo 为 null 情况，此处补充 targetId，方便本地有缓存时获取信息
     targetUserInfo = targetUserInfo || { userId: senderId };

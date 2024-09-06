@@ -343,13 +343,14 @@ export default function getQueryBody({ data, callback, index }){
   }
 
   if(utils.isEqual(COMMAND_TOPICS.CLEAR_MESSAGE, topic)){
-    let { conversationId: targetId, conversationType: channelType, time: cleanMsgTime } = data;
+    let { conversationId, conversationType: channelType, time: cleanMsgTime } = data;
     let codec = Proto.lookup('codec.CleanHisMsgReq');
     let message = codec.create({
       channelType,
-      targetId,
+      targetId: conversationId,
       cleanMsgTime,
     });
+    targetId = conversationId;
     buffer = codec.encode(message).finish();
   }
 

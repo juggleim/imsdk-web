@@ -73,7 +73,7 @@ export default function($message, { webAgent }){
             })
             $message.insertBatchMsgs({ msgs: newMsgs });
   
-            let _msgs = tools.formatMsgs({ messages: existMsgs, senders, groups });
+            let _msgs = tools.formatMsgs({ messages: messages, senders, groups });
             let list = newMsgs.concat(_msgs);
             list = utils.quickSort(list, (a, b) => {
               return a.sentTime < b.sentTime;

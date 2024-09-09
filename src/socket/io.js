@@ -247,6 +247,7 @@ export default function IO(config){
       syncer.exec({
         msg: result,
         name: name,
+        $message: config.$message,
         user: { id: currentUserInfo.id }
       });
       // 连接成功后会开始计时 3 分钟拉取逻辑，如果收到直发或者 NTF 重新开始计算时长，连接断开后会清空计时
@@ -320,6 +321,7 @@ export default function IO(config){
             syncer.exec({
               msg: { type: NOTIFY_TYPE.MSG },
               name: SIGNAL_NAME.S_NTF,
+              $message: config.$message,
               user: { id: currentUserInfo.id }
             });
           }
@@ -331,6 +333,7 @@ export default function IO(config){
             syncer.exec({
               msg: { type: NOTIFY_TYPE.MSG },
               name: SIGNAL_NAME.S_NTF,
+              $message: config.$message,
               user: { id: currentUserInfo.id }
             });
           });
@@ -391,8 +394,9 @@ export default function IO(config){
     },
     sync: (syncers) => {
       syncers = utils.isArray(syncers) ? syncers : [syncers];
+      let config = getConfig();
       utils.forEach(syncers, (item) => {
-        syncer.exec(item);
+        syncer.exec({ ...item, $message: config.$message });
       });
     },
     ...emitter

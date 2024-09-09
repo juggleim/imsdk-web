@@ -1,4 +1,4 @@
-import { CONVERATION_TYPE, MENTION_TYPE, UNREAD_TAG  } from '../../enum';
+import { CONVERATION_TYPE, MENTION_TYPE, MESSAGE_TYPE, UNREAD_TAG  } from '../../enum';
 import utils from '../../utils';
 
 let isGroup = (type) => {
@@ -149,16 +149,47 @@ let formatConversations = ({ conversations, users, groups }) => {
 };
 let createMentions = (mentions, message, user) => {
   let { mentionInfo } = message;
+
+  let { senders = [], msgs = [] } = mentions;
+  if(utils.isEqual(message.name, MESSAGE_TYPE.RECALL_INFO)){
+    let { content: { messageId }, sender } = message;
+    let msgIndex = utils.find(msgs, (msg) => {
+      return utils.isEqual(msg.messageId, messageId)
+    });
+    if(msgIndex > -1){
+      msgs.splice(msgIndex, 1);
+    }
+
+    // 如果没有消息撤回发送人的消息，移除 senders 中的发送人信息
+    let isIncludeSender = utils.find(msgs, (msg) => { return utils.isEqual(msg.senderId, sender.id) }) > -1;
+    if(!isIncludeSender){
+      let senderIndex = utils.find(senders, (member) => {
+        return utils.isEqual(message.sender.id, member.id);
+      });
+      if(!utils.isEqual(senderIndex, -1)){
+        senders.splice(senderIndex, 1);
+      }
+    }
+
+    let count = msgs.length;
+    return {
+      isMentioned: count > 0,
+      senders,
+      msgs,
+      count: count
+    };
+  }
+
   if(utils.isEmpty(mentionInfo)){
     return mentions;
   }
+
   let { members, type } = mentionInfo;
   let index = utils.find(members, (member) => {
     return utils.isEqual(user.id, member.id);
   });
 
   if(index > -1 || utils.isEqual(type, MENTION_TYPE.ALL)){
-    let { isMentioned = true, senders = [], msgs = [] } = mentions;
     msgs.push({ senderId: message.sender.id, messageId: message.messageId, sentTime: message.sentTime });
 
     let senderIndex = utils.find(senders, (member) => {
@@ -167,15 +198,14 @@ let createMentions = (mentions, message, user) => {
     if(utils.isEqual(senderIndex, -1)){
       senders.push(message.sender);
     }
-
-    mentions = {
-      isMentioned,
-      senders,
-      msgs,
-      count: msgs.length
-    };
   }
-  return mentions;
+  let count = msgs.length;
+  return {
+    isMentioned: count > 0,
+    senders,
+    msgs,
+    count: count
+  };
 }
 
 export default {

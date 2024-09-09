@@ -13,12 +13,12 @@ export default function({ data, callback, index }){
     let codec = Proto.lookup('codec.UpMsg');
     let mention = { };
     if(mentionInfo){
-      let { members = [], type } = mentionInfo;
+      let { members = [], mentionType } = mentionInfo;
       members = utils.map(members, (member) => {
         return { userId: member.id };
       });
       utils.extend(mention, {
-        mentionType: type,
+        mentionType: mentionType,
         targetUsers: members
       }) 
     }

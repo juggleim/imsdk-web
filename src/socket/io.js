@@ -111,7 +111,7 @@ export default function IO(config){
             platform = PLATFORM.DESKTOP;
           }
           let clientSession = common.getClientSession();
-          sendCommand(SIGNAL_CMD.CONNECT, { appkey, token, deviceId, platform, clientSession });
+          sendCommand(SIGNAL_CMD.CONNECT, { appkey, token, deviceId, platform, clientSession, sdkVerion: VERSION });
         };
         ws.onclose = (e) => {
           onDisconnect({ type: DISCONNECT_TYPE.CLOSE });

@@ -8,7 +8,12 @@ import BufferDecoder from "./decoder";
 import Network from "../common/network";
 import Cache from "../common/cache";
 import common from "../common/common";
-import Syncer from "./sync";
+
+import MessageSyncer from "./syncer/message-syncer";
+import ConversationSyncer from "./syncer/conversation-syncer";
+import ChatroomSyncer from "./syncer/chatroom-syncer";
+import ChatroomAttrSyncer from "./syncer/chatroom-attr-syncer";
+
 import Timer from "../common/timer";
 import Counter from "../common/counter";
 import { VERSION } from "./version";
@@ -225,7 +230,10 @@ export default function IO(config){
     }
   };
   
-  let syncer = Syncer(sendCommand, emitter, io, { logger });
+  let messageSyncer = MessageSyncer(sendCommand, emitter, io, { logger });
+  let conversationSyncer = ConversationSyncer(sendCommand, emitter, io, { logger });
+  let chatroomSyncer = ChatroomSyncer(sendCommand, emitter, io, { logger });
+  let chatroomAttrSyncer = ChatroomAttrSyncer(sendCommand, emitter, io, { logger });
 
   let bufferHandler = (buffer) => {
     let { cmd, result, name } = decoder.decode(buffer);
@@ -243,8 +251,9 @@ export default function IO(config){
       let { chatroomId, time, type } = result;
       emitter.emit(SIGNAL_NAME.CMD_CHATROOM_EVENT, { chatroomId, time, type });
     }
-    if(utils.isEqual(name, SIGNAL_NAME.S_NTF) || utils.isEqual(name, SIGNAL_NAME.CMD_RECEIVED) ){
-      syncer.exec({
+
+    if(utils.isEqual(name, SIGNAL_NAME.CMD_RECEIVED)){
+      messageSyncer.exec({
         msg: result,
         name: name,
         $message: config.$message,
@@ -253,6 +262,27 @@ export default function IO(config){
       // 连接成功后会开始计时 3 分钟拉取逻辑，如果收到直发或者 NTF 重新开始计算时长，连接断开后会清空计时
       syncTimer.reset();
     }
+
+    if(utils.isEqual(name, SIGNAL_NAME.S_NTF)){
+      let { type } = result;
+      let _invokeItem = { msg: result, name: name, $message: config.$message, user: { id: currentUserInfo.id } }
+     
+      if (utils.isEqual(type, NOTIFY_TYPE.MSG)) {
+        messageSyncer.exec(_invokeItem);
+      }
+      
+      if (utils.isEqual(type, NOTIFY_TYPE.CHATROOM) || utils.isEqual(type, NOTIFY_TYPE.CHATROOM_DESTORY)) {
+        chatroomSyncer.exec(_invokeItem);
+      }
+
+      if(utils.isEqual(type, NOTIFY_TYPE.CHATROOM_ATTR)){
+        chatroomAttrSyncer.exec(_invokeItem);
+      } 
+
+      // 连接成功后会开始计时 3 分钟拉取逻辑，如果收到直发或者 NTF 重新开始计算时长，连接断开后会清空计时
+      syncTimer.reset();
+    }
+
     if(utils.isEqual(cmd, SIGNAL_CMD.PUBLISH_ACK)){
       utils.extend(data, result);
       let { conversationType } = data;
@@ -299,7 +329,7 @@ export default function IO(config){
           // 同步会话和同步消息顺序不能调整，保证先同步会话再同步消息，规避会话列表最后一条消息不是最新的
           if(config.isPC){
             let syncNext = () => {
-              syncer.exec({
+              conversationSyncer.exec({
                 time: Storage.get(STORAGE.SYNC_CONVERSATION_TIME).time || 0,
                 name: SIGNAL_NAME.S_SYNC_CONVERSATION_NTF,
                 user: { id: currentUserInfo.id },
@@ -318,7 +348,7 @@ export default function IO(config){
             }
           }
           if(isSync){
-            syncer.exec({
+            messageSyncer.exec({
               msg: { type: NOTIFY_TYPE.MSG },
               name: SIGNAL_NAME.S_NTF,
               $message: config.$message,
@@ -330,7 +360,7 @@ export default function IO(config){
             logger.info({ tag: LOG_MODULE.HB_START });
           });
           syncTimer.resume(() => {
-            syncer.exec({
+            messageSyncer.exec({
               msg: { type: NOTIFY_TYPE.MSG },
               name: SIGNAL_NAME.S_NTF,
               $message: config.$message,
@@ -396,7 +426,14 @@ export default function IO(config){
       syncers = utils.isArray(syncers) ? syncers : [syncers];
       let config = getConfig();
       utils.forEach(syncers, (item) => {
-        syncer.exec({ ...item, $message: config.$message });
+        let _item = { ...item, $message: config.$message };
+        let { msg: { type } } = item;
+        if (utils.isEqual(type, NOTIFY_TYPE.CHATROOM)) {
+          chatroomSyncer.exec(_item);
+        }
+        if(utils.isEqual(type, NOTIFY_TYPE.CHATROOM_ATTR)){
+          chatroomAttrSyncer.exec(_item);
+        } 
       });
     },
     ...emitter

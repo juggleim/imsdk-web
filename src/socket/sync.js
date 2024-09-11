@@ -149,40 +149,22 @@ export default function Syncer(send, emitter, io, { logger }) {
         }
 
         let msgs = [];
-        let sendBoxTime = 0;
-        let receiveBoxTime = 0;
         utils.forEach(messages, (message, index) => {
           let { flags, sentTime, isSender } = message;
           let msgFlag = common.formatter.toMsg(flags);
           if(msgFlag.isStorage){
             msgs.push(message);
           }
-          
-          if(isSender && sentTime > sendBoxTime){
-            sendBoxTime = sentTime;
-          }
-          if(!isSender && sentTime > receiveBoxTime){
-            receiveBoxTime = sentTime;
-          }
         });
-        $message.insertBatchMsgs({ msgs }, () => {
+        $message.insertBatchMsgs({ msgs }).then(() => {
           utils.forEach(messages, (message, index) => {
-            let { isSender, sentTime } = message;
-            let key =  STORAGE.SYNC_RECEIVED_MSG_TIME;
-            if(isSender){
-              key =  STORAGE.SYNC_SENT_MSG_TIME;
-            }
-            let time = Storage.get(key).time || 0;
-            let isNewMsg = sentTime > time;
-            
+            let { sentTime, isSender } = message;
+            let isNewMsg = common.updateSyncTime({ sentTime, isSender, io});
             if (isNewMsg) {
               let isFinishedAll = isFinished && utils.isEqual(messages.length - 1, index);
               emitter.emit(SIGNAL_NAME.CMD_RECEIVED, [message, isFinishedAll]);
             }
           });
-          // 更新收发消息时间戳
-          common.updateSyncTime({ sentTime: sendBoxTime, isSender: true, io});
-          common.updateSyncTime({ sentTime: receiveBoxTime, isSender: false, io});
           let isSyncing = !isFinished;
           if (isSyncing) {
             // 如果有未拉取，向队列下标最小位置插入消费对象，一次拉取执行完成后再处理它 ntf 或者 msg
@@ -198,7 +180,7 @@ export default function Syncer(send, emitter, io, { logger }) {
       let syncTime = Storage.get(STORAGE.SYNC_CONVERSATION_TIME).time || 0;
       if(syncTime > time){
         logger.info({ tag: LOG_MODULE.CONV_SYNC, syncTime, time });
-        return;
+        return next();
       }
       let data = {
         userId: user.id,

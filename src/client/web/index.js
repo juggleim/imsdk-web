@@ -11,8 +11,8 @@ let init = ({ io, emitter, logger }) => {
   io.setConfig({
     logger: logger,
     $message: {
-      insertBatchMsgs: (params, callback) => {
-        callback();
+      insertBatchMsgs: (params) => {
+        return Promise.resolve()
       }
     },
   });

@@ -71,7 +71,7 @@ export default function($message, { webAgent }){
                 existMsgs.push(eMsg);
               }
             })
-            $message.insertBatchMsgs({ msgs: newMsgs });
+            $message.insertBatchMsgs({ msgs: utils.clone(newMsgs) });
   
             let _msgs = tools.formatMsgs({ messages: messages, senders, groups });
             let list = newMsgs.concat(_msgs);

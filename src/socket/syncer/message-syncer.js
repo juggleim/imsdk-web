@@ -66,7 +66,7 @@ export default function MessageSyncer(send, emitter, io, { logger }) {
             msgs.push(message);
           }
         });
-        $message.insertBatchMsgs({ msgs }).then(() => {
+        $message.insertBatchMsgs({ msgs: utils.clone(msgs) }).then(() => {
           utils.forEach(messages, (message, index) => {
             let { sentTime, isSender } = message;
             let isNewMsg = common.updateSyncTime({ sentTime, isSender, io});

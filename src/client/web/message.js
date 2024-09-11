@@ -145,7 +145,7 @@ export default function(io, emitter, logger){
       let tid = message.tid || utils.getUUID();
       utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
       _callbacks.onbefore(message);
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messageId, sentTime, code, msg, msgIndex }) => {
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messageId, sentTime, code, msg, msgIndex, memberCount }) => {
         let sender = io.getCurrentUser() || {};
         utils.extend(message, { sender, isSender: true });
         if(code){
@@ -163,6 +163,11 @@ export default function(io, emitter, logger){
           let { msgs = [] } = chatroomCacher.get(conversationId);
           msgs.push(message.messageId);
           chatroomCacher.set(conversationId, { msgs });
+        }
+
+        let isGroup = utils.isEqual(message.conversationType, CONVERATION_TYPE.GROUP);
+        if(isGroup){
+          message = utils.extend(message, { unreadCount: memberCount, readCount: 0 });
         }
         resolve(message);
       });

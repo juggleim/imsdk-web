@@ -162,6 +162,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           msgIndex: {
             type: "int64",
             id: 5
+          },
+          memberCount: {
+            type: "int32",
+            id: 6
           }
         }
       },

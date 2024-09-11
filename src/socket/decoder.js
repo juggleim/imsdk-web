@@ -25,8 +25,8 @@ export default function Decoder(cache, io) {
       case SIGNAL_CMD.PUBLISH_ACK:
         codec = Proto.lookup('codec.PublishAckMsgBody');
         let pubAckMsgBody = codec.decode(stream);
-        let { index, msgId: messageId, timestamp: sentTime, code, msgIndex } = pubAckMsgBody;
-        result = { messageId, sentTime, index, isSender: true, code, msgIndex };
+        let { index, msgId: messageId, timestamp: sentTime, code, msgIndex, memberCount } = pubAckMsgBody;
+        result = { messageId, sentTime, index, isSender: true, code, msgIndex, memberCount };
         break;
       case SIGNAL_CMD.PUBLISH:
         let { _msg, _name } = publishHandler(stream);

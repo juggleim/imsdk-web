@@ -215,7 +215,9 @@ export default function IO(config){
     let counter = Counter({ cmd });
     let buffer = encoder.encode(cmd, { callback, data, index, counter });
     ws.send(buffer);
-    logger.info({ tag: LOG_MODULE.WS_SEND, cmd, ...data });
+    let _data = utils.clone(data);
+    delete _data.messages;
+    logger.info({ tag: LOG_MODULE.WS_SEND, cmd, ..._data });
 
     if(!utils.isEqual(SIGNAL_CMD.PUBLISH_ACK, cmd)){
       // 请求发出后开始计时，一定时间内中未响应认为连接异常，断开连接，counter 定时器在收到 ack 后清除

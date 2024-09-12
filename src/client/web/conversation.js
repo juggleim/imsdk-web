@@ -289,6 +289,8 @@ export default function(io, emitter){
         return reject(error);
       }
       let user = io.getCurrentUser();
+      conversations = utils.isArray(conversations) ? conversations : [conversations];
+
       let data = { topic: COMMAND_TOPICS.TOP_CONVERSATION, conversations, userId: user.id };
       io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, msg, timestamp }) => {
         if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){

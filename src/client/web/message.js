@@ -584,7 +584,12 @@ export default function(io, emitter, logger){
       let onbefore = callbacks.onbefore || utils.noop;
       let tid = message.tid || utils.getUUID();
       utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
-      onbefore(message);
+
+      let { size = 0 } = message.content;
+      size = size / 1024;
+      let msg = utils.clone(message);
+      msg.content = { ...message.content, size };
+      onbefore(msg);
 
       _uploadFile(option, message, {
         onprogress: callbacks.onprogress,

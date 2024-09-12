@@ -10,7 +10,6 @@ import Cache from "../common/cache";
 import common from "../common/common";
 
 import MessageSyncer from "./syncer/message-syncer";
-import ConversationSyncer from "./syncer/conversation-syncer";
 import ChatroomSyncer from "./syncer/chatroom-syncer";
 import ChatroomAttrSyncer from "./syncer/chatroom-attr-syncer";
 
@@ -233,7 +232,6 @@ export default function IO(config){
   };
   
   let messageSyncer = MessageSyncer(sendCommand, emitter, io, { logger });
-  let conversationSyncer = ConversationSyncer(sendCommand, emitter, io, { logger });
   let chatroomSyncer = ChatroomSyncer(sendCommand, emitter, io, { logger });
   let chatroomAttrSyncer = ChatroomAttrSyncer(sendCommand, emitter, io, { logger });
 
@@ -331,7 +329,7 @@ export default function IO(config){
           // 同步会话和同步消息顺序不能调整，保证先同步会话再同步消息，规避会话列表最后一条消息不是最新的
           if(config.isPC){
             let syncNext = () => {
-              conversationSyncer.exec({
+              messageSyncer.exec({
                 time: Storage.get(STORAGE.SYNC_CONVERSATION_TIME).time || 0,
                 name: SIGNAL_NAME.S_SYNC_CONVERSATION_NTF,
                 user: { id: currentUserInfo.id },

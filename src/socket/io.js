@@ -335,6 +335,7 @@ export default function IO(config){
                 user: { id: currentUserInfo.id },
                 $conversation: config.$conversation
               });
+              syncMsgs();
             };
 
             // PC 中先连接后打开数据库，优先将本地数据库中的同步时间更新至 LocalStorage 中，避免换 Token 不换用户 Id 重复同步会话
@@ -346,14 +347,8 @@ export default function IO(config){
             }else{
               syncNext();
             }
-          }
-          if(isSync){
-            messageSyncer.exec({
-              msg: { type: NOTIFY_TYPE.MSG },
-              name: SIGNAL_NAME.S_NTF,
-              $message: config.$message,
-              user: { id: currentUserInfo.id }
-            });
+          }else{
+            syncMsgs();
           }
           timer.resume(() => {
             sendCommand(SIGNAL_CMD.PING, {});
@@ -380,6 +375,17 @@ export default function IO(config){
       logger.info({ tag: LOG_MODULE.HB_STOP });
     }
     cache.remove(index);
+  }
+
+  function syncMsgs(){
+    if(isSync){
+      messageSyncer.exec({
+        msg: { type: NOTIFY_TYPE.MSG },
+        name: SIGNAL_NAME.S_NTF,
+        $message: config.$message,
+        user: { id: currentUserInfo.id }
+      });
+    }
   }
 
   let isConnected = () => {

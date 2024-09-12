@@ -512,10 +512,13 @@ export default function(io, emitter, logger){
           if(thumbnail){
             return uploadFile(auth, message);
           }
-          common.uploadThumbnail(upload, params, (error, thumbnail, args) => {
-            let { height, width } = args;
-            utils.extend(message.content, { thumbnail, height, width, type: content.file.type });
-            uploadFile(auth, message);
+
+          getFileToken({ type: fileType, ext }).then((cred) => {
+            common.uploadThumbnail(upload, { ...params, ...cred }, (error, thumbnail, args) => {
+              let { height, width } = args;
+              utils.extend(message.content, { thumbnail, height, width, type: content.file.type });
+              uploadFile(auth, message);
+            });
           });
         }
         
@@ -525,10 +528,12 @@ export default function(io, emitter, logger){
           if(snapshotUrl){
             return uploadFile(auth, message);
           }
-          common.uploadFrame(upload, params, (error, snapshotUrl, args) => {
-            let { height, width, duration } = args;
-            utils.extend(message.content, { snapshotUrl, height, width, duration});
-            uploadFile(auth, message);
+          getFileToken({ type: fileType, ext }).then((cred) => {
+            common.uploadFrame(upload, { ...params, ...cred }, (error, snapshotUrl, args) => {
+              let { height, width, duration } = args;
+              utils.extend(message.content, { snapshotUrl, height, width, duration});
+              uploadFile(auth, message);
+            });
           });
         }
 

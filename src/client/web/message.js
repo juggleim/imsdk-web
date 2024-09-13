@@ -524,14 +524,14 @@ export default function(io, emitter, logger){
         
         if(utils.isEqual(name, MESSAGE_TYPE.VIDEO)){
           // 业务层设置封面，传入优先，不再执行生成缩略图逻辑
-          let { snapshotUrl } = content;
-          if(snapshotUrl){
+          let { poster } = content;
+          if(poster){
             return uploadFile(auth, message);
           }
           getFileToken({ type: fileType, ext }).then((cred) => {
-            common.uploadFrame(upload, { ...params, ...cred }, (error, snapshotUrl, args) => {
+            common.uploadFrame(upload, { ...params, ...cred }, (error, poster, args) => {
               let { height, width, duration } = args;
-              utils.extend(message.content, { snapshotUrl, height, width, duration});
+              utils.extend(message.content, { poster, height, width, duration});
               uploadFile(auth, message);
             });
           });

@@ -8,7 +8,7 @@ export default function({ data, callback, index }){
   let buffer = [];
 
   if(utils.isInclude([COMMAND_TOPICS.SEND_GROUP, COMMAND_TOPICS.SEND_PRIVATE, COMMAND_TOPICS.SEND_CHATROOM], topic)){
-    let { name, content, mentionInfo, flag, mergeMsg, referMsg } = data;
+    let { name, content, mentionInfo, flag, mergeMsg, referMsg, push } = data;
     content  = utils.toJSON(content);
     let codec = Proto.lookup('codec.UpMsg');
     let mention = { };
@@ -43,14 +43,26 @@ export default function({ data, callback, index }){
         // targetUserInfo: referTarget
       };
     }
-    let message = codec.create({
+
+    let _msg = {
       msgType: name,
       mentionInfo: mention,
       flags: flag,
       referMsg: referMsg,
       mergedMsgs: mergeMsg,
       msgContent: new TextEncoder().encode(content)
-    });
+    };
+
+    if(push){
+      let { text, title } = push;
+      let pushData = { title, pushText: text };
+      pushData = utils.clone(pushData);
+      if(!utils.isEmpty(pushData)){
+        _msg = utils.extend(_msg, { pushData });
+      }
+    }
+
+    let message = codec.create(_msg);
     buffer = codec.encode(message).finish();
   }
 

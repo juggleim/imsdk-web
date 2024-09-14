@@ -2,7 +2,7 @@ import { FUNC_PARAM_CHECKER, ErrorType, SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME,
 import utils from "../../utils";
 import common from "../../common/common";
 import Storage from "../../common/storage";
-
+import tools from "../desktop/tools";
 export default function(io, emitter){
   /*  
   1、内存中缓存最近 200 个会话，并按 message.sentTime 倒序排序
@@ -98,11 +98,20 @@ export default function(io, emitter){
     if(utils.isEqual(message.name, MESSAGE_TYPE.RECALL)){
       let { content: { messageId } } = message;
       let conversation = conversationUtils.getPer(message);
-      let { latestMessage } = conversation || { };
+      let { latestMessage, mentions } = conversation || { };
       latestMessage = latestMessage || {}; 
-      if(!utils.isEqual(latestMessage.messageId, messageId)){
+
+      let isLastMsg = utils.isEqual(latestMessage.messageId, messageId);
+      mentions = mentions || {};
+      let _msgs = mentions.msgs || [];
+      let msgIndex = utils.find(_msgs, (msg) => {
+        return utils.isEqual(msg.messageId, messageId);
+      });
+
+      if(!isLastMsg && utils.isEqual(msgIndex, -1)){
         return;
       }
+      
       // 对外模拟 recallinfo 消息
       message = utils.extend(message, { name: MESSAGE_TYPE.RECALL_INFO });
     }
@@ -435,33 +444,9 @@ export default function(io, emitter){
     };
     let _conversation = conversationUtils.getPer(message);
     let mentions = _conversation.mentions || {};
-    if(mentionInfo){
-      let { members, type } = mentionInfo;
-      let user = io.getCurrentUser();
-      let index = utils.find(members, (member) => {
-        return utils.isEqual(user.id, member.id);
-      });
-      //TODO 撤回 @ 消息需要删除
-      if(index > -1 || utils.isEqual(type, MENTION_TYPE.ALL)){
-        let { isMentioned = true, senders = [], msgs = [] } = mentions;
-        msgs.push({ senderId: message.sender.id, messageId: message.messageId, sentTime: message.sentTime });
+    let user = io.getCurrentUser();
+    mentions = tools.createMentions(mentions, message, user);
 
-        let senderIndex = utils.find(senders, (member) => {
-          return utils.isEqual(message.sender.id, member.id);
-        });
-        if(utils.isEqual(senderIndex, -1)){
-          senders.push(message.sender);
-        }
-
-        mentions = {
-          isMentioned,
-          senders,
-          msgs,
-          count: msgs.length
-        };
-      }
-      utils.extend($conversation, { mentions });
-    }
     if(message.isSender){
       let conversation = conversationUtils.getPer(message);
       utils.extend($conversation, {
@@ -470,6 +455,7 @@ export default function(io, emitter){
         conversationExts: conversation.conversationExts,
       });
     }
+    utils.extend($conversation, { mentions });
     return $conversation;
   }
 

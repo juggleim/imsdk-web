@@ -312,7 +312,7 @@ export default function(io, emitter, logger){
         }
         let config = io.getConfig();
         if(!config.isPC){
-          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, { name: MESSAGE_TYPE.CLIENT_REMOVE_MSGS, content: { messages } });
+          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, { name: MESSAGE_TYPE.CLIENT_REMOVE_MSGS, content: { messages }, ...item });
         }
         resolve();
       });

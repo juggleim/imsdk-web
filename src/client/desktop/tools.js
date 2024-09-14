@@ -221,12 +221,12 @@ let createMentions = (mentions, message, user) => {
     return mentions;
   }
 
-  let { members, type } = mentionInfo;
+  let { members, mentionType } = mentionInfo;
   let index = utils.find(members, (member) => {
     return utils.isEqual(user.id, member.id);
   });
 
-  if(index > -1 || utils.isEqual(type, MENTION_TYPE.ALL)){
+  if(index > -1 || utils.isEqual(mentionType, MENTION_TYPE.ALL)){
     msgs.push({ senderId: message.sender.id, messageId: message.messageId, sentTime: message.sentTime });
 
     let senderIndex = utils.find(senders, (member) => {

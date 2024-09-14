@@ -180,6 +180,43 @@ let createMentions = (mentions, message, user) => {
     };
   }
 
+  if(utils.isEqual(message.name, MESSAGE_TYPE.CLIENT_REMOVE_MSGS)){
+    let { content: { messages }, sender } = message;
+    let senderIds = {};
+    utils.forEach(messages, ({ messageId }) => {
+      let msgIndex = utils.find(msgs, (msg) => {
+        let isSame = utils.isEqual(msg.messageId, messageId);
+        if(isSame){
+          senderIds[msg.senderId] = msg.senderId;
+        }
+        return isSame;
+      });
+      if(msgIndex > -1){
+        msgs.splice(msgIndex, 1);
+      }
+    })
+    
+    utils.forEach(senderIds, (senderId) => {
+      let isIncludeSender = utils.find(msgs, (msg) => { return utils.isEqual(msg.senderId, senderId) }) > -1;
+      if(!isIncludeSender){
+        let senderIndex = utils.find(senders, (member) => {
+          return utils.isEqual(senderId, member.id);
+        });
+        if(!utils.isEqual(senderIndex, -1)){
+          senders.splice(senderIndex, 1);
+        }
+      }
+    });
+
+    let count = msgs.length;
+    return {
+      isMentioned: count > 0,
+      senders,
+      msgs,
+      count: count
+    };
+  }
+
   if(utils.isEmpty(mentionInfo)){
     return mentions;
   }
@@ -208,6 +245,19 @@ let createMentions = (mentions, message, user) => {
   };
 }
 
+function isNestInclude(sources, targets, callback){
+  let isOK = false;
+  for (var i = 0; i < sources.length; i++) {
+    for (var j = 0; j < targets.length; j++) {
+      isOK = callback(sources[i], targets[j]);
+      if(isOK){
+        break;
+      }
+    }
+  }
+  return isOK;
+}
+
 export default {
   isGroup,
   formatMsg,
@@ -215,4 +265,5 @@ export default {
   formatConversations,
   formatConversation,
   createMentions,
+  isNestInclude,
 };

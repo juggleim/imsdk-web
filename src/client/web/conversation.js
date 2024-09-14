@@ -88,9 +88,28 @@ export default function(io, emitter){
         return item.tid;
       });
       let { latestMessage } = conversation;
-      // 只有会话最后一条消息被删除时触发会话列表变更
-      if(utils.isInclude(tids, latestMessage.tid)){
-        next({ conversationId: msg.conversationId, conversationType: msg.conversationType });
+      // 只有会话最后一条消息被删除时触发会话列表变更或这删除的消息 @ 消息
+
+      let mentions = conversation.mentions || {};
+      let mentionMsgs = mentions.msgs || [];
+      
+      let isIncludeMsg = tools.isNestInclude(mentionMsgs, messages, (mentionMsg, msg) => {
+        return utils.isEqual(mentionMsg.messageId, msg.tid);
+      });
+      let isLastMsg = utils.isInclude(tids, latestMessage.tid);
+
+      if(isLastMsg || isIncludeMsg){
+        let _conversation = conversationUtils.getPer(message);
+        let _mentions = _conversation.mentions || {};
+        let current = io.getCurrentUser();
+        _mentions = tools.createMentions(_mentions, message, current);
+
+        let props = { mentions: _mentions };
+        if(isLastMsg){
+          utils.extend(props, { latestMessage: {} });
+        }
+        let list = conversationUtils.modify(_conversation, props);
+        emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations: utils.clone(list) });
       }
       return;
     }

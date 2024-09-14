@@ -215,7 +215,7 @@ export let COMMAND_TOPICS = {
   GET_READ_MESSAGE_DETAIL: 'qry_read_detail',
   UPDATE_MESSAGE: 'modify_msg',
   CLEAR_MESSAGE: 'clean_hismsg',
-  REMOVE_MESSAGE: 'del_hismsg',
+  REMOVE_MESSAGE: 'del_msg',
   GET_MSG_BY_IDS: 'qry_hismsg_by_ids',
   GET_FILE_TOKEN: 'file_cred',
 

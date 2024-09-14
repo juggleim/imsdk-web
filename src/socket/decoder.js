@@ -448,10 +448,7 @@ export default function Decoder(cache, io) {
         user = common.formatUser(user);
         return user;
       });
-      mentionInfo = {
-        type: mentionType,
-        members,
-      };
+      mentionInfo = { mentionType, members };
     }
     let newRefer = {};
     if (referMsg) {

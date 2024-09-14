@@ -528,7 +528,7 @@ export default function(io, emitter, logger){
           if(poster){
             return uploadFile(auth, message);
           }
-          getFileToken({ type: fileType, ext }).then((cred) => {
+          getFileToken({ type: fileType, ext: 'png' }).then((cred) => {
             common.uploadFrame(upload, { ...params, ...cred }, (error, poster, args) => {
               let { height, width, duration } = args;
               utils.extend(message.content, { poster, height, width, duration});

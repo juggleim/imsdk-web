@@ -411,7 +411,7 @@ export default function Decoder(cache, io) {
     return { isFinished, messages, index };
   }
   function msgFormat(msg) {
-    let { undisturbType, senderId, unreadIndex, memberCount, referMsg, readCount, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo } = msg;
+    let { undisturbType, msgExtSet, senderId, unreadIndex, memberCount, referMsg, readCount, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo } = msg;
     let content = '';
     if (msgContent && msgContent.length > 0) {
       content = new TextDecoder().decode(msgContent);
@@ -470,6 +470,12 @@ export default function Decoder(cache, io) {
     let msgFlag = common.formatter.toMsg(flags);
     let user = io.getCurrentUser();
 
+    let reactions = {};
+    if(msgExtSet){
+      msgExtSet = utils.clone(msgExtSet);
+      reactions = utils.groupBy(msgExtSet, ['key']);
+    }
+
     let _message = {
       conversationType,
       conversationId,
@@ -493,6 +499,7 @@ export default function Decoder(cache, io) {
       undisturbType: undisturbType || 0,
       unreadIndex: unreadIndex || 0,
       flags,
+      reactions,
     };
 
     if (_message.isSender) {
@@ -664,6 +671,14 @@ export default function Decoder(cache, io) {
         }
       })
       content = { conversations };
+    }
+    if (utils.isEqual(MESSAGE_TYPE.COMMAND_MSG_EXSET, msgType)) {
+      let { channel_type, msg_id, target_id, exts } = content;
+      let reactions = utils.map(exts, (item) => {
+        let { is_del, timestamp, key, value } = item;
+        return { isRemove: Boolean(is_del), key, value, timestamp };
+      });
+      content = { conversationId: target_id, conversationType: channel_type, messageId: msg_id, reactions };
     }
 
     utils.extend(_message, { content })

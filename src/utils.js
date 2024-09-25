@@ -481,6 +481,24 @@ function isValidHMTime(timeStr) {
 function getRandoms(len){
   return Array(len).fill(0).map(() => Math.floor(Math.random()*10));
 }
+// input: groupBy([{a:1},{a:1}, {a:2}], ['a'])
+// output: { 1: [{a:1},{a:1}], 2: [{a:2}] }
+let groupBy = (arrs, keys) => {
+  let obj = {};
+  forEach(arrs, (item) => {
+    let names = [];
+    forEach(item, (v, k) => {
+      if(isInclude(keys, k)){
+        names.push(v);
+      }
+    });
+    let name = names.join('_');
+    let _list = obj[name] || [];
+    _list.push(item);
+    obj[name] = _list;
+  });
+  return obj;
+};
 export default {
   Prosumer,
   Observer,
@@ -530,4 +548,5 @@ export default {
   formatTime,
   isValidHMTime,
   getRandoms,
+  groupBy,
 }

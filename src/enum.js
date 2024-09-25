@@ -176,6 +176,9 @@ export let FUNC_PARAM_CHECKER = {
     }
   ],
   GET_ALL_CHATROOM_ATTRS: [{ name: 'id', type: 'String' }],
+
+  ADD_MSG_REACTION: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'reactionId', type: 'String' }],
+  REMOVE_MSG_REACTION: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'reactionId', type: 'String' }],
 };
 export let COMMAND_TOPICS = {
   HISTORY_MESSAGES: 'qry_hismsgs',
@@ -229,6 +232,9 @@ export let COMMAND_TOPICS = {
   REMOVE_CHATROOM_ATTRIBUTES: 'c_batch_del_att',
   GET_CHATROOM_ATTRIBUTES: 'fake_c_get_one',
   GET_ALL_CHATROOM_ATTRIBUTES: 'fake_c_get_all',
+  
+  ADD_MSG_REACTION: 'msg_exset',
+  REMOVE_MSG_REACTION: 'del_msg_exset',
 };
 export let NOTIFY_TYPE = {
   DEFAULT: 0,
@@ -333,6 +339,7 @@ export let EVENT = {
   MESSAGE_REMOVED: 'message_removed',
   MESSAGE_CLEAN: 'message_clean',
   MESSAGE_CLEAN_SOMEONE: 'message_clean_someone',
+  MESSAGE_REACTION_CHANGED: 'message_reaction_changed',
 
   CONVERSATION_SYNC_FINISHED: 'conversation_sync_finished',
   CONVERSATION_UNDISTURBED: 'conversation_undisturb',
@@ -474,6 +481,7 @@ export let MESSAGE_TYPE = {
   COMMAND_CLEAR_TOTALUNREAD: 'jg:cleartotalunread',
   COMMAND_MARK_UNREAD: 'jg:markunread',
   COMMAND_LOG_REPORT: 'jg:logcmd',
+  COMMAND_MSG_EXSET: 'jg:msgexset',
   
   // CLIENT_* 约定为客户端定义适用
   CLIENT_REMOVE_MSGS: 'jgc:removemsgs',

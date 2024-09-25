@@ -523,7 +523,66 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           unreadIndex: {
             type: "int64",
             id: 23
+          },
+          msgItems: {
+            rule: "repeated",
+            type: "StreamMsgItem",
+            id: 24
+          },
+          msgExtSet: {
+            rule: "repeated",
+            type: "MsgExtItem",
+            id: 25
+          },
+          msgExts: {
+            rule: "repeated",
+            type: "MsgExtItem",
+            id: 26
           }
+        }
+      },
+      StreamMsgItem: {
+        fields: {
+          event: {
+            type: "StreamEvent",
+            id: 1
+          },
+          subSeq: {
+            type: "int64",
+            id: 2
+          },
+          partialContent: {
+            type: "bytes",
+            id: 3
+          }
+        }
+      },
+      StreamDownMsg: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          ChannelType: {
+            type: "ChannelType",
+            id: 2
+          },
+          msgId: {
+            type: "string",
+            id: 3
+          },
+          msgItems: {
+            rule: "repeated",
+            type: "StreamMsgItem",
+            id: 4
+          }
+        }
+      },
+      StreamEvent: {
+        values: {
+          DefaultStreamEvent: 0,
+          StreamMessage: 1,
+          StreamComplete: 2
         }
       },
       MergedMsgs: {
@@ -1532,6 +1591,42 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           Quit: 1,
           Kick: 2,
           Fallout: 3
+        }
+      },
+      MsgExt: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 2
+          },
+          msgId: {
+            type: "string",
+            id: 3
+          },
+          ext: {
+            type: "MsgExtItem",
+            id: 4
+          }
+        }
+      },
+      MsgExtItem: {
+        fields: {
+          key: {
+            type: "string",
+            id: 1
+          },
+          value: {
+            type: "string",
+            id: 2
+          },
+          timestamp: {
+            type: "int64",
+            id: 3
+          }
         }
       }
     }

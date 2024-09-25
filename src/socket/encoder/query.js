@@ -435,6 +435,22 @@ export default function getQueryBody({ data, callback, index }){
     buffer = codec.encode(message).finish();
   }
 
+  if(utils.isInclude([COMMAND_TOPICS.ADD_MSG_REACTION, COMMAND_TOPICS.REMOVE_MSG_REACTION], topic)){
+    let { messageId, reactionId, userId, conversationId, conversationType } = data;
+    let codec = Proto.lookup('codec.MsgExt');
+    let message = codec.create({ 
+      channelType: conversationType,
+      targetId: conversationId,
+      msgId: messageId,
+      ext: {
+        key: reactionId,
+        value: userId
+      }
+    });
+    targetId = messageId;
+    buffer = codec.encode(message).finish();
+  }
+
   let codec = Proto.lookup('codec.QueryMsgBody');
   let message = codec.create({ index, topic, targetId, data: buffer });
   let _buffer = codec.encode(message).finish();

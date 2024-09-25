@@ -6,7 +6,7 @@ let isGroup = (type) => {
 }
 
 let formatMsg = ({ message, senders, groups }) => {
-  let { content = '{}', senderId, conversationType, conversationId, mentionInfo = '{}', isRead, isSender, isUpdated, referMsg = '{}', mergeMsg = '{}', attribute = '' } = message;
+  let { content = '{}', senderId, conversationType, conversationId, mentionInfo = '{}', isRead, isSender, isUpdated, referMsg = '{}', mergeMsg = '{}', reactions = '{}', attribute = '' } = message;
   content = utils.parse(content);
   mentionInfo = utils.parse(mentionInfo);
   let sender = utils.filter(senders, (user) => {
@@ -25,6 +25,7 @@ let formatMsg = ({ message, senders, groups }) => {
   message = utils.extend(message, { 
     mergeMsg: utils.parse(mergeMsg),
     referMsg: utils.parse(referMsg),
+    reactions: utils.parse(reactions),
     conversationTitle: target.name,
     conversationPortrait: target.portrait,
     conversationExts: target.exts,

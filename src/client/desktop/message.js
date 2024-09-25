@@ -25,6 +25,8 @@ export default function($message, { webAgent }){
     'sendMergeMessage',
     'getMergeMessages',
     'setSearchContent',
+    'addMessageReaction',
+    'removeMessageReaction',
     'getFirstUnreadMessage',
   ];
   let invokes = common.formatProvider(funcs, $message);

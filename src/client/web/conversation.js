@@ -13,6 +13,10 @@ export default function(io, emitter){
 
   io.on(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, (message) => {
 
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_MSG_EXSET)){
+      return;
+    }
+
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_DELETE_MSGS)){
       let { content: { messages } } = message;
       return io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, { ...message, name: MESSAGE_TYPE.CLIENT_REMOVE_MSGS });

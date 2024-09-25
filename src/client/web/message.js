@@ -77,6 +77,11 @@ export default function(io, emitter, logger){
       return emitter.emit(EVENT.MESSAGE_RECALLED, { conversationId, conversationType, content, sender });
     }
   
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_MSG_EXSET)){
+      let { content } = message;
+      return emitter.emit(EVENT.MESSAGE_REACTION_CHANGED, { ...content });
+    }
+    
     if(utils.isEqual(message.name, MESSAGE_TYPE.CLEAR_MSG)){
       let { content: {  conversationType, conversationId, cleanTime, senderId } } = message;
       if(!utils.isEmpty(senderId)){
@@ -84,6 +89,7 @@ export default function(io, emitter, logger){
       }
       return emitter.emit(EVENT.MESSAGE_CLEAN, { conversationType, conversationId, cleanTime });
     }
+
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       let { conversationType, conversationId, content, messageId } = message;
       return emitter.emit(EVENT.MESSAGE_UPDATED, { conversationType, conversationId, messageId, content });
@@ -813,6 +819,49 @@ export default function(io, emitter, logger){
       resolve(msg);
     });
   };
+
+  let addMessageReaction = (message) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.ADD_MSG_REACTION);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { id: userId } = io.getCurrentUser();
+      let data = {
+        topic: COMMAND_TOPICS.ADD_MSG_REACTION,
+        ...message,
+        userId
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, timestamp }) => {
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });  
+        }
+        resolve();
+      });
+    });
+  };
+
+  let removeMessageReaction = (message) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.REMOVE_MSG_REACTION);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { id: userId } = io.getCurrentUser();
+      let data = {
+        topic: COMMAND_TOPICS.REMOVE_MSG_REACTION,
+        ...message,
+        userId
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, timestamp }) => {
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });  
+        }
+        resolve();
+      });
+    });
+  };
+
   return {
     sendMessage,
     sendMassMessage,
@@ -837,6 +886,8 @@ export default function(io, emitter, logger){
     getMergeMessages,
     getFirstUnreadMessage,
     searchMessages,
+    addMessageReaction,
+    removeMessageReaction,
     _uploadFile,
   };
 }

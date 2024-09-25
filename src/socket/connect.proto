@@ -169,6 +169,28 @@ message DownMsg{
     int32 memberCount = 21;
     int32 readCount = 22;
     int64 unreadIndex = 23;
+    repeated StreamMsgItem msgItems = 24;
+    repeated MsgExtItem msgExtSet = 25;
+    repeated MsgExtItem msgExts = 26;
+}
+
+message StreamMsgItem{
+  StreamEvent event = 1;
+  int64 subSeq = 2;
+  bytes partialContent= 3;
+}
+
+message StreamDownMsg{
+  string targetId = 1;
+  ChannelType ChannelType = 2;
+  string msgId = 3;
+  repeated StreamMsgItem msgItems = 4;
+}
+
+enum StreamEvent{
+  DefaultStreamEvent = 0;
+  StreamMessage = 1;
+  StreamComplete = 2;
 }
 
 message MergedMsgs{
@@ -511,10 +533,21 @@ message ChrmEvent{
     string chatId = 2;
     string userId = 3;
     int64 eventTime = 4;
-  }
-  enum ChrmEventType{
+}
+enum ChrmEventType{
     Join = 0;  //加入聊天室通知
     Quit = 1;  // 主动退出聊天室通知
     Kick = 2;   // 踢出聊天室通知
     Fallout = 3;  // 自动掉出聊天室通知
-  }
+}
+message MsgExt {
+  string targetId = 1;
+  ChannelType channelType = 2;
+  string msgId = 3;
+  MsgExtItem ext = 4;
+}
+message MsgExtItem {
+  string key = 1;
+  string value = 2;
+  int64 timestamp = 3;
+}

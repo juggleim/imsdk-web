@@ -81,7 +81,7 @@ export default function(io, emitter, logger){
       let { content } = message;
       return emitter.emit(EVENT.MESSAGE_REACTION_CHANGED, { ...content });
     }
-    
+
     if(utils.isEqual(message.name, MESSAGE_TYPE.CLEAR_MSG)){
       let { content: {  conversationType, conversationId, cleanTime, senderId } } = message;
       if(!utils.isEmpty(senderId)){
@@ -826,10 +826,13 @@ export default function(io, emitter, logger){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      let { reactionId } = message;
+      reactionId = escape(reactionId)
       let { id: userId } = io.getCurrentUser();
       let data = {
         topic: COMMAND_TOPICS.ADD_MSG_REACTION,
         ...message,
+        reactionId,
         userId
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, timestamp }) => {
@@ -848,9 +851,12 @@ export default function(io, emitter, logger){
         return reject(error);
       }
       let { id: userId } = io.getCurrentUser();
+      let { reactionId } = message;
+      reactionId = escape(reactionId)
       let data = {
         topic: COMMAND_TOPICS.REMOVE_MSG_REACTION,
         ...message,
+        reactionId,
         userId
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, timestamp }) => {

@@ -472,6 +472,11 @@ export default function Decoder(cache, io) {
 
     let reactions = {};
     if(msgExtSet){
+      msgExtSet = utils.map(msgExtSet, (item) => {
+        let { key } = item;
+        item.key = unescape(key);
+        return item;
+      });
       msgExtSet = utils.clone(msgExtSet);
       reactions = utils.groupBy(msgExtSet, ['key']);
     }
@@ -676,6 +681,7 @@ export default function Decoder(cache, io) {
       let { channel_type, msg_id, target_id, exts } = content;
       let reactions = utils.map(exts, (item) => {
         let { is_del, timestamp, key, value } = item;
+        key = unescape(key);
         return { isRemove: Boolean(is_del), key, value, timestamp };
       });
       content = { conversationId: target_id, conversationType: channel_type, messageId: msg_id, reactions };

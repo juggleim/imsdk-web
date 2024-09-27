@@ -143,6 +143,10 @@ export default function Decoder(cache, io) {
       result = getMessage(index, data);
     }
 
+    if(utils.isEqual(topic, COMMAND_TOPICS.CONVERSATION_TAG_QUERY)){
+      result = getConversationTags(index, data);
+    }
+
     result = utils.extend(result, { code, timestamp, index });
     return result;
   }
@@ -372,6 +376,16 @@ export default function Decoder(cache, io) {
       return { key, value, updateTime, userId, type };
     });
     return { attrs: atts, chatroomId: targetId, index };
+  }
+  function getConversationTags(index, data) {
+    let payload = Proto.lookup('codec.UserConverTags');
+    let result = payload.decode(data);
+    let { tags } = result;
+    tags = utils.map(tags, (tag) => {
+      let { tag: id, tagName, tagType } = tag;
+      return { id, name: tagName, type: tagType };
+    });
+    return { tags, index };
   }
   function getChatroomMsgsHandler(index, data) {
     let payload = Proto.lookup('codec.SyncChatroomMsgResp');

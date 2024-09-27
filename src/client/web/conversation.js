@@ -1,4 +1,4 @@
-import { FUNC_PARAM_CHECKER, ErrorType, SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME, EVENT, MESSAGE_ORDER, CONNECT_STATE, MESSAGE_TYPE, MENTION_TYPE, UNDISTURB_TYPE, CONVERSATION_ORDER } from "../../enum";
+import { CONVERSATION_TAG, FUNC_PARAM_CHECKER, ErrorType, SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME, EVENT, MESSAGE_ORDER, CONNECT_STATE, MESSAGE_TYPE, MENTION_TYPE, UNDISTURB_TYPE, CONVERSATION_ORDER } from "../../enum";
 import utils from "../../utils";
 import common from "../../common/common";
 import Storage from "../../common/storage";
@@ -20,6 +20,23 @@ export default function(io, emitter){
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_DELETE_MSGS)){
       let { content: { messages } } = message;
       return io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, { ...message, name: MESSAGE_TYPE.CLIENT_REMOVE_MSGS });
+    }
+
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_ADD)){
+      let { content: { id, name } } = message;
+      if(utils.isEmpty(name) && conversations.length > 0){
+        return emitter.emit(EVENT.CONVERSATION_TAG_CREATED, { tags: [{ id, name }] });
+      }
+      return emitter.emit(EVENT.CONVERSATION_CHANGED, {  
+        tags: [{ id, name }]
+      });
+    }
+    
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_REMOVE)){
+      let { content: { id, name } } = message;
+      return emitter.emit(EVENT.CONVERSATION_TAG_DESTROYED, {  
+        tags: [{ id, name }]
+      });
     }
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_ADD_CONVER)){
@@ -587,6 +604,118 @@ export default function(io, emitter){
     });
   };
 
+  let createConversationTag = (tag) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, tag, FUNC_PARAM_CHECKER.CREATE_CONVERSATION_TAG);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let _tag = utils.clone(tag);
+      let { id: userId } = io.getCurrentUser();
+      let data = { topic: COMMAND_TOPICS.CONVERSATION_TAG_ADD, userId, tag: _tag };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { timestamp, code } = result;
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
+          let config = io.getConfig();
+          resolve();
+        }else{
+          reject({ code });
+        }        
+      });
+    });
+  };
+
+  let destroyConversationTag = (tag) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, tag, FUNC_PARAM_CHECKER.REMOVE_CONVERSATION_TAG);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let _tag = utils.clone(tag);
+      let { id: userId } = io.getCurrentUser();
+      let data = { topic: COMMAND_TOPICS.CONVERSATION_TAG_REMOVE, userId, tag: _tag };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { timestamp, code } = result;
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
+          let config = io.getConfig();
+          resolve();
+        }else{
+          reject({ code });
+        }        
+      });
+    });
+  };
+
+  let getConversationTags = () => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, {}, {});
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { id: userId } = io.getCurrentUser();
+      let data = { topic: COMMAND_TOPICS.CONVERSATION_TAG_QUERY, userId };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { timestamp, code, tags } = result;
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          let _tags = utils.map(tags, (tag) => {
+            let item = CONVERSATION_TAG[tag.id] || {};
+            utils.extend(tag, item);
+            return tag;
+          })
+          resolve({ tags: _tags });
+        }else{
+          reject({ code });
+        }
+      });
+    });
+  };
+  
+  let addConversationsToTag = (tag) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, tag, FUNC_PARAM_CHECKER.ADD_CONVERSATION_TO_TAG);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let _tag = utils.clone(tag);
+      let { id: userId } = io.getCurrentUser();
+      let data = { topic: COMMAND_TOPICS.CONVERSATION_TAG_ADD, userId, tag: _tag };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { timestamp, code } = result;
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
+          let config = io.getConfig();
+          resolve();
+        }else{
+          reject({ code });
+        }        
+      });
+    });
+  };
+
+  let removeConversationsFromTag = (tag) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, tag, FUNC_PARAM_CHECKER.REMOVE_CONVERSATION_FROM_TAG);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let _tag = utils.clone(tag);
+      let { id: userId } = io.getCurrentUser();
+      let data = { topic: COMMAND_TOPICS.CONVERSATION_TAG_REMOVE, userId, tag: _tag };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { timestamp, code } = result;
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
+          let config = io.getConfig();
+          resolve();
+        }else{
+          reject({ code });
+        }        
+      });
+    });
+  };
+
   return {
     getConversations,
     removeConversation,
@@ -604,5 +733,10 @@ export default function(io, emitter){
     removeDraft,
     setAllDisturb,
     getAllDisturb,
+    createConversationTag,
+    destroyConversationTag,
+    getConversationTags,
+    addConversationsToTag,
+    removeConversationsFromTag,
   };
 }

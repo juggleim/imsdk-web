@@ -1628,6 +1628,55 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 3
           }
         }
+      },
+      TagConvers: {
+        fields: {
+          tag: {
+            type: "string",
+            id: 1
+          },
+          tagName: {
+            type: "string",
+            id: 2
+          },
+          convers: {
+            rule: "repeated",
+            type: "SimpleConversation",
+            id: 11
+          }
+        }
+      },
+      UserConverTags: {
+        fields: {
+          tags: {
+            rule: "repeated",
+            type: "ConverTag",
+            id: 1
+          }
+        }
+      },
+      ConverTag: {
+        fields: {
+          tag: {
+            type: "string",
+            id: 1
+          },
+          tagName: {
+            type: "string",
+            id: 2
+          },
+          tagType: {
+            type: "ConverTagType",
+            id: 3
+          }
+        }
+      },
+      ConverTagType: {
+        values: {
+          UserTag: 0,
+          SystemTag: 1,
+          GlobalTag: 2
+        }
       }
     }
   }

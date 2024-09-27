@@ -28,6 +28,12 @@ export default function(io, emitter, logger){
       return common.reportLogs({ logger, params: { ...content, messageId } });
     }
 
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_ADD)){
+      return;
+    }
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_REMOVE)){
+      return;
+    }
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       let { content: { content, messageId, sentTime } } = message;
       let str = utils.decodeBase64(content);

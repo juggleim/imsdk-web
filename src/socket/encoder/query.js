@@ -450,6 +450,30 @@ export default function getQueryBody({ data, callback, index }){
     targetId = messageId;
     buffer = codec.encode(message).finish();
   }
+  
+  if(utils.isInclude([COMMAND_TOPICS.CONVERSATION_TAG_ADD, COMMAND_TOPICS.CONVERSATION_TAG_REMOVE], topic)){
+    let { userId, tag } = data;
+    let { name = '', id, conversations = [] } = tag;
+    let convers = utils.map(conversations, ({ conversationId, conversationType }) => {
+      return { targetId: conversationId, channelType: conversationType };
+    });
+    let codec = Proto.lookup('codec.TagConvers');
+    let message = codec.create({ 
+      tag: id,
+      tagName: name,
+      convers: convers
+    });
+    targetId = userId;
+    buffer = codec.encode(message).finish();
+  }
+
+  if(utils.isEqual(COMMAND_TOPICS.CONVERSATION_TAG_QUERY, topic)){
+    let { userId } = data;
+    let codec = Proto.lookup('codec.Nil');
+    let message = codec.create({});
+    targetId = userId;
+    buffer = codec.encode(message).finish();
+  }
 
   let codec = Proto.lookup('codec.QueryMsgBody');
   let message = codec.create({ index, topic, targetId, data: buffer });

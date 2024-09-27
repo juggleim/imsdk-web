@@ -179,6 +179,32 @@ export let FUNC_PARAM_CHECKER = {
 
   ADD_MSG_REACTION: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'reactionId', type: 'String' }],
   REMOVE_MSG_REACTION: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'reactionId', type: 'String' }],
+
+  CREATE_CONVERSATION_TAG: [{ name: 'id', type: 'String' }, { name: 'name', type: 'String' }],
+  REMOVE_CONVERSATION_TAG: [{ name: 'id', type: 'String' }, { name: 'name', type: 'String' }],
+  ADD_CONVERSATION_TO_TAG: [
+    {  name: 'id',  type: 'String'},
+    { 
+      name: 'conversations', 
+      type: 'Array',
+      children: [
+        { name: 'conversationId' },
+        { name: 'conversationType' },
+      ]
+    }
+  ],
+  REMOVE_CONVERSATION_FROM_TAG: [
+    {  name: 'id',  type: 'String'},
+    { 
+      name: 'conversations', 
+      type: 'Array',
+      children: [
+        { name: 'conversationId' },
+        { name: 'conversationType' },
+      ]
+    }
+  ],
+
 };
 export let COMMAND_TOPICS = {
   HISTORY_MESSAGES: 'qry_hismsgs',
@@ -235,6 +261,10 @@ export let COMMAND_TOPICS = {
   
   ADD_MSG_REACTION: 'msg_exset',
   REMOVE_MSG_REACTION: 'del_msg_exset',
+  
+  CONVERSATION_TAG_ADD: 'tag_add_convers',
+  CONVERSATION_TAG_REMOVE: 'tag_del_convers',
+  CONVERSATION_TAG_QUERY: 'qry_user_conver_tags',
 };
 export let NOTIFY_TYPE = {
   DEFAULT: 0,
@@ -350,6 +380,10 @@ export let EVENT = {
   CONVERSATION_CHANGED: 'conversation_changed',
   CONVERSATION_ADDED: 'conversation_added',
   CONVERSATION_REMOVED: 'conversation_removed',
+  
+  CONVERSATION_TAG_CREATED: 'conversation_tag_created',
+  CONVERSATION_TAG_DESTROYED: 'conversation_tag_destroyed',
+  CONVERSATION_TAG_CHANGED: 'conversation_tag_changed',
 
   CHATROOM_ATTRIBUTE_UPDATED: 'chatroom_attr_updated',
   CHATROOM_ATTRIBUTE_DELETED: 'chatroom_attr_deleted',
@@ -483,6 +517,9 @@ export let MESSAGE_TYPE = {
   COMMAND_LOG_REPORT: 'jg:logcmd',
   COMMAND_MSG_EXSET: 'jg:msgexset',
   
+  COMMAND_CONVERSATION_TAG_ADD: 'jg:tagaddconvers',
+  COMMAND_CONVERSATION_TAG_REMOVE: 'jg:tagdelconvers',
+  
   // CLIENT_* 约定为客户端定义适用
   CLIENT_REMOVE_MSGS: 'jgc:removemsgs',
   CLIENT_REMOVE_CONVERS: 'jgc:removeconvers',
@@ -526,4 +563,12 @@ export let UNREAD_TAG = {
 export let SET_SEARCH_CONTENT_TYPE = {
   APPEND: 1,
   REPLACE: 2
+};
+
+export let CONVERSATION_TAG = {
+  jg_all: { id: 'jg_all', type: 1, name: '消息' },
+  jg_unread: { id: 'jg_unread', type: 1, name: '未读' },
+  jg_mentionme: { id: 'jg_mentionme', type: 1, name: '@我' },
+  jg_private: { id: 'jg_private', type: 1, name: '单聊' },
+  jg_group: { id: 'jg_group', type: 1, name: '群聊' },
 };

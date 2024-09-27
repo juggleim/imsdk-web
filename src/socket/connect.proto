@@ -551,3 +551,22 @@ message MsgExtItem {
   string value = 2;
   int64 timestamp = 3;
 }
+
+message TagConvers{
+  string tag = 1;
+  string tagName = 2;
+  repeated SimpleConversation convers = 11;
+}
+message UserConverTags{
+  repeated ConverTag tags = 1;
+}
+message ConverTag{
+  string tag = 1;
+  string tagName = 2;
+  ConverTagType tagType = 3;
+}
+enum ConverTagType{
+  UserTag = 0;
+  SystemTag = 1;
+  GlobalTag = 2;
+}

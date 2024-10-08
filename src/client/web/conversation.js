@@ -680,6 +680,10 @@ export default function(io, emitter){
       }
       let _tag = utils.clone(tag);
       let { id: userId } = io.getCurrentUser();
+      let conversations = utils.map(_tag.conversations, (conversation) => {
+        return { conversationId: conversation.conversationId, conversationType: conversation.conversationType };
+      });
+      _tag = utils.extend(_tag, { conversations });
       let data = { topic: COMMAND_TOPICS.CONVERSATION_TAG_ADD, userId, tag: _tag };
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let { timestamp, code } = result;
@@ -701,6 +705,11 @@ export default function(io, emitter){
         return reject(error);
       }
       let _tag = utils.clone(tag);
+      let conversations = utils.map(_tag.conversations, (conversation) => {
+        return { conversationId: conversation.conversationId, conversationType: conversation.conversationType };
+      });
+      _tag = utils.extend(_tag, { conversations });
+      
       let { id: userId } = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.CONVERSATION_TAG_REMOVE, userId, tag: _tag };
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {

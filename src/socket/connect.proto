@@ -235,7 +235,10 @@ message QryConversationsReq{
     int64 startTime = 1;
     int32 count = 2;
     int32 order = 3;
-    ChannelType channelType = 4;
+
+    string targetId = 5;
+    ChannelType channelType = 6;
+    string tag = 7;
 }
 
 message QryConversationsResp{
@@ -269,6 +272,7 @@ message Conversation{
     int32 isDelete = 15;
     int64 latestUnreadIndex = 16;
     int32 unreadTag = 17;
+    string tag = 18;
 }
 
 message Mentions{
@@ -364,6 +368,7 @@ message QryTotalUnreadCountReq{
 message ConverFilter{
   repeated ChannelType channelTypes = 1;
   repeated SimpleConversation ignoreConvers = 2;
+  string tag = 4;
 }
 message SimpleConversation {
   string targetId = 1;

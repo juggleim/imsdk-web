@@ -402,7 +402,7 @@ export default function(io, emitter){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-      let { conversationTypes = [], ignoreConversations } = params;
+      let { conversationTypes = [], ignoreConversations, tag } = params;
       conversationTypes = utils.isArray(conversationTypes) ? conversationTypes : [conversationTypes];
       if(!utils.isEmpty(ignoreConversations)){
         let error = common.check(io, params, FUNC_PARAM_CHECKER.GET_TOTAL_UNREADCOUNT);
@@ -411,7 +411,7 @@ export default function(io, emitter){
         }
       }
       let { id: userId } = io.getCurrentUser();
-      let data = { topic: COMMAND_TOPICS.GET_UNREAD_TOTLAL_CONVERSATION, userId, conversationTypes, ignoreConversations };
+      let data = { topic: COMMAND_TOPICS.GET_UNREAD_TOTLAL_CONVERSATION, userId, conversationTypes, ignoreConversations, tag };
       io.sendCommand(SIGNAL_CMD.QUERY, data, ({ count }) => {
         resolve({ count });
       });
@@ -634,7 +634,7 @@ export default function(io, emitter){
       }
       let _tag = utils.clone(tag);
       let { id: userId } = io.getCurrentUser();
-      let data = { topic: COMMAND_TOPICS.CONVERSATION_TAG_REMOVE, userId, tag: _tag };
+      let data = { topic: COMMAND_TOPICS.TAG_REMOVE, userId, tag: _tag };
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let { timestamp, code } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){

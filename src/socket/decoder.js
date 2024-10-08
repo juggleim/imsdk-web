@@ -266,6 +266,7 @@ export default function Decoder(cache, io) {
         latestUnreadIndex,
         isTop,
         unreadTag,
+        tag,
       } = conversation;
       if (!msg) {
         msg = { msgContent: [] };
@@ -345,6 +346,7 @@ export default function Decoder(cache, io) {
         latestReadIndex,
         latestUnreadIndex,
         unreadTag,
+        tag: tag || '',
         isTop: !!isTop,
       };
     });

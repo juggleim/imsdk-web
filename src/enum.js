@@ -181,7 +181,7 @@ export let FUNC_PARAM_CHECKER = {
   REMOVE_MSG_REACTION: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'reactionId', type: 'String' }],
 
   CREATE_CONVERSATION_TAG: [{ name: 'id', type: 'String' }, { name: 'name', type: 'String' }],
-  REMOVE_CONVERSATION_TAG: [{ name: 'id', type: 'String' }, { name: 'name', type: 'String' }],
+  REMOVE_CONVERSATION_TAG: [{ name: 'id', type: 'String' }],
   ADD_CONVERSATION_TO_TAG: [
     {  name: 'id',  type: 'String'},
     { 
@@ -264,6 +264,7 @@ export let COMMAND_TOPICS = {
   
   CONVERSATION_TAG_ADD: 'tag_add_convers',
   CONVERSATION_TAG_REMOVE: 'tag_del_convers',
+  TAG_REMOVE: 'del_user_conver_tags',
   CONVERSATION_TAG_QUERY: 'qry_user_conver_tags',
 };
 export let NOTIFY_TYPE = {

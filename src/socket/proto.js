@@ -706,9 +706,17 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "int32",
             id: 3
           },
+          targetId: {
+            type: "string",
+            id: 5
+          },
           channelType: {
             type: "ChannelType",
-            id: 4
+            id: 6
+          },
+          tag: {
+            type: "string",
+            id: 7
           }
         }
       },
@@ -821,6 +829,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           unreadTag: {
             type: "int32",
             id: 17
+          },
+          tag: {
+            type: "string",
+            id: 18
           }
         }
       },

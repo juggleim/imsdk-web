@@ -21,7 +21,7 @@ export default function getQueryBody({ data, callback, index }){
   }
 
   if(utils.isEqual(topic, COMMAND_TOPICS.CONVERSATIONS)){
-    let { count, time, order, conversationType } = data;
+    let { count, time, order, conversationType, tag } = data;
     targetId = userId;
     let codec = Proto.lookup('codec.QryConversationsReq');
     let content = {
@@ -31,6 +31,9 @@ export default function getQueryBody({ data, callback, index }){
     };
     if(!utils.isUndefined(conversationType)){
       utils.extend(content, { channelType: conversationType });
+    }
+    if(tag){
+      utils.extend(content, { tag });
     }
     let message = codec.create(content);
     buffer = codec.encode(message).finish();
@@ -105,7 +108,7 @@ export default function getQueryBody({ data, callback, index }){
   if(utils.isEqual(COMMAND_TOPICS.GET_UNREAD_TOTLAL_CONVERSATION, topic)){
     targetId = userId;
     let codec = Proto.lookup('codec.QryTotalUnreadCountReq');
-    let { conversationTypes = [], ignoreConversations = [] } = data;
+    let { conversationTypes = [], ignoreConversations = [], tag } = data;
     let ingores = [];
     utils.forEach(ignoreConversations, ({ conversationId, conversationType }) => {
       ingores.push({ 
@@ -117,6 +120,9 @@ export default function getQueryBody({ data, callback, index }){
       channelTypes: conversationTypes,
       ignoreConvers: ingores
     };
+    if(tag){
+      utils.extend(filter, { tag });
+    }
     let message = codec.create({ 
       filter: filter
     });
@@ -462,6 +468,20 @@ export default function getQueryBody({ data, callback, index }){
       tag: id,
       tagName: name,
       convers: convers
+    });
+    targetId = userId;
+    buffer = codec.encode(message).finish();
+  }
+
+  if(utils.isEqual(COMMAND_TOPICS.TAG_REMOVE, topic)){
+    let { userId, tag } = data;
+    let tags = utils.isArray(tag) ? tag : [tag];
+    tags = utils.map(tags, (tag) => {
+      return { tag: tag.id };
+    });
+    let codec = Proto.lookup('codec.UserConverTags');
+    let message = codec.create({
+      tags: tags
     });
     targetId = userId;
     buffer = codec.encode(message).finish();

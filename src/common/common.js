@@ -236,7 +236,8 @@ function ConversationUtils(){
       });
       let conversation = item;
       let { latestMessage, updatedTime, conversationExts, mentions, undisturbType } = item;
-
+      
+      let tags = latestMessage.tags;
       let messageName = latestMessage.name;
       let msgFlag = formatter.toMsg(latestMessage.flags) || {};
 
@@ -291,7 +292,11 @@ function ConversationUtils(){
       let key = getDraftKey(conversation);
       let draft = Storage.get(key);
       draft = utils.isEmpty(draft) ? '' : draft;
-      utils.extend(conversation, { draft })
+      utils.extend(conversation, { draft });
+
+      if(!utils.isEmpty(tags)){
+        utils.extend(conversation, { tags });
+      }
 
       let sortTime = latestMessage.sentTime || conversation.sortTime;
       // 如果是自己发发送的群发消息不更新会话列表, 自己本地发送的消息通过 isMass 区分，接收或同步消息通过消息位计算

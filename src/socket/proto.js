@@ -538,6 +538,11 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             rule: "repeated",
             type: "MsgExtItem",
             id: 26
+          },
+          converTags: {
+            rule: "repeated",
+            type: "ConverTag",
+            id: 27
           }
         }
       },
@@ -830,9 +835,18 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "int32",
             id: 17
           },
-          tag: {
+          latestReadMsgId: {
             type: "string",
             id: 18
+          },
+          latestReadMsgTime: {
+            type: "int64",
+            id: 19
+          },
+          converTags: {
+            rule: "repeated",
+            type: "ConverTag",
+            id: 20
           }
         }
       },
@@ -1108,6 +1122,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             rule: "repeated",
             type: "SimpleConversation",
             id: 2
+          },
+          tag: {
+            type: "string",
+            id: 4
           }
         }
       },

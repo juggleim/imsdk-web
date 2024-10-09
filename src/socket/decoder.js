@@ -266,7 +266,7 @@ export default function Decoder(cache, io) {
         latestUnreadIndex,
         isTop,
         unreadTag,
-        tag,
+        converTags,
       } = conversation;
       if (!msg) {
         msg = { msgContent: [] };
@@ -330,6 +330,12 @@ export default function Decoder(cache, io) {
       if (utils.isEqual(COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS, topic)) {
         _sortTime = topUpdatedTime;
       }
+
+      converTags = converTags || [];
+      let tags = utils.map(converTags, (item) => {
+        let { tag: id, tagName: name, tagType: type } = item;
+        return { id, name, type };
+      });
       return {
         conversationType,
         conversationId: targetId,
@@ -346,7 +352,7 @@ export default function Decoder(cache, io) {
         latestReadIndex,
         latestUnreadIndex,
         unreadTag,
-        tag: tag || '',
+        tags,
         isTop: !!isTop,
       };
     });
@@ -427,7 +433,7 @@ export default function Decoder(cache, io) {
     return { isFinished, messages, index };
   }
   function msgFormat(msg) {
-    let { undisturbType, msgExtSet, senderId, unreadIndex, memberCount, referMsg, readCount, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo } = msg;
+    let { converTags, undisturbType, msgExtSet, senderId, unreadIndex, memberCount, referMsg, readCount, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo } = msg;
     let content = '';
     if (msgContent && msgContent.length > 0) {
       content = new TextDecoder().decode(msgContent);
@@ -496,7 +502,11 @@ export default function Decoder(cache, io) {
       msgExtSet = utils.clone(msgExtSet);
       reactions = utils.groupBy(msgExtSet, ['key']);
     }
-
+    converTags = converTags || [];
+    let tags = utils.map(converTags, (item) => {
+      let { tag: id, tagName: name, tagType: type } = item;
+      return { id, name, type };
+    });
     let _message = {
       conversationType,
       conversationId,
@@ -521,6 +531,7 @@ export default function Decoder(cache, io) {
       unreadIndex: unreadIndex || 0,
       flags,
       reactions,
+      tags,
     };
 
     if (_message.isSender) {

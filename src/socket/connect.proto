@@ -172,6 +172,7 @@ message DownMsg{
     repeated StreamMsgItem msgItems = 24;
     repeated MsgExtItem msgExtSet = 25;
     repeated MsgExtItem msgExts = 26;
+    repeated ConverTag converTags = 27;
 }
 
 message StreamMsgItem{
@@ -272,7 +273,9 @@ message Conversation{
     int32 isDelete = 15;
     int64 latestUnreadIndex = 16;
     int32 unreadTag = 17;
-    string tag = 18;
+    string latestReadMsgId = 18;
+    int64 latestReadMsgTime = 19;
+    repeated ConverTag converTags = 20;
 }
 
 message Mentions{

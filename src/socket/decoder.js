@@ -692,6 +692,37 @@ export default function Decoder(cache, io) {
       };
     }
 
+    if (utils.isEqual(MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_ADD, msgType)) {
+      let { tag, tag_name, convers } = content;
+      convers = convers || [];
+      convers = utils.map(convers, (item) => {
+        return { conversationId: item.target_id, conversationType: item.channel_type };
+      });
+      content = {
+        id: tag,
+        name: tag_name,
+        conversations: convers
+      };
+    }
+
+    if (utils.isEqual(MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_REMOVE, msgType)) {
+      let { tags } = content;
+      tags = utils.map(tags, (tag) => {
+        return { id: tag.tag };
+      });
+      content = {
+        tags
+      };
+    }
+
+    if (utils.isEqual(MESSAGE_TYPE.COMMAND_REMOVE_CONVERS_FROM_TAG, msgType)) {
+      let { tag: id, convers } = content;
+      convers = utils.map(convers, (item) => {
+        return { conversationId: item.target_id, conversationType: item.channel_type };
+      });
+      content = { id, conversations: convers };
+    }
+
     if (utils.isEqual(MESSAGE_TYPE.COMMAND_MARK_UNREAD, msgType)) {
       let list = content.conversations;
       let conversations = utils.map(list, (item) => {

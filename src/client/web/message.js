@@ -28,12 +28,6 @@ export default function(io, emitter, logger){
       return common.reportLogs({ logger, params: { ...content, messageId } });
     }
 
-    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_ADD)){
-      return;
-    }
-    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_REMOVE)){
-      return;
-    }
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       let { content: { content, messageId, sentTime } } = message;
       let str = utils.decodeBase64(content);
@@ -45,6 +39,18 @@ export default function(io, emitter, logger){
     // 收到非聊天室消息一定要更新会话列表
     io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, utils.clone(message));
 
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_ADD)){
+      return;
+    }
+    
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_REMOVE)){
+      return;
+    }
+
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_REMOVE_CONVERS_FROM_TAG)){
+      return;
+    }
+    
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_DELETE_MSGS)){
       let { content: { conversationId, conversationType, messages } } = message;
       return emitter.emit(EVENT.MESSAGE_REMOVED, { conversationId, conversationType, messages });

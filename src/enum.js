@@ -390,10 +390,6 @@ export let EVENT = {
   CONVERSATION_ADDED: 'conversation_added',
   CONVERSATION_REMOVED: 'conversation_removed',
   
-  CONVERSATION_TAG_CREATED: 'conversation_tag_created',
-  CONVERSATION_TAG_DESTROYED: 'conversation_tag_destroyed',
-  CONVERSATION_TAG_CHANGED: 'conversation_tag_changed',
-
   CHATROOM_ATTRIBUTE_UPDATED: 'chatroom_attr_updated',
   CHATROOM_ATTRIBUTE_DELETED: 'chatroom_attr_deleted',
   CHATROOM_DESTROYED: 'chatroom_destroyed',
@@ -527,7 +523,12 @@ export let MESSAGE_TYPE = {
   COMMAND_MSG_EXSET: 'jg:msgexset',
   
   COMMAND_CONVERSATION_TAG_ADD: 'jg:tagaddconvers',
-  COMMAND_CONVERSATION_TAG_REMOVE: 'jg:tagdelconvers',
+
+  // 删除 TAG 下会话
+  COMMAND_REMOVE_CONVERS_FROM_TAG: 'jg:tagdelconvers',
+  
+  // 删除 TAG 
+  COMMAND_CONVERSATION_TAG_REMOVE: 'jg:delconvertags',
   
   // CLIENT_* 约定为客户端定义适用
   CLIENT_REMOVE_MSGS: 'jgc:removemsgs',

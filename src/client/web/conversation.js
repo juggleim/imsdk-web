@@ -23,20 +23,30 @@ export default function(io, emitter){
     }
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_ADD)){
-      let { content: { id, name } } = message;
-      if(utils.isEmpty(name) && conversations.length > 0){
-        return emitter.emit(EVENT.CONVERSATION_TAG_CREATED, { tags: [{ id, name }] });
+      let { content: { id, name, conversations } } = message;
+      if(conversations.length > 0){
+        return emitter.emit(EVENT.TAG_CONVERSATION_ADDED, { id, conversations });
       }
-      return emitter.emit(EVENT.CONVERSATION_CHANGED, {  
+      if(!utils.isEmpty(name) && conversations.length == 0){
+        return emitter.emit(EVENT.TAG_CHANGED, {  
+          tags: [{ id, name }]
+        });
+      }
+      return emitter.emit(EVENT.TAG_ADDED, {  
         tags: [{ id, name }]
       });
     }
     
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_REMOVE)){
-      let { content: { id, name } } = message;
-      return emitter.emit(EVENT.CONVERSATION_TAG_DESTROYED, {  
-        tags: [{ id, name }]
+      let { content: { tags } } = message;
+      return emitter.emit(EVENT.TAG_REMOVED, {  
+        tags: tags
       });
+    }
+
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_REMOVE_CONVERS_FROM_TAG)){
+      let { content: { id, conversations } } = message;
+      return emitter.emit(EVENT.TAG_CONVERSATION_REMOVED, { id, conversations });
     }
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_ADD_CONVER)){

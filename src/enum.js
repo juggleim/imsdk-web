@@ -27,6 +27,8 @@ export let SIGNAL_NAME = {
   CMD_CONVERSATION_CHANGED: 'cmd_inner_conversation_changed',
   CONN_CHANGED: 'conn_inner_changed',
 
+  CMD_SYNC_TAG_FINISHED: 'cmd_inner_sync_tags_finished',
+
   CMD_CHATROOM_EVENT: 'cmd_inner_chatroom_event',
   CMD_CHATROOM_REJOIN: 'cmd_inner_chatroom_rejoin',
 
@@ -371,6 +373,12 @@ export let EVENT = {
   MESSAGE_CLEAN: 'message_clean',
   MESSAGE_CLEAN_SOMEONE: 'message_clean_someone',
   MESSAGE_REACTION_CHANGED: 'message_reaction_changed',
+  
+  TAG_ADDED: 'tag_added',
+  TAG_REMOVED: 'tag_removed',
+  TAG_CHANGED: 'tag_changed',
+  TAG_CONVERSATION_ADDED: 'tag_conversation_added',
+  TAG_CONVERSATION_REMOVED: 'tag_conversation_removed',
 
   CONVERSATION_SYNC_FINISHED: 'conversation_sync_finished',
   CONVERSATION_UNDISTURBED: 'conversation_undisturb',

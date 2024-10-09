@@ -12,6 +12,7 @@ import common from "../common/common";
 import MessageSyncer from "./syncer/message-syncer";
 import ChatroomSyncer from "./syncer/chatroom-syncer";
 import ChatroomAttrSyncer from "./syncer/chatroom-attr-syncer";
+import TagSyncer from "./syncer/tag-syncer";
 
 import Timer from "../common/timer";
 import Counter from "../common/counter";
@@ -234,6 +235,7 @@ export default function IO(config){
   let messageSyncer = MessageSyncer(sendCommand, emitter, io, { logger });
   let chatroomSyncer = ChatroomSyncer(sendCommand, emitter, io, { logger });
   let chatroomAttrSyncer = ChatroomAttrSyncer(sendCommand, emitter, io, { logger });
+  let tagSyncer = TagSyncer(sendCommand, emitter, io, { logger });
 
   let bufferHandler = (buffer) => {
     let { cmd, result, name } = decoder.decode(buffer);
@@ -329,13 +331,19 @@ export default function IO(config){
           // 同步会话和同步消息顺序不能调整，保证先同步会话再同步消息，规避会话列表最后一条消息不是最新的
           if(config.isPC){
             let syncNext = () => {
+              
               messageSyncer.exec({
                 time: Storage.get(STORAGE.SYNC_CONVERSATION_TIME).time || 0,
                 name: SIGNAL_NAME.S_SYNC_CONVERSATION_NTF,
                 user: { id: currentUserInfo.id },
                 $conversation: config.$conversation
               });
+              
               syncMsgs();
+              
+              tagSyncer.exec({
+                $conversation: config.$conversation
+              });
             };
 
             // PC 中先连接后打开数据库，优先将本地数据库中的同步时间更新至 LocalStorage 中，避免换 Token 不换用户 Id 重复同步会话

@@ -573,3 +573,9 @@ export let CONVERSATION_TAG = {
   jg_private: { id: 'jg_private', type: 1, name: '单聊' },
   jg_group: { id: 'jg_group', type: 1, name: '群聊' },
 };
+
+export let CONVERATION_TAG_TYPE = {
+  USER: 0,
+  SYSNTEM: 1,
+  GLOBAL: 2
+}

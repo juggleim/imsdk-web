@@ -19,6 +19,11 @@ export default function($conversation, { conversationUtils, webAgent }){
     'setAllDisturb',
     'getAllDisturb',
     'getAllDisturb',
+    'createConversationTag',
+    'destroyConversationTag',
+    'getConversationTags',
+    'addConversationsToTag',
+    'removeConversationsFromTag',
     '_batchInsertConversations',
   ];
   let invokes = common.formatProvider(funcs, $conversation);

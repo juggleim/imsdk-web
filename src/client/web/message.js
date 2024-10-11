@@ -25,7 +25,10 @@ export default function(io, emitter, logger){
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_LOG_REPORT)){
       let { content, messageId } = message;
-      return common.reportLogs({ logger, params: { ...content, messageId } });
+      if(utils.isEqual('Web', content.platform)){
+        return common.reportLogs({ logger, params: { ...content, messageId } });
+      }
+      return;
     }
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){

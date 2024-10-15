@@ -29,6 +29,11 @@ let url = `dist/juggleim-es-min-${version}.js`;
 let cmd = `cp ${url} ${dir}/index.js`;
 execSync(cmd);
 
+// 移动 d.ts
+let url = `src/index.d.ts`;
+let cmd = `cp ${url} ${dir}/index.d.ts`;
+execSync(cmd);
+
 // 写入 package.json
 fs.writeFileSync(`${dir}/package.json`, pkg);
 

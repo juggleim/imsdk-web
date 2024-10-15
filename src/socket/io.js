@@ -26,7 +26,7 @@ export default function IO(config){
   let emitter = Emitter();
   let { appkey, navList, serverList = [], isSync = true, reconnectCount = 100, logger } = config;
   if(!utils.isArray(navList)){
-    navList = ['https://nav.juggleim.com'];
+    navList = ['https://nav.fake.com'];
   }
   
   let ws = {};

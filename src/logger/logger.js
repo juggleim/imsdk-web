@@ -14,7 +14,7 @@ export default function Logger(option = {}){
   let { isConsole = true, appkey, sessionId, getCurrentUser, getVersion } = option;
 
   let $db = DB({
-    name: `JUGGLEIM_${appkey}`,
+    name: `_IMIIM_${appkey}`,
     tables: [
       { 
         name: TABLE_NAME, 

@@ -2,20 +2,21 @@ import babel from 'rollup-plugin-babel';
 import minify from 'rollup-plugin-babel-minify';
 import json from '@rollup/plugin-json';
 import utils from '../src/utils';
+require("dotenv").config();
 
 const {version} = require('../package.json');
 const fullYear = new Date().getFullYear();
 
 const banner = [
   '/*', 
-  `* JuggleChat.js v${version}`, 
-  `* (c) 2022-${fullYear} JuggleChat`,
+  `* ${process.env.PACKAGE_NAME}.js v${version}`, 
+  `* (c) 2022-${fullYear} ${process.env.PACKAGE_NAME}`,
   '* Released under the MIT License.',
   '*/'].join('\n');
 
 const getTarget = function(type){
   type = type || '';
-  return `dist/juggleim-${type}-${version}.js`;
+  return `dist/${process.env.PACKAGE_NAME.toLowerCase()}-${type}-${version}.js`;
 };
 
 const genConfig = function(type){
@@ -24,7 +25,7 @@ const genConfig = function(type){
     output: {
       file: getTarget(type),
       format: 'umd',
-      name: 'JuggleChat',
+      name: process.env.PACKAGE_NAME,
       globals: {
         "$protobuf": "protobufjs/minimal"
       }

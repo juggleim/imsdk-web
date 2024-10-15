@@ -30,7 +30,7 @@ let cmd = `cp ${url} ${dir}/index.js`;
 execSync(cmd);
 
 // 移动 d.ts
-let url = `src/index.d.ts`;
+url = `src/index.d.ts`;
 let cmd = `cp ${url} ${dir}/index.d.ts`;
 execSync(cmd);
 

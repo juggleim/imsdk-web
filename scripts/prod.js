@@ -31,7 +31,7 @@ execSync(cmd);
 
 // 移动 d.ts
 url = `src/index.d.ts`;
-let cmd = `cp ${url} ${dir}/index.d.ts`;
+cmd = `cp ${url} ${dir}/index.d.ts`;
 execSync(cmd);
 
 // 写入 package.json

@@ -9,6 +9,7 @@ let pkg = `
   "version": "${version}",
   "description": "JuggleChat SDK, IM, Chat",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": { },
   "author": "sxiaomahou"
 }

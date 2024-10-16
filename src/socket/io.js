@@ -40,6 +40,8 @@ export default function IO(config){
   let timer = Timer({ timeout: HEART_TIMEOUT });
   let syncTimer = Timer({ timeout: SYNC_MESSAGE_TIME });
 
+  let isCurrentFirstConnect = true;
+
   let connectionState = CONNECT_STATE.DISCONNECTED;
   let reconnectErrors = [
     ErrorType.CONNECT_APPKEY_IS_REQUIRE.code,
@@ -303,11 +305,18 @@ export default function IO(config){
 
       let _callback = cache.get(SIGNAL_NAME.S_CONNECT_ACK) || utils.noop;
 
-      let { ack: { code, userId } } = result;
+      let { ack: { code, userId, timestamp: ackTime } } = result;
    
       let state = CONNECT_STATE.CONNECT_FAILED;
       let error = common.getError(code);
       if(utils.isEqual(code, ErrorType.CONNECT_SUCCESS.code)){
+        // 会话列表 IM Server 维护，Web 端首次连接，不拉取离线消息，开发者只需要获取最新的会话列表即可
+        if(isCurrentFirstConnect && !config.isPC){
+          common.updateSyncTime({ sentTime: ackTime, isSender: true, io});
+          common.updateSyncTime({ sentTime: ackTime, isSender: false, io});
+        }
+        isCurrentFirstConnect = false;
+
         state = CONNECT_STATE.CONNECTED;
         setCurrentUser({ id: userId });
         // 兼容只设置 IM Server 列表的情况

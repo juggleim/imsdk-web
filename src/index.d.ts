@@ -347,6 +347,13 @@ interface ReactionOptions{
   messageId: string;
   reactionId: string;
 }
+interface CustomMsgOption{
+  name: string;
+  isCount?: boolean;
+  isStorage?: boolean;
+  isCommand?: boolean;
+}
+
 declare class IMProvider {
   connect: (user: IMUser) => Promise<>;
   disconnect: () => Promise<any>;
@@ -405,6 +412,12 @@ declare class IMProvider {
   searchMessages: (options: SearchOptions) => Promise<SearchResult>;
   addMessageReaction: (message: ReactionOptions) => Promise<any>;
   removeMessageReaction: (message: ReactionOptions) => Promise<any>;
+  registerMessage: (names: CustomMsgOption[]) => any;
+  isDesktop:  () => boolean;
+  on: (name: string, event: (event: any)) => any;
+  off: (name: string) => any;
+  clear: () => any;
+  once: (name: string, event: (event: any)) => any;
   Event: EVENT;
   ConnectionState: CONNECT_STATE;
   ConversationType: CONVERATION_TYPE;

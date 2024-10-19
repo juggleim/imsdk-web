@@ -267,8 +267,8 @@ declare class TimeZone{
   end: string;
 }
 declare class DisturbInfo {
-  type: UNDISTURB_TYPE,
-  timezone: string,
+  type: UNDISTURB_TYPE;
+  timezone: string;
   times: TimeZone[];
 }
 declare class TagInfo {
@@ -276,11 +276,15 @@ declare class TagInfo {
   name?: string;
   conversations?: Conversation[]
 }
+interface SendMsgCbData { message: Message, percent?: number, count?: number, total?: number  }
+interface SendMsgCbCompleteData { 
+  messages: Message[] 
+}
 interface SendMsgCallbacks{
-  onbefore?(message: Message): any;
-  onerror?(error: Error): any;
-  onprogress?({ percent?: number, message: Message, count?: number, total?: number  }):any;
-  oncompleted?({ messages: Message[] }): any;
+  onbefore?(message: Message): void;
+  onerror?(error: Error): void;
+  onprogress?(data: SendMsgCbData):void;
+  oncompleted?(data: SendMsgCbCompleteData): void;
 }
 interface GetMsgByIdOptions{
   conversationType: CONVERATION_TYPE,
@@ -414,10 +418,10 @@ declare class IMProvider {
   removeMessageReaction: (message: ReactionOptions) => Promise<any>;
   registerMessage: (names: CustomMsgOption[]) => any;
   isDesktop:  () => boolean;
-  on: (name: string, event: (event: any)) => any;
+  on: (name: string, event: any) => any;
   off: (name: string) => any;
   clear: () => any;
-  once: (name: string, event: (event: any)) => any;
+  once: (name: string, event: any) => any;
   Event: EVENT;
   ConnectionState: CONNECT_STATE;
   ConversationType: CONVERATION_TYPE;

@@ -1,4 +1,4 @@
-import { COMMAND_TOPICS, CONVERATION_TYPE, UNDISTURB_TYPE } from "../../enum";
+import { COMMAND_TOPICS, CONVERATION_TYPE, UNDISTURB_TYPE, RTC_STATE} from "../../enum";
 import utils from "../../utils";
 import Proto from "../proto";
 
@@ -492,6 +492,65 @@ export default function getQueryBody({ data, callback, index }){
     let codec = Proto.lookup('codec.Nil');
     let message = codec.create({});
     targetId = userId;
+    buffer = codec.encode(message).finish();
+  }
+  if(utils.isInclude([COMMAND_TOPICS.RTC_CREATE_ROOM, COMMAND_TOPICS.RTC_JOIN_ROOM], topic)){
+    let { room, user } = data;
+    let { id, type, option = { cameraEnable = false, micEnable = false } } = room;
+    let codec = Proto.lookup('codec.RtcRoomReq');
+    let message = codec.create({
+      roomId: id, 
+      roomType: type,
+      joinMember: {
+        member: user,
+        rtcState: RTC_STATE.NONE,
+        cameraEnable, 
+        micEnable,
+      }
+    });
+    targetId = user.id;
+    if(utils.isEqual(COMMAND_TOPICS.RTC_JOIN_ROOM, topic)){
+      targetId = room.id;
+    }
+    buffer = codec.encode(message).finish();
+  }
+  if(utils.isEqual(COMMAND_TOPICS.RTC_QUIT_ROOM, topic)){
+    let { room } = data;
+    let codec = Proto.lookup('codec.RtcRoomReq');
+    let message = codec.create({
+      roomId: room.id,
+      roomType: room.type
+    });
+    targetId = room.id;
+    buffer = codec.encode(message).finish();
+  }
+  if(utils.isEqual(COMMAND_TOPICS.RTC_QRY_ROOM, topic)){
+    let { room } = data;
+    let codec = Proto.lookup('codec.Nil');
+    let message = codec.create({});
+    targetId = room.id;
+    buffer = codec.encode(message).finish();
+  }
+  if(utils.isEqual(COMMAND_TOPICS.RTC_PING, topic)){
+    let { room } = data;
+    let codec = Proto.lookup('codec.Nil');
+    let message = codec.create({});
+    targetId = room.id;
+    buffer = codec.encode(message).finish();
+  }
+  if(utils.isEqual(COMMAND_TOPICS.RTC_INVITE, topic)){
+    let { room, inviteType, members = [] } = data;
+    let memberIds = utils.map(members, ({ id }) => {
+      return id;
+    });
+    let codec = Proto.lookup('codec.RtcInviteReq');
+    let message = codec.create({
+      inviteType: inviteType,
+      roomId: room.id,
+      roomType: room.type,
+      targetIds: memberIds,
+    });
+    targetId = room.id;
     buffer = codec.encode(message).finish();
   }
 

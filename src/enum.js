@@ -268,6 +268,13 @@ export let COMMAND_TOPICS = {
   CONVERSATION_TAG_REMOVE: 'tag_del_convers',
   TAG_REMOVE: 'del_user_conver_tags',
   CONVERSATION_TAG_QUERY: 'qry_user_conver_tags',
+
+  RTC_CREATE_ROOM: 'rtc_create',
+  RTC_JOIN_ROOM: 'rtc_join',
+  RTC_QUIT_ROOM: 'rtc_quit',
+  RTC_QRY_ROOM: 'rtc_qry',
+  RTC_PING: 'rtc_ping',
+  RTC_INVITE: 'rtc_invite',
 };
 export let NOTIFY_TYPE = {
   DEFAULT: 0,
@@ -604,3 +611,24 @@ export let CONVERATION_TAG_TYPE = {
   SYSNTEM: 1,
   GLOBAL: 2
 }
+
+export let RTC_STATE = {
+  NONE: 0,
+  INCOMING: 1,
+  OUTGOING: 2,
+  CONNECTING: 3,
+  CONNECTED: 4
+};
+
+export let RTC_ROOM_TYPE = {
+  ONE_ONE: 0,
+  ONE_MORE: 1
+};
+export let RTC_INVITE_TYPE = {
+  NONE: 0,
+  INVITE: 1,
+  ACCEPT: 2,
+  REJECT: 3,
+  CANCEL: 4,
+  TIMEOUT: 5
+};

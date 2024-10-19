@@ -1707,6 +1707,125 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           SystemTag: 1,
           GlobalTag: 2
         }
+      },
+      RtcRoomReq: {
+        fields: {
+          roomType: {
+            type: "RtcRoomType",
+            id: 1
+          },
+          roomId: {
+            type: "string",
+            id: 2
+          },
+          joinMember: {
+            type: "RtcMember",
+            id: 3
+          }
+        }
+      },
+      RtcRoomType: {
+        values: {
+          OneOne: 0,
+          OneMore: 1
+        }
+      },
+      RtcMember: {
+        fields: {
+          member: {
+            type: "UserInfo",
+            id: 1
+          },
+          rtcState: {
+            type: "RtcState",
+            id: 2
+          },
+          cameraEnable: {
+            type: "int32",
+            id: 3
+          },
+          micEnable: {
+            type: "int32",
+            id: 4
+          },
+          callTime: {
+            type: "int64",
+            id: 5
+          },
+          connectTime: {
+            type: "int64",
+            id: 6
+          },
+          hangupTime: {
+            type: "int64",
+            id: 7
+          },
+          inviter: {
+            type: "UserInfo",
+            id: 8
+          }
+        }
+      },
+      RtcState: {
+        values: {
+          RtcStateDefault: 0,
+          RtcIncoming: 1,
+          RtcOutgoing: 2,
+          RtcConnecting: 3,
+          RtcConnected: 4
+        }
+      },
+      RtcRoom: {
+        fields: {
+          roomType: {
+            type: "RtcRoomType",
+            id: 1
+          },
+          roomId: {
+            type: "string",
+            id: 2
+          },
+          owner: {
+            type: "UserInfo",
+            id: 3
+          },
+          members: {
+            rule: "repeated",
+            type: "RtcMember",
+            id: 51
+          }
+        }
+      },
+      RtcInviteReq: {
+        fields: {
+          inviteType: {
+            type: "InviteType",
+            id: 1
+          },
+          targetIds: {
+            rule: "repeated",
+            type: "string",
+            id: 2
+          },
+          roomType: {
+            type: "RtcRoomType",
+            id: 3
+          },
+          roomId: {
+            type: "string",
+            id: 4
+          }
+        }
+      },
+      InviteType: {
+        values: {
+          DefaultInviteType: 0,
+          Invite: 1,
+          Accept: 2,
+          Reject: 3,
+          Cancel: 4,
+          Timeout: 5
+        }
       }
     }
   }

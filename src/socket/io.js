@@ -391,6 +391,10 @@ export default function IO(config){
     if(utils.isEqual(name, SIGNAL_NAME.S_PONG)){
       logger.info({ tag: LOG_MODULE.HB_STOP });
     }
+    
+    if(utils.isEqual(name, SIGNAL_NAME.S_RTC_INVITE_NTF)){
+      emitter.emit(SIGNAL_NAME.CMD_RTC_INVITE_EVENT, result);
+    }
     cache.remove(index);
   }
 

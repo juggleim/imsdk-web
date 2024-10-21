@@ -15,21 +15,35 @@ export default function getPublishMsgBody(stream, { currentUser }){
 
     // 收到 NTF 直接返回，通过 sync_msgs 同步消息
     if (utils.isEqual(topic, COMMAND_TOPICS.NTF)) {
+      
       let payload = Proto.lookup('codec.Notify');
       let message = payload.decode(data);
       let { syncTime: receiveTime, type, chatroomId } = message;
       _msg = { topic, receiveTime, type, targetId: chatroomId };
       _name = SIGNAL_NAME.S_NTF;
+
     } else if (utils.isEqual(topic, COMMAND_TOPICS.MSG)) {
+      
       let payload = Proto.lookup('codec.DownMsg');
       let message = payload.decode(data);
       _msg = tools.msgFormat(message, { currentUser });
+
     } else if (utils.isEqual(topic, COMMAND_TOPICS.CHATROOM_USER_NTF)) {
+      
       let payload = Proto.lookup('codec.ChrmEvent');
       let message = payload.decode(data);
       let { chatId, eventTime, eventType } = message;
       _msg = { chatroomId: chatId, time: eventTime, type: eventType };
       _name = SIGNAL_NAME.S_CHATROOM_USER_NTF;
+
+    } else if(utils.isEqual(topic, COMMAND_TOPICS.RTC_INVITE_EVENT)){
+      let payload = Proto.lookup('codec.RtcRoom');
+      let result = payload.decode(data);
+      let room = tools.formatRTCRoom(result);
+
+      _msg = room;
+      _name = SIGNAL_NAME.S_RTC_INVITE_NTF;
+
     } else {
       console.log('unkown topic', topic);
     }

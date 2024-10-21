@@ -69,22 +69,10 @@ export default function getQueryAckBody(stream, { cache, currentUser }){
     result = getConversationTags(index, data);
   }
 
-  if(utils.isInclude([COMMAND_TOPICS.RTC_CREATE_ROOM, COMMAND_TOPICS.RTC_JOIN_ROOM], topic)){
+  if(utils.isInclude([COMMAND_TOPICS.RTC_CREATE_ROOM, COMMAND_TOPICS.RTC_JOIN_ROOM, COMMAND_TOPICS.RTC_QRY_ROOM], topic)){
     result = getRTCRoom(index, data);
   }
-  if(utils.isEqual(COMMAND_TOPICS.RTC_QUIT_ROOM, topic)){
-    
-  }
-  if(utils.isEqual(COMMAND_TOPICS.RTC_QRY_ROOM, topic)){
-    
-  }
-  if(utils.isEqual(COMMAND_TOPICS.RTC_PING, topic)){
-    
-  }
-  if(utils.isEqual(COMMAND_TOPICS.RTC_INVITE, topic)){
-    
-  }
-
+  
   result = utils.extend(result, { code, timestamp, index });
   return result;
 };
@@ -261,4 +249,10 @@ function getMessagesHandler(index, data, { currentUser }) {
     return tools.msgFormat(msg, { currentUser });
   });
   return { isFinished, messages, index };
+}
+
+function getRTCRoom(index, data){
+  let payload = Proto.lookup('codec.RtcRoom');
+  let result = payload.decode(data);
+  return tools.formatRTCRoom(result);
 }

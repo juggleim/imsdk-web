@@ -1826,6 +1826,27 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           Cancel: 4,
           Timeout: 5
         }
+      },
+      RtcInviteEvent: {
+        fields: {
+          inviteType: {
+            type: "InviteType",
+            id: 1
+          },
+          targetUser: {
+            type: "UserInfo",
+            id: 2
+          },
+          room: {
+            type: "RtcRoom",
+            id: 3
+          },
+          targetIds: {
+            rule: "repeated",
+            type: "string",
+            id: 4
+          }
+        }
       }
     }
   }

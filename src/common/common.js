@@ -285,7 +285,7 @@ function ConversationUtils(){
       }
 
       if(!isSender && msgFlag.isCount){
-        latestUnreadIndex = latestMessage.unreadIndex || 0;
+        latestUnreadIndex = latestMessage.unreadIndex || latestUnreadIndex;
         unreadCount = latestUnreadIndex - latestReadIndex;
       }
 

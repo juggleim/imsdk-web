@@ -1,8 +1,12 @@
 import { COMMAND_TOPICS, SIGNAL_CMD, SIGNAL_NAME, EVENT, ErrorType, LOG_MODULE } from "../../enum";
 import utils from "../../utils";
 import common from "../../common/common";
-export default function(io, emitter, logger){
+export default function({ io, emitter, logger }){
   
+  io.on(SIGNAL_NAME.CMD_RTC_INVITE_EVENT, (notify) => {
+    return emitter.emit(EVENT.RTC_INVITED, notify);
+  });
+
   /* let room = { type, id, members } */ 
   let createRTCRoom = (room) => {
     return utils.deferred((resolve, reject) => {
@@ -35,7 +39,7 @@ export default function(io, emitter, logger){
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let { code } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          return resolve();
+          return resolve({ room });
         }
         let error = common.getError(code);
         reject(error);
@@ -55,7 +59,7 @@ export default function(io, emitter, logger){
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let { code } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          return resolve();
+          return resolve({ room });
         }
         let error = common.getError(code);
         reject(error);
@@ -108,14 +112,14 @@ export default function(io, emitter, logger){
     return utils.deferred((resolve, reject) => {
       let user = io.getCurrentUser();
       let data = {
+        ...options,
         topic: COMMAND_TOPICS.RTC_INVITE,
         user: user,
-        options
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let { code } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          return resolve({ room });
+          return resolve();
         }
         let error = common.getError(code);
         reject(error);

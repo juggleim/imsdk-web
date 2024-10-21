@@ -433,4 +433,19 @@ function formatConversations(conversations, options = {}) {
   });
 }
 
-export default { msgFormat, formatConversations }
+function formatRTCRoom(result){
+  let { roomId, roomType, owner, members } = result;
+  members = utils.map(members, (item) => {
+    let { member, rtcState: state, cameraEnable, micEnable, callTime, connectTime, hangupTime, inviter } = item;
+    member = common.formatUser(member);
+    inviter = common.formatUser(inviter);
+    return { member, rtcState: state, cameraEnable, micEnable, callTime, connectTime, hangupTime, inviter };
+  });
+  return {
+    room: { id: roomId, type: roomType },
+    owner: common.formatUser(owner),
+    members: members,
+  };
+}
+
+export default { msgFormat, formatConversations, formatRTCRoom }

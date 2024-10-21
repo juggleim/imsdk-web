@@ -1,6 +1,7 @@
 import IO from "../socket/io";
 import Web from "./web/index";
 import Desktop from "./desktop/index";
+import RTCSignal from "./signal/index";
 
 import Logger from "../logger/logger";
 import Emitter from "../common/emmit";
@@ -41,7 +42,8 @@ let init = (config) => {
     provider = Desktop.init({ appkey, io, emitter, web, client: JGChatPCClient, logger });
   }
 
-  return  {
+
+  let _export = {
     ...provider.socket,
     ...provider.message,
     ...provider.conversation,
@@ -49,6 +51,10 @@ let init = (config) => {
     ...emitter,
     registerMessage: common.registerMessage,
     isDesktop: common.isDesktop,
+    use: () => {
+      let rtc = RTCSignal({ io, emitter, logger });
+      utils.extend(_export, rtc);
+    },
     Event: EVENT,
     ConnectionState: CONNECT_STATE,
     ConversationType: CONVERATION_TYPE,
@@ -63,7 +69,9 @@ let init = (config) => {
     SentState: MESSAGE_SENT_STATE,
     UnreadTag: UNREAD_TAG,
     ConversationTagType: CONVERATION_TAG_TYPE,
-  }
+  };
+
+  return  _export;
 }
 
 export default {

@@ -32,6 +32,8 @@ export let SIGNAL_NAME = {
   CMD_CHATROOM_EVENT: 'cmd_inner_chatroom_event',
   CMD_CHATROOM_REJOIN: 'cmd_inner_chatroom_rejoin',
 
+  CMD_RTC_INVITE_EVENT: 'cmd_inner_rtc_invite_event',
+
   // 与下行信令进行匹配，在 io.js 中进行派发
   S_CONNECT_ACK: 's_connect_ack',
   S_DISCONNECT: 's_disconnect',
@@ -39,6 +41,8 @@ export let SIGNAL_NAME = {
   S_QUERY_ACK: 's_query_ack',
   S_NTF: 's_ntf',
   S_CHATROOM_USER_NTF: 's_c_user_ntf',
+  
+  S_RTC_INVITE_NTF: 's_rtc_invite_ntf',
   // PC 端自定义通知
   S_SYNC_CONVERSATION_NTF: 's_sync_conversation_ntf',
   S_PONG: 's_pong',
@@ -275,6 +279,7 @@ export let COMMAND_TOPICS = {
   RTC_QRY_ROOM: 'rtc_qry',
   RTC_PING: 'rtc_ping',
   RTC_INVITE: 'rtc_invite',
+  RTC_INVITE_EVENT: 'rtc_invite_event',
 };
 export let NOTIFY_TYPE = {
   DEFAULT: 0,
@@ -402,7 +407,9 @@ export let EVENT = {
   CHATROOM_DESTROYED: 'chatroom_destroyed',
 
   CHATROOM_USER_QUIT: 'chatroom_user_quit',
-  CHATROOM_USER_KICKED: 'chatroom_user_kicked'
+  CHATROOM_USER_KICKED: 'chatroom_user_kicked',
+
+  RTC_INVITED: 'rtc_invited',
 
 };
 export let CONNECT_STATE = {

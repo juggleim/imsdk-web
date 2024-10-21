@@ -628,3 +628,9 @@ enum InviteType{
     Cancel = 4;   //取消邀请事件
     Timeout = 5;  //呼叫超时事件
 }
+message RtcInviteEvent{
+    InviteType inviteType = 1;
+    UserInfo targetUser = 2;
+    RtcRoom room = 3;
+    repeated string targetIds = 4;
+}

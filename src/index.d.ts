@@ -26,116 +26,116 @@ interface EVENT {
   CHATROOM_DESTROYED: string;
   CHATROOM_USER_QUIT: string;
   CHATROOM_USER_KICKED: string;
-};
+}
 interface CONNECT_STATE {
-  CONNECTED,
-  CONNECTING,
-  DISCONNECTED,
-  CONNECT_FAILED,
-  DB_OPENED,
-  DB_CLOSED,
-  RECONNECTING,
+  CONNECTED: number;
+  CONNECTING: number;
+  DISCONNECTED: number;
+  CONNECT_FAILED: number;
+  DB_OPENED: number;
+  DB_CLOSED: number;
+  RECONNECTING: number;
 }
 interface CONVERATION_TYPE {
-  PRIVATE,
-  GROUP,
-  CHATROOM,
-  SYSTEM,
+  PRIVATE: number;
+  GROUP: number;
+  CHATROOM: number;
+  SYSTEM: number;
 }
 interface MESSAGE_ORDER {
-  FORWARD,
-  BACKWARD,
+  FORWARD: number;
+  BACKWARD: number;
 }
 interface CONVERSATION_ORDER {
-  BACKWARD,
-  FORWARD,
+  BACKWARD: number;
+  FORWARD: number;
 }
 interface MENTION_ORDER {
-  BACKWARD,
-  FORWARD,
+  BACKWARD: number;
+  FORWARD: number;
 }
 interface UPLOAD_TYPE {
-  NONE,
-  QINIU,
-  ALI,
+  NONE: number;
+  QINIU: number;
+  ALI: number;
 }
 interface UNDISTURB_TYPE {
-  DISTURB,
-  UNDISTURB,
+  DISTURB: number;
+  UNDISTURB: number;
 }
 
 interface MESSAGE_TYPE {
-  TEXT,
-  IMAGE,
-  VOICE,
-  VIDEO,
-  FILE,
-  MERGE,
-  RECALL,
-  RECALL_INFO,
-  READ_MSG,
-  READ_GROUP_MSG,
-  MODIFY,
-  CLEAR_MSG,
-  CLEAR_UNREAD,
-  COMMAND_DELETE_MSGS,
-  COMMAND_UNDISTURB,
-  COMMAND_TOPCONVERS,
-  COMMAND_REMOVE_CONVERS,
-  COMMAND_ADD_CONVER,
-  COMMAND_CLEAR_TOTALUNREAD,
-  COMMAND_MARK_UNREAD,
-  COMMAND_LOG_REPORT,
-  COMMAND_MSG_EXSET,
-  COMMAND_CONVERSATION_TAG_ADD,
-  COMMAND_REMOVE_CONVERS_FROM_TAG,
-  COMMAND_CONVERSATION_TAG_REMOVE,
-  CLIENT_REMOVE_MSGS,
-  CLIENT_REMOVE_CONVERS,
-  CLIENT_RECALL_MSG,
-  CLIENT_MARK_UNREAD,
+  TEXT: string;
+  IMAGE: string;
+  VOICE: string;
+  VIDEO: string;
+  FILE: string;
+  MERGE: string;
+  RECALL: string;
+  RECALL_INFO: string;
+  READ_MSG: string;
+  READ_GROUP_MSG: string;
+  MODIFY: string;
+  CLEAR_MSG: string;
+  CLEAR_UNREAD: string;
+  COMMAND_DELETE_MSGS: string;
+  COMMAND_UNDISTURB: string;
+  COMMAND_TOPCONVERS: string;
+  COMMAND_REMOVE_CONVERS: string;
+  COMMAND_ADD_CONVER: string;
+  COMMAND_CLEAR_TOTALUNREAD: string;
+  COMMAND_MARK_UNREAD: string;
+  COMMAND_LOG_REPORT: string;
+  COMMAND_MSG_EXSET: string;
+  COMMAND_CONVERSATION_TAG_ADD: string;
+  COMMAND_REMOVE_CONVERS_FROM_TAG: string;
+  COMMAND_CONVERSATION_TAG_REMOVE: string;
+  CLIENT_REMOVE_MSGS: string;
+  CLIENT_REMOVE_CONVERS: string;
+  CLIENT_RECALL_MSG: string;
+  CLIENT_MARK_UNREAD: string;
 }
 interface MENTION_TYPE {
-  ALL,
-  SOMEONE,
-  ALL_SOMEONE,
+  ALL: string;
+  SOMEONE: string;
+  ALL_SOMEONE: string;
 }
 interface FILE_TYPE {
-  IMAGE,
-  AUDIO,
-  VIDEO,
-  FILE,
+  IMAGE: number;
+  AUDIO: number;
+  VIDEO: number;
+  FILE: number;
 }
 interface MESSAGE_SENT_STATE {
-  NONE,
-  SENDING,
-  SUCCESS,
-  FAILED,
-  UPLOADING,
+  NONE: number;
+  SENDING: number;
+  SUCCESS: number;
+  FAILED: number;
+  UPLOADING: number;
 }
 interface DISCONNECT_TYPE {
-  DISCONNECT,
-  CLOSE,
-  ERROR,
-  SERVER,
+  DISCONNECT: number;
+  CLOSE: number;
+  ERROR: number;
+  SERVER: number;
 }
 interface UNREAD_TAG {
-  READ,
-  UNREAD,
+  READ: number;
+  UNREAD: number;
 }
 interface SET_SEARCH_CONTENT_TYPE {
-  APPEND,
-  REPLACE,
+  APPEND: number;
+  REPLACE: number;
 }
 interface CONVERATION_TAG_TYPE {
-  USER,
-  SYSNTEM,
-  GLOBAL,
+  USER: number;
+  SYSNTEM: number;
+  GLOBAL: number;
 }
 
 interface Error {
-  code: number,
-  msg: string
+  code: number;
+  msg: string;
 }
 declare class IMUser {
   id?: string;
@@ -255,14 +255,14 @@ interface GetConversationOptions {
   count?: number;
   time?: number;
 }
-interface TotalUnreadResult{
+interface TotalUnreadResult {
   total: number;
 }
-interface GetTotalOptions{
+interface GetTotalOptions {
   conversationTypes?: CONVERATION_TYPE[];
   ignoreConversations?: Conversation[];
 }
-declare class TimeZone{
+declare class TimeZone {
   start: string;
   end: string;
 }
@@ -276,51 +276,51 @@ declare class TagInfo {
   name?: string;
   conversations?: Conversation[]
 }
-interface SendMsgCbData { message: Message, percent?: number, count?: number, total?: number  }
-interface SendMsgCbCompleteData { 
-  messages: Message[] 
+interface SendMsgCbData { message: Message, percent?: number, count?: number, total?: number }
+interface SendMsgCbCompleteData {
+  messages: Message[]
 }
-interface SendMsgCallbacks{
+interface SendMsgCallbacks {
   onbefore?(message: Message): void;
   onerror?(error: Error): void;
-  onprogress?(data: SendMsgCbData):void;
+  onprogress?(data: SendMsgCbData): void;
   oncompleted?(data: SendMsgCbCompleteData): void;
 }
-interface GetMsgByIdOptions{
+interface GetMsgByIdOptions {
   conversationType: CONVERATION_TYPE,
   conversationId: string;
   messageIds: string[];
 }
-interface ClearMsgsOptions{
+interface ClearMsgsOptions {
   conversationType: CONVERATION_TYPE,
   conversationId: string;
   time: number;
 }
-interface ReadMember{
+interface ReadMember {
   readTime: number;
   member: IMUser;
 }
-interface GetGroupMessageDetailResult{
+interface GetGroupMessageDetailResult {
   readCount: number;
   unreadCount: number;
   unreadMembers: ReadMember[];
   readMembers: ReadMember[];
 }
-interface GetMentionOptions{
+interface GetMentionOptions {
   conversationType: CONVERATION_TYPE,
   conversationId: string;
   messageIndex: number;
   count?: number;
   order?: number;
 }
-interface SendMergeOptions{
+interface SendMergeOptions {
   conversationType: CONVERATION_TYPE,
   conversationId: string;
   messageIdList: string[];
-  previewList: Array;
+  previewList: any;
   title: string;
 }
-interface SearchOptions{
+interface SearchOptions {
   conversationType?: CONVERATION_TYPE,
   conversationId?: string;
   keywords: string[];
@@ -331,7 +331,7 @@ interface SearchOptions{
   page?: number;
   pageSize?: number;
 }
-interface SearchMatchMsg{
+interface SearchMatchMsg {
   conversationType: CONVERATION_TYPE;
   conversationId: string;
   conversationExts: string;
@@ -340,18 +340,18 @@ interface SearchMatchMsg{
   matchedCount: number;
   matchedList: Message[];
 }
-interface SearchResult{
+interface SearchResult {
   isFinished: boolean;
   total: number;
   list: SearchMatchMsg[];
 }
-interface ReactionOptions{
+interface ReactionOptions {
   conversationType: CONVERATION_TYPE;
   conversationId: string;
   messageId: string;
   reactionId: string;
 }
-interface CustomMsgOption{
+interface CustomMsgOption {
   name: string;
   isCount?: boolean;
   isStorage?: boolean;
@@ -359,7 +359,7 @@ interface CustomMsgOption{
 }
 
 declare class IMProvider {
-  connect: (user: IMUser) => Promise<>;
+  connect: (user: IMUser) => Promise<any>;
   disconnect: () => Promise<any>;
   getDevice: () => Promise<any>;
   isConnected: () => boolean;
@@ -394,7 +394,7 @@ declare class IMProvider {
   sendMessage: (message: Message, callbacks?: SendMsgCallbacks) => Promise<Message>;
   sendMassMessage: (messages: Message[], callbacks?: SendMsgCallbacks) => Promise<any>;
   getMessages: (conversation: Conversation) => Promise<{ isFinished: boolean, messages: Message[] }>;
-  removeMessages: (messages: Messages[]) => Promise<any>;
+  removeMessages: (messages: Message[]) => Promise<any>;
   getMessagesByIds: (options: GetMsgByIdOptions) => Promise<{ messages: Message[] }>;
   clearMessage: (options: ClearMsgsOptions) => Promise<any>;
   recallMessage: (message: Message) => Promise<any>;
@@ -417,7 +417,7 @@ declare class IMProvider {
   addMessageReaction: (message: ReactionOptions) => Promise<any>;
   removeMessageReaction: (message: ReactionOptions) => Promise<any>;
   registerMessage: (names: CustomMsgOption[]) => any;
-  isDesktop:  () => boolean;
+  isDesktop: () => boolean;
   on: (name: string, event: any) => any;
   off: (name: string) => any;
   clear: () => any;
@@ -443,7 +443,7 @@ declare class IMProvider {
 
 interface InitOptions {
   appkey: string;
-  navList?: Array;
+  navList?: string[];
   isSync?: boolean;
   upload?: Object;
 }
@@ -469,4 +469,4 @@ declare namespace IMCore {
   export let IMProvider: IMProvider;
 }
 
-export default { ...IMCore };
+export default IMCore;

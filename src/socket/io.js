@@ -4,7 +4,7 @@ import Storage from "../common/storage";
 import Proto from "./proto";
 import { DISCONNECT_TYPE, CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX, COMMAND_TOPICS, CONVERATION_TYPE, SYNC_MESSAGE_TIME, STORAGE, PLATFORM, CONNECT_TOOL, LOG_MODULE } from "../enum";
 import BufferEncoder from "./encoder/encoder";
-import BufferDecoder from "./decoder";
+import BufferDecoder from "./decoder/decoder";
 import Network from "../common/network";
 import Cache from "../common/cache";
 import common from "../common/common";

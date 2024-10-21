@@ -496,7 +496,8 @@ export default function getQueryBody({ data, callback, index }){
   }
   if(utils.isInclude([COMMAND_TOPICS.RTC_CREATE_ROOM, COMMAND_TOPICS.RTC_JOIN_ROOM], topic)){
     let { room, user } = data;
-    let { id, type, option = { cameraEnable = false, micEnable = false } } = room;
+    let { id, type, option = {} } = room;
+    let { cameraEnable = false, micEnable = false } = option;
     let codec = Proto.lookup('codec.RtcRoomReq');
     let message = codec.create({
       roomId: id, 

@@ -72,11 +72,12 @@ export default function getQueryBody({ data, callback, index }){
   }
 
   if(utils.isEqual(topic, COMMAND_TOPICS.SYNC_CHATROOM_MESSAGES)){
-    let { syncTime, chatroomId } = data;
+    let { syncTime, chatroomId, count } = data;
     let codec = Proto.lookup('codec.SyncChatroomReq');
     let message = codec.create({
       syncTime,
-      chatroomId
+      chatroomId,
+      count
     });
     targetId = chatroomId;
     buffer = codec.encode(message).finish();

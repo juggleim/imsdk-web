@@ -49,9 +49,11 @@ export default function ChatroomSyncer(send, emitter, io, { logger }) {
         return next();
       }
 
+      let count = msg.count || 50;
       let data = {
         syncTime: syncTime,
         chatroomId: chatroomId,
+        count: count,
         topic: COMMAND_TOPICS.SYNC_CHATROOM_MESSAGES
       };
       send(SIGNAL_CMD.QUERY, data, ({ messages, code }) => {

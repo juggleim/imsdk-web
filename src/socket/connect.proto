@@ -301,6 +301,7 @@ message SyncMsgReq{
 message SyncChatroomReq{
   string chatroomId = 1;//聊天室id
   int64 syncTime = 2; // 聊天室消息同步时间戳
+  int32 count = 3;
 }
 
 message SyncChatroomMsgResp{

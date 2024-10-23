@@ -164,11 +164,10 @@ export default function(io, emitter, logger){
       utils.extend(data, { topic })
 
       let tid = message.tid || utils.getUUID();
-      utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
+      let sender = io.getCurrentUser() || {};
+      utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING, sender, isSender: true });
       _callbacks.onbefore(message);
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messageId, sentTime, code, msg, msgIndex, memberCount }) => {
-        let sender = io.getCurrentUser() || {};
-        utils.extend(message, { sender, isSender: true });
         if(code){
           utils.extend(message, { error: { code, msg }, sentState: MESSAGE_SENT_STATE.FAILED });
           return reject(message)

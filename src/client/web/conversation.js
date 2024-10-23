@@ -379,6 +379,10 @@ export default function(io, emitter){
       let _params = { topic: COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS, time: 0, count, userId: user.id };
       utils.extend(_params, params);
       io.sendCommand(SIGNAL_CMD.QUERY, _params, (result) => {
+        let { code, msg } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
         resolve({ conversations: result.conversations, isFinished: result.isFinished });
       });
     });
@@ -423,6 +427,7 @@ export default function(io, emitter){
       let { id: userId } = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.GET_UNREAD_TOTLAL_CONVERSATION, userId, conversationTypes, ignoreConversations, tag };
       io.sendCommand(SIGNAL_CMD.QUERY, data, ({ count }) => {
+        count = count || 0;
         resolve({ count });
       });
     });
@@ -608,7 +613,8 @@ export default function(io, emitter){
           }
           resolve();
         }else{
-          reject({ code });
+          let error = common.getError(code);
+          reject(error);
         }        
       });
     });
@@ -676,7 +682,8 @@ export default function(io, emitter){
           })
           resolve({ tags: _tags });
         }else{
-          reject({ code });
+          let error = common.getError(code);
+          reject(error);
         }
       });
     });
@@ -702,7 +709,8 @@ export default function(io, emitter){
           let config = io.getConfig();
           resolve();
         }else{
-          reject({ code });
+          let error = common.getError(code);
+          reject(error);
         }        
       });
     });
@@ -729,7 +737,8 @@ export default function(io, emitter){
           let config = io.getConfig();
           resolve();
         }else{
-          reject({ code });
+          let error = common.getError(code);
+          reject(error);
         }        
       });
     });

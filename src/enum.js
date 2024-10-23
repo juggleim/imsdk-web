@@ -486,7 +486,7 @@ export let ErrorMessages = [
   { code: 25001, msg: '连接已存在', name: 'CONNECTION_EXISTS' },
   { code: 25002, msg: '连接不存在', name: 'CONNECTION_NOT_READY' },
   { code: 25003, msg: '参数类型不正确', name: 'ILLEGAL_TYPE_PARAMS' },
-  { code: 25004, msg: '发送超时，连接异常', name: 'COMMAND_FAILED' },
+  { code: 25004, msg: '连接异常,信令发送超时', name: 'COMMAND_FAILED' },
   { code: 25005, msg: '上传文件组件为空', name: 'UPLOAD_PLUGIN_ERROR' },
   { code: 25006, msg: '上传文件组件与 OSS 存储不一致', name: 'UPLOAD_PLUGIN_NOTMATCH' },
   { code: 25007, msg: '文件上传失败，请重试', name: 'UPLOADING_FILE_ERROR' },
@@ -497,6 +497,7 @@ export let ErrorMessages = [
   { code: 25012, msg: 'IM 服务连接失败，请检查当前设备网络是否可用', name: 'IM_SERVER_CONNECT_ERROR' },
   { code: 25013, msg: '参数不可为空，请检查传入参数', name: 'ILLEGAL_PARAMS_EMPTY' },
   { code: 25014, msg: 'SDK 内部正在连接，无需重复调用 connect 方法', name: 'REPREAT_CONNECTION' },
+  { code: 25015, msg: '消息重复发送，相同的 tid 且正在发送中，无需再次发送消息', name: 'MESSAGE_SEND_REPETITION' },
 
   { code: 21200, msg: '消息撤回成功', name: 'MESSAGE_RECALL_SUCCESS' },
   

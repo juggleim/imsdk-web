@@ -135,6 +135,11 @@ export default function(io, emitter, logger){
     topics[map[0]] = map[1];
   });
 
+  /*
+    缓存发送的消息，同样的 tid 重复发送消息返回错误，不再调用 socket send 方法，规避消息重复发送
+    sendingMsgMap[tid] = true;  
+  */ 
+  let sendingMsgMap = {};
   let sendMessage = (message, callbacks = {}) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, message, FUNC_PARAM_CHECKER.SENDMSG, true);
@@ -147,6 +152,11 @@ export default function(io, emitter, logger){
         if(utils.isUndefined(messageIndex) || utils.isUndefined(messageId) ){
           return reject({ error: ErrorType.SEND_REFER_MESSAGE_ERROR });
         }
+      }
+      let sender = io.getCurrentUser() || {};
+      let isSending = sendingMsgMap[message.tid];
+      if(isSending){
+        return reject({ ...message, sender, error: ErrorType.MESSAGE_SEND_REPETITION });
       }
       logger.info({ tag: LOG_MODULE.MSG_SEND });
       let _callbacks = {
@@ -164,17 +174,20 @@ export default function(io, emitter, logger){
       utils.extend(data, { topic })
 
       let tid = message.tid || utils.getUUID();
-      let sender = io.getCurrentUser() || {};
       utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING, sender, isSender: true });
-      _callbacks.onbefore(message);
+      sendingMsgMap[tid] = true;
+      _callbacks.onbefore(utils.clone(message));
 
       if(!io.isConnected()){
+        delete sendingMsgMap[tid];
         return reject({ ...message, sentState: MESSAGE_SENT_STATE.FAILED, error: ErrorType.CONNECTION_NOT_READY });
       }
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messageId, sentTime, code, msg, msgIndex, memberCount }) => {
+        // 不管消息发送成功或失败，清理 tid 发送中的状态
+        delete sendingMsgMap[tid];
         if(code){
           utils.extend(message, { error: { code, msg }, sentState: MESSAGE_SENT_STATE.FAILED });
-          return reject(message)
+          return reject(utils.clone(message));
         }
         utils.extend(message, { sentTime, messageId, messageIndex: msgIndex, sentState: MESSAGE_SENT_STATE.SUCCESS });
         let config = io.getConfig();
@@ -262,7 +275,10 @@ export default function(io, emitter, logger){
       };
       params = utils.extend(params, conversation);
       io.sendCommand(SIGNAL_CMD.QUERY, params, (result) => {
-        let { messages } = result;
+        let { messages, code, msg } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
         messageCacher.add(conversation, messages);
         resolve(result);
       });
@@ -280,7 +296,11 @@ export default function(io, emitter, logger){
         userId: user.id,
       };
       data = utils.extend(data, params);
-      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ messages }) => {
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { messages, code, msg } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
         resolve({ messages });
       });
     });
@@ -419,6 +439,10 @@ export default function(io, emitter, logger){
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         delete result.index;
+        let { code, msg } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
         resolve(result);
       });
     });
@@ -452,8 +476,11 @@ export default function(io, emitter, logger){
         ...message
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code, msg } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
         let sender = io.getCurrentUser();
-        
         notify({
           sender,
           isSender: true,
@@ -485,7 +512,11 @@ export default function(io, emitter, logger){
         userId: user.id,
         ...params
       };
-      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ isFinished, msgs }) => {
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code, msg, isFinished, msgs } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
         resolve({ isFinished, msgs });
       });
     });
@@ -502,8 +533,10 @@ export default function(io, emitter, logger){
         ...params,
         userId
       };
-      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ cred: { token, domain, type, url } }) => {
-        resolve({ token, domain, type, url });
+      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ cred, code }) => {
+        cred = cred || {};
+        let { token, domain, type, url } = cred;
+        resolve({ token, domain, type, url, code });
       });
     });
   };
@@ -525,6 +558,9 @@ export default function(io, emitter, logger){
       let ext = names[names.length - 1];
       getFileToken({ type: fileType, ext }).then((auth) => {
         let { type } = auth;
+        if(utils.isEqual(ErrorType.COMMAND_FAILED.code, auth.code)){
+          return _callbacks.onerror(ErrorType.COMMAND_FAILED);
+        }
         if(!utils.isEqual(type, uploadType)){
           return _callbacks.onerror(ErrorType.UPLOAD_PLUGIN_NOTMATCH);
         }
@@ -538,6 +574,9 @@ export default function(io, emitter, logger){
           }
 
           getFileToken({ type: fileType, ext }).then((cred) => {
+            if(utils.isEqual(ErrorType.COMMAND_FAILED.code, cred.code)){
+              return _callbacks.onerror(ErrorType.COMMAND_FAILED);
+            }
             common.uploadThumbnail(upload, { ...params, ...cred }, (error, thumbnail, args) => {
               let { height, width } = args;
               utils.extend(message.content, { thumbnail, height, width, type: content.file.type });
@@ -553,6 +592,9 @@ export default function(io, emitter, logger){
             return uploadFile(auth, message);
           }
           getFileToken({ type: fileType, ext: 'png' }).then((cred) => {
+            if(utils.isEqual(ErrorType.COMMAND_FAILED.code, cred.code)){
+              return _callbacks.onerror(ErrorType.COMMAND_FAILED);
+            }
             common.uploadFrame(upload, { ...params, ...cred }, (error, poster, args) => {
               let { height, width, duration } = args;
               utils.extend(message.content, { poster, height, width, duration});
@@ -596,13 +638,13 @@ export default function(io, emitter, logger){
     message = utils.extend(message, { name: MESSAGE_TYPE.FILE });
     let option = { fileType: FILE_TYPE.FILE };
     return utils.deferred((resolve, reject) => {
-      let error = common.check(io, message, FUNC_PARAM_CHECKER.SEND_FILE_MESSAGE);
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.SEND_FILE_MESSAGE, true);
       let { uploadType } = io.getConfig();
       if(utils.isEqual(uploadType, UPLOAD_TYPE.NONE)){
         error = ErrorType.UPLOAD_PLUGIN_ERROR;
       }
       if(!utils.isEmpty(error)){
-        return reject(error);
+        return reject({ error });
       }
       logger.info({ tag: LOG_MODULE.MSG_SEND_FILE, type: FILE_TYPE.FILE });
       let onbefore = callbacks.onbefore || utils.noop;
@@ -615,12 +657,21 @@ export default function(io, emitter, logger){
       msg.content = { ...message.content, size };
       onbefore(msg);
 
+      if(!io.isConnected()){
+        return reject({ tid, sentState: MESSAGE_SENT_STATE.FAILED, error: ErrorType.CONNECTION_NOT_READY });
+      }
+
       _uploadFile(option, message, {
         onprogress: callbacks.onprogress,
         oncompleted: (message) => {
           sendMessage(message).then(resolve, reject);
         },
-        onerror: callbacks.onerror,
+        onerror: (error) => {
+          if(utils.isEqual(error.code, ErrorType.COMMAND_FAILED.code)){
+            return reject({ tid, sentState: MESSAGE_SENT_STATE.FAILED, error: ErrorType.COMMAND_FAILED });
+          }
+          callbacks.onerror(error, message);
+        },
       })
     });
   };
@@ -629,13 +680,13 @@ export default function(io, emitter, logger){
     message = utils.extend(message, { name: MESSAGE_TYPE.IMAGE });
     let option = { fileType: FILE_TYPE.IMAGE, scale: message.scale };
     return utils.deferred((resolve, reject) => {
-      let error = common.check(io, message, FUNC_PARAM_CHECKER.SEND_FILE_MESSAGE);
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.SEND_FILE_MESSAGE, true);
       let { uploadType } = io.getConfig();
       if(utils.isEqual(uploadType, UPLOAD_TYPE.NONE)){
         error = ErrorType.UPLOAD_PLUGIN_ERROR;
       }
       if(!utils.isEmpty(error)){
-        return reject(error);
+        return reject({ error });
       }
       logger.info({ tag: LOG_MODULE.MSG_SEND_FILE, type: FILE_TYPE.IMAGE });
       let onbefore = callbacks.onbefore || utils.noop;
@@ -643,12 +694,21 @@ export default function(io, emitter, logger){
       utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
       onbefore(message);
 
+      if(!io.isConnected()){
+        return reject({ tid, sentState: MESSAGE_SENT_STATE.FAILED, error: ErrorType.CONNECTION_NOT_READY });
+      }
+
       _uploadFile(option, message, {
         onprogress: callbacks.onprogress,
         oncompleted: (message) => {
           sendMessage(message).then(resolve, reject);
         },
-        onerror: callbacks.onerror,
+        onerror: (error) => {
+          if(utils.isEqual(error.code, ErrorType.COMMAND_FAILED.code)){
+            return reject({ tid, sentState: MESSAGE_SENT_STATE.FAILED, error: ErrorType.COMMAND_FAILED });
+          }
+          callbacks.onerror(error, message);
+        },
       })
     });
   };
@@ -657,13 +717,13 @@ export default function(io, emitter, logger){
     message = utils.extend(message, { name: MESSAGE_TYPE.VOICE });
     let option = { fileType: FILE_TYPE.AUDIO };
     return utils.deferred((resolve, reject) => {
-      let error = common.check(io, message, FUNC_PARAM_CHECKER.SEND_FILE_MESSAGE);
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.SEND_FILE_MESSAGE, true);
       let { uploadType } = io.getConfig();
       if(utils.isEqual(uploadType, UPLOAD_TYPE.NONE)){
         error = ErrorType.UPLOAD_PLUGIN_ERROR;
       }
       if(!utils.isEmpty(error)){
-        return reject(error);
+        return reject({ error });
       }
       logger.info({ tag: LOG_MODULE.MSG_SEND_FILE, type: FILE_TYPE.AUDIO });
 
@@ -672,12 +732,21 @@ export default function(io, emitter, logger){
       utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
       onbefore(message);
 
+      if(!io.isConnected()){
+        return reject({ tid, sentState: MESSAGE_SENT_STATE.FAILED, error: ErrorType.CONNECTION_NOT_READY });
+      }
+      
       _uploadFile(option, message, {
         onprogress: callbacks.onprogress,
         oncompleted: (message) => {
           sendMessage(message).then(resolve, reject);
         },
-        onerror: callbacks.onerror,
+        onerror: (error) => {
+          if(utils.isEqual(error.code, ErrorType.COMMAND_FAILED.code)){
+            return reject({ tid, sentState: MESSAGE_SENT_STATE.FAILED, error: ErrorType.COMMAND_FAILED });
+          }
+          callbacks.onerror(error, message);
+        },
       })
     });
   };
@@ -686,13 +755,13 @@ export default function(io, emitter, logger){
     message = utils.extend(message, { name: MESSAGE_TYPE.VIDEO });
     let option = { fileType: FILE_TYPE.VIDEO, scale: message.scale };
     return utils.deferred((resolve, reject) => {
-      let error = common.check(io, message, FUNC_PARAM_CHECKER.SEND_FILE_MESSAGE);
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.SEND_FILE_MESSAGE, true);
       let { uploadType } = io.getConfig();
       if(utils.isEqual(uploadType, UPLOAD_TYPE.NONE)){
         error = ErrorType.UPLOAD_PLUGIN_ERROR;
       }
       if(!utils.isEmpty(error)){
-        return reject(error);
+        return reject({ error });
       }
       logger.info({ tag: LOG_MODULE.MSG_SEND_FILE, type: FILE_TYPE.VIDEO });
       let onbefore = callbacks.onbefore || utils.noop;
@@ -700,12 +769,21 @@ export default function(io, emitter, logger){
       utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
       onbefore(message);
       
+      if(!io.isConnected()){
+        return reject({ tid, sentState: MESSAGE_SENT_STATE.FAILED, error: ErrorType.CONNECTION_NOT_READY });
+      }
+
       _uploadFile(option, message, {
         onprogress: callbacks.onprogress,
         oncompleted: (message) => {
           sendMessage(message).then(resolve, reject);
         },
-        onerror: callbacks.onerror,
+        onerror: (error) => {
+          if(utils.isEqual(error.code, ErrorType.COMMAND_FAILED.code)){
+            return reject({ tid, sentState: MESSAGE_SENT_STATE.FAILED, error: ErrorType.COMMAND_FAILED });
+          }
+          callbacks.onerror(error, message);
+        },
       });
     });
   };
@@ -714,12 +792,12 @@ export default function(io, emitter, logger){
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, params, FUNC_PARAM_CHECKER.SEND_MERGE_MESSAGE);
       if(!utils.isEmpty(error)){
-        return reject(error);
+        return reject({ error });
       }
       logger.info({ tag: LOG_MODULE.MSG_SEND_MERGE });
       let { conversationType, conversationId, messages, previewList, title } = params;
       if(messages.length > 20){
-        return reject(ErrorType.TRANSFER_MESSAGE_COUNT_EXCEED);
+        return reject({ error: ErrorType.TRANSFER_MESSAGE_COUNT_EXCEED });
       }
       let mergeMsg = {
         channelType: CONVERATION_TYPE.PRIVATE,
@@ -768,7 +846,11 @@ export default function(io, emitter, logger){
         topic: COMMAND_TOPICS.GET_MERGE_MSGS,
       };
       utils.extend(data, params);
-      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ isFinished, messages }) => {
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code, msg, isFinished, messages } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
         resolve({ isFinished, messages });
       });
     });
@@ -786,7 +868,8 @@ export default function(io, emitter, logger){
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, msg }) => {
         if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          return reject({ code });
+          let error = common.getError(code);
+          return reject(error);
         }
         resolve({ message: msg });
       });
@@ -853,10 +936,12 @@ export default function(io, emitter, logger){
         reactionId,
         userId
       };
-      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, timestamp }) => {
-        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });  
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code, msg, timestamp } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
         }
+        common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });  
         resolve();
       });
     });
@@ -877,10 +962,12 @@ export default function(io, emitter, logger){
         reactionId,
         userId
       };
-      io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, timestamp }) => {
-        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });  
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code, msg, timestamp } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
         }
+        common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });  
         resolve();
       });
     });

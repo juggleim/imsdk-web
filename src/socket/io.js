@@ -68,6 +68,16 @@ export default function IO(config){
   let isUserDisconnected = false;
   let onDisconnect = (result = {}) => {
     let { code } = result;
+    let cbs = cache.getAll();
+    utils.forEach(cbs, (val, key) => {
+      if(!utils.isNaN(key)){
+        let { callback } = val;
+        callback = callback || utils.noop;
+        callback(ErrorType.COMMAND_FAILED);
+        cache.remove(key);
+      }
+    });
+    
     if(!isUserDisconnected && !utils.isInclude(reconnectErrors, code) && !utils.isEqual(connectionState, CONNECT_STATE.DISCONNECTED)){
       let user = getCurrentUser();
       clearHeart();

@@ -23,6 +23,9 @@ const isNull = (str) => {
 const isNumber = (str) => {
   return Object.prototype.toString.call(str) === '[object Number]';
 };
+const _isNaN = (str) => {
+  return isNaN(Number(str));
+};
 const stringify = (obj) => {
   return JSON.stringify(obj);
 };
@@ -549,4 +552,5 @@ export default {
   isValidHMTime,
   getRandoms,
   groupBy,
+  isNaN: _isNaN
 }

@@ -137,15 +137,15 @@ export default function(io, emitter, logger){
 
   let sendMessage = (message, callbacks = {}) => {
     return utils.deferred((resolve, reject) => {
-      let error = common.check(io, message, FUNC_PARAM_CHECKER.SENDMSG);
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.SENDMSG, true);
       if(!utils.isEmpty(error)){
-        return reject(error);
+        return reject({ error });
       }
       let { referMsg } = message;
       if(!utils.isUndefined(referMsg)){
         let { messageIndex, messageId } = referMsg;
         if(utils.isUndefined(messageIndex) || utils.isUndefined(messageId) ){
-          return reject(ErrorType.SEND_REFER_MESSAGE_ERROR);
+          return reject({ error: ErrorType.SEND_REFER_MESSAGE_ERROR });
         }
       }
       logger.info({ tag: LOG_MODULE.MSG_SEND });
@@ -164,11 +164,14 @@ export default function(io, emitter, logger){
       utils.extend(data, { topic })
 
       let tid = message.tid || utils.getUUID();
-      utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
+      let sender = io.getCurrentUser() || {};
+      utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING, sender, isSender: true });
       _callbacks.onbefore(message);
+
+      if(!io.isConnected()){
+        return reject({ ...message, sentState: MESSAGE_SENT_STATE.FAILED, error: ErrorType.CONNECTION_NOT_READY });
+      }
       io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messageId, sentTime, code, msg, msgIndex, memberCount }) => {
-        let sender = io.getCurrentUser() || {};
-        utils.extend(message, { sender, isSender: true });
         if(code){
           utils.extend(message, { error: { code, msg }, sentState: MESSAGE_SENT_STATE.FAILED });
           return reject(message)

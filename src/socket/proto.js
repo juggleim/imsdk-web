@@ -917,6 +917,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           syncTime: {
             type: "int64",
             id: 2
+          },
+          count: {
+            type: "int32",
+            id: 3
           }
         }
       },

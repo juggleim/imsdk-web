@@ -92,12 +92,13 @@ export default function(io, emitter, logger){
       chatroom,
       conversationId: id
     };
+    let count = chatroom.count || 50;
     io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code }) => {
       logger.info({ tag: LOG_MODULE.CHATROOM_USER_JOIN, ...chatroom, code });
       if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
         chatroomCacher.set(chatroom.id, { isJoined: true });
         let syncers = [
-          { name: SIGNAL_NAME.S_NTF, msg: { receiveTime: 0, type: NOTIFY_TYPE.CHATROOM, targetId: id } },
+          { name: SIGNAL_NAME.S_NTF, msg: { receiveTime: 0, count: count, type: NOTIFY_TYPE.CHATROOM, targetId: id } },
           { name: SIGNAL_NAME.S_NTF, msg: { receiveTime: 0, type: NOTIFY_TYPE.CHATROOM_ATTR, targetId: id } },
         ];
         io.sync(syncers);

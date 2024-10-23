@@ -393,7 +393,8 @@ export default function IO(config){
     }
     
     if(utils.isEqual(name, SIGNAL_NAME.S_RTC_INVITE_NTF)){
-      emitter.emit(SIGNAL_NAME.CMD_RTC_INVITE_EVENT, result);
+      let { roomId, roomType, eventType, user } = result;
+      emitter.emit(SIGNAL_NAME.CMD_RTC_INVITE_EVENT, { eventType, user, roomId, roomType });
     }
     cache.remove(index);
   }

@@ -67,6 +67,45 @@ export default function({ io, emitter, logger }){
     });
   };
 
+  /* let options = { room: { id }, inviter: { id: '' } } */ 
+  let acceptRTC = (options) => {
+    return utils.deferred((resolve, reject) => {
+      let user = io.getCurrentUser();
+      let data = {
+        topic: COMMAND_TOPICS.RTC_ACCEPT,
+        user: user,
+        options
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code } = result;
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return resolve();
+        }
+        let error = common.getError(code);
+        reject(error);
+      });
+    });
+  };
+  /* let options = { room: { id }, inviter: { id: '' } } */ 
+  let declineRTC = (options) => {
+    return utils.deferred((resolve, reject) => {
+      let user = io.getCurrentUser();
+      let data = {
+        topic: COMMAND_TOPICS.RTC_DECLINE,
+        user: user,
+        options
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code } = result;
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return resolve();
+        }
+        let error = common.getError(code);
+        reject(error);
+      });
+    });
+  };
+
   /* let room = { id } */ 
   let queryRTCRoom = (room) => {
     return utils.deferred((resolve, reject) => {
@@ -77,9 +116,9 @@ export default function({ io, emitter, logger }){
         room
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
-        let { code } = result;
+        let { code, room: _room } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          return resolve({ room });
+          return resolve({ ..._room });
         }
         let error = common.getError(code);
         reject(error);
@@ -134,5 +173,7 @@ export default function({ io, emitter, logger }){
     queryRTCRoom,
     pingRTC,
     inviteRTC,
+    acceptRTC,
+    declineRTC,
   }
 }

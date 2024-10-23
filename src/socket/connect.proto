@@ -615,17 +615,16 @@ message RtcRoom{
     repeated RtcMember members = 51;
 }
 message RtcInviteReq{
-    InviteType inviteType = 1;
-    repeated string targetIds = 2;
-    RtcRoomType roomType = 3;
-    string roomId = 4;
+    repeated string targetIds = 1;
+    RtcRoomType roomType = 2;
+    string roomId = 3;
 }
 
 enum InviteType{
     DefaultInviteType = 0;
     Invite = 1;   //邀请事件
     Accept = 2;   //接受邀请事件
-    Reject= 3;    //拒绝邀请事件
+    Decline = 3;    //拒绝邀请事件
     Cancel = 4;   //取消邀请事件
     Timeout = 5;  //呼叫超时事件
 }
@@ -634,4 +633,8 @@ message RtcInviteEvent{
     UserInfo targetUser = 2;
     RtcRoom room = 3;
     repeated string targetIds = 4;
+}
+message RtcAnswerReq{
+    string targetId = 1;
+    string roomId = 2;
 }

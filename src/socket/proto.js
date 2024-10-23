@@ -1802,22 +1802,18 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
       },
       RtcInviteReq: {
         fields: {
-          inviteType: {
-            type: "InviteType",
-            id: 1
-          },
           targetIds: {
             rule: "repeated",
             type: "string",
-            id: 2
+            id: 1
           },
           roomType: {
             type: "RtcRoomType",
-            id: 3
+            id: 2
           },
           roomId: {
             type: "string",
-            id: 4
+            id: 3
           }
         }
       },
@@ -1826,7 +1822,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           DefaultInviteType: 0,
           Invite: 1,
           Accept: 2,
-          Reject: 3,
+          Decline: 3,
           Cancel: 4,
           Timeout: 5
         }
@@ -1849,6 +1845,18 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             rule: "repeated",
             type: "string",
             id: 4
+          }
+        }
+      },
+      RtcAnswerReq: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          roomId: {
+            type: "string",
+            id: 2
           }
         }
       }

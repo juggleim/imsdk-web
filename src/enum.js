@@ -276,6 +276,8 @@ export let COMMAND_TOPICS = {
   RTC_CREATE_ROOM: 'rtc_create',
   RTC_JOIN_ROOM: 'rtc_join',
   RTC_QUIT_ROOM: 'rtc_quit',
+  RTC_ACCEPT: 'rtc_accept',
+  RTC_DECLINE: 'rtc_decline',
   RTC_QRY_ROOM: 'rtc_qry',
   RTC_PING: 'rtc_ping',
   RTC_INVITE: 'rtc_invite',

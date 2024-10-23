@@ -254,5 +254,5 @@ function getMessagesHandler(index, data, { currentUser }) {
 function getRTCRoom(index, data){
   let payload = Proto.lookup('codec.RtcRoom');
   let result = payload.decode(data);
-  return tools.formatRTCRoom(result);
+  return { room: tools.formatRTCRoom(result) };
 }

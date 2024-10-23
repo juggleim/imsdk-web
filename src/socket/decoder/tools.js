@@ -434,7 +434,7 @@ function formatConversations(conversations, options = {}) {
 }
 
 function formatRTCRoom(result){
-  let { roomId, roomType, owner, members } = result;
+  let { roomId, roomType, members } = result;
   members = utils.map(members, (item) => {
     let { member, rtcState: state, cameraEnable, micEnable, callTime, connectTime, hangupTime, inviter } = item;
     member = common.formatUser(member);
@@ -443,7 +443,6 @@ function formatRTCRoom(result){
   });
   return {
     room: { id: roomId, type: roomType },
-    owner: common.formatUser(owner),
     members: members,
   };
 }

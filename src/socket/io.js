@@ -238,8 +238,8 @@ export default function IO(config){
         if(utils.isEqual(_cmd, SIGNAL_CMD.PING) && PingTimeouts.length < 3){
           return PingTimeouts.push({ cmd: _cmd });
         }
-        callback(ErrorType.COMMAND_FAILED);
         disconnect();
+        callback(ErrorType.COMMAND_FAILED);
       });
     }
   };

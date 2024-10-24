@@ -371,13 +371,25 @@ export default function(io, emitter, logger){
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, timestamp }) => {
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });  
+          common.updateSyncTime({ isSender: true,  sentTime: timestamp, io }); 
+          let _msgs = utils.map(messages, (msg) => {
+            let { messageId, tid, conversationType, conversationId } = msg;
+            return { messageId, tid, conversationType, conversationId };
+          });
+          let notify = {
+            name: MESSAGE_TYPE.COMMAND_DELETE_MSGS,
+            content: {
+              conversationType: item.conversationType,
+              conversationId: item.conversationId,
+              messages: _msgs
+            }
+          };
+          commandNotify(notify);
+          resolve();
+        }else{
+          let errorInfo = common.getError(code);
+          reject(errorInfo);
         }
-        let config = io.getConfig();
-        if(!config.isPC){
-          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, { name: MESSAGE_TYPE.CLIENT_REMOVE_MSGS, content: { messages }, ...item });
-        }
-        resolve();
       });
     });
   };

@@ -33,8 +33,11 @@ export default function(io, emitter, logger){
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       let { content: { content, messageId, sentTime } } = message;
-      let str = utils.decodeBase64(content);
-      let newContent = utils.parse(str);
+      let newContent = content;
+      if(utils.isBase64(content)){
+        let str = utils.decodeBase64(content);
+        newContent = utils.parse(str);
+      }
       // 将被修改消息的 messageId 和 sentTime 赋值给 message，伪装成 message 对象抛给业务层
       utils.extend(message, { content: newContent, messageId, sentTime });
     }
@@ -500,15 +503,12 @@ export default function(io, emitter, logger){
       }
       logger.info({ tag: LOG_MODULE.MSG_UPDATE,  messageId: message.messageId });
       let msg = {
-        ...message,
+        ...utils.clone(message),
         name: MESSAGE_TYPE.MODIFY,
       };
       let notify = (_msg = {}) => {
         utils.extend(msg, _msg);
-        let config = io.getConfig();
-        if(!config.isPC){
-          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
-        }
+        commandNotify(msg);
       };
       // 兼容 PC 端修改非 content 属性，保证多端行为一致性，直接返回，PC 端会做本地消息 update
       if(utils.isUndefined(message.content)){
@@ -531,7 +531,7 @@ export default function(io, emitter, logger){
           isUpdated: true,
           content: {
             messageId: message.messageId,
-            ...message.content
+            content: message.content
           }
         });
         resolve(msg);

@@ -413,10 +413,7 @@ export default function(io, emitter, logger){
               exts,
             },
           });
-          let config = io.getConfig();
-          if(!config.isPC){
-            io.emit(SIGNAL_NAME.CMD_RECEIVED, msg);
-          }
+          commandNotify(msg)
 
           let _msg = utils.clone(msg);
           delete msg.exts;

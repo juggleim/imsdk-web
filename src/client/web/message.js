@@ -32,14 +32,13 @@ export default function(io, emitter, logger){
     }
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
-      let { content: { content, messageId, sentTime } } = message;
+      let { conversationType, conversationId, content: { content, messageId, sentTime } } = message;
       let newContent = content;
       if(utils.isBase64(content)){
         let str = utils.decodeBase64(content);
         newContent = utils.parse(str);
       }
-      // 将被修改消息的 messageId 和 sentTime 赋值给 message，伪装成 message 对象抛给业务层
-      utils.extend(message, { content: newContent, messageId, sentTime });
+      return emitter.emit(EVENT.MESSAGE_UPDATED, { conversationType, conversationId, messageId, content: newContent });
     }
 
     // 收到非聊天室消息一定要更新会话列表
@@ -108,10 +107,6 @@ export default function(io, emitter, logger){
       return emitter.emit(EVENT.MESSAGE_CLEAN, { conversationType, conversationId, cleanTime });
     }
 
-    if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
-      let { conversationType, conversationId, content, messageId } = message;
-      return emitter.emit(EVENT.MESSAGE_UPDATED, { conversationType, conversationId, messageId, content });
-    }
     if(utils.isEqual(message.name, MESSAGE_TYPE.READ_MSG) || utils.isEqual(message.name, MESSAGE_TYPE.READ_GROUP_MSG)){
       let { conversationType, conversationId, content: { msgs } } = message;
       let notify = {
@@ -534,7 +529,7 @@ export default function(io, emitter, logger){
             content: message.content
           }
         });
-        resolve(msg);
+        resolve();
       });
     });
   };

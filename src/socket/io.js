@@ -79,7 +79,7 @@ export default function IO(config){
     });
     
     if(!isUserDisconnected && !utils.isInclude(reconnectErrors, code) && !utils.isEqual(connectionState, CONNECT_STATE.DISCONNECTED)){
-      let user = getCurrentUser();
+      let user = getCurrentUser({ ignores: [] });
       clearHeart();
       return reconnect(user, ({ next }) => {
         next();
@@ -423,8 +423,13 @@ export default function IO(config){
     return utils.isEqual(connectionState, CONNECT_STATE.DISCONNECTED)
   }
 
-  function getCurrentUser(){
-    return currentUserInfo;
+  function getCurrentUser(options = {}){
+    let { ignores = ['token'] } = options;
+    let user = utils.clone(currentUserInfo);
+    utils.forEach(ignores, (key) => {
+      delete user[key];
+    });
+    return user;
   };
 
   function getConfig(){

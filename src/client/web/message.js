@@ -325,17 +325,28 @@ export default function(io, emitter, logger){
         time: 0
       };
       utils.extend(data, params);
-
       io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code, timestamp }) => {
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });  
+          let content = { 
+            conversationType: params.conversationType,
+            conversationId: params.conversationId,
+            cleanTime: params.time || 0,
+          };
+          let { senderId } = params;
+          if(!utils.isUndefined(senderId)){
+            utils.extend(content, { senderId  })
+          }
+          let notify = { 
+            name: MESSAGE_TYPE.CLEAR_MSG, 
+            content: content
+          };
+          commandNotify(notify);
+          resolve();
+        }else{
+          let errorInfo = common.getError(code);
+          reject(errorInfo)
         }
-        let config = io.getConfig();
-        if(!config.isPC){
-          let msg = { name: MESSAGE_TYPE.CLEAR_MSG, content: { ...data } };
-          io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
-        }
-        resolve();
       });
     });
   };
@@ -428,7 +439,7 @@ export default function(io, emitter, logger){
         let { conversationType, conversationId, messageId, sentTime } = message;
         return { conversationType, conversationId, messageId, sentTime };
       });
-      
+
       let data = {
         topic: COMMAND_TOPICS.READ_MESSAGE,
         messages

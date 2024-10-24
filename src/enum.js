@@ -460,6 +460,7 @@ export let ErrorMessages = [
   { code: 11012, msg: '注销下线', name: 'CONNECT_USER_LOGOUT' },
   { code: 11013, msg: '不支持的信令', name: 'CONNECT_SIGNAL_UNSUPPORT' },
   { code: 11014, msg: '接口调用超频，默认 100 次/秒', name: 'COMMAND_OVER_FREQUENCY' },
+  { code: 11020, msg: '安全域名校验失败', name: 'CONNECT_SECURITY_DOMAIN_ERROR' },
   { code: 10102, msg: '用户不存在', name: 'CONNECT_USER_NOT_EXISTS' },
   { code: 10104, msg: '时区不合法', name: 'PARAMS_TIMEZONE_ILLEGAL' },
   { code: 12004, msg: '消息格式不合法', name: 'PARAMS_MESSAGE_ILLEGAL'},

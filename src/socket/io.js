@@ -82,6 +82,7 @@ export default function IO(config){
       let user = getCurrentUser({ ignores: [] });
       clearHeart();
       return reconnect(user, ({ next }) => {
+        next = next || utils.noop;
         next();
       });
     }
@@ -391,7 +392,11 @@ export default function IO(config){
           });
         });
       }
-      updateState({ state, user: currentUserInfo });
+      if(utils.isEqual(code, ErrorType.CONNECT_SECURITY_DOMAIN_ERROR.code)){
+        // 防止 WebScoket 断开自动重连
+        isUserDisconnected = true;
+      }
+      updateState({ state, user: currentUserInfo, code });
       _callback({ user: currentUserInfo, error });
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.DISCONNECT)){

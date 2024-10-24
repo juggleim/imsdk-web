@@ -125,6 +125,14 @@ export default function(io, emitter, logger){
     }
   });
 
+
+  let commandNotify = (msg) => {
+    let config = io.getConfig();
+    if(!config.isPC){
+      io.emit(SIGNAL_NAME.CMD_RECEIVED, msg);
+    }
+  };
+
   let maps = [
     [CONVERATION_TYPE.PRIVATE, 'p_msg'],
     [CONVERATION_TYPE.GROUP, 'g_msg'],
@@ -415,6 +423,12 @@ export default function(io, emitter, logger){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
+      messages = utils.isArray(messages) ? messages : [messages];
+      messages = utils.map(messages, (message) => {
+        let { conversationType, conversationId, messageId, sentTime } = message;
+        return { conversationType, conversationId, messageId, sentTime };
+      });
+      
       let data = {
         topic: COMMAND_TOPICS.READ_MESSAGE,
         messages
@@ -422,6 +436,16 @@ export default function(io, emitter, logger){
       io.sendCommand(SIGNAL_CMD.QUERY, data, ({ code,  timestamp }) => {
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });  
+          let conversation = messages[0];
+          let notify = {
+            name: MESSAGE_TYPE.READ_MSG,
+            conversationType: conversation.conversationType,
+            conversationId: conversation.conversationId,
+            content: {
+              msgs: messages
+            }
+          };
+          commandNotify(notify);
         }
         resolve();
       });

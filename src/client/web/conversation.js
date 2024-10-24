@@ -215,6 +215,13 @@ export default function(io, emitter){
     conversationUtils.clear();
   });
 
+  let commandNotify = (msg) => {
+    let config = io.getConfig();
+    if(!config.isPC){
+      io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
+    }
+  };
+
   let getConversations = (params = {}) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, params, []);
@@ -633,10 +640,15 @@ export default function(io, emitter){
         let { timestamp, code } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
-          let config = io.getConfig();
+          let notify = {
+            name: MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_ADD,
+            content: { id: tag.id, name: tag.name, conversations: [] },
+          };
+          commandNotify(notify);
           resolve();
         }else{
-          reject({ code });
+          let errorInfo = common.getError(code);
+          reject(errorInfo);
         }        
       });
     });
@@ -655,10 +667,16 @@ export default function(io, emitter){
         let { timestamp, code } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
-          let config = io.getConfig();
+          let tags = utils.isArray(tag) ? tag : [tag];
+          let notify = {
+            name: MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_REMOVE,
+            content: { tags }
+          };
+          commandNotify(notify);
           resolve();
         }else{
-          reject({ code });
+          let errorInfo = common.getError(code);
+          reject(errorInfo);
         }        
       });
     });
@@ -706,7 +724,11 @@ export default function(io, emitter){
         let { timestamp, code } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
-          let config = io.getConfig();
+          let notify = {
+            name: MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_ADD,
+            content: { id: tag.id, conversations: conversations },
+          };
+          commandNotify(notify);
           resolve();
         }else{
           let error = common.getError(code);
@@ -734,7 +756,11 @@ export default function(io, emitter){
         let { timestamp, code } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
-          let config = io.getConfig();
+          let notify = {
+            name: MESSAGE_TYPE.COMMAND_REMOVE_CONVERS_FROM_TAG,
+            content: { id: tag.id, conversations: conversations },
+          };
+          commandNotify(notify);
           resolve();
         }else{
           let error = common.getError(code);

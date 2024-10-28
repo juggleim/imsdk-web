@@ -146,6 +146,12 @@ export default function(io, emitter, logger){
     sendingMsgMap[tid] = true;  
   */ 
   let sendingMsgMap = {};
+
+    /*
+    缓存发送失败的 clientMsgId，防止未收到 ACK，重发导致接收端消息重复
+    sendMsgMap[tid] = uuid;  
+  */ 
+  let sendMsgMap = {};
   let sendMessage = (message, callbacks = {}) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, message, FUNC_PARAM_CHECKER.SENDMSG, true);
@@ -170,7 +176,13 @@ export default function(io, emitter, logger){
       };
       utils.extend(_callbacks, callbacks);
       
-      let data = utils.clone(message);
+      let tid = message.tid || utils.getUUID();
+      let clientMsgId = sendMsgMap[tid] || utils.getUUID();
+      sendMsgMap[tid] = clientMsgId;
+
+      sendingMsgMap[tid] = true;
+
+      let data = utils.clone({...message, clientMsgId });
       let { name, conversationType, conversationId, isMass } = data;
 
       let flag = common.getMsgFlag(name, { isMass });
@@ -179,9 +191,7 @@ export default function(io, emitter, logger){
       let topic = topics[conversationType];
       utils.extend(data, { topic })
 
-      let tid = message.tid || utils.getUUID();
       utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING, sender, isSender: true });
-      sendingMsgMap[tid] = true;
       _callbacks.onbefore(utils.clone(message));
 
       if(!io.isConnected()){
@@ -195,6 +205,10 @@ export default function(io, emitter, logger){
           utils.extend(message, { error: { code, msg }, sentState: MESSAGE_SENT_STATE.FAILED });
           return reject(utils.clone(message));
         }
+
+        // 消息发送成功，清理缓存消息
+        delete sendMsgMap[tid];
+
         utils.extend(message, { sentTime, messageId, messageIndex: msgIndex, sentState: MESSAGE_SENT_STATE.SUCCESS });
         let config = io.getConfig();
         if(!config.isPC && !utils.isEqual(conversationType, CONVERATION_TYPE.CHATROOM)){

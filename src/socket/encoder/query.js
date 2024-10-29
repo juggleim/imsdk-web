@@ -363,9 +363,9 @@ export default function getQueryBody({ data, callback, index }){
   }
 
   if(utils.isEqual(COMMAND_TOPICS.JOIN_CHATROOM, topic)){
-    let { chatroom: { id: chatId  } } = data;
+    let { chatroom: { id: chatId, isAutoCreate  } } = data;
     let codec = Proto.lookup('codec.ChatRoomReq');
-    let message = codec.create({ chatId });
+    let message = codec.create({ chatId, isAutoCreate });
     targetId = chatId;
     buffer = codec.encode(message).finish();
   }

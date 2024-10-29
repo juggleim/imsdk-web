@@ -43,6 +43,9 @@ export default function($chatroom, { io, emitter, logger }){
   let joinChatroom = (chatroom) =>{
     return $chatroom.joinChatroom(chatroom);
   };
+  let joinAndCreateChatroom = (chatroom) =>{
+    return $chatroom.joinAndCreateChatroom(chatroom);
+  };
   let quitChatroom = (chatroom) => {
     return $chatroom.quitChatroom(chatroom);
   };
@@ -66,6 +69,7 @@ export default function($chatroom, { io, emitter, logger }){
   return {
     joinChatroom,
     quitChatroom,
+    joinAndCreateChatroom,
     setChatroomAttributes,
     getChatroomAttributes,
     removeChatroomAttributes,

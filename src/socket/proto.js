@@ -1100,6 +1100,14 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           chatId: {
             type: "string",
             id: 1
+          },
+          chatName: {
+            type: "string",
+            id: 2
+          },
+          isAutoCreate: {
+            type: "bool",
+            id: 3
           }
         }
       },

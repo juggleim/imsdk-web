@@ -78,13 +78,36 @@ export default function(io, emitter, logger){
       if(chatroomResult.isJoined){
         return resolve();
       }
-      logger.info({ tag: LOG_MODULE.CHATROOM_USER_JOIN, ...chatroom  });
-      _joinChatroom(chatroom, {
+      let _chatroom = { ...utils.clone(chatroom), isAutoCreate: false  }
+      logger.info({ tag: LOG_MODULE.CHATROOM_USER_JOIN, ..._chatroom  });
+      _joinChatroom(_chatroom, {
         success: resolve,
         fail: reject,
       });
     });
   };
+
+  function joinAndCreateChatroom(chatroom){
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, chatroom, FUNC_PARAM_CHECKER.JOINCHATROOM);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { id } = chatroom;
+      let chatroomResult = chatroomCacher.get(id);
+      if(chatroomResult.isJoined){
+        return resolve();
+      }
+      let _chatroom = { ...utils.clone(chatroom), isAutoCreate: true  }
+      logger.info({ tag: LOG_MODULE.CHATROOM_USER_JOIN, ..._chatroom  });
+
+      _joinChatroom(_chatroom, {
+        success: resolve,
+        fail: reject,
+      });
+    });
+  }
+
   function _joinChatroom(chatroom, callbacks){
     let { id } = chatroom;
     let data = {
@@ -256,6 +279,7 @@ export default function(io, emitter, logger){
 
   return {
     joinChatroom,
+    joinAndCreateChatroom,
     quitChatroom,
     setChatroomAttributes,
     getChatroomAttributes,

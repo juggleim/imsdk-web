@@ -68,10 +68,21 @@ export default function IO(config){
   let isUserDisconnected = false;
   let onDisconnect = (result = {}) => {
     let { code } = result;
+    let cbs = cache.getAll();
+    utils.forEach(cbs, (val, key) => {
+      if(!utils.isNaN(key)){
+        let { callback } = val;
+        callback = callback || utils.noop;
+        callback(ErrorType.COMMAND_FAILED);
+        cache.remove(key);
+      }
+    });
+    
     if(!isUserDisconnected && !utils.isInclude(reconnectErrors, code) && !utils.isEqual(connectionState, CONNECT_STATE.DISCONNECTED)){
-      let user = getCurrentUser();
+      let user = getCurrentUser({ ignores: [] });
       clearHeart();
       return reconnect(user, ({ next }) => {
+        next = next || utils.noop;
         next();
       });
     }
@@ -228,8 +239,8 @@ export default function IO(config){
         if(utils.isEqual(_cmd, SIGNAL_CMD.PING) && PingTimeouts.length < 3){
           return PingTimeouts.push({ cmd: _cmd });
         }
-        callback(ErrorType.COMMAND_FAILED);
         disconnect();
+        callback(ErrorType.COMMAND_FAILED);
       });
     }
   };
@@ -381,7 +392,11 @@ export default function IO(config){
           });
         });
       }
-      updateState({ state, user: currentUserInfo });
+      if(utils.isEqual(code, ErrorType.CONNECT_SECURITY_DOMAIN_ERROR.code)){
+        // 防止 WebScoket 断开自动重连
+        isUserDisconnected = true;
+      }
+      updateState({ state, user: currentUserInfo, code });
       _callback({ user: currentUserInfo, error });
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.DISCONNECT)){
@@ -418,8 +433,13 @@ export default function IO(config){
     return utils.isEqual(connectionState, CONNECT_STATE.DISCONNECTED)
   }
 
-  function getCurrentUser(){
-    return currentUserInfo;
+  function getCurrentUser(options = {}){
+    let { ignores = ['token'] } = options;
+    let user = utils.clone(currentUserInfo);
+    utils.forEach(ignores, (key) => {
+      delete user[key];
+    });
+    return user;
   };
 
   function getConfig(){

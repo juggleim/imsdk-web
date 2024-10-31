@@ -84,7 +84,7 @@ export let FUNC_PARAM_CHECKER = {
   RECALLMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'sentTime' }],
   READMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'sentTime', type: 'Number' }, { name: 'unreadIndex' }],
   GET_MESSAGE_READ_DETAILS: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }],
-  UPDATEMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'tid' }],
+  UPDATEMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'tid' }, { name: 'sentTime' }, { name: 'messageId' }, { name: 'content' }],
   GET_MENTIOIN_MESSAGES: [{ name: 'conversationType' }, { name: 'conversationId' }],
   SEARCH_MESSAGES: [{ name: 'keywords', type: 'Array' }],
   UPDATE_MESSAGE_ATTR: [{ name: 'tid' }, { name: 'attribute', type: 'String' }],
@@ -476,6 +476,7 @@ export let ErrorMessages = [
   { code: 11012, msg: '注销下线', name: 'CONNECT_USER_LOGOUT' },
   { code: 11013, msg: '不支持的信令', name: 'CONNECT_SIGNAL_UNSUPPORT' },
   { code: 11014, msg: '接口调用超频，默认 100 次/秒', name: 'COMMAND_OVER_FREQUENCY' },
+  { code: 11020, msg: '安全域名校验失败', name: 'CONNECT_SECURITY_DOMAIN_ERROR' },
   { code: 10102, msg: '用户不存在', name: 'CONNECT_USER_NOT_EXISTS' },
   { code: 10104, msg: '时区不合法', name: 'PARAMS_TIMEZONE_ILLEGAL' },
   { code: 12004, msg: '消息格式不合法', name: 'PARAMS_MESSAGE_ILLEGAL'},
@@ -502,7 +503,7 @@ export let ErrorMessages = [
   { code: 25001, msg: '连接已存在', name: 'CONNECTION_EXISTS' },
   { code: 25002, msg: '连接不存在', name: 'CONNECTION_NOT_READY' },
   { code: 25003, msg: '参数类型不正确', name: 'ILLEGAL_TYPE_PARAMS' },
-  { code: 25004, msg: '发送超时，连接异常', name: 'COMMAND_FAILED' },
+  { code: 25004, msg: '连接异常,信令发送超时', name: 'COMMAND_FAILED' },
   { code: 25005, msg: '上传文件组件为空', name: 'UPLOAD_PLUGIN_ERROR' },
   { code: 25006, msg: '上传文件组件与 OSS 存储不一致', name: 'UPLOAD_PLUGIN_NOTMATCH' },
   { code: 25007, msg: '文件上传失败，请重试', name: 'UPLOADING_FILE_ERROR' },
@@ -513,6 +514,7 @@ export let ErrorMessages = [
   { code: 25012, msg: 'IM 服务连接失败，请检查当前设备网络是否可用', name: 'IM_SERVER_CONNECT_ERROR' },
   { code: 25013, msg: '参数不可为空，请检查传入参数', name: 'ILLEGAL_PARAMS_EMPTY' },
   { code: 25014, msg: 'SDK 内部正在连接，无需重复调用 connect 方法', name: 'REPREAT_CONNECTION' },
+  { code: 25015, msg: '消息重复发送，相同的 tid 且正在发送中，无需再次发送消息', name: 'MESSAGE_SEND_REPETITION' },
 
   { code: 21200, msg: '消息撤回成功', name: 'MESSAGE_RECALL_SUCCESS' },
   
@@ -565,7 +567,6 @@ export let MESSAGE_TYPE = {
   // CLIENT_* 约定为客户端定义适用
   CLIENT_REMOVE_MSGS: 'jgc:removemsgs',
   CLIENT_REMOVE_CONVERS: 'jgc:removeconvers',
-  CLIENT_RECALL_MSG: 'jgc:recallmsg',
   CLIENT_MARK_UNREAD: 'jgc:markunread',
 }
 

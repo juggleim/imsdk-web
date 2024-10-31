@@ -280,13 +280,13 @@ function ConversationUtils(){
         unreadCount = 0;
         latestMessage = conversation.latestMessage;
       }
-      if(unreadCount < 0 || utils.isNull(unreadCount)){
-        unreadCount = 0;
-      }
-
       if(!isSender && msgFlag.isCount){
         latestUnreadIndex = latestMessage.unreadIndex || latestUnreadIndex;
         unreadCount = latestUnreadIndex - latestReadIndex;
+      }
+
+      if(unreadCount < 0 || utils.isNull(unreadCount)){
+        unreadCount = 0;
       }
 
       let key = getDraftKey(conversation);

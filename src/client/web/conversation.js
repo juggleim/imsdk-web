@@ -215,6 +215,13 @@ export default function(io, emitter){
     conversationUtils.clear();
   });
 
+  let commandNotify = (msg) => {
+    let config = io.getConfig();
+    if(!config.isPC){
+      io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, msg);
+    }
+  };
+
   let getConversations = (params = {}) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, params, []);
@@ -379,6 +386,10 @@ export default function(io, emitter){
       let _params = { topic: COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS, time: 0, count, userId: user.id };
       utils.extend(_params, params);
       io.sendCommand(SIGNAL_CMD.QUERY, _params, (result) => {
+        let { code, msg } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
         resolve({ conversations: result.conversations, isFinished: result.isFinished });
       });
     });
@@ -423,6 +434,7 @@ export default function(io, emitter){
       let { id: userId } = io.getCurrentUser();
       let data = { topic: COMMAND_TOPICS.GET_UNREAD_TOTLAL_CONVERSATION, userId, conversationTypes, ignoreConversations, tag };
       io.sendCommand(SIGNAL_CMD.QUERY, data, ({ count }) => {
+        count = count || 0;
         resolve({ count });
       });
     });
@@ -608,7 +620,8 @@ export default function(io, emitter){
           }
           resolve();
         }else{
-          reject({ code });
+          let error = common.getError(code);
+          reject(error);
         }        
       });
     });
@@ -627,10 +640,15 @@ export default function(io, emitter){
         let { timestamp, code } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
-          let config = io.getConfig();
+          let notify = {
+            name: MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_ADD,
+            content: { id: tag.id, name: tag.name, conversations: [] },
+          };
+          commandNotify(notify);
           resolve();
         }else{
-          reject({ code });
+          let errorInfo = common.getError(code);
+          reject(errorInfo);
         }        
       });
     });
@@ -649,10 +667,16 @@ export default function(io, emitter){
         let { timestamp, code } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
-          let config = io.getConfig();
+          let tags = utils.isArray(tag) ? tag : [tag];
+          let notify = {
+            name: MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_REMOVE,
+            content: { tags }
+          };
+          commandNotify(notify);
           resolve();
         }else{
-          reject({ code });
+          let errorInfo = common.getError(code);
+          reject(errorInfo);
         }        
       });
     });
@@ -676,7 +700,8 @@ export default function(io, emitter){
           })
           resolve({ tags: _tags });
         }else{
-          reject({ code });
+          let error = common.getError(code);
+          reject(error);
         }
       });
     });
@@ -699,10 +724,15 @@ export default function(io, emitter){
         let { timestamp, code } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
-          let config = io.getConfig();
+          let notify = {
+            name: MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_ADD,
+            content: { id: tag.id, conversations: conversations },
+          };
+          commandNotify(notify);
           resolve();
         }else{
-          reject({ code });
+          let error = common.getError(code);
+          reject(error);
         }        
       });
     });
@@ -726,10 +756,15 @@ export default function(io, emitter){
         let { timestamp, code } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
-          let config = io.getConfig();
+          let notify = {
+            name: MESSAGE_TYPE.COMMAND_REMOVE_CONVERS_FROM_TAG,
+            content: { id: tag.id, conversations: conversations },
+          };
+          commandNotify(notify);
           resolve();
         }else{
-          reject({ code });
+          let error = common.getError(code);
+          reject(error);
         }        
       });
     });

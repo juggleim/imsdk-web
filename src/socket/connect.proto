@@ -364,6 +364,8 @@ message QryHisMsgByIdsReq{
 }
 message ChatRoomReq{
     string chatId = 1;
+    string chatName = 2;
+    bool isAutoCreate = 3;
 }
 message QryTotalUnreadCountReq{
     int64 time = 1;

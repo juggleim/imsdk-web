@@ -43,6 +43,12 @@ let init = (config) => {
   }
 
 
+  let plugins = {
+    call: () => {
+      return RTCSignal({ io, emitter, logger });
+    }
+  }
+
   let _export = {
     ...provider.socket,
     ...provider.message,
@@ -51,9 +57,14 @@ let init = (config) => {
     ...emitter,
     registerMessage: common.registerMessage,
     isDesktop: common.isDesktop,
-    use: () => {
-      let rtc = RTCSignal({ io, emitter, logger });
-      utils.extend(_export, rtc);
+    install: (plugin) => {
+      if(!utils.isObject(plugin)){
+        return;
+      }
+      let { name } = plugin;
+      let func = plugins[name] || function(){ return {} };
+      let apis = func();
+      return apis;
     },
     Event: EVENT,
     ConnectionState: CONNECT_STATE,

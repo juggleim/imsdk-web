@@ -55,6 +55,7 @@ export default function MessageSyncer(send, emitter, io, { logger }) {
       };
       send(SIGNAL_CMD.QUERY, data, ({ isFinished, messages, code }) => {
         
+        messages = messages || [];
         logger.info({ tag: LOG_MODULE.MSG_SYNC, data, msg, code, count: messages.length });
         
         if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){

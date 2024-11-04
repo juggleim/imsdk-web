@@ -18,6 +18,7 @@ import Timer from "../common/timer";
 import Counter from "../common/counter";
 import { VERSION } from "./version";
 
+import NetworkWatcher from "../common/network-watcher";
 /* 
   fileCompressLimit: 图片缩略图压缩限制，小于设置数值将不执行压缩，单位 KB
   config = { appkey, nav, isSync, upload, uploadType, fileCompressLimit }
@@ -64,6 +65,23 @@ export default function IO(config){
     timer.pause();
     syncTimer.pause();
   };
+
+  let networkWatcher = NetworkWatcher({
+    ononline: () => {
+      if(ws.readyState == 3){
+        console.log('ws.readyState', ws.readyState)
+        let user = getCurrentUser({ ignores: [] });
+        clearHeart();
+        cache.remove(CONNECT_TOOL.RECONNECT_COUNT);
+        cache.remove(CONNECT_TOOL.RECONNECT_FREQUENCY);
+        return reconnect(user, ({ next }) => {
+          next = next || utils.noop;
+          next();
+        });
+      }
+    }
+  });
+  networkWatcher.watch();
 
   let isUserDisconnected = false;
   let onDisconnect = (result = {}) => {
@@ -166,7 +184,9 @@ export default function IO(config){
     });
   };
   
+  let reconnectTimer = 0;
   let reconnect = ({ token, userId, deviceId }, callback) => {
+    clearTimeout(reconnectTimer);
 
     logger.info({ tag: LOG_MODULE.CON_RECONNECT, userId, deviceId });
 
@@ -182,7 +202,7 @@ export default function IO(config){
     let reconnectOpt = cache.get(CONNECT_TOOL.RECONNECT_FREQUENCY);
     let frequency = reconnectOpt.frequency || 1;
     let msec = frequency * 1000;
-    setTimeout(() => {
+    reconnectTimer = setTimeout(() => {
       
       count += 1;
       cache.set(CONNECT_TOOL.RECONNECT_COUNT, { count });
@@ -227,6 +247,10 @@ export default function IO(config){
     }
     let counter = Counter({ cmd });
     let buffer = encoder.encode(cmd, { callback, data, index, counter });
+    if(ws.readyState != 1){
+      disconnect();
+      return callback(ErrorType.COMMAND_FAILED);
+    }
     ws.send(buffer);
     let _data = utils.clone(data);
     delete _data.messages;

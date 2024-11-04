@@ -48,7 +48,12 @@ export default function ChatroomSyncer(send, emitter, io, { logger }) {
         logger.info({ tag: LOG_MODULE.MSG_SYNC, syncTime, msg });
         return next();
       }
-
+      if(msg.isNotSync){
+        logger.info({ tag: LOG_MODULE.MSG_SYNC, syncTime, msg });
+        setChatRoomSyncTime(msg.targetId, msg.receiveTime);
+        return next();
+      }
+      
       let count = msg.count || 50;
       let data = {
         syncTime: syncTime,

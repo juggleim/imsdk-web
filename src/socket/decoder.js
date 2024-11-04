@@ -311,14 +311,14 @@ export default function Decoder(cache, io) {
       }
 
       if (utils.isEqual(conversationType, CONVERATION_TYPE.PRIVATE)) {
-        let { userPortrait, nickname, extFields, userId, updatedTime } = targetUserInfo;
+        let { userPortrait, nickname, extFields, userId, updatedTime } = targetUserInfo || {};
         extFields = utils.toObject(extFields);
 
         utils.extend(latestMessage, {
-          conversationTitle: nickname,
-          conversationPortrait: userPortrait,
-          conversationExts: extFields,
-          conversationUpdatedTime: updatedTime,
+          conversationTitle: nickname || '',
+          conversationPortrait: userPortrait || '',
+          conversationExts: extFields || '',
+          conversationUpdatedTime: updatedTime || 0,
         });
 
         GroupCacher.set(userId, targetUserInfo);

@@ -227,6 +227,10 @@ export default function IO(config){
     }
     let counter = Counter({ cmd });
     let buffer = encoder.encode(cmd, { callback, data, index, counter });
+    if(ws.readyState != 1){
+      disconnect();
+      return callback(ErrorType.COMMAND_FAILED);
+    }
     ws.send(buffer);
     let _data = utils.clone(data);
     delete _data.messages;

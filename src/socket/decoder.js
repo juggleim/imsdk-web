@@ -297,14 +297,14 @@ export default function Decoder(cache, io) {
       }
 
       if (utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)) {
-        let { groupName, groupPortrait, extFields, groupId, updatedTime } = groupInfo;
+        let { groupName, groupPortrait, extFields } = groupInfo || { extFields: {} };
         extFields = utils.toObject(extFields);
 
         utils.extend(latestMessage, {
-          conversationTitle: groupName,
-          conversationPortrait: groupPortrait,
+          conversationTitle: groupName || '',
+          conversationPortrait: groupPortrait || '',
           conversationExts: extFields,
-          conversationUpdatedTime: updatedTime,
+          conversationUpdatedTime: updatedTime || 0,
         });
 
         GroupCacher.set(groupId, groupInfo);

@@ -107,6 +107,8 @@ export let FUNC_PARAM_CHECKER = {
   GET_MERGE_MESSAGES: [{ name: 'messageId' }],
 
   GET_FIRST_UNREAD_MSG: [{ name: 'conversationType' }, { name: 'conversationId' }],
+  
+  SUBSCRIBE_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }],
 
   GETCONVERSATIONS: [{ name: 'limit' }],
   GETCONVERSATION: [{ name: 'conversationType' }, { name: 'conversationId' }],

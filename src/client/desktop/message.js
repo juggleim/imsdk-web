@@ -31,6 +31,13 @@ export default function($message, { webAgent }){
   ];
   let invokes = common.formatProvider(funcs, $message);
 
+  invokes.subscribeMessage = (conversation) => {
+    return webAgent.subscribeMessage(conversation);
+  };
+  invokes.unsubscribeMessage = (conversation) => {
+    return webAgent.unsubscribeMessage(conversation);
+  };
+
   invokes.getMessages = (conversation) => {
     return utils.deferred((resolve, reject) => {
       let { order = MESSAGE_ORDER.BACKWARD } = conversation;

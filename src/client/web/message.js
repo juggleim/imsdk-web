@@ -299,7 +299,7 @@ export default function(io, emitter, logger){
         if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           return reject({code, msg});
         }
-        messageCacher.add(conversation, messages);
+        // messageCacher.add(conversation, messages);
         resolve(result);
       });
     });
@@ -1026,6 +1026,81 @@ export default function(io, emitter, logger){
     });
   };
 
+  /* 
+
+    let subscribeMsgCache = {
+      conversationType_convesationId: { 
+        timer: '定时器',
+        time: '上一次的获取时间'
+      }
+    }
+  */
+  let subscribeMsgCache = {};
+  let _getSubId = (conversation) => {
+    let { conversationId, conversationType } = conversation;
+    return `${conversationType}_${conversationId}`;
+  };
+  let subscribeMessage = (conversation, option) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, conversation, FUNC_PARAM_CHECKER.SUBSCRIBE_MESSAGE, true);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let subId = _getSubId(conversation);
+      let subInfo = subscribeMsgCache[subId];
+      if(subInfo){
+        return resolve();
+      }
+      subInfo = { timer: 0, time: 0 };
+      subscribeMsgCache[subId] = subInfo;
+
+      let defOption = { ms: 3 * 1000 };
+      if(!utils.isObject(option) || !utils.isNumber(option.ms)){
+        option = defOption;
+      }
+
+      let fetchMsgs = (params) => {
+        getMessages(params).then((result) => {
+          let { messages } = result;
+          messages = messages || [];
+          let message = messages[messages.length - 1];
+          if(message){
+            subInfo.time = message.sentTime;
+          }
+          utils.forEach(messages, (message) => {
+            io.emit(SIGNAL_NAME.CMD_RECEIVED, message);
+          });
+        });
+      }
+
+      let firstParams = { 
+        ...conversation,
+        time: 0
+      };
+      fetchMsgs(firstParams);
+
+      subInfo.timer = setInterval(() => {
+        let params = { ...conversation, time: subInfo.time, count: 200, order: MESSAGE_ORDER.FORWARD };
+        fetchMsgs(params)
+      }, option.ms);
+    });
+  };
+  let unsubscribeMessage = (conversation) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, conversation, FUNC_PARAM_CHECKER.SUBSCRIBE_MESSAGE, true);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let subId = _getSubId(conversation);
+      let subInfo = subscribeMsgCache[subId];
+      if(subInfo){
+        clearInterval(subInfo.timer);
+        delete subscribeMsgCache[subId];
+      }
+      resolve();
+    });
+  };
+
   return {
     sendMessage,
     sendMassMessage,
@@ -1052,6 +1127,8 @@ export default function(io, emitter, logger){
     searchMessages,
     addMessageReaction,
     removeMessageReaction,
+    subscribeMessage,
+    unsubscribeMessage,
     _uploadFile,
   };
 }

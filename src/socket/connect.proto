@@ -581,3 +581,69 @@ enum ConverTagType{
   SystemTag = 1;
   GlobalTag = 2;
 }
+
+message RtcRoomReq{
+    RtcRoomType roomType = 1;
+    string roomId = 2;
+    RtcMember joinMember = 3;
+}
+
+enum RtcRoomType{
+    OneOne = 0;
+    OneMore = 1;
+}
+
+message RtcMember{
+    UserInfo member = 1;
+    RtcState rtcState = 2;
+    int32 cameraEnable = 3;
+    int32 micEnable = 4;
+    int64 callTime = 5;
+    int64 connectTime = 6;
+    int64 hangupTime = 7;
+    UserInfo inviter = 8;
+}
+enum RtcState{
+    RtcStateDefault = 0;
+    RtcIncoming = 1;
+    RtcOutgoing = 2;
+    RtcConnecting = 3;
+    RtcConnected = 4;
+}
+message RtcRoom{
+    RtcRoomType roomType = 1;
+    string roomId = 2;
+    UserInfo owner = 3;
+    repeated RtcMember members = 51;
+}
+message RtcInviteReq{
+    repeated string targetIds = 1;
+    RtcRoomType roomType = 2;
+    string roomId = 3;
+    RtcChannel rtcChannel = 4;
+}
+
+enum InviteType{
+    RtcInvite = 0;
+    RtcAccept = 1;
+    RtcHangup = 2;
+}
+message RtcInviteEvent{
+    InviteType inviteType = 1;
+    UserInfo user = 2; //事件发起人的用户信息
+    RtcRoom room = 3;
+    repeated UserInfo targetUsers = 4; 
+}
+message RtcAnswerReq{
+    string targetId = 1;
+    string roomId = 2;
+}
+enum RtcChannel {
+    Zego = 0;
+}
+message RtcAuth{
+    ZegoAuth zegoAuth = 1;
+}
+message ZegoAuth{
+    string token = 1;
+}

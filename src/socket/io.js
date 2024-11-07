@@ -4,7 +4,7 @@ import Storage from "../common/storage";
 import Proto from "./proto";
 import { DISCONNECT_TYPE, CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX, COMMAND_TOPICS, CONVERATION_TYPE, SYNC_MESSAGE_TIME, STORAGE, PLATFORM, CONNECT_TOOL, LOG_MODULE } from "../enum";
 import BufferEncoder from "./encoder/encoder";
-import BufferDecoder from "./decoder";
+import BufferDecoder from "./decoder/decoder";
 import Network from "../common/network";
 import Cache from "../common/cache";
 import common from "../common/common";
@@ -429,6 +429,11 @@ export default function IO(config){
     }
     if(utils.isEqual(name, SIGNAL_NAME.S_PONG)){
       logger.info({ tag: LOG_MODULE.HB_STOP });
+    }
+    
+    if(utils.isEqual(name, SIGNAL_NAME.S_RTC_INVITE_NTF)){
+      let { roomId, roomType, eventType, user } = result;
+      emitter.emit(SIGNAL_NAME.CMD_RTC_INVITE_EVENT, { eventType, user, roomId, roomType });
     }
     cache.remove(index);
   }

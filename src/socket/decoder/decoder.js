@@ -1,0 +1,62 @@
+import Emitter from "../../common/emmit";
+import utils from "../../utils";
+import Proto from "../proto";
+import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, CONNECT_ACK_INDEX, PONG_INDEX, UPLOAD_TYPE, CONVERATION_TYPE, MESSAGE_SENT_STATE, UNDISTURB_TYPE, STORAGE } from "../../enum";
+import common from "../../common/common";
+import tools from "./tools";
+
+import getQueryAckBody from "./query_ack";
+import getPublishMsgBody from "./publish_msg";
+
+export default function Decoder(cache, io) {
+  let imsocket = Proto.lookup('codec.ImWebsocketMsg');
+  let decode = (buffer) => {
+    let msg = imsocket.decode(new Uint8Array(buffer));
+    let result = {}, name = '';
+    let { cmd, payload } = msg;
+    let xors = cache.get(STORAGE.CRYPTO_RANDOM);
+    let stream = common.decrypto(msg.payload, xors);
+    let codec = null;
+    let currentUser = io.getCurrentUser();
+    switch (cmd) {
+      case SIGNAL_CMD.CONNECT_ACK:
+        codec = Proto.lookup('codec.ConnectAckMsgBody');
+        let connectAckMsg = codec.decode(stream);
+        result = utils.extend(result, { ack: connectAckMsg, index: CONNECT_ACK_INDEX, extra: connectAckMsg.ext });
+        name = SIGNAL_NAME.S_CONNECT_ACK;
+        break;
+      case SIGNAL_CMD.PUBLISH_ACK:
+        codec = Proto.lookup('codec.PublishAckMsgBody');
+        let pubAckMsgBody = codec.decode(stream);
+        let { index, msgId: messageId, timestamp: sentTime, code, msgIndex, memberCount } = pubAckMsgBody;
+        result = { messageId, sentTime, index, isSender: true, code, msgIndex, memberCount };
+        break;
+      case SIGNAL_CMD.PUBLISH:
+        currentUser = io.getCurrentUser();
+        let { _msg, _name } = getPublishMsgBody(stream, { currentUser });
+        name = _name;
+        result = _msg;
+        break;
+      case SIGNAL_CMD.QUERY_ACK:
+        currentUser = io.getCurrentUser();
+        result = getQueryAckBody(stream, { cache, currentUser });
+        name = SIGNAL_NAME.S_QUERY_ACK;
+        break;
+      case SIGNAL_CMD.PONG:
+        result = { index: PONG_INDEX }
+        name = SIGNAL_NAME.S_PONG;
+        break;
+      case SIGNAL_CMD.DISCONNECT:
+        codec = Proto.lookup('codec.DisconnectMsgBody');
+        let disconnectMsgBody = codec.decode(stream);
+        result = utils.extend(result, { extra: disconnectMsgBody.ext, code: disconnectMsgBody.code });
+        break;
+    }
+    return {
+      cmd, result, name
+    };
+  };
+  return {
+    decode
+  };
+}

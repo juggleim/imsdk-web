@@ -297,7 +297,7 @@ export default function Decoder(cache, io) {
       }
 
       if (utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)) {
-        let { groupName, groupPortrait, extFields } = groupInfo || { extFields: {} };
+        let { groupName, groupPortrait, extFields, groupId, updatedTime } = groupInfo  || { extFields: {} };
         extFields = utils.toObject(extFields);
 
         utils.extend(latestMessage, {

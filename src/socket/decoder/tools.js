@@ -111,14 +111,17 @@ function msgFormat(msg, { currentUser }) {
   }
 
   if (utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)) {
-    let { groupName, groupPortrait, extFields } = groupInfo || { extFields: {} };
+    let { groupName, groupPortrait, extFields, groupId, updatedTime } = groupInfo || {
+      extFields: {}
+    };
+
     extFields = utils.toObject(extFields);
 
     utils.extend(_message, {
-      conversationTitle: groupName,
-      conversationPortrait: groupPortrait,
+      conversationTitle: groupName || '',
+      conversationPortrait: groupPortrait || '',
       conversationExts: extFields,
-      conversationUpdatedTime: groupInfo.updatedTime,
+      conversationUpdatedTime: groupInfo.updatedTime || 0,
       unreadCount: memberCount - readCount,
       readCount: readCount
     });
@@ -372,30 +375,28 @@ function formatConversations(conversations, options = {}) {
     }
 
     if (utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)) {
-      let { groupName, groupPortrait, extFields, groupId, updatedTime } = groupInfo;
+      let { groupName, groupPortrait, extFields, groupId, updatedTime } = groupInfo || { extFields: {} };
       extFields = utils.toObject(extFields);
 
       utils.extend(latestMessage, {
-        conversationTitle: groupName,
-        conversationPortrait: groupPortrait,
+        conversationTitle: groupName || '',
+        conversationPortrait: groupPortrait || '',
         conversationExts: extFields,
-        conversationUpdatedTime: updatedTime,
+        conversationUpdatedTime: updatedTime || 0,
       });
 
       GroupCacher.set(groupId, groupInfo);
     }
 
     if (utils.isEqual(conversationType, CONVERATION_TYPE.PRIVATE)) {
-      let { userPortrait, nickname, extFields, userId, updatedTime } = targetUserInfo;
+      let { userPortrait, nickname, extFields, userId, updatedTime} = targetUserInfo || {};
       extFields = utils.toObject(extFields);
-
       utils.extend(latestMessage, {
-        conversationTitle: nickname,
-        conversationPortrait: userPortrait,
+        conversationTitle: nickname || '',
+        conversationPortrait: userPortrait || '',
         conversationExts: extFields,
-        conversationUpdatedTime: updatedTime,
+        conversationUpdatedTime: updatedTime || 0
       });
-
       GroupCacher.set(userId, targetUserInfo);
     }
 

@@ -4,7 +4,7 @@ import common from "../../common/common";
 export default function({ io, emitter, logger }){
   
   io.on(SIGNAL_NAME.CMD_RTC_INVITE_EVENT, (notify) => {
-    return emitter.emit(EVENT.RTC_INVITED, notify);
+    return emitter.emit(EVENT.RTC_INVITE_EVENT, notify);
   });
 
   /* let room = { type, id, members } */ 
@@ -67,19 +67,19 @@ export default function({ io, emitter, logger }){
     });
   };
 
-  /* let options = { room: { id }, inviter: { id: '' } } */ 
+  /* let options = { roomId } */ 
   let acceptRTC = (options) => {
     return utils.deferred((resolve, reject) => {
       let user = io.getCurrentUser();
       let data = {
         topic: COMMAND_TOPICS.RTC_ACCEPT,
         user: user,
-        options
+        ...options
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let { code } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-          return resolve();
+          return resolve(result);
         }
         let error = common.getError(code);
         reject(error);
@@ -146,7 +146,12 @@ export default function({ io, emitter, logger }){
     });
   };
 
-  /* let options = { room: { id, type }, inviteType, members } */ 
+  /* let options = { 
+    roomId: '',
+    roomType: roomType,
+    memberIds: memberIds,
+    channel: 0
+  */ 
   let inviteRTC = (options) => {
     return utils.deferred((resolve, reject) => {
       let user = io.getCurrentUser();
@@ -154,6 +159,30 @@ export default function({ io, emitter, logger }){
         ...options,
         topic: COMMAND_TOPICS.RTC_INVITE,
         user: user,
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code } = result;
+        if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return resolve(result);
+        }
+        let error = common.getError(code);
+        reject(error);
+      });
+    });
+  };
+  /* 
+    let options = {
+      roomId: '',
+      memberId: '',
+      state: CALL_STATE.INCOMMING    
+    };
+  */
+  let updateRTCState = (options) => {
+    return utils.deferred((resolve, reject) => {
+      let user = io.getCurrentUser();
+      let data = {
+        ...options,
+        topic: COMMAND_TOPICS.RTC_UPDATE_STATE,
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let { code } = result;
@@ -175,5 +204,9 @@ export default function({ io, emitter, logger }){
     inviteRTC,
     acceptRTC,
     declineRTC,
+    updateRTCState,
+    $emitter: emitter,
+    isConnected: io.isConnected,
+    getCurrentUser: io.getCurrentUser,
   }
 }

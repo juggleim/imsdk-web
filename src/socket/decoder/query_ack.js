@@ -69,6 +69,10 @@ export default function getQueryAckBody(stream, { cache, currentUser }){
     result = getConversationTags(index, data);
   }
 
+  if(utils.isInclude([COMMAND_TOPICS.RTC_ACCEPT, COMMAND_TOPICS.RTC_INVITE], topic)){
+    result = getRTCAuth(index, data);
+  }
+
   if(utils.isInclude([COMMAND_TOPICS.RTC_CREATE_ROOM, COMMAND_TOPICS.RTC_JOIN_ROOM, COMMAND_TOPICS.RTC_QRY_ROOM], topic)){
     result = getRTCRoom(index, data);
   }
@@ -76,6 +80,14 @@ export default function getQueryAckBody(stream, { cache, currentUser }){
   result = utils.extend(result, { code, timestamp, index });
   return result;
 };
+
+function getRTCAuth(index, data){
+  let payload = Proto.lookup('codec.RtcAuth');
+  let auth = payload.decode(data);
+  return {
+    index, auth
+  }
+}
 
 function getChatroomSetAttrs(index, data) {
   let payload = Proto.lookup('codec.ChatAttBatchResp');

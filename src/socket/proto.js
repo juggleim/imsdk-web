@@ -1822,17 +1822,18 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           roomId: {
             type: "string",
             id: 3
+          },
+          rtcChannel: {
+            type: "RtcChannel",
+            id: 4
           }
         }
       },
       InviteType: {
         values: {
-          DefaultInviteType: 0,
-          Invite: 1,
-          Accept: 2,
-          Decline: 3,
-          Cancel: 4,
-          Timeout: 5
+          RtcInvite: 0,
+          RtcAccept: 1,
+          RtcHangup: 2
         }
       },
       RtcInviteEvent: {
@@ -1841,7 +1842,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "InviteType",
             id: 1
           },
-          targetUser: {
+          user: {
             type: "UserInfo",
             id: 2
           },
@@ -1849,9 +1850,9 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "RtcRoom",
             id: 3
           },
-          targetIds: {
+          targetUsers: {
             rule: "repeated",
-            type: "string",
+            type: "UserInfo",
             id: 4
           }
         }
@@ -1865,6 +1866,27 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           roomId: {
             type: "string",
             id: 2
+          }
+        }
+      },
+      RtcChannel: {
+        values: {
+          Zego: 0
+        }
+      },
+      RtcAuth: {
+        fields: {
+          zegoAuth: {
+            type: "ZegoAuth",
+            id: 1
+          }
+        }
+      },
+      ZegoAuth: {
+        fields: {
+          token: {
+            type: "string",
+            id: 1
           }
         }
       }

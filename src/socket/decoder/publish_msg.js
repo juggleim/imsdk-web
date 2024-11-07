@@ -39,10 +39,13 @@ export default function getPublishMsgBody(stream, { currentUser }){
     } else if(utils.isEqual(topic, COMMAND_TOPICS.RTC_INVITE_EVENT)){
       let payload = Proto.lookup('codec.RtcInviteEvent');
       let result = payload.decode(data);
-      let { room, inviteType, targetUser } = result;
-      let user = common.formatUser(targetUser || {});
+      let { room, inviteType, targetUsers = [], user } = result;
+      user = common.formatUser(user || {});
+      let members = utils.map(targetUsers, (target) => {
+        return common.formatUser(target);
+      });
       let { roomId, roomType } = room;
-      _msg = { roomId, roomType, eventType: inviteType, user };
+      _msg = { roomId, roomType, eventType: inviteType, user, members };
       _name = SIGNAL_NAME.S_RTC_INVITE_NTF;
 
     } else {

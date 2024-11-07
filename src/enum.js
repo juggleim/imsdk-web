@@ -281,6 +281,7 @@ export let COMMAND_TOPICS = {
   RTC_QRY_ROOM: 'rtc_qry',
   RTC_PING: 'rtc_ping',
   RTC_INVITE: 'rtc_invite',
+  RTC_UPDATE_STATE: 'rtc_upd_state',
   RTC_INVITE_EVENT: 'rtc_invite_event',
 };
 export let NOTIFY_TYPE = {
@@ -411,8 +412,8 @@ export let EVENT = {
   CHATROOM_USER_QUIT: 'chatroom_user_quit',
   CHATROOM_USER_KICKED: 'chatroom_user_kicked',
 
-  RTC_INVITED: 'rtc_invited',
-
+  RTC_ROOM_EVENT: 'rtc_room_event',
+  RTC_INVITE_EVENT: 'rtc_invite_event',
 };
 export let CONNECT_STATE = {
   CONNECTED: 0,

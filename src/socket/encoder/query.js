@@ -542,25 +542,34 @@ export default function getQueryBody({ data, callback, index }){
     buffer = codec.encode(message).finish();
   }
   if(utils.isEqual(COMMAND_TOPICS.RTC_INVITE, topic)){
-    let { room, members = [], user } = data;
-    let memberIds = utils.map(members, ({ id }) => {
-      return id;
-    });
+    let { roomId, roomType, memberIds, channel, user } = data;
     let codec = Proto.lookup('codec.RtcInviteReq');
     let message = codec.create({
-      roomId: room.id,
-      roomType: room.type,
+      roomId: roomId,
+      roomType: roomType,
       targetIds: memberIds,
+      rtcChannel: channel,
     });
     targetId = user.id;
     buffer = codec.encode(message).finish();
   }
+  if(utils.isEqual(COMMAND_TOPICS.RTC_UPDATE_STATE, topic)){
+    let { memberId, state, roomId } = data;
+    let codec = Proto.lookup('codec.RtcMember');
+    let message = codec.create({
+      member: { 
+        userId: memberId 
+      },
+      rtcState: state,
+    });
+    targetId = roomId;
+    buffer = codec.encode(message).finish();
+  }
   if(utils.isInclude([COMMAND_TOPICS.RTC_ACCEPT, COMMAND_TOPICS.RTC_DECLINE], topic)){
-    let { options, user } = data;
-    let { room, user: _user } = options;
-    let codec = Proto.lookup('codec.RtcAnswerReq');
-    let message = codec.create({ roomId: room.id, targetId: _user.id });
-    targetId = user.id;
+    let { roomId, user } = data;
+    let codec = Proto.lookup('codec.Nil');
+    let message = codec.create({});
+    targetId = roomId;
     buffer = codec.encode(message).finish();
   }
   let codec = Proto.lookup('codec.QueryMsgBody');

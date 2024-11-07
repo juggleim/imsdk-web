@@ -375,7 +375,8 @@ function formatConversations(conversations, options = {}) {
     }
 
     if (utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)) {
-      let { groupName, groupPortrait, extFields, groupId, updatedTime } = groupInfo || { extFields: {} };
+      groupInfo = groupInfo || { extFields: {} };
+      let { groupName, groupPortrait, extFields, groupId, updatedTime } = groupInfo;
       extFields = utils.toObject(extFields);
 
       utils.extend(latestMessage, {
@@ -389,7 +390,8 @@ function formatConversations(conversations, options = {}) {
     }
 
     if (utils.isEqual(conversationType, CONVERATION_TYPE.PRIVATE)) {
-      let { userPortrait, nickname, extFields, userId, updatedTime} = targetUserInfo || {};
+      targetUserInfo = targetUserInfo || { extFields: {} };
+      let { userPortrait, nickname, extFields, userId, updatedTime } = targetUserInfo;
       extFields = utils.toObject(extFields);
       utils.extend(latestMessage, {
         conversationTitle: nickname || '',
@@ -397,7 +399,7 @@ function formatConversations(conversations, options = {}) {
         conversationExts: extFields,
         conversationUpdatedTime: updatedTime || 0
       });
-      GroupCacher.set(userId, targetUserInfo);
+      UserCacher.set(userId, targetUserInfo);
     }
 
     let { conversationTitle, conversationPortrait, conversationExts, conversationUpdatedTime } = latestMessage;

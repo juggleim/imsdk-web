@@ -65,9 +65,17 @@ export default function(io, emitter, logger){
     });
   };
 
+  let setSetServerUrlProider = (callback) => {
+    if(!utils.isFunction(callback)){
+      callback = utils.noop;
+    }
+    io.setSetServerUrlProider(callback);
+  };
+
   return {
     connect,
     disconnect,
+    setSetServerUrlProider,
     getDevice: getDevice,
     isConnected: io.isConnected,
     getCurrentUser: io.getCurrentUser

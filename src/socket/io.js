@@ -33,6 +33,8 @@ export default function IO(config){
   let ws = {};
   let io = {};
   
+  let serverProviderCallback = utils.noop;
+
   let cache = Cache();
 
   let decoder = BufferDecoder(cache, io);
@@ -66,18 +68,21 @@ export default function IO(config){
     syncTimer.pause();
   };
 
+  function forceReconnect(){
+    let user = getCurrentUser({ ignores: [] });
+    clearHeart();
+    cache.remove(CONNECT_TOOL.RECONNECT_COUNT);
+    cache.remove(CONNECT_TOOL.RECONNECT_FREQUENCY);
+    return reconnect(user, ({ next }) => {
+      next = next || utils.noop;
+      next();
+    });
+  };
+
   let networkWatcher = NetworkWatcher({
     ononline: () => {
       if(ws.readyState == 3){
-        console.log('ws.readyState', ws.readyState)
-        let user = getCurrentUser({ ignores: [] });
-        clearHeart();
-        cache.remove(CONNECT_TOOL.RECONNECT_COUNT);
-        cache.remove(CONNECT_TOOL.RECONNECT_FREQUENCY);
-        return reconnect(user, ({ next }) => {
-          next = next || utils.noop;
-          next();
-        });
+        forceReconnect();
       }
     }
   });
@@ -131,6 +136,15 @@ export default function IO(config){
       Network.detect(servers, (domain, error) => {
         // 如果嗅探失败，返回连接断开，同时清理已缓存的 CMP 地址
         if(error){
+          serverProviderCallback((result) => {
+            result = utils.isObject(result) ? result : {};
+            let { serverUrls } = result;
+            serverUrls = serverUrls || [];
+            if(serverUrls.length > 0){
+              serverList = serverUrls.concat(serverUrls);
+              forceReconnect();
+            }
+          });
           clearLocalServers(userId);
           return reconnect({ token, userId, deviceId }, callback);
         }
@@ -491,6 +505,9 @@ export default function IO(config){
     isConnected,
     isNeedConnect,
     getCurrentUser,
+    setSetServerUrlProider: (callback) => {
+      serverProviderCallback = callback;
+    },
     getVersion: () => {
       return VERSION;
     },

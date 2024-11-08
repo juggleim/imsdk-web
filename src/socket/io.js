@@ -505,7 +505,7 @@ export default function IO(config){
     isConnected,
     isNeedConnect,
     getCurrentUser,
-    setSetServerUrlProider: (callback) => {
+    setServerUrlProider: (callback) => {
       serverProviderCallback = callback;
     },
     getVersion: () => {

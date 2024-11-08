@@ -8,8 +8,8 @@ export default function($socket, { webAgent }){
     'getCurrentUser',
   ];
   let invokes = common.formatProvider(funcs, $socket);
-  invokes.setSetServerUrlProider = (callback) => {
-    webAgent.setSetServerUrlProider(callback)
+  invokes.setServerUrlProider = (callback) => {
+    webAgent.setServerUrlProider(callback)
   };
   return invokes;
 }

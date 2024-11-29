@@ -26,7 +26,7 @@ let init = (config) => {
   let io = IO(config);
 
   function getCurrentUser(){
-    return io.getCurrentUser();
+    return io.getCurrentUser({ ignores: [] });
   }
 
   function getVersion(){

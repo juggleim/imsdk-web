@@ -550,7 +550,7 @@ export default function getQueryBody({ data, callback, index }){
       targetIds: memberIds,
       rtcChannel: channel,
     });
-    targetId = user.id;
+    targetId = roomId;
     buffer = codec.encode(message).finish();
   }
   if(utils.isEqual(COMMAND_TOPICS.RTC_UPDATE_STATE, topic)){
@@ -565,7 +565,7 @@ export default function getQueryBody({ data, callback, index }){
     targetId = roomId;
     buffer = codec.encode(message).finish();
   }
-  if(utils.isInclude([COMMAND_TOPICS.RTC_ACCEPT, COMMAND_TOPICS.RTC_DECLINE], topic)){
+  if(utils.isInclude([COMMAND_TOPICS.RTC_ACCEPT, COMMAND_TOPICS.RTC_HANGUP], topic)){
     let { roomId, user } = data;
     let codec = Proto.lookup('codec.Nil');
     let message = codec.create({});

@@ -48,7 +48,23 @@ export default function getPublishMsgBody(stream, { currentUser }){
       _msg = { roomId, roomType, eventType: inviteType, user, members };
       _name = SIGNAL_NAME.S_RTC_INVITE_NTF;
 
-    } else {
+    } else if(utils.isEqual(topic, COMMAND_TOPICS.RTC_ROOM_EVENT)){
+      let payload = Proto.lookup('codec.RtcRoomEvent');
+      let result = payload.decode(data);
+      let { roomEventType, member, room } = result;
+      
+      member = member || {};
+      if(!utils.isEmpty(member)){
+        member.member = common.formatUser(member.member || {});
+      }
+
+      let { owner } = room;
+      owner = common.formatUser(owner || {});
+      room.owner = owner;
+
+      _msg = { roomEventType, room, member };
+      _name = SIGNAL_NAME.S_RTC_ROOM_EVENT;
+    }else {
       console.log('unkown topic', topic);
     }
     utils.extend(_msg, { ackIndex: index });

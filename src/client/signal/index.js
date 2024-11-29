@@ -1,10 +1,13 @@
-import { COMMAND_TOPICS, SIGNAL_CMD, SIGNAL_NAME, EVENT, ErrorType, LOG_MODULE } from "../../enum";
+import { COMMAND_TOPICS, SIGNAL_CMD, SIGNAL_NAME, EVENT, ErrorType, LOG_MODULE, RTC_CHANNEL } from "../../enum";
 import utils from "../../utils";
 import common from "../../common/common";
 export default function({ io, emitter, logger }){
   
   io.on(SIGNAL_NAME.CMD_RTC_INVITE_EVENT, (notify) => {
     return emitter.emit(EVENT.RTC_INVITE_EVENT, notify);
+  });
+  io.on(SIGNAL_NAME.CMD_RTC_ROOM_EVENT, (notify) => {
+    return emitter.emit(EVENT.RTC_ROOM_EVENT, notify);
   });
 
   /* let room = { type, id, members } */ 
@@ -86,14 +89,14 @@ export default function({ io, emitter, logger }){
       });
     });
   };
-  /* let options = { room: { id }, inviter: { id: '' } } */ 
-  let declineRTC = (options) => {
+  /* let room = { id }*/ 
+  let hangupRTC = (room) => {
     return utils.deferred((resolve, reject) => {
       let user = io.getCurrentUser();
       let data = {
-        topic: COMMAND_TOPICS.RTC_DECLINE,
+        topic: COMMAND_TOPICS.RTC_HANGUP,
         user: user,
-        options
+        roomId: room.id
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let { code } = result;
@@ -156,6 +159,7 @@ export default function({ io, emitter, logger }){
     return utils.deferred((resolve, reject) => {
       let user = io.getCurrentUser();
       let data = {
+        channel: RTC_CHANNEL.ZEGO,
         ...options,
         topic: COMMAND_TOPICS.RTC_INVITE,
         user: user,
@@ -203,7 +207,7 @@ export default function({ io, emitter, logger }){
     pingRTC,
     inviteRTC,
     acceptRTC,
-    declineRTC,
+    hangupRTC,
     updateRTCState,
     $emitter: emitter,
     isConnected: io.isConnected,

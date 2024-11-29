@@ -1752,29 +1752,21 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "RtcState",
             id: 2
           },
-          cameraEnable: {
-            type: "int32",
-            id: 3
-          },
-          micEnable: {
-            type: "int32",
-            id: 4
-          },
           callTime: {
             type: "int64",
-            id: 5
+            id: 3
           },
           connectTime: {
             type: "int64",
-            id: 6
+            id: 4
           },
           hangupTime: {
             type: "int64",
-            id: 7
+            id: 5
           },
           inviter: {
             type: "UserInfo",
-            id: 8
+            id: 6
           }
         }
       },
@@ -1888,6 +1880,31 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "string",
             id: 1
           }
+        }
+      },
+      RtcRoomEvent: {
+        fields: {
+          roomEventType: {
+            type: "RtcRoomEventType",
+            id: 1
+          },
+          member: {
+            type: "RtcMember",
+            id: 2
+          },
+          room: {
+            type: "RtcRoom",
+            id: 3
+          }
+        }
+      },
+      RtcRoomEventType: {
+        values: {
+          DefaultRtcRoomEvent: 0,
+          RtcJoin: 1,
+          RtcQuit: 2,
+          RtcDestroy: 3,
+          RtcStateChg: 4
         }
       }
     }

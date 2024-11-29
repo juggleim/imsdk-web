@@ -268,6 +268,9 @@ export default function IO(config){
     ws.send(buffer);
     let _data = utils.clone(data);
     delete _data.messages;
+    if(_data.user){
+      _data.user = { id: _data.user.id };
+    }
     logger.info({ tag: LOG_MODULE.WS_SEND, cmd, ..._data });
 
     if(!utils.isEqual(SIGNAL_CMD.PUBLISH_ACK, cmd)){
@@ -446,9 +449,15 @@ export default function IO(config){
     }
     
     if(utils.isEqual(name, SIGNAL_NAME.S_RTC_INVITE_NTF)){
-      let { roomId, roomType, eventType, user } = result;
-      emitter.emit(SIGNAL_NAME.CMD_RTC_INVITE_EVENT, { eventType, user, roomId, roomType });
+      let { roomId, roomType, eventType, user, members } = result;
+      emitter.emit(SIGNAL_NAME.CMD_RTC_INVITE_EVENT, { eventType, user, roomId, roomType, members });
     }
+    
+    if(utils.isEqual(name, SIGNAL_NAME.S_RTC_ROOM_EVENT)){
+      let { roomEventType, room, member } = result;
+      emitter.emit(SIGNAL_NAME.CMD_RTC_ROOM_EVENT, { roomEventType, room, member });
+    }
+
     cache.remove(index);
   }
 

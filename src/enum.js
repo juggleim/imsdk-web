@@ -33,6 +33,8 @@ export let SIGNAL_NAME = {
   CMD_CHATROOM_REJOIN: 'cmd_inner_chatroom_rejoin',
 
   CMD_RTC_INVITE_EVENT: 'cmd_inner_rtc_invite_event',
+  
+  CMD_RTC_ROOM_EVENT: 'cmd_inner_rtc_room_event',
 
   // 与下行信令进行匹配，在 io.js 中进行派发
   S_CONNECT_ACK: 's_connect_ack',
@@ -43,6 +45,8 @@ export let SIGNAL_NAME = {
   S_CHATROOM_USER_NTF: 's_c_user_ntf',
   
   S_RTC_INVITE_NTF: 's_rtc_invite_ntf',
+
+  S_RTC_ROOM_EVENT: 's_rtc_room_event_ntf',
   // PC 端自定义通知
   S_SYNC_CONVERSATION_NTF: 's_sync_conversation_ntf',
   S_PONG: 's_pong',
@@ -279,12 +283,13 @@ export let COMMAND_TOPICS = {
   RTC_JOIN_ROOM: 'rtc_join',
   RTC_QUIT_ROOM: 'rtc_quit',
   RTC_ACCEPT: 'rtc_accept',
-  RTC_DECLINE: 'rtc_decline',
+  RTC_HANGUP: 'rtc_hangup',
   RTC_QRY_ROOM: 'rtc_qry',
   RTC_PING: 'rtc_ping',
   RTC_INVITE: 'rtc_invite',
   RTC_UPDATE_STATE: 'rtc_upd_state',
   RTC_INVITE_EVENT: 'rtc_invite_event',
+  RTC_ROOM_EVENT: 'rtc_room_event'
 };
 export let NOTIFY_TYPE = {
   DEFAULT: 0,
@@ -645,3 +650,6 @@ export let RTC_INVITE_TYPE = {
   CANCEL: 4,
   TIMEOUT: 5
 };
+export let RTC_CHANNEL = {
+  ZEGO: 0
+}

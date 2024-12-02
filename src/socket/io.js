@@ -247,6 +247,7 @@ export default function IO(config){
 
   let userDisconnect = () => {
     isUserDisconnected = true;
+    connectionState = CONNECT_STATE.DISCONNECTED;
     disconnect();
   };
 

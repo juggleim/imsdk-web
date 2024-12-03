@@ -1070,7 +1070,7 @@ export default function(io, emitter, logger){
           utils.forEach(messages, (message) => {
             io.emit(SIGNAL_NAME.CMD_RECEIVED, message);
           });
-        });
+        }).catch(utils.noop);
       }
 
       let firstParams = { 

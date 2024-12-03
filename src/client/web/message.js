@@ -1042,7 +1042,7 @@ export default function(io, emitter, logger){
   };
   let subscribeMessage = (conversation, option) => {
     return utils.deferred((resolve, reject) => {
-      let error = common.check(io, conversation, FUNC_PARAM_CHECKER.SUBSCRIBE_MESSAGE, true);
+      let error = common.check(io, conversation, FUNC_PARAM_CHECKER.SUBSCRIBE_MESSAGE);
       if(!utils.isEmpty(error)){
         return reject(error);
       }

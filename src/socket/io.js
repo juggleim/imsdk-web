@@ -350,7 +350,7 @@ export default function IO(config){
       callback(data);
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.QUERY_ACK)){
-      callback(result);
+      callback && callback(result);
     }
     if(utils.isEqual(cmd, SIGNAL_CMD.CONNECT_ACK)){
       

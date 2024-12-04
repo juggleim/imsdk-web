@@ -421,6 +421,7 @@ export let EVENT = {
 
   RTC_ROOM_EVENT: 'rtc_room_event',
   RTC_INVITE_EVENT: 'rtc_invite_event',
+  RTC_FINISHED_1V1_EVENT: 'rtc_finished_1v1_event',
 };
 export let CONNECT_STATE = {
   CONNECTED: 0,
@@ -565,6 +566,8 @@ export let MESSAGE_TYPE = {
   COMMAND_MSG_EXSET: 'jg:msgexset',
   
   COMMAND_CONVERSATION_TAG_ADD: 'jg:tagaddconvers',
+  
+  COMMAND_RTC_1V1_FINISHED: 'jg:callfinishntf',
 
   // 删除 TAG 下会话
   COMMAND_REMOVE_CONVERS_FROM_TAG: 'jg:tagdelconvers',

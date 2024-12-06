@@ -51,18 +51,20 @@ export default function getPublishMsgBody(stream, { currentUser }){
     } else if(utils.isEqual(topic, COMMAND_TOPICS.RTC_ROOM_EVENT)){
       let payload = Proto.lookup('codec.RtcRoomEvent');
       let result = payload.decode(data);
-      let { roomEventType, member, room } = result;
+      let { roomEventType, members, room, reason } = result;
       
-      member = member || {};
-      if(!utils.isEmpty(member)){
-        member.member = common.formatUser(member.member || {});
-      }
+      members = members || [];
+      members = utils.map(members, ({ member, rtcState }) => {
+        member = common.formatUser(member);
+        utils.extend(member, { status: rtcState });
+        return member;
+      });
 
       let { owner } = room;
       owner = common.formatUser(owner || {});
       room.owner = owner;
 
-      _msg = { roomEventType, room, member };
+      _msg = { roomEventType, room, members, reason };
       _name = SIGNAL_NAME.S_RTC_ROOM_EVENT;
     }else {
       console.log('unkown topic', topic);

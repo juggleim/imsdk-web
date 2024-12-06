@@ -1818,7 +1818,17 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           rtcChannel: {
             type: "RtcChannel",
             id: 4
+          },
+          rtcMediaType: {
+            type: "RtcMediaType",
+            id: 5
           }
+        }
+      },
+      RtcMediaType: {
+        values: {
+          RtcAudio: 0,
+          RtcVideo: 1
         }
       },
       InviteType: {
@@ -1888,13 +1898,22 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "RtcRoomEventType",
             id: 1
           },
-          member: {
+          members: {
+            rule: "repeated",
             type: "RtcMember",
             id: 2
           },
           room: {
             type: "RtcRoom",
             id: 3
+          },
+          reason: {
+            type: "RtcRoomQuitReason",
+            id: 4
+          },
+          eventTime: {
+            type: "int64",
+            id: 5
           }
         }
       },
@@ -1905,6 +1924,13 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           RtcQuit: 2,
           RtcDestroy: 3,
           RtcStateChg: 4
+        }
+      },
+      RtcRoomQuitReason: {
+        values: {
+          Active: 0,
+          CallTimeout: 1,
+          PingTimeout: 2
         }
       }
     }

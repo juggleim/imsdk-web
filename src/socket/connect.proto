@@ -619,6 +619,12 @@ message RtcInviteReq{
     RtcRoomType roomType = 2;
     string roomId = 3;
     RtcChannel rtcChannel = 4;
+    RtcMediaType rtcMediaType = 5;
+}
+
+enum RtcMediaType{
+    RtcAudio = 0;
+    RtcVideo = 1;
 }
 
 enum InviteType{
@@ -647,8 +653,10 @@ message ZegoAuth{
 }
 message RtcRoomEvent{
     RtcRoomEventType roomEventType = 1;
-    RtcMember member = 2;
+    repeated RtcMember members = 2;
     RtcRoom room = 3;
+    RtcRoomQuitReason reason = 4;
+    int64 eventTime = 5;
 }
 enum RtcRoomEventType{
     DefaultRtcRoomEvent = 0;
@@ -656,4 +664,10 @@ enum RtcRoomEventType{
     RtcQuit = 2;
     RtcDestroy = 3;
     RtcStateChg = 4;
+}
+
+enum RtcRoomQuitReason{
+    Active = 0; //主动退出
+    CallTimeout = 1;//暂时废弃
+    PingTimeout = 2; //ping超时，自动被提出
 }

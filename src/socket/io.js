@@ -455,8 +455,8 @@ export default function IO(config){
     }
     
     if(utils.isEqual(name, SIGNAL_NAME.S_RTC_ROOM_EVENT)){
-      let { roomEventType, room, member } = result;
-      emitter.emit(SIGNAL_NAME.CMD_RTC_ROOM_EVENT, { roomEventType, room, member });
+      let { roomEventType, room, members, reason } = result;
+      emitter.emit(SIGNAL_NAME.CMD_RTC_ROOM_EVENT, { roomEventType, room, members, reason });
     }
 
     cache.remove(index);

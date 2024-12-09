@@ -450,8 +450,7 @@ export default function IO(config){
     }
     
     if(utils.isEqual(name, SIGNAL_NAME.S_RTC_INVITE_NTF)){
-      let { roomId, roomType, eventType, user, members } = result;
-      emitter.emit(SIGNAL_NAME.CMD_RTC_INVITE_EVENT, { eventType, user, roomId, roomType, members });
+      emitter.emit(SIGNAL_NAME.CMD_RTC_INVITE_EVENT, result);
     }
     
     if(utils.isEqual(name, SIGNAL_NAME.S_RTC_ROOM_EVENT)){

@@ -384,6 +384,11 @@ export let CHATROOM_EVENT_TYPE = {
   FALLOUT: 3,
 };
 
+export let MEDIA_TYPE = {
+  AUDIO: 0,
+  VIDEO: 1,
+};
+
 // 以下是对外暴露枚举
 export let EVENT = {
   STATE_CHANGED: 'state_changed',
@@ -555,6 +560,7 @@ export let MESSAGE_TYPE = {
   MODIFY: 'jg:modify',
   CLEAR_MSG: 'jg:cleanmsg',
   CLEAR_UNREAD: 'jg:clearunread',
+  CALL_1V1_FINISHED: 'jg:callfinishntf',
   COMMAND_DELETE_MSGS: 'jg:delmsgs',
   COMMAND_UNDISTURB: 'jg:undisturb',
   COMMAND_TOPCONVERS: 'jg:topconvers',

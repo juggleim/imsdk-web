@@ -30,7 +30,7 @@ export default function getQueryAckBody(stream, { cache, currentUser }){
   }
 
   if (utils.isEqual(topic, COMMAND_TOPICS.GET_CONVERSATION)) {
-    result = getConversationHandler(index, data);
+    result = getConversationHandler(index, data, { currentUser });
   }
 
   if (utils.isEqual(topic, COMMAND_TOPICS.GET_UNREAD_TOTLAL_CONVERSATION)) {

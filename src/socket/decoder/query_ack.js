@@ -134,6 +134,10 @@ function getFileToken(index, data) {
     let { preSignResp } = result;
     utils.extend(cred, preSignResp);
   }
+  if (utils.isEqual(ossType, UPLOAD_TYPE.S3)) {
+    let { preSignResp } = result;
+    utils.extend(cred, preSignResp);
+  }
   return {
     index, cred
   };

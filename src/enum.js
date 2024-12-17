@@ -466,6 +466,7 @@ export let UPLOAD_TYPE = {
   NONE: 0,
   QINIU: 1,
   ALI: 4,
+  S3: 2,
 };
 
 export let UNDISTURB_TYPE = {

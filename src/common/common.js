@@ -422,6 +422,9 @@ function checkUploadType(upload){
   if(upload.urllib){
     type = UPLOAD_TYPE.ALI;
   }
+  if(upload && upload.name == 'S3Client'){
+    type = UPLOAD_TYPE.S3;
+  }
   return type;
 }
 

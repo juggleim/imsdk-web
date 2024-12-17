@@ -195,13 +195,8 @@ function getTotalUnread(index, data) {
 function getConversationHandler(index, data, { currentUser }) {
   let payload = Proto.lookup('codec.Conversation');
   let item = payload.decode(data);
-  let conversation = {};
-  if (!item.msg) {
-    conversation = {}
-  } else {
-    let conversations = tools.formatConversations([item], { currentUser});
-    conversation = conversations[0] || conversation;
-  }
+  let conversations = tools.formatConversations([item], { currentUser});
+  let conversation = conversations[0] || {};
   return { conversation, index };
 }
 function getConversationsHandler(index, data, options = {}) {

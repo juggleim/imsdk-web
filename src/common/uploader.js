@@ -56,7 +56,10 @@ export default function (uploader, { type }) {
     let { file, name } = content;
     utils.requestNormal(url, {
       method: 'PUT',
-      headers: { 'Content-Type': '' },
+      headers: { 
+        'Content-Type': '',
+        'x-amz-acl': 'public-read'
+      },
       body: file
     }, {
       success: () => {

@@ -191,6 +191,7 @@ let formatter = {
       6: { name: 'isMerge' },
       7: { name: 'isMute' },
       8: { name: 'isMass' },
+      11: { name: 'isStream' }
     };
     let result = {};
     for(let num in obj){

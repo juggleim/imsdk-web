@@ -5,7 +5,11 @@ import UserCacher from "../../common/user-cacher";
 import common from "../../common/common";
 
 function msgFormat(msg, { currentUser }) {
-  let { converTags, undisturbType, msgExtSet, senderId, unreadIndex, memberCount, referMsg, readCount, msgId, msgTime, msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo } = msg;
+  let { msgItems, converTags, undisturbType, msgExtSet, 
+        senderId, unreadIndex, memberCount, referMsg, readCount, msgId, msgTime, 
+        msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, 
+        isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo 
+    } = msg;
   let content = '';
   if (msgContent && msgContent.length > 0) {
     content = new TextDecoder().decode(msgContent);
@@ -97,6 +101,7 @@ function msgFormat(msg, { currentUser }) {
     isUpdated: msgFlag.isUpdated,
     isMuted: msgFlag.isMute,
     isMass: msgFlag.isMass,
+    isStreamMsg: msgFlag.isStream,
     referMsg: newRefer,
     sentState: MESSAGE_SENT_STATE.SUCCESS,
     undisturbType: undisturbType || 0,
@@ -108,6 +113,11 @@ function msgFormat(msg, { currentUser }) {
 
   if (_message.isSender) {
     utils.extend(_message.sender, user);
+  }
+
+  if(_message.isStreamMsg){
+    let streams = formatStreams(msgItems);
+    utils.extend(_message, { streams });
   }
 
   if (utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)) {
@@ -450,4 +460,20 @@ function formatRTCRoom(result){
   };
 }
 
-export default { msgFormat, formatConversations, formatRTCRoom }
+function formatStreams(list){
+  let streams = utils.map(list, (item) => {
+    return formatStream(item);
+  });
+  return streams;
+}
+function formatStream(item){
+  let { event, subSeq, partialContent } = item;
+  let content = '';
+  if (partialContent && partialContent.length > 0) {
+    content = new TextDecoder().decode( partialContent);
+    content = utils.parse(content);
+  }
+  return { event, seq: subSeq, content };
+}
+
+export default { msgFormat, formatConversations, formatRTCRoom, formatStreams }

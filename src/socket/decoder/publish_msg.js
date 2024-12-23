@@ -74,6 +74,13 @@ export default function getPublishMsgBody(stream, { currentUser }){
 
       _msg = { roomEventType, room, members, reason };
       _name = SIGNAL_NAME.S_RTC_ROOM_EVENT;
+    }else if(utils.isEqual(topic, COMMAND_TOPICS.STREAM_MSG)){
+      let payload = Proto.lookup('codec.StreamDownMsg');
+      let result = payload.decode(data);
+      let { channelType: conversationType, targetId: conversationId, msgId: messageId, msgItems } = result;
+      let streams = tools.formatStreams(msgItems);
+      _msg = { conversationId, conversationType, messageId, streams };
+      _name = SIGNAL_NAME.S_STREAM_EVENT;
     }else {
       console.log('unkown topic', topic);
     }

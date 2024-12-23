@@ -33,8 +33,10 @@ export let SIGNAL_NAME = {
   CMD_CHATROOM_REJOIN: 'cmd_inner_chatroom_rejoin',
 
   CMD_RTC_INVITE_EVENT: 'cmd_inner_rtc_invite_event',
-  
   CMD_RTC_ROOM_EVENT: 'cmd_inner_rtc_room_event',
+
+  CMD_STREAM_APPENDED: 'cmd_innter_stream_appended',
+  CMD_STREAM_COMPLETED: 'cmd_innter_stream_completed',
 
   // 与下行信令进行匹配，在 io.js 中进行派发
   S_CONNECT_ACK: 's_connect_ack',
@@ -45,8 +47,10 @@ export let SIGNAL_NAME = {
   S_CHATROOM_USER_NTF: 's_c_user_ntf',
   
   S_RTC_INVITE_NTF: 's_rtc_invite_ntf',
-
   S_RTC_ROOM_EVENT: 's_rtc_room_event_ntf',
+
+  S_STREAM_EVENT: 's_stream_event',
+
   // PC 端自定义通知
   S_SYNC_CONVERSATION_NTF: 's_sync_conversation_ntf',
   S_PONG: 's_pong',
@@ -229,6 +233,7 @@ export let COMMAND_TOPICS = {
   
   NTF: 'ntf',
   MSG: 'msg',
+  STREAM_MSG: 'stream_msg',
   CHATROOM_USER_NTF: 'c_user_ntf',
   
   SEND_GROUP: 'g_msg',
@@ -427,6 +432,9 @@ export let EVENT = {
   RTC_ROOM_EVENT: 'rtc_room_event',
   RTC_INVITE_EVENT: 'rtc_invite_event',
   RTC_FINISHED_1V1_EVENT: 'rtc_finished_1v1_event',
+
+  STREAM_APPENDED: 'stream_appended',
+  STREAM_COMPLETED: 'stream_completed',
 };
 export let CONNECT_STATE = {
   CONNECTED: 0,
@@ -663,3 +671,8 @@ export let RTC_INVITE_TYPE = {
 export let RTC_CHANNEL = {
   ZEGO: 0
 }
+export let STREAM_EVENT = {
+  NONE: 0,
+  MESSAGE: 1,
+  FINISHED: 2
+};

@@ -568,7 +568,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "string",
             id: 1
           },
-          ChannelType: {
+          channelType: {
             type: "ChannelType",
             id: 2
           },

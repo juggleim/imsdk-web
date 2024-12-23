@@ -49,6 +49,18 @@ let init = (config) => {
     }
   }
 
+  // PC 和 Web 复用的事件在此处透传
+  io.on(SIGNAL_NAME.CMD_STREAM_APPENDED, (message) => {
+    emitter.emit(EVENT.STREAM_APPENDED, { message });
+  });
+  io.on(SIGNAL_NAME.CMD_STREAM_COMPLETED, (message) => {
+    let { conversationId, conversationType, messageId } = message;
+    provider.message.getMessagesByIds({ conversationId, conversationType, messageIds: [messageId] }).then(({ messages }) => {
+      let msg = messages[0] || { content: '' };
+      emitter.emit(EVENT.STREAM_COMPLETED, { message: { ...message, content: msg.content } });
+    });
+  });
+
   let _export = {
     ...provider.socket,
     ...provider.message,

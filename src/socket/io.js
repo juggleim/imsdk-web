@@ -2,7 +2,7 @@ import Emitter from "../common/emmit";
 import utils from "../utils";
 import Storage from "../common/storage";
 import Proto from "./proto";
-import { DISCONNECT_TYPE, CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX, COMMAND_TOPICS, CONVERATION_TYPE, SYNC_MESSAGE_TIME, STORAGE, PLATFORM, CONNECT_TOOL, LOG_MODULE } from "../enum";
+import { DISCONNECT_TYPE, CONNECT_STATE, SIGNAL_NAME, SIGNAL_CMD, QOS, NOTIFY_TYPE, ErrorType, HEART_TIMEOUT, CONNECT_ACK_INDEX, PONG_INDEX, COMMAND_TOPICS, CONVERATION_TYPE, SYNC_MESSAGE_TIME, STORAGE, PLATFORM, CONNECT_TOOL, LOG_MODULE, STREAM_EVENT } from "../enum";
 import BufferEncoder from "./encoder/encoder";
 import BufferDecoder from "./decoder/decoder";
 import Network from "../common/network";
@@ -307,6 +307,33 @@ export default function IO(config){
     if(utils.isEqual(name, SIGNAL_NAME.S_CHATROOM_USER_NTF)){
       let { chatroomId, time, type } = result;
       emitter.emit(SIGNAL_NAME.CMD_CHATROOM_EVENT, { chatroomId, time, type });
+    }
+    
+    if(utils.isEqual(name, SIGNAL_NAME.S_STREAM_EVENT)){
+      let { conversationType, conversationId, messageId, streams } = result;
+      
+      let msgs = [], comps = [];
+      utils.forEach(streams, (stream) => {
+        let { event } = stream;
+        if(utils.isEqual(event, STREAM_EVENT.MESSAGE)){
+          msgs.push(stream);
+        }
+        if(utils.isEqual(event, STREAM_EVENT.FINISHED)){
+          comps.push(stream);
+        }
+      });
+      
+      if(!utils.isEqual(msgs.length, 0)){
+        let _result = { conversationType, conversationId, messageId, streams: msgs };
+        emitter.emit(SIGNAL_NAME.CMD_STREAM_APPENDED, _result);
+      }
+
+      if(!utils.isEqual(comps.length, 0)){
+        utils.forEach(comps, (stream) => {
+          let _result = { conversationType, conversationId, messageId };
+          emitter.emit(SIGNAL_NAME.CMD_STREAM_COMPLETED, _result);
+        });
+      }
     }
 
     if(utils.isEqual(name, SIGNAL_NAME.CMD_RECEIVED)){

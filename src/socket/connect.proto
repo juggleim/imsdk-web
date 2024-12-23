@@ -183,7 +183,7 @@ message StreamMsgItem{
 
 message StreamDownMsg{
   string targetId = 1;
-  ChannelType ChannelType = 2;
+  ChannelType channelType = 2;
   string msgId = 3;
   repeated StreamMsgItem msgItems = 4;
 }

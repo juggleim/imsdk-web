@@ -6,7 +6,7 @@ import RTCSignal from "./signal/index";
 import Logger from "../logger/logger";
 import Emitter from "../common/emmit";
 import common from "../common/common";
-import { MEDIA_TYPE, CONVERATION_TAG_TYPE, MESSAGE_SENT_STATE, EVENT, CONNECT_STATE, UNDISTURB_TYPE, CONVERATION_TYPE, MESSAGE_TYPE, ErrorType, CONVERSATION_ORDER, MESSAGE_ORDER, MENTION_TYPE, FILE_TYPE, MENTION_ORDER, SIGNAL_NAME, UNREAD_TAG } from "../enum";
+import { USER_TYPE, MEDIA_TYPE, CONVERATION_TAG_TYPE, MESSAGE_SENT_STATE, EVENT, CONNECT_STATE, UNDISTURB_TYPE, CONVERATION_TYPE, MESSAGE_TYPE, ErrorType, CONVERSATION_ORDER, MESSAGE_ORDER, MENTION_TYPE, FILE_TYPE, MENTION_ORDER, SIGNAL_NAME, UNREAD_TAG } from "../enum";
 import * as ENUM from "../enum";
 import utils from "../utils";
 import MessageCacher from "../common/msg-cacher";
@@ -93,6 +93,7 @@ let init = (config) => {
     UnreadTag: UNREAD_TAG,
     ConversationTagType: CONVERATION_TAG_TYPE,
     MediaType: MEDIA_TYPE,
+    UserType: USER_TYPE,
   };
 
   return  _export;
@@ -115,4 +116,5 @@ export default {
   UnreadTag: UNREAD_TAG,
   ConversationTagType: CONVERATION_TAG_TYPE,
   MediaType: MEDIA_TYPE,
+  UserType: USER_TYPE,
 }

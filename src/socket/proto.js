@@ -682,7 +682,27 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           updatedTime: {
             type: "int64",
             id: 5
+          },
+          settings: {
+            rule: "repeated",
+            type: "KvItem",
+            id: 6
+          },
+          statuses: {
+            rule: "repeated",
+            type: "KvItem",
+            id: 7
+          },
+          userType: {
+            type: "UserType",
+            id: 8
           }
+        }
+      },
+      UserType: {
+        values: {
+          User: 0,
+          Bot: 1
         }
       },
       SyncConversationsReq: {

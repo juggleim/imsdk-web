@@ -157,6 +157,7 @@ function getError(code) {
 // 内置消息类型和动态注入的自定消息类型
 let _MSG_FLAG_NAMES = [
   {name: MESSAGE_TYPE.TEXT,  isCount: true, isStorage: true },
+  {name: MESSAGE_TYPE.STREAM_TEXT,  isCount: true, isStorage: true },
   {name: MESSAGE_TYPE.FILE,  isCount: true, isStorage: true },
   {name: MESSAGE_TYPE.IMAGE, isCount: true, isStorage: true },
   {name: MESSAGE_TYPE.VOICE, isCount: true, isStorage: true },
@@ -508,7 +509,8 @@ function formatUser(user){
     name: user.nickname || "",
     portrait: user.userPortrait || "",
     updatedTime: user.updatedTime || 0,
-    exts: exts || {}
+    exts: exts || {},
+    type: user.userType || 0,
   };
 }
 function toKVs(obj){

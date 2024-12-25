@@ -225,8 +225,14 @@ message UserInfo{
     string userPortrait = 3;
     repeated KvItem extFields = 4;
     int64 updatedTime = 5;
+    repeated KvItem settings = 6;
+    repeated KvItem statuses = 7;
+    UserType userType = 8;
 }
-
+enum UserType{
+    User = 0;
+    Bot = 1;
+}
 message SyncConversationsReq{
     int64 startTime = 1;
     int32 count = 2;

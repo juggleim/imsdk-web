@@ -143,6 +143,7 @@ function msgFormat(msg, { currentUser }) {
       conversationPortrait: targetUser.portrait,
       conversationExts: targetUser.exts,
       conversationUpdatedTime: targetUser.updatedTime,
+      conversationUserType: targetUser.userType || 0,
     });
   }
 
@@ -401,18 +402,19 @@ function formatConversations(conversations, options = {}) {
 
     if (utils.isEqual(conversationType, CONVERATION_TYPE.PRIVATE)) {
       targetUserInfo = targetUserInfo || { extFields: {} };
-      let { userPortrait, nickname, extFields, userId, updatedTime } = targetUserInfo;
+      let { userPortrait, nickname, extFields, userId, updatedTime, userType } = targetUserInfo;
       extFields = utils.toObject(extFields);
       utils.extend(latestMessage, {
         conversationTitle: nickname || '',
         conversationPortrait: userPortrait || '',
         conversationExts: extFields,
-        conversationUpdatedTime: updatedTime || 0
+        conversationUpdatedTime: updatedTime || 0,
+        conversationUserType: userType || 0,
       });
       UserCacher.set(userId, targetUserInfo);
     }
 
-    let { conversationTitle, conversationPortrait, conversationExts, conversationUpdatedTime } = latestMessage;
+    let { conversationTitle, conversationPortrait, conversationExts, conversationUpdatedTime, conversationUserType } = latestMessage;
 
     
     if (utils.isEqual(COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS, topic)) {
@@ -433,6 +435,7 @@ function formatConversations(conversations, options = {}) {
       conversationTitle,
       conversationPortrait,
       conversationUpdatedTime,
+      conversationUserType,
       conversationExts,
       mentions,
       syncTime,

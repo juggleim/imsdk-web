@@ -557,6 +557,7 @@ export let ErrorType = getErrorType();
 
 export let MESSAGE_TYPE = {
   TEXT: 'jg:text',
+  STREAM_TEXT: 'jgs:text',
   IMAGE: 'jg:img',
   VOICE: 'jg:voice',
   VIDEO: 'jg:video',
@@ -676,3 +677,7 @@ export let STREAM_EVENT = {
   MESSAGE: 1,
   FINISHED: 2
 };
+export let USER_TYPE = {
+  USER: 0,
+  BOT: 1,
+}

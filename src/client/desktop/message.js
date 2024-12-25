@@ -61,29 +61,47 @@ export default function($message, { webAgent }){
         let isCon = utils.isContinuous(list, 'messageIndex');
         let len = messages.length;
         let isFetch = isFinished && params.count > len;
+        let isUncomleted = tools.hasUncompletedStream(list);
         // 如果首次获取历史消息，从远端拉取历史消息
-        if(isFetch || !isCon || utils.isEqual(params.time, 0)){
+        if(isFetch || !isCon || utils.isEqual(params.time, 0) || isUncomleted){
           // 按类型获取历史消息，不再从远端获取，方式 index 断续
           if(!utils.isEmpty(params.names)){
             return next();
           }
           return webAgent.getMessages(conversation).then((result) => {
-            let newMsgs = [], existMsgs = [];
+            let newMsgs = [], streamMsgs = [];
             utils.forEach(result.messages, (newMsg) => {
               let index = utils.find(messages, (msg) => {
                 return utils.isEqual(msg.messageId, newMsg.messageId);
               });
-              if(utils.isEqual(index, -1)){
+              let _msg = messages[index];
+              if(!_msg){
                 newMsgs.push(newMsg)
-              }else{
-                let eMsg = messages[index];
-                existMsgs.push(eMsg);
+              }
+
+              let { streams } = newMsg;
+              if(_msg){
+                let _streams = _msg.streams || [];
+                if(streams.length > _streams.length){
+                  streamMsgs.push(newMsg)
+                }
               }
             })
-            $message.insertBatchMsgs({ msgs: utils.clone(newMsgs) });
+            $message.insertBatchMsgs({ msgs: utils.clone(newMsgs.concat(streamMsgs)) });
   
             let _msgs = tools.formatMsgs({ messages: messages, senders, groups });
             let list = newMsgs.concat(_msgs);
+
+            utils.forEach(streamMsgs, (streamMsg) => {
+              let { messageId, streams } = streamMsg;
+              let index = utils.find(list, (item) => {
+                return utils.isEqual(item.messageId, messageId);
+              });
+              if(index > -1){
+                utils.extend(list[index], { streams });
+              }
+            });
+
             list = utils.quickSort(list, (a, b) => {
               return a.sentTime < b.sentTime;
             });

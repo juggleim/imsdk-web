@@ -6,7 +6,11 @@ let isGroup = (type) => {
 }
 
 let formatMsg = ({ message, senders, groups }) => {
-  let { content = '{}', senderId, conversationType, conversationId, mentionInfo = '{}', isRead, isSender, isUpdated, referMsg = '{}', mergeMsg = '{}', reactions = '{}', attribute = '' } = message;
+  let { content = '{}', senderId, conversationType, conversationId, 
+        mentionInfo = '{}', isRead, isStream, streams, isSender, 
+        isUpdated, referMsg = '{}', mergeMsg = '{}', reactions = '{}', attribute = '' 
+      } = message;
+
   content = utils.parse(content);
   mentionInfo = utils.parse(mentionInfo);
   let sender = utils.filter(senders, (user) => {
@@ -22,6 +26,10 @@ let formatMsg = ({ message, senders, groups }) => {
       return utils.isEqual(user.id, conversationId);
     })[0] || {};
   }
+  if(!streams){
+    streams = '[]';
+  }
+  streams = utils.parse(streams);
   message = utils.extend(message, { 
     mergeMsg: utils.parse(mergeMsg),
     referMsg: utils.parse(referMsg),
@@ -32,6 +40,8 @@ let formatMsg = ({ message, senders, groups }) => {
     content, 
     sender,
     mentionInfo,
+    streams,
+    isStream: Boolean(isStream),
     sentTime: Number(message.sentTime),
     isRead: Boolean(isRead), 
     isSender: Boolean(isSender),
@@ -258,7 +268,23 @@ function isNestInclude(sources, targets, callback){
   }
   return isOK;
 }
-
+function hasUncompletedStream(messages){
+  let isInclude = false;
+  for (var i = 0; i < messages.length; i++) {
+    let message = messages[i];
+    let { isStream, streams } = message;
+    isStream = !!isStream;
+    if(!streams){
+      streams = '[]';
+    }
+    streams = utils.parse(streams);
+    if(isStream && utils.isEqual(streams.length, 0)){
+      isInclude = true;
+      break;
+    }
+  }
+  return isInclude;
+}
 export default {
   isGroup,
   formatMsg,
@@ -267,4 +293,5 @@ export default {
   formatConversation,
   createMentions,
   isNestInclude,
+  hasUncompletedStream,
 };

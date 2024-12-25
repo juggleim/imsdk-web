@@ -114,11 +114,11 @@ function msgFormat(msg, { currentUser }) {
   if (_message.isSender) {
     utils.extend(_message.sender, user);
   }
-
+  let streams = [];
   if(_message.isStreamMsg){
-    let streams = formatStreams(msgItems);
-    utils.extend(_message, { streams });
+    streams = formatStreams(msgItems);
   }
+  utils.extend(_message, { streams });
 
   if (utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)) {
     let { groupName, groupPortrait, extFields, groupId, updatedTime } = groupInfo || {

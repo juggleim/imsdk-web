@@ -195,6 +195,12 @@ export let FUNC_PARAM_CHECKER = {
 
   ADD_MSG_REACTION: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'reactionId', type: 'String' }],
   REMOVE_MSG_REACTION: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'reactionId', type: 'String' }],
+  
+  TRANSLATE: [
+    { name: 'sourceLang' }, 
+    { name: 'targetLang' }, 
+    { name: 'content', type: 'Object' }
+  ],
 
   CREATE_CONVERSATION_TAG: [{ name: 'id', type: 'String' }, { name: 'name', type: 'String' }],
   REMOVE_CONVERSATION_TAG: [{ name: 'id', type: 'String' }],
@@ -264,6 +270,7 @@ export let COMMAND_TOPICS = {
   REMOVE_MESSAGE: 'del_msg',
   GET_MSG_BY_IDS: 'qry_hismsg_by_ids',
   GET_FILE_TOKEN: 'file_cred',
+  BATCH_TRANSLATE: 'batch_trans',
 
   GET_USER_INFO: 'qry_user_info',
 

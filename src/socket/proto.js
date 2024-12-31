@@ -1952,6 +1952,35 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           CallTimeout: 1,
           PingTimeout: 2
         }
+      },
+      TransReq: {
+        fields: {
+          items: {
+            rule: "repeated",
+            type: "TransItem",
+            id: 1
+          },
+          targetLang: {
+            type: "string",
+            id: 2
+          },
+          sourceLang: {
+            type: "string",
+            id: 3
+          }
+        }
+      },
+      TransItem: {
+        fields: {
+          key: {
+            type: "string",
+            id: 1
+          },
+          content: {
+            type: "string",
+            id: 2
+          }
+        }
       }
     }
   }

@@ -573,6 +573,22 @@ export default function getQueryBody({ data, callback, index }){
     targetId = roomId;
     buffer = codec.encode(message).finish();
   }
+  if(utils.isEqual(COMMAND_TOPICS.BATCH_TRANSLATE, topic)){
+    let { userId, content, sourceLang, targetLang } = data;
+    let codec = Proto.lookup('codec.TransReq');
+    let items = [];
+    utils.forEach(content, (val, key) => {
+      items.push({ key, content: val });
+    });
+    sourceLang = utils.isEqual(sourceLang, 'auto') ? '' : sourceLang;
+    let message = codec.create({
+      items,
+      sourceLang,
+      targetLang,
+    });
+    targetId = userId;
+    buffer = codec.encode(message).finish();
+  }
   let codec = Proto.lookup('codec.QueryMsgBody');
   let message = codec.create({ index, topic, targetId, data: buffer });
   let _buffer = codec.encode(message).finish();

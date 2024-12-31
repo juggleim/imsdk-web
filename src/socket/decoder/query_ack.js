@@ -68,6 +68,9 @@ export default function getQueryAckBody(stream, { cache, currentUser }){
   if(utils.isEqual(topic, COMMAND_TOPICS.CONVERSATION_TAG_QUERY)){
     result = getConversationTags(index, data);
   }
+  if(utils.isEqual(topic, COMMAND_TOPICS.BATCH_TRANSLATE)){
+    result = getBatchTranslate(index, data);
+  }
 
   if(utils.isInclude([COMMAND_TOPICS.RTC_ACCEPT, COMMAND_TOPICS.RTC_INVITE], topic)){
     result = getRTCAuth(index, data);
@@ -80,6 +83,14 @@ export default function getQueryAckBody(stream, { cache, currentUser }){
   result = utils.extend(result, { code, timestamp, index });
   return result;
 };
+
+function getBatchTranslate(index, data){
+  let payload = Proto.lookup('codec.TransReq');
+  let trans = payload.decode(data);
+  return {
+    index, trans
+  }
+}
 
 function getRTCAuth(index, data){
   let payload = Proto.lookup('codec.RtcAuth');

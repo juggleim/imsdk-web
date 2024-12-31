@@ -37,6 +37,9 @@ export default function($message, { webAgent }){
   invokes.unsubscribeMessage = (conversation) => {
     return webAgent.unsubscribeMessage(conversation);
   };
+  invokes.translate = (params) => {
+    return webAgent.translate(params);
+  };
 
   invokes.getMessages = (conversation) => {
     return utils.deferred((resolve, reject) => {

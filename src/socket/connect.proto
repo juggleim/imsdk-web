@@ -677,3 +677,12 @@ enum RtcRoomQuitReason{
     CallTimeout = 1;//暂时废弃
     PingTimeout = 2; //ping超时，自动被提出
 }
+message TransReq{
+    repeated TransItem items = 1;
+    string targetLang = 2;
+    string sourceLang = 3;
+}
+message TransItem{
+    string key = 1;  
+    string content = 2;
+}

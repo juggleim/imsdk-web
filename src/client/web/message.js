@@ -1031,6 +1031,48 @@ export default function(io, emitter, logger){
   };
 
   /* 
+    let params = {
+      targetLang: '',
+      sourceLang: '',
+      content: {
+        key1: content,
+        key2: content2
+      }
+    }
+  */
+  let translate = (params) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, params, FUNC_PARAM_CHECKER.TRANSLATE);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { content } = params;
+      if(utils.isEmpty(content)){
+        return resolve(params);
+      }
+      let user = io.getCurrentUser();
+      let data = {
+        topic: COMMAND_TOPICS.BATCH_TRANSLATE,
+        ...params,
+        userId: user.id,
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code, msg, trans } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
+        let { items } = trans;
+        let _result = {};
+        utils.forEach(items, (item) => {
+          let { key, content } = item;
+          _result[key] = content;
+        })
+        resolve(_result);
+      });
+    });
+  };
+
+  /* 
 
     let subscribeMsgCache = {
       conversationType_convesationId: { 
@@ -1133,6 +1175,7 @@ export default function(io, emitter, logger){
     removeMessageReaction,
     subscribeMessage,
     unsubscribeMessage,
+    translate,
     _uploadFile,
   };
 }

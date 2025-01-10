@@ -17,7 +17,7 @@ let pkg = `
 let readme = `
 ### JuggleChat Web SDK
 
-Docs: [https://www.jugglechat.com/](https://www.jugglechat.com/)
+Docs: [https://www.juggle.im/](https://www.juggle.im/)
 `;
 
 let dir = path.join(__dirname, '../', 'release');

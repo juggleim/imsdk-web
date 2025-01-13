@@ -1171,8 +1171,9 @@ export default function(io, emitter, logger){
       }
       let { isTop, conversationType, conversationId, messageId } = message;
       let user = io.getCurrentUser();
+      let topic = isTop ? COMMAND_TOPICS.SET_TOP_MSG : COMMAND_TOPICS.DEL_TOP_MSG;
       let data = {
-        topic: COMMAND_TOPICS.SET_TOP_MSG,
+        topic: topic,
         conversationType, 
         conversationId,
         messageId,

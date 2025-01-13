@@ -254,6 +254,7 @@ export let COMMAND_TOPICS = {
   GET_MERGE_MSGS: 'qry_merged_msgs',
   GET_TOP_MSG: 'get_top_msg',
   SET_TOP_MSG: 'set_top_msg',
+  DEL_TOP_MSG: 'del_top_msg',
   
   MSG_ADD_FAVORITE: 'add_favorite_msg',
   MSG_QRY_FAVORITE: 'qry_favorite_msgs',

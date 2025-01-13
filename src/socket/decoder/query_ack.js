@@ -113,9 +113,12 @@ function getFavtoriteMsgs(index, data, { currentUser }){
 function getTopMessage(index, data, { currentUser }){
   let payload = Proto.lookup('codec.TopMsg');
   let result = payload.decode(data);
-  let { msg, operator, createdTime } = result;
-  let message = tools.msgFormat(result.msg, { currentUser });
-  operator = common.formatUser(result.operator);
+  let { msg, operator, createdTime = 0 } = result;
+  let message = {};
+  if(msg){
+    message = tools.msgFormat(result.msg, { currentUser });
+    operator = common.formatUser(result.operator);
+  }
   return {
     index, message, operator, createdTime
   }

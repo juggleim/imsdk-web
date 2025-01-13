@@ -1203,7 +1203,6 @@ export default function(io, emitter, logger){
         return reject(error);
       }
       let { conversationType, conversationId } = conversation;
-      let user = io.getCurrentUser();
       let data = {
         topic: COMMAND_TOPICS.GET_TOP_MSG,
         conversationType, 
@@ -1214,7 +1213,11 @@ export default function(io, emitter, logger){
         if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           return reject({code, msg});
         }
-        resolve({ message, operator, createdTime });
+        let _result = {};
+        if(message){
+          _result = { message, operator, createdTime };
+        }
+        resolve(_result);
       });
     });
   };

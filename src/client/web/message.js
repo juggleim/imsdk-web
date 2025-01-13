@@ -1210,6 +1210,57 @@ export default function(io, emitter, logger){
     });
   };
 
+  let addFavoriteMessage = (params) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, params, FUNC_PARAM_CHECKER.ADD_FAVORITE_MESSAGE);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { conversationType, conversationId, senderId, messageId } = params;
+      let user = io.getCurrentUser();
+      let data = {
+        topic: COMMAND_TOPICS.MSG_ADD_FAVORITE,
+        conversationType, 
+        conversationId,
+        senderId, 
+        messageId,
+        userId: user.id
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code, msg } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
+        resolve();
+      });
+    });
+  };
+
+  let getFavoriteMessages = (params) => {
+    return utils.deferred((resolve, reject) => {
+      let _params = { count: 20, page: 1 };
+      if(!utils.isObject(params)){
+        params = _params;
+      }
+      let { count = 20, page = 1 } = params;
+
+      let user = io.getCurrentUser();
+      let data = {
+        topic: COMMAND_TOPICS.MSG_QRY_FAVORITE,
+        count,
+        page,
+        userId: user.id
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code, msg, list } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
+        resolve({ list });
+      });
+    });
+  };
+
   return {
     sendMessage,
     sendMassMessage,
@@ -1241,6 +1292,8 @@ export default function(io, emitter, logger){
     translate,
     setTopMessage,
     getTopMessage,
+    addFavoriteMessage,
+    getFavoriteMessages,
     _uploadFile,
   };
 }

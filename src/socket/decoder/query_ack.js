@@ -76,6 +76,10 @@ export default function getQueryAckBody(stream, { cache, currentUser }){
   if(utils.isEqual(topic, COMMAND_TOPICS.GET_TOP_MSG)){
     result = getTopMessage(index, data, { currentUser });
   }
+  
+  if(utils.isEqual(topic, COMMAND_TOPICS.MSG_QRY_FAVORITE)){
+    result = getFavtoriteMsgs(index, data, { currentUser });
+  }
 
   if(utils.isInclude([COMMAND_TOPICS.RTC_ACCEPT, COMMAND_TOPICS.RTC_INVITE], topic)){
     result = getRTCAuth(index, data);
@@ -88,6 +92,23 @@ export default function getQueryAckBody(stream, { cache, currentUser }){
   result = utils.extend(result, { code, timestamp, index });
   return result;
 };
+
+function getFavtoriteMsgs(index, data, { currentUser }){
+  let payload = Proto.lookup('codec.FavoriteMsgs');
+  let result = payload.decode(data);
+  let { items } = result;
+  if(!items){
+    items = [];
+  }
+  let list = utils.map(items, (item) => {
+    let { createdTime, msg } = item;
+    let message = tools.msgFormat(msg, { currentUser });
+    return { createdTime, message };
+  });
+  return {
+    index, list
+  }
+}
 
 function getTopMessage(index, data, { currentUser }){
   let payload = Proto.lookup('codec.TopMsg');

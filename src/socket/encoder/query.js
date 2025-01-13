@@ -595,6 +595,28 @@ export default function getQueryBody({ data, callback, index }){
     targetId = conversationId;
     buffer = codec.encode(message).finish();
   }
+  if(utils.isEqual(COMMAND_TOPICS.MSG_ADD_FAVORITE, topic)){
+    let { conversationId, conversationType, senderId, messageId, userId } = data;
+    let codec = Proto.lookup('codec.AddFavoriteMsgReq');
+    let message = codec.create({
+      channelType: conversationType,
+      receiverId: conversationId,
+      senderId: senderId,
+      msgId: messageId
+    });
+    targetId = userId;
+    buffer = codec.encode(message).finish();
+  }
+  if(utils.isEqual(COMMAND_TOPICS.MSG_QRY_FAVORITE, topic)){
+    let { count, page, userId } = data;
+    let codec = Proto.lookup('codec.QryFavoriteMsgsReq');
+    let message = codec.create({
+      limit: count,
+      offset: page
+    });
+    targetId = userId;
+    buffer = codec.encode(message).finish();
+  }
   if(utils.isEqual(COMMAND_TOPICS.BATCH_TRANSLATE, topic)){
     let { userId, content, sourceLang, targetLang } = data;
     let codec = Proto.lookup('codec.TransReq');

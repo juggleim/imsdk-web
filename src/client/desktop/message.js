@@ -46,6 +46,12 @@ export default function($message, { webAgent }){
   invokes.getTopMessage = (params) => {
     return webAgent.getTopMessage(params);
   };
+  invokes.addFavoriteMessage = (params) => {
+    return webAgent.addFavoriteMessage(params);
+  };
+  invokes.getFavoriteMessages = (params) => {
+    return webAgent.getFavoriteMessages(params);
+  };
 
   invokes.getMessages = (conversation) => {
     return utils.deferred((resolve, reject) => {

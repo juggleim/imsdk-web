@@ -204,6 +204,8 @@ export let FUNC_PARAM_CHECKER = {
   
   SET_TOP_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }],
   GET_TOP_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }],
+  
+  ADD_FAVORITE_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'senderId' }, { name: 'messageId' }],
 
   CREATE_CONVERSATION_TAG: [{ name: 'id', type: 'String' }, { name: 'name', type: 'String' }],
   REMOVE_CONVERSATION_TAG: [{ name: 'id', type: 'String' }],

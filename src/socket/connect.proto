@@ -700,7 +700,10 @@ message TopMsg{
   UserInfo operator = 2;
   int64 createdTime = 3;
 }
-message AddFavoriteMsgReq{
+message FavoriteMsgIds{
+  repeated FavoriteMsgIdItem items = 1;
+}
+message FavoriteMsgIdItem{
   string senderId = 1;
   string receiverId = 2;
   ChannelType channelType = 3;

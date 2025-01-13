@@ -2026,7 +2026,16 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           }
         }
       },
-      AddFavoriteMsgReq: {
+      FavoriteMsgIds: {
+        fields: {
+          items: {
+            rule: "repeated",
+            type: "FavoriteMsgIdItem",
+            id: 1
+          }
+        }
+      },
+      FavoriteMsgIdItem: {
         fields: {
           senderId: {
             type: "string",

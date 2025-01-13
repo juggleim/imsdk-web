@@ -594,15 +594,19 @@ export default function getQueryBody({ data, callback, index }){
     targetId = conversationId;
     buffer = codec.encode(message).finish();
   }
-  if(utils.isEqual(COMMAND_TOPICS.MSG_ADD_FAVORITE, topic)){
-    let { conversationId, conversationType, senderId, messageId, userId } = data;
-    let codec = Proto.lookup('codec.AddFavoriteMsgReq');
-    let message = codec.create({
-      channelType: conversationType,
-      receiverId: conversationId,
-      senderId: senderId,
-      msgId: messageId
+  if(utils.isInclude([COMMAND_TOPICS.MSG_ADD_FAVORITE, COMMAND_TOPICS.MSG_REMOVE_FAVORITE], topic)){
+    let { messages, userId } = data;
+    let codec = Proto.lookup('codec.FavoriteMsgIds');
+    let items = utils.map(messages, (message) => {
+      let { conversationId, conversationType, senderId, messageId } = message;
+      return {
+        channelType: conversationType,
+        receiverId: conversationId,
+        senderId: senderId,
+        msgId: messageId
+      };
     });
+    let message = codec.create({ items });
     targetId = userId;
     buffer = codec.encode(message).finish();
   }

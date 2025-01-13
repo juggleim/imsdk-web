@@ -1219,20 +1219,40 @@ export default function(io, emitter, logger){
     });
   };
 
-  let addFavoriteMessage = (params) => {
+  let addFavoriteMessages = (params) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, params, FUNC_PARAM_CHECKER.ADD_FAVORITE_MESSAGE);
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-      let { conversationType, conversationId, senderId, messageId } = params;
+      let { messages } = params;
       let user = io.getCurrentUser();
       let data = {
         topic: COMMAND_TOPICS.MSG_ADD_FAVORITE,
-        conversationType, 
-        conversationId,
-        senderId, 
-        messageId,
+        messages,
+        userId: user.id
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code, msg } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
+        resolve();
+      });
+    });
+  };
+
+  let removeFavoriteMessages = (params) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, params, FUNC_PARAM_CHECKER.ADD_FAVORITE_MESSAGE);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { messages } = params;
+      let user = io.getCurrentUser();
+      let data = {
+        topic: COMMAND_TOPICS.MSG_REMOVE_FAVORITE,
+        messages,
         userId: user.id
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
@@ -1301,7 +1321,8 @@ export default function(io, emitter, logger){
     translate,
     setTopMessage,
     getTopMessage,
-    addFavoriteMessage,
+    addFavoriteMessages,
+    removeFavoriteMessages,
     getFavoriteMessages,
     _uploadFile,
   };

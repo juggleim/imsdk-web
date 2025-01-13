@@ -205,7 +205,16 @@ export let FUNC_PARAM_CHECKER = {
   SET_TOP_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }],
   GET_TOP_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }],
   
-  ADD_FAVORITE_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'senderId' }, { name: 'messageId' }],
+  ADD_FAVORITE_MESSAGE: [{
+    name: 'messages',
+    type: 'Array',
+    children: [
+      { name: 'conversationType' }, 
+      { name: 'conversationId' }, 
+      { name: 'senderId' }, 
+      { name: 'messageId' }
+    ]
+  }],
 
   CREATE_CONVERSATION_TAG: [{ name: 'id', type: 'String' }, { name: 'name', type: 'String' }],
   REMOVE_CONVERSATION_TAG: [{ name: 'id', type: 'String' }],
@@ -256,7 +265,8 @@ export let COMMAND_TOPICS = {
   SET_TOP_MSG: 'set_top_msg',
   DEL_TOP_MSG: 'del_top_msg',
   
-  MSG_ADD_FAVORITE: 'add_favorite_msg',
+  MSG_ADD_FAVORITE: 'add_favorite_msgs',
+  MSG_REMOVE_FAVORITE: 'del_favorite_msgs',
   MSG_QRY_FAVORITE: 'qry_favorite_msgs',
   
   GET_FIRST_UNREAD_MSG: 'qry_first_unread_msg',

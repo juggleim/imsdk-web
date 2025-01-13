@@ -573,6 +573,28 @@ export default function getQueryBody({ data, callback, index }){
     targetId = roomId;
     buffer = codec.encode(message).finish();
   }
+  if(utils.isEqual(COMMAND_TOPICS.SET_TOP_MSG, topic)){
+    let { conversationId, conversationType, messageId, isTop, userId } = data;
+    let codec = Proto.lookup('codec.SetTopMsgReq');
+    let message = codec.create({
+      channelType: conversationType,
+      targetId: conversationId,
+      msgId: messageId,
+      isTop: isTop
+    });
+    targetId = userId;
+    buffer = codec.encode(message).finish();
+  }
+  if(utils.isEqual(COMMAND_TOPICS.GET_TOP_MSG, topic)){
+    let { conversationId, conversationType } = data;
+    let codec = Proto.lookup('codec.GetTopMsgReq');
+    let message = codec.create({
+      channelType: conversationType,
+      targetId: conversationId
+    });
+    targetId = conversationId;
+    buffer = codec.encode(message).finish();
+  }
   if(utils.isEqual(COMMAND_TOPICS.BATCH_TRANSLATE, topic)){
     let { userId, content, sourceLang, targetLang } = data;
     let codec = Proto.lookup('codec.TransReq');

@@ -40,6 +40,12 @@ export default function($message, { webAgent }){
   invokes.translate = (params) => {
     return webAgent.translate(params);
   };
+  invokes.setTopMessage = (params) => {
+    return webAgent.setTopMessage(params);
+  };
+  invokes.getTopMessage = (params) => {
+    return webAgent.getTopMessage(params);
+  };
 
   invokes.getMessages = (conversation) => {
     return utils.deferred((resolve, reject) => {

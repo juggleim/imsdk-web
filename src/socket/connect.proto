@@ -686,3 +686,35 @@ message TransItem{
     string key = 1;  
     string content = 2;
 }
+message SetTopMsgReq{
+  string targetId = 1;
+  ChannelType channelType = 2;
+  string msgId = 3;
+}
+message GetTopMsgReq{
+  string targetId = 1;
+  ChannelType channelType = 2;
+}
+message TopMsg{
+  DownMsg msg = 1;
+  UserInfo operator = 2;
+  int64 createdTime = 3;
+}
+message AddFavoriteMsgReq{
+  string senderId = 1;
+  string receiverId = 2;
+  ChannelType channelType = 3;
+  string msgId = 4;
+}
+message QryFavoriteMsgsReq{
+  int64 limit = 1;
+  string offset = 2;
+}
+message FavoriteMsgs{
+  repeated FavoriteMsg items = 1;
+  string offset = 2;
+}
+message FavoriteMsg{
+  DownMsg msg = 1;
+  int64 createdTime = 2;
+}

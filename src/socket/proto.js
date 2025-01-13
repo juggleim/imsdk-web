@@ -1981,6 +1981,107 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 2
           }
         }
+      },
+      SetTopMsgReq: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 2
+          },
+          msgId: {
+            type: "string",
+            id: 3
+          }
+        }
+      },
+      GetTopMsgReq: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 2
+          }
+        }
+      },
+      TopMsg: {
+        fields: {
+          msg: {
+            type: "DownMsg",
+            id: 1
+          },
+          operator: {
+            type: "UserInfo",
+            id: 2
+          },
+          createdTime: {
+            type: "int64",
+            id: 3
+          }
+        }
+      },
+      AddFavoriteMsgReq: {
+        fields: {
+          senderId: {
+            type: "string",
+            id: 1
+          },
+          receiverId: {
+            type: "string",
+            id: 2
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 3
+          },
+          msgId: {
+            type: "string",
+            id: 4
+          }
+        }
+      },
+      QryFavoriteMsgsReq: {
+        fields: {
+          limit: {
+            type: "int64",
+            id: 1
+          },
+          offset: {
+            type: "string",
+            id: 2
+          }
+        }
+      },
+      FavoriteMsgs: {
+        fields: {
+          items: {
+            rule: "repeated",
+            type: "FavoriteMsg",
+            id: 1
+          },
+          offset: {
+            type: "string",
+            id: 2
+          }
+        }
+      },
+      FavoriteMsg: {
+        fields: {
+          msg: {
+            type: "DownMsg",
+            id: 1
+          },
+          createdTime: {
+            type: "int64",
+            id: 2
+          }
+        }
       }
     }
   }

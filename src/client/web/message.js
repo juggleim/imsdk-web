@@ -1147,6 +1147,69 @@ export default function(io, emitter, logger){
     });
   };
 
+  /* 
+    let message = {
+      conversationType: 1,
+      conversationId: '',
+      messageId: '',
+      isTop: true,
+    }
+  */
+  let setTopMessage = (message) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, message, FUNC_PARAM_CHECKER.SET_TOP_MESSAGE);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { isTop, conversationType, conversationId, messageId } = message;
+      let user = io.getCurrentUser();
+      let data = {
+        topic: COMMAND_TOPICS.SET_TOP_MSG,
+        conversationType, 
+        conversationId,
+        messageId,
+        userId: user.id,
+        isTop: !!isTop,
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code, msg } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
+        resolve();
+      });
+    });
+  };
+  
+  /* 
+    let conversation = {
+      conversationType: 1,
+      conversationId: '',
+    }
+  */
+  let getTopMessage = (conversation) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, conversation, FUNC_PARAM_CHECKER.GET_TOP_MESSAGE);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { conversationType, conversationId } = conversation;
+      let user = io.getCurrentUser();
+      let data = {
+        topic: COMMAND_TOPICS.GET_TOP_MSG,
+        conversationType, 
+        conversationId
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code, msg, message, operator, createdTime } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
+        resolve({ message, operator, createdTime });
+      });
+    });
+  };
+
   return {
     sendMessage,
     sendMassMessage,
@@ -1176,6 +1239,8 @@ export default function(io, emitter, logger){
     subscribeMessage,
     unsubscribeMessage,
     translate,
+    setTopMessage,
+    getTopMessage,
     _uploadFile,
   };
 }

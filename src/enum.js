@@ -201,6 +201,9 @@ export let FUNC_PARAM_CHECKER = {
     { name: 'targetLang' }, 
     { name: 'content', type: 'Object' }
   ],
+  
+  SET_TOP_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }],
+  GET_TOP_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }],
 
   CREATE_CONVERSATION_TAG: [{ name: 'id', type: 'String' }, { name: 'name', type: 'String' }],
   REMOVE_CONVERSATION_TAG: [{ name: 'id', type: 'String' }],
@@ -247,6 +250,11 @@ export let COMMAND_TOPICS = {
   SEND_CHATROOM: 'c_msg',
   
   GET_MERGE_MSGS: 'qry_merged_msgs',
+  GET_TOP_MSG: 'get_top_msg',
+  SET_TOP_MSG: 'set_top_msg',
+  
+  MSG_ADD_FAVORITE: 'add_favorite_msg',
+  MSG_QRY_FAVORITE: 'qry_favorite_msgs',
   
   GET_FIRST_UNREAD_MSG: 'qry_first_unread_msg',
 
@@ -587,6 +595,7 @@ export let MESSAGE_TYPE = {
   COMMAND_MARK_UNREAD: 'jg:markunread',
   COMMAND_LOG_REPORT: 'jg:logcmd',
   COMMAND_MSG_EXSET: 'jg:msgexset',
+  COMMAND_MSG_SET_TOP: 'jg:topmsg',
   
   COMMAND_CONVERSATION_TAG_ADD: 'jg:tagaddconvers',
   

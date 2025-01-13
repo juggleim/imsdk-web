@@ -96,7 +96,7 @@ export default function getQueryAckBody(stream, { cache, currentUser }){
 function getFavtoriteMsgs(index, data, { currentUser }){
   let payload = Proto.lookup('codec.FavoriteMsgs');
   let result = payload.decode(data);
-  let { items } = result;
+  let { items, offset } = result;
   if(!items){
     items = [];
   }
@@ -106,7 +106,7 @@ function getFavtoriteMsgs(index, data, { currentUser }){
     return { createdTime, message };
   });
   return {
-    index, list
+    index, list, offset
   }
 }
 

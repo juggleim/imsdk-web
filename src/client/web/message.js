@@ -1270,25 +1270,25 @@ export default function(io, emitter, logger){
 
   let getFavoriteMessages = (params) => {
     return utils.deferred((resolve, reject) => {
-      let _params = { count: 20, page: 1 };
+      let _params = { limit: 20, offset: '' };
       if(!utils.isObject(params)){
         params = _params;
       }
-      let { count = 20, page = 1 } = params;
+      let { limit = 20, offset = '' } = params;
 
       let user = io.getCurrentUser();
       let data = {
         topic: COMMAND_TOPICS.MSG_QRY_FAVORITE,
-        count,
-        page,
+        limit,
+        offset,
         userId: user.id
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
-        let { code, msg, list } = result;
+        let { code, msg, list, offset } = result;
         if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           return reject({code, msg});
         }
-        resolve({ list });
+        resolve({ list, offset });
       });
     });
   };

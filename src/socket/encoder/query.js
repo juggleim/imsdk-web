@@ -611,11 +611,10 @@ export default function getQueryBody({ data, callback, index }){
     buffer = codec.encode(message).finish();
   }
   if(utils.isEqual(COMMAND_TOPICS.MSG_QRY_FAVORITE, topic)){
-    let { count, page, userId } = data;
+    let { limit, offset, userId } = data;
     let codec = Proto.lookup('codec.QryFavoriteMsgsReq');
     let message = codec.create({
-      limit: count,
-      offset: page
+      limit, offset
     });
     targetId = userId;
     buffer = codec.encode(message).finish();

@@ -417,6 +417,7 @@ export let EVENT = {
   MESSAGE_RECEIVED: 'message_received',
   MESSAGE_RECALLED: 'message_recalled',
   MESSAGE_UPDATED: 'message_updated',
+  MESSAGE_SET_TOP: 'message_set_top',
   MESSAGE_READ: 'message_read',
   MESSAGE_REMOVED: 'message_removed',
   MESSAGE_CLEAN: 'message_clean',

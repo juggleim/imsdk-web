@@ -40,6 +40,14 @@ export default function(io, emitter, logger){
       }
       return emitter.emit(EVENT.MESSAGE_UPDATED, { conversationType, conversationId, messageId, content: newContent });
     }
+    
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_MSG_SET_TOP)){
+      let { conversationType, conversationId, content: { msg_id } } = message;
+      return getMessagesByIds({ conversationType, conversationId, messageIds: [msg_id] }).then(({ messages = [] }) => {
+        let message = messages[0];
+        return message && emitter.emit(EVENT.MESSAGE_SET_TOP, { conversationType, conversationId, messageId: msg_id });
+      });
+    }
 
     // if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_RTC_1V1_FINISHED)){
     //   return emitter.emit(EVENT.RTC_FINISHED_1V1_EVENT, message);

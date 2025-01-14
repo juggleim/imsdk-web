@@ -1191,6 +1191,7 @@ export default function(io, emitter, logger){
           conversationId,
           content: { msg_id: messageId, action: isTop ? MSG_TOP_ACTION_TYPE.ADD : MSG_TOP_ACTION_TYPE.REMOVE },
           sender: user,
+          name: MESSAGE_TYPE.COMMAND_MSG_SET_TOP,
           sentTime: Date.now()
         };
         commandNotify(msg);

@@ -1186,6 +1186,14 @@ export default function(io, emitter, logger){
         if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           return reject({code, msg});
         }
+        let msg = {
+          conversationType, 
+          conversationId,
+          content: { msg_id: messageId, action: isTop ? MSG_TOP_ACTION_TYPE.ADD : MSG_TOP_ACTION_TYPE.REMOVE },
+          sender: user,
+          sentTime: Date.now()
+        };
+        commandNotify(msg);
         resolve();
       });
     });

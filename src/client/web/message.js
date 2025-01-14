@@ -1186,7 +1186,7 @@ export default function(io, emitter, logger){
         if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           return reject({code, msg});
         }
-        let msg = {
+        let _msg = {
           conversationType, 
           conversationId,
           content: { msg_id: messageId, action: isTop ? MSG_TOP_ACTION_TYPE.ADD : MSG_TOP_ACTION_TYPE.REMOVE },
@@ -1194,7 +1194,7 @@ export default function(io, emitter, logger){
           name: MESSAGE_TYPE.COMMAND_MSG_SET_TOP,
           sentTime: Date.now()
         };
-        commandNotify(msg);
+        commandNotify(_msg);
         resolve();
       });
     });

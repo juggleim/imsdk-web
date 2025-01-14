@@ -63,6 +63,11 @@ export let PLATFORM = {
   DESKTOP: 'PC'
 }
 
+export let MSG_TOP_ACTION_TYPE = {
+  ADD: 0,
+  REMOVE: 1
+};
+
 export let SIGNAL_CMD = {
   CONNECT: 0,
   CONNECT_ACK: 1,

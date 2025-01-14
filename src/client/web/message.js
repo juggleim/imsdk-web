@@ -2,7 +2,7 @@ import {
   MESSAGE_SENT_STATE, SIGNAL_CMD, 
   EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_ORDER, COMMAND_TOPICS, CONVERATION_TYPE, 
   ErrorType, MENTION_ORDER, UPLOAD_TYPE, FILE_TYPE, MESSAGE_TYPE,
-  LOG_MODULE,
+  LOG_MODULE, MSG_TOP_ACTION_TYPE
 } from "../../enum";
 import utils from "../../utils";
 import common from "../../common/common";
@@ -42,10 +42,11 @@ export default function(io, emitter, logger){
     }
     
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_MSG_SET_TOP)){
-      let { conversationType, conversationId, content: { msg_id } } = message;
+      let { conversationType, conversationId, content: { msg_id, action = 0 }, sender, sentTime } = message;
       return getMessagesByIds({ conversationType, conversationId, messageIds: [msg_id] }).then(({ messages = [] }) => {
         let message = messages[0];
-        return message && emitter.emit(EVENT.MESSAGE_SET_TOP, { conversationType, conversationId, messageId: msg_id });
+        let isTop = utils.isEqual(MSG_TOP_ACTION_TYPE.ADD, action);
+        return message && emitter.emit(EVENT.MESSAGE_SET_TOP, { isTop, message, operator: sender, createdTime: sentTime });
       });
     }
 

@@ -43,11 +43,8 @@ export default function(io, emitter, logger){
     
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_MSG_SET_TOP)){
       let { conversationType, conversationId, content: { msg_id, action = 0 }, sender, sentTime } = message;
-      return getMessagesByIds({ conversationType, conversationId, messageIds: [msg_id] }).then(({ messages = [] }) => {
-        let message = messages[0];
-        let isTop = utils.isEqual(MSG_TOP_ACTION_TYPE.ADD, action);
-        return message && emitter.emit(EVENT.MESSAGE_SET_TOP, { isTop, message, operator: sender, createdTime: sentTime });
-      });
+      let isTop = utils.isEqual(MSG_TOP_ACTION_TYPE.ADD, action);
+      return emitter.emit(EVENT.MESSAGE_SET_TOP, { isTop, message: { conversationType, conversationId, messageId: msg_id }, operator: sender, createdTime: sentTime });
     }
 
     // if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_RTC_1V1_FINISHED)){

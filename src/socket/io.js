@@ -18,6 +18,8 @@ import Timer from "../common/timer";
 import Counter from "../common/counter";
 import { VERSION } from "./version";
 
+import JWebSocket from "../provoider/websocket/index"
+
 import NetworkWatcher from "../common/network-watcher";
 /* 
   fileCompressLimit: 图片缩略图压缩限制，小于设置数值将不执行压缩，单位 KB
@@ -148,10 +150,10 @@ export default function IO(config){
           clearLocalServers(userId);
           return reconnect({ token, userId, deviceId }, callback);
         }
-        domain = domain.replaceAll(/http:\/\/|https:\/\/|file:\/\/|wss:\/\/|ws:\/\//g, '');
+        domain = domain.replace(/http:\/\/|https:\/\/|file:\/\/|wss:\/\/|ws:\/\//g, '');
         let { ws: protocol } = utils.getProtocol();
         let url = `${protocol}//${domain}/im`;
-        ws = new WebSocket(url);
+        ws = new JWebSocket(url);
 
         logger.info({ tag: LOG_MODULE.WS_CONNECT });
 
@@ -170,11 +172,16 @@ export default function IO(config){
           onDisconnect({ type: DISCONNECT_TYPE.ERROR });
         };
         ws.onmessage = function({ data }){
-          let reader = new FileReader();
-          reader.onload = function() {
-            bufferHandler(this.result);
+          // 需要修改在适配层处理
+          if(common.isUni()){
+            bufferHandler(data);
+          }else{
+            let reader = new FileReader();
+            reader.onload = function() {
+              bufferHandler(this.result);
+            }
+            reader.readAsArrayBuffer(data);
           }
-          reader.readAsArrayBuffer(data);
         };
       });
     }

@@ -3,6 +3,7 @@ import utils from "../../utils";
 import GroupCacher from "../../common/group-cacher";
 import UserCacher from "../../common/user-cacher";
 import common from "../../common/common";
+import JTextEncoder from "../../provoider/textencoder/index";
 
 function msgFormat(msg, { currentUser }) {
   let { msgItems, converTags, undisturbType, msgExtSet, 
@@ -12,7 +13,7 @@ function msgFormat(msg, { currentUser }) {
     } = msg;
   let content = '';
   if (msgContent && msgContent.length > 0) {
-    content = new TextDecoder().decode(msgContent);
+    content = JTextEncoder.decoder(msgContent);
     content = utils.parse(content);
   }
 
@@ -52,7 +53,7 @@ function msgFormat(msg, { currentUser }) {
   if (referMsg) {
     let rcontent = referMsg.msgContent || '';
     if (rcontent.length != 0) {
-      rcontent = new TextDecoder().decode(rcontent);
+      rcontent = JTextEncoder.decoder(rcontent);
       newRefer.content = utils.parse(rcontent);
     }
     referMsg.targetUserInfo = common.formatUser(referMsg.targetUserInfo || {})
@@ -473,7 +474,7 @@ function formatStream(item){
   let { event, subSeq, partialContent } = item;
   let content = '';
   if (partialContent && partialContent.length > 0) {
-    content = new TextDecoder().decode( partialContent);
+    content = JTextEncoder.decoder( partialContent);
     content = utils.parse(content);
   }
   return { event, seq: subSeq, content };

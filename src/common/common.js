@@ -2,6 +2,7 @@ import utils from "../utils";
 import { ErrorType, STORAGE, ErrorMessages, MESSAGE_TYPE, UPLOAD_TYPE, UNREAD_TAG } from "../enum";
 import Storage from "./storage";
 import Uploader from "./uploader";
+import JSessionStorage from "../provoider/session/index";
 
 /* 
 let params = { content: 123 }
@@ -578,10 +579,10 @@ function genUId(){
   });
 }
 function getClientSession(){
-  let clientSession = sessionStorage.getItem(STORAGE.CLIENT_SESSION);
+  let clientSession = JSessionStorage.getItem(STORAGE.CLIENT_SESSION);
   if(!clientSession){
     clientSession = genUId();
-    sessionStorage.setItem(STORAGE.CLIENT_SESSION, clientSession);
+    JSessionStorage.setItem(STORAGE.CLIENT_SESSION, clientSession);
   }
   return clientSession;
 }
@@ -607,6 +608,10 @@ function decrypto(arrs, xors){
 
 function reportLogs({ logger, params }){
   return logger.report({ ...params });
+}
+
+function isUni(){
+  return typeof uni != 'undefined';
 }
 
 export default {
@@ -635,4 +640,5 @@ export default {
   encrypto,
   decrypto,
   reportLogs,
+  isUni,
 }

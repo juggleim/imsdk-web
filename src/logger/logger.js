@@ -1,8 +1,9 @@
-import DB from './database';
+import DB from '../provoider/database/index';
 import { LOG_LEVEL } from '../enum';
 import utils from "../utils";
 import Storage from '../common/storage';
 import common from "../common/common";
+import jrequest from "../provoider/request/index";
 
 export default function Logger(option = {}){
   let TABLE_NAME = 'LOGS';
@@ -51,7 +52,7 @@ export default function Logger(option = {}){
     if(isConsole){
       let _time = utils.formatTime(time);
       let _content = utils.toJSON(content);
-      console.log(`%cJG:LOG`, `background-color:#1e1ec5;color:#FFF;padding:0 4px;font-size:10px;`, `${_time} ${_content}`);
+      console.log(`%cJG:LOG`, ``, `${_time} ${_content}`);
     }
   };
   let error = (content) => {
@@ -83,7 +84,7 @@ export default function Logger(option = {}){
       let { token } = user;
       let api = navi.url || '';
       let url = `${api}/navigator/upload-log-plain`;
-      utils.requestNormal(url, {
+      jrequest.requestNormal(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -2,6 +2,7 @@ import utils from "../utils";
 import Storage from "../common/storage";
 import { STORAGE, ErrorType, LOG_MODULE } from "../enum";
 import common from "./common";
+import jrequest from "../provoider/request/index";
 
 let detect = (urls, callback, option = {}) => {
   let requests = [], superior = '', errors = []; 
@@ -9,10 +10,10 @@ let detect = (urls, callback, option = {}) => {
   utils.forEach(urls, (domain) => {
     let { http } = utils.getProtocol();
     
-    domain = domain.replaceAll(/http:\/\/|https:\/\/|file:\/\/|wss:\/\/|ws:\/\//g, '');
+    domain = domain.replace(/http:\/\/|https:\/\/|file:\/\/|wss:\/\/|ws:\/\//g, '');
     let url = `${http}//${domain}/health`;
     let options = {};
-    let xhr = utils.requestNormal(url, options, {
+    let xhr = jrequest.requestNormal(url, options, {
       success: function(result, $xhr){
         if(utils.isEmpty(superior)){
           let { responseURL } = $xhr;
@@ -62,7 +63,7 @@ let getNavis = (urls, option, callback) => {
   }
 
   utils.forEach(urls, (domain) => {
-    let url = domain.replaceAll(/http:\/\/|https:\/\/|file:\/\//g, '')
+    let url = domain.replace(/http:\/\/|https:\/\/|file:\/\//g, '')
     let { http } = utils.getProtocol(domain);
     url = `${http}//${url}/navigator/general`;
     let options = {
@@ -71,7 +72,7 @@ let getNavis = (urls, option, callback) => {
         'x-token': token
       }
     };
-    let xhr = utils.requestNormal(url, options, {
+    let xhr = jrequest.requestNormal(url, options, {
       success: function(result, $xhr){
         if(!isResponsed){
           let { responseURL } = $xhr;

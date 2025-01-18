@@ -2,6 +2,7 @@ import common from "../../common/common";
 import { CONVERATION_TYPE, COMMAND_TOPICS } from "../../enum";
 import utils from "../../utils";
 import Proto from "../proto";
+import JTextEncoder from "../../provoider/textencoder/index";
 
 export default function({ data, callback, index }){
   let { conversationId: targetId, conversationType, topic } = data;
@@ -36,7 +37,7 @@ export default function({ data, callback, index }){
         msgIndex: messageIndex,
         msgTime: sentTime,
         msgId: messageId,
-        msgContent: new TextEncoder().encode(referContent),
+        msgContent: JTextEncoder.encoder(referContent),
         msgType: referMsg.name,
         type: referMsg.conversationType,
         senderId: sender.id
@@ -51,7 +52,7 @@ export default function({ data, callback, index }){
       referMsg: referMsg,
       mergedMsgs: mergeMsg,
       clientUid: clientMsgId,
-      msgContent: new TextEncoder().encode(content)
+      msgContent:JTextEncoder.encoder(content)
     };
 
     if(push){

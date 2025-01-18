@@ -1,5 +1,7 @@
 import { UPLOAD_TYPE } from "../enum";
 import utils from "../utils";
+import jrequest from "../provoider/request/index";
+
 export default function (uploader, { type }) {
   let qiniuExec = (content, option, callbacks) => {
     let { token, domain } = option;
@@ -33,7 +35,7 @@ export default function (uploader, { type }) {
   let aliExec = (content, option, callbacks) => {
     let { url } = option;
     let { file, name } = content;
-    utils.requestNormal(url, {
+    jrequest.uploadFile(url, {
       method: 'PUT',
       headers: { 'Content-Type': '' },
       body: file
@@ -54,7 +56,7 @@ export default function (uploader, { type }) {
   let s3Exec = (content, option, callbacks) => {
     let { url } = option;
     let { file, name } = content;
-    utils.requestNormal(url, {
+    jrequest.uploadFile(url, {
       method: 'PUT',
       headers: { 
         'Content-Type': '',

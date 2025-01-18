@@ -1,6 +1,7 @@
 import { COMMAND_TOPICS, CONVERATION_TYPE, UNDISTURB_TYPE, RTC_STATE} from "../../enum";
 import utils from "../../utils";
 import Proto from "../proto";
+import JTextEncoder from "../../provoider/textencoder/index";
 
 export default function getQueryBody({ data, callback, index }){
   let { targetId, userId, topic  } = data;
@@ -311,7 +312,7 @@ export default function getQueryBody({ data, callback, index }){
       atts: attributes,
     };
     if(!utils.isUndefined(notify)){
-      utils.extend(_msg, { msg: new TextEncoder().encode(notify)})
+      utils.extend(_msg, { msg: JTextEncoder.encoder(notify)})
     }
     let message = codec.create(_msg);
     targetId = chatId;
@@ -344,7 +345,7 @@ export default function getQueryBody({ data, callback, index }){
       targetId: conversationId,
       msgId,
       msgTime,
-      msgContent: new TextEncoder().encode(content)
+      msgContent: JTextEncoder.encoder(content)
     });
     targetId = conversationId;
     buffer = codec.encode(message).finish();

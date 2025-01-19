@@ -1,12 +1,21 @@
 import utils from "../../utils";
 export default function(){
   let encoder = (str) => {
-    return uni.base64ToArrayBuffer(str);
+    var binstr = unescape(encodeURIComponent(str)),
+      arr = new Uint8Array(binstr.length);
+    binstr.split('').forEach(function(char, i) {
+      arr[i] = char.charCodeAt(0);
+    });
+    return arr;
   };
 
-  let decoder = (buffer) => {
-    let str = uni.arrayBufferToBase64(buffer);
-    return utils.decodeBase64(str);
+  let decoder = (view) => {
+    var arr = new Uint8Array(view.buffer, view.byteOffset, view.byteLength),
+      charArr = new Array(arr.length);
+    arr.forEach(function(charcode, i) {
+      charArr[i] = String.fromCharCode(charcode);
+    });
+    return decodeURIComponent(escape(charArr.join('')));
   };
 
   return {

@@ -5,6 +5,7 @@ export default function($socket, { webAgent }){
     'disconnect',
     'getDevice',
     'isConnected',
+    'isNeedConnect',
     'getCurrentUser',
   ];
   let invokes = common.formatProvider(funcs, $socket);

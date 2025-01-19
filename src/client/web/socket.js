@@ -77,6 +77,7 @@ export default function(io, emitter, logger){
     disconnect,
     setServerUrlProider,
     getDevice: getDevice,
+    isNeedConnect: io.isNeedConnect,
     isConnected: io.isConnected,
     getCurrentUser: io.getCurrentUser
   }

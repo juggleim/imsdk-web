@@ -371,8 +371,8 @@ function formatConversations(conversations, options = {}) {
         return common.formatUser(sender);
       });
       mentionMsgs = utils.map(mentionMsgs, (msg) => {
-        let { senderId, msgId, msgTime } = msg;
-        return { senderId, messageId: msgId, sentTime: msgTime };
+        let { senderId, msgId, msgTime, mentionType } = msg;
+        return { senderId, messageId: msgId, sentTime: msgTime, mentionType };
       });
       mentions = {
         isMentioned: isMentioned,

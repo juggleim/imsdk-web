@@ -238,7 +238,7 @@ let createMentions = (mentions, message, user) => {
   });
 
   if(index > -1 || utils.isEqual(mentionType, MENTION_TYPE.ALL)){
-    msgs.push({ senderId: message.sender.id, messageId: message.messageId, sentTime: message.sentTime });
+    msgs.push({ senderId: message.sender.id, messageId: message.messageId, sentTime: message.sentTime, mentionType });
 
     let senderIndex = utils.find(senders, (member) => {
       return utils.isEqual(message.sender.id, member.id);

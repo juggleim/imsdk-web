@@ -905,6 +905,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           msgTime: {
             type: "int64",
             id: 3
+          },
+          mentionType: {
+            type: "MentionType",
+            id: 4
           }
         }
       },

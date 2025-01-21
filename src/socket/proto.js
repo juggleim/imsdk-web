@@ -166,6 +166,14 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           memberCount: {
             type: "int32",
             id: 6
+          },
+          clientMsgId: {
+            type: "string",
+            id: 7
+          },
+          modifiedMsg: {
+            type: "DownMsg",
+            id: 8
           }
         }
       },

@@ -28,8 +28,17 @@ export default function Decoder(cache, io) {
       case SIGNAL_CMD.PUBLISH_ACK:
         codec = Proto.lookup('codec.PublishAckMsgBody');
         let pubAckMsgBody = codec.decode(stream);
-        let { index, msgId: messageId, timestamp: sentTime, code, msgIndex, memberCount } = pubAckMsgBody;
-        result = { messageId, sentTime, index, isSender: true, code, msgIndex, memberCount };
+        let { index, msgId: messageId, timestamp: sentTime, code, msgIndex, memberCount, modifiedMsg } = pubAckMsgBody;
+
+        if(modifiedMsg){
+          let { msgContent, msgType } = modifiedMsg;
+          if (msgContent && msgContent.length > 0) {
+            let content = new TextDecoder().decode(msgContent);
+            modifiedMsg = { msgContent: utils.parse(content), msgType };
+          }
+        }
+
+        result = { messageId, sentTime, index, isSender: true, code, msgIndex, memberCount, modifiedMsg };
         break;
       case SIGNAL_CMD.PUBLISH:
         currentUser = io.getCurrentUser();

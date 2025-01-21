@@ -208,7 +208,7 @@ export default function(io, emitter, logger){
         delete sendingMsgMap[tid];
         return reject({ ...message, sentState: MESSAGE_SENT_STATE.FAILED, error: ErrorType.CONNECTION_NOT_READY });
       }
-      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messageId, sentTime, code, msg, msgIndex, memberCount }) => {
+      io.sendCommand(SIGNAL_CMD.PUBLISH, data, ({ messageId, sentTime, code, msg, msgIndex, memberCount, modifiedMsg }) => {
         // 不管消息发送成功或失败，清理 tid 发送中的状态
         delete sendingMsgMap[tid];
         if(code){
@@ -219,7 +219,13 @@ export default function(io, emitter, logger){
         // 消息发送成功，清理缓存消息
         delete sendMsgMap[tid];
 
-        utils.extend(message, { sentTime, messageId, messageIndex: msgIndex, sentState: MESSAGE_SENT_STATE.SUCCESS });
+        modifiedMsg = modifiedMsg || { };
+        let { msgContent, msgType } = modifiedMsg;
+        msgType = msgType || message.name;
+        msgContent = msgContent || message.content;
+        
+        utils.extend(message, { name: msgType, content: msgContent, sentTime, messageId, messageIndex: msgIndex, sentState: MESSAGE_SENT_STATE.SUCCESS });
+
         let config = io.getConfig();
         if(!config.isPC && !utils.isEqual(conversationType, CONVERATION_TYPE.CHATROOM)){
           io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);

@@ -461,11 +461,49 @@ function formatMediaMessage(message, url){
 }
 
 function uploadThumbnail(upload, option, callback){
+  if(isUni()){
+    return uploadUniThumbnail(upload, option, callback);
+  }
+  uploadWebThumbnail(upload, option, callback);
+}
+function uploadUniThumbnail(upload, option, callback){
+  let { type, content } = option;
+  let uploader = Uploader(upload, { type });
+
+  let { tempPath } = content;
+
+  uni.compressImage({
+    src: tempPath,
+    quality: 25,
+    success: res => {
+      console.log(res.tempFilePath)
+      let callbacks = {
+        onprogress: utils.noop,
+        oncompleted: ({ url }) => {
+          let error = null;
+          uni.getImageInfo({
+            src: tempPath,
+            success: function (args) {
+              callback(error, url, args);
+            }
+          });
+        },
+        onerror: (error) => {
+          callback(error);
+        }
+      };
+      uploader.exec({ tempPath: res.tempFilePath }, option, callbacks);
+    }
+  })
+}
+
+
+function uploadWebThumbnail(upload, option, callback){
   let { type, token, domain, file, url: uploadUrl } = option;
   let uploader = Uploader(upload, { type });
   uploader.compress(file, (tbFile, args) => {
     let content = { file: tbFile };
-    let opts = { token, domain, url: uploadUrl };
+    let opts = { token, domain, url: uploadUrl, ...option };
     let callbacks = {
       onprogress: utils.noop,
       oncompleted: ({ url }) => {
@@ -480,12 +518,23 @@ function uploadThumbnail(upload, option, callback){
   }, option);
 }
 
+//TODO: 区分 uni 和 web 
 function uploadFrame(upload, option, callback){
+  if(isUni()){
+    return uploadUniFrame(upload, option, callback);
+  }
+  uploadWebFrame(upload, option, callback);
+}
+
+function uploadUniFrame(upload, option, callback){
+
+}
+function uploadWebFrame(upload, option, callback){
   let { type, token, domain, file, url: uploadUrl } = option;
   let uploader = Uploader(upload, { type });
   uploader.capture(file, (frameFile, args) => {
     let content = { file: frameFile };
-    let opts = { token, domain, url: uploadUrl };
+    let opts = { token, domain, url: uploadUrl, ...option };
     let callbacks = {
       onprogress: utils.noop,
       oncompleted: ({ url }) => {

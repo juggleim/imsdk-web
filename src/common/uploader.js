@@ -34,14 +34,16 @@ export default function (uploader, { type }) {
   };
   let aliExec = (content, option, callbacks) => {
     let { url } = option;
-    let { file, name } = content;
+    let { file, name, tempPath } = content;
     jrequest.uploadFile(url, {
+      ...option,
       method: 'PUT',
       headers: { 'Content-Type': '' },
+      tempPath: tempPath,
       body: file
     }, {
-      success: () => {
-        url = url.split('?')[0]
+      success: (result) => {
+        url = result.url || url.split('?')[0]
         callbacks.oncompleted({ url });
       },
       progress: (event) => {
@@ -55,13 +57,15 @@ export default function (uploader, { type }) {
   };
   let s3Exec = (content, option, callbacks) => {
     let { url } = option;
-    let { file, name } = content;
+    let { file, name, tempPath } = content;
     jrequest.uploadFile(url, {
+      ...option,
       method: 'PUT',
       headers: { 
         'Content-Type': '',
         'x-amz-acl': 'public-read'
       },
+      tempPath: tempPath,
       body: file
     }, {
       success: () => {
@@ -140,7 +144,7 @@ export default function (uploader, { type }) {
       canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
       canvas.toBlob((blob) => {
         var thumbnail = new File([blob], 'tb.png', { type: 'image/png' });
-        callback(thumbnail, { height, width });
+        callback(thumbnail, { height, width, type: 'image/png' });
       });
     };
   };

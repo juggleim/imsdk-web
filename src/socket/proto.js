@@ -1279,6 +1279,30 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           url: {
             type: "string",
             id: 1
+          },
+          objKey: {
+            type: "string",
+            id: 2
+          },
+          policy: {
+            type: "string",
+            id: 3
+          },
+          signVersion: {
+            type: "string",
+            id: 4
+          },
+          credential: {
+            type: "string",
+            id: 5
+          },
+          date: {
+            type: "string",
+            id: 6
+          },
+          signature: {
+            type: "string",
+            id: 7
           }
         }
       },

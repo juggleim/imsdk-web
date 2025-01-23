@@ -604,8 +604,7 @@ export default function(io, emitter, logger){
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, ({ cred, code }) => {
         cred = cred || {};
-        let { token, domain, type, url } = cred;
-        resolve({ token, domain, type, url, code });
+        resolve(cred);
       });
     });
   };
@@ -623,7 +622,10 @@ export default function(io, emitter, logger){
 
       let { name, content } = message;
       let _file = content.file;
-      let names = _file.name.split('.');
+      
+      let fileName = _file.name || _file.path;
+      let names = fileName.split('.');
+
       let ext = names[names.length - 1];
       getFileToken({ type: fileType, ext }).then((auth) => {
         let { type } = auth;
@@ -646,9 +648,9 @@ export default function(io, emitter, logger){
             if(utils.isEqual(ErrorType.COMMAND_FAILED.code, cred.code)){
               return _callbacks.onerror(ErrorType.COMMAND_FAILED);
             }
-            common.uploadThumbnail(upload, { ...params, ...cred }, (error, thumbnail, args) => {
+            common.uploadThumbnail(upload, { ...params, ...cred, content }, (error, thumbnail, args) => {
               let { height, width } = args;
-              utils.extend(message.content, { thumbnail, height, width, type: content.file.type });
+              utils.extend(message.content, { thumbnail, height, width, type: args.type });
               uploadFile(auth, message);
             });
           });
@@ -664,7 +666,7 @@ export default function(io, emitter, logger){
             if(utils.isEqual(ErrorType.COMMAND_FAILED.code, cred.code)){
               return _callbacks.onerror(ErrorType.COMMAND_FAILED);
             }
-            common.uploadFrame(upload, { ...params, ...cred }, (error, poster, args) => {
+            common.uploadFrame(upload, { ...params, ...cred, content }, (error, poster, args) => {
               let { height, width, duration } = args;
               utils.extend(message.content, { poster, height, width, duration});
               uploadFile(auth, message);
@@ -733,6 +735,7 @@ export default function(io, emitter, logger){
       _uploadFile(option, message, {
         onprogress: callbacks.onprogress,
         oncompleted: (message) => {
+          delete message.content.tempPath;
           sendMessage(message).then(resolve, reject);
         },
         onerror: (error) => {
@@ -770,6 +773,7 @@ export default function(io, emitter, logger){
       _uploadFile(option, message, {
         onprogress: callbacks.onprogress,
         oncompleted: (message) => {
+          delete message.content.tempPath;
           sendMessage(message).then(resolve, reject);
         },
         onerror: (error) => {
@@ -808,6 +812,7 @@ export default function(io, emitter, logger){
       _uploadFile(option, message, {
         onprogress: callbacks.onprogress,
         oncompleted: (message) => {
+          delete message.content.tempPath;
           sendMessage(message).then(resolve, reject);
         },
         onerror: (error) => {
@@ -845,6 +850,7 @@ export default function(io, emitter, logger){
       _uploadFile(option, message, {
         onprogress: callbacks.onprogress,
         oncompleted: (message) => {
+          delete message.content.tempPath;
           sendMessage(message).then(resolve, reject);
         },
         onerror: (error) => {

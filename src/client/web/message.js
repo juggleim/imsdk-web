@@ -621,9 +621,10 @@ export default function(io, emitter, logger){
       let uploader = Uploder(upload, { type: uploadType });
 
       let { name, content } = message;
-      let _file = content.file;
+      let _file = content.file || { name: '' };
       
-      let fileName = _file.name || _file.path;
+      let fileName = _file.name || content.tempPath;
+      fileName = fileName || '';
       let names = fileName.split('.');
 
       let ext = names[names.length - 1];
@@ -686,7 +687,8 @@ export default function(io, emitter, logger){
             _callbacks.onprogress({ percent, message });
           },
           oncompleted: ({ url }) => {
-            let size = content.file.size/1024;
+            let _size = content.size || content.file.size;
+            let size = _size/1024;
             utils.extend(message.content, { url, size: size.toFixed(2) });
             delete message.content.file;
             _callbacks.oncompleted(message);

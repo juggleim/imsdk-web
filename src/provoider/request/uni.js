@@ -1,5 +1,7 @@
 import utils from "../../utils";
 import JTextEncoder from "../textencoder/index";
+import WebUploader from "./web";
+
 export default function(){
   let noop = () => {};
 
@@ -13,6 +15,7 @@ export default function(){
       url: url,
       data: body,
       header: headers,
+      method: option.method || 'GET',
       success: (res) => {
         let { data } = res;
         callback.success(data, { responseURL: url });
@@ -50,7 +53,11 @@ export default function(){
   }
 
   let uploadFile = (url, option, callbacks) => {
-    let { tempPath, header, method } = option;
+    let { tempPath, header, method, isUniWebThumbnail } = option;
+    if(isUniWebThumbnail){
+      let webUploader = WebUploader();
+      return webUploader.uploadFile(url, option, callbacks);
+    }
     let { objKey, policy, signVersion, signature, date, credential } = option;
     let formData = {
       key: objKey,

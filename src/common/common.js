@@ -461,7 +461,7 @@ function formatMediaMessage(message, url){
 }
 
 function uploadThumbnail(upload, option, callback){
-  if(isUni()){
+  if(typeof uni != 'undefined' && uni.compressImage){
     return uploadUniThumbnail(upload, option, callback);
   }
   uploadWebThumbnail(upload, option, callback);
@@ -503,7 +503,7 @@ function uploadWebThumbnail(upload, option, callback){
   let uploader = Uploader(upload, { type });
   uploader.compress(file, (tbFile, args) => {
     let content = { file: tbFile };
-    let opts = { token, domain, url: uploadUrl, ...option };
+    let opts = { token, domain, url: uploadUrl, ...option, isUniWebThumbnail: true };
     let callbacks = {
       onprogress: utils.noop,
       oncompleted: ({ url }) => {

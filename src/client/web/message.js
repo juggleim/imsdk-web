@@ -650,9 +650,9 @@ export default function(io, emitter, logger){
               return _callbacks.onerror(ErrorType.COMMAND_FAILED);
             }
             common.uploadThumbnail(upload, { ...params, ...cred, content }, (error, thumbnail, args) => {
-              let { height, width } = args;
+              let { height, width, isUniWebThumbnail } = args;
               utils.extend(message.content, { thumbnail, height, width, type: args.type });
-              uploadFile(auth, message);
+              uploadFile({ ...auth, isUniWebThumbnail }, message);
             });
           });
         }

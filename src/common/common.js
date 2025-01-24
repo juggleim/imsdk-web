@@ -476,7 +476,6 @@ function uploadUniThumbnail(upload, option, callback){
     src: tempPath,
     quality: 25,
     success: res => {
-      console.log(res.tempFilePath)
       let callbacks = {
         onprogress: utils.noop,
         oncompleted: ({ url }) => {
@@ -508,7 +507,7 @@ function uploadWebThumbnail(upload, option, callback){
       onprogress: utils.noop,
       oncompleted: ({ url }) => {
         let error = null;
-        callback(error, url, args);
+        callback(error, url, {...args, isUniWebThumbnail: true});
       },
       onerror: (error) => {
         callback(error);

@@ -518,7 +518,6 @@ function uploadWebThumbnail(upload, option, callback){
   }, option);
 }
 
-//TODO: 区分 uni 和 web 
 function uploadFrame(upload, option, callback){
   if(isUni()){
     return uploadUniFrame(upload, option, callback);
@@ -526,8 +525,11 @@ function uploadFrame(upload, option, callback){
   uploadWebFrame(upload, option, callback);
 }
 
+//TODO: UniApp 截图视频首帧需特殊处理
 function uploadUniFrame(upload, option, callback){
-
+  let error = null;
+  let url = '';
+  callback(error, url, option.content);
 }
 function uploadWebFrame(upload, option, callback){
   let { type, token, domain, file, url: uploadUrl } = option;

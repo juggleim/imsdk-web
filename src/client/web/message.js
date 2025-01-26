@@ -687,9 +687,12 @@ export default function(io, emitter, logger){
             _callbacks.onprogress({ percent, message });
           },
           oncompleted: ({ url }) => {
-            let _size = content.size || content.file.size;
-            let size = _size/1024;
-            utils.extend(message.content, { url, size: size.toFixed(2) });
+            if(!utils.isInclude([MESSAGE_TYPE.VOICE], name)){
+              let _size = content.size || content.file.size;
+              let size = _size/1024;
+              utils.extend(message.content, { size: size.toFixed(2) });
+            }
+            utils.extend(message.content, { url });
             delete message.content.file;
             _callbacks.oncompleted(message);
           },

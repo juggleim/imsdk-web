@@ -67,7 +67,6 @@ export default function(){
       'x-oss-date': date,
       'x-oss-signature': signature,
     };
-    console.log('option', option)
     let host = getProtocolAndDomain(url);
     let uploadTask = uni.uploadFile({
 			url: host,

@@ -716,3 +716,7 @@ export let USER_TYPE = {
   USER: 0,
   BOT: 1,
 }
+export let CONVERSATION_TOP_TYPE = {
+  BY_TOP_TIME: 0,
+  BY_MESSAGE_TIME: 1
+}

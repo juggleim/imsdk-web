@@ -1448,7 +1448,21 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           startTime: {
             type: "int64",
             id: 1
+          },
+          sortType: {
+            type: "TopConverSortType",
+            id: 2
+          },
+          order: {
+            type: "int32",
+            id: 3
           }
+        }
+      },
+      TopConverSortType: {
+        values: {
+          ByTopTime: 0,
+          BySortTime: 1
         }
       },
       DelHisMsgsReq: {

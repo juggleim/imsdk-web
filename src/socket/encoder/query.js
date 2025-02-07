@@ -223,9 +223,9 @@ export default function getQueryBody({ data, callback, index }){
   }
 
   if(utils.isEqual(COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS, topic)){
-    let { time, userId } = data;
+    let { time, userId, sortType } = data;
     let codec = Proto.lookup('codec.QryTopConversReq');
-    let message = codec.create({ startTime: time });
+    let message = codec.create({ startTime: time, sortType });
     targetId = userId;
     buffer = codec.encode(message).finish();
   }

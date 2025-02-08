@@ -380,7 +380,7 @@ const decodeBase64 = function (input) {
       output += String.fromCharCode(chr3);
     }
   }
-
+  output = decodeURIComponent(escape(output));
   return output;
 };
 const isContinuous = (numbers, key) => {

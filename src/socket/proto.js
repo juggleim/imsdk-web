@@ -551,6 +551,31 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             rule: "repeated",
             type: "ConverTag",
             id: 27
+          },
+          searchText: {
+            type: "string",
+            id: 29
+          },
+          grpMemberInfo: {
+            type: "GrpMemberInfo",
+            id: 30
+          }
+        }
+      },
+      GrpMemberInfo: {
+        fields: {
+          grpDisplayName: {
+            type: "string",
+            id: 1
+          },
+          extFields: {
+            rule: "repeated",
+            type: "KvItem",
+            id: 2
+          },
+          updatedTime: {
+            type: "int64",
+            id: 3
           }
         }
       },

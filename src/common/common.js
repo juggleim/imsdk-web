@@ -564,6 +564,17 @@ function formatUser(user){
     type: user.userType || 0,
   };
 }
+function formatGroupMember(member){
+  if(!member){
+    member = { extFields: [] }
+  }
+  let exts = utils.toObject(member.extFields);
+  return {
+    name: member.grpDisplayName || "",
+    updatedTime: member.updatedTime || 0,
+    exts: exts || {},
+  };
+}
 function toKVs(obj){
   let arrs = [];
   utils.forEach(obj, (value, key) => {
@@ -691,4 +702,5 @@ export default {
   decrypto,
   reportLogs,
   isUni,
+  formatGroupMember,
 }

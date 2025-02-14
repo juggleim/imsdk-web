@@ -9,7 +9,8 @@ function msgFormat(msg, { currentUser }) {
   let { msgItems, converTags, undisturbType, msgExtSet, 
         senderId, unreadIndex, memberCount, referMsg, readCount, msgId, msgTime, 
         msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, 
-        isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo 
+        isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo,
+        grpMemberInfo 
     } = msg;
   let content = '';
   if (msgContent && msgContent.length > 0) {
@@ -84,6 +85,12 @@ function msgFormat(msg, { currentUser }) {
     let { tag: id, tagName: name, tagType: type } = item;
     return { id, name, type };
   });
+
+  let groupMember = {};
+  if(utils.isEqual(CONVERATION_TYPE.GROUP, conversationType)){
+    groupMember = common.formatGroupMember(grpMemberInfo);
+  }
+  
   let _message = {
     conversationType,
     conversationId,
@@ -91,6 +98,7 @@ function msgFormat(msg, { currentUser }) {
     conversationPortrait: '',
     conversationExts: {},
     sender: utils.clone(targetUser),
+    groupMember: groupMember,
     messageId: msgId,
     tid: msgId,
     sentTime: msgTime,

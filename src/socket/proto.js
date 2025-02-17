@@ -1763,6 +1763,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           timestamp: {
             type: "int64",
             id: 3
+          },
+          userInfo: {
+            type: "UserInfo",
+            id: 4
           }
         }
       },

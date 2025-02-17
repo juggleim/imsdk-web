@@ -73,11 +73,10 @@ function msgFormat(msg, { currentUser }) {
   let reactions = {};
   if(msgExtSet){
     msgExtSet = utils.map(msgExtSet, (item) => {
-      let { key } = item;
-      item.key = unescape(key);
-      return item;
+      let { key, value, timestamp, userInfo } = item;
+      let user = common.formatUser(userInfo);
+      return { key: unescape(key), value, user, timestamp };
     });
-    msgExtSet = utils.clone(msgExtSet);
     reactions = utils.groupBy(msgExtSet, ['key']);
   }
   converTags = converTags || [];
@@ -333,9 +332,13 @@ function msgFormat(msg, { currentUser }) {
   if (utils.isEqual(MESSAGE_TYPE.COMMAND_MSG_EXSET, msgType)) {
     let { channel_type, msg_id, exts } = content;
     let reactions = utils.map(exts, (item) => {
-      let { is_del, timestamp, key, value } = item;
+      let { is_del, timestamp, key, value, user } = item;
       key = unescape(key);
-      return { isRemove: Boolean(is_del), key, value, timestamp };
+      let _user = {};
+      if(user){
+        _user = { id: user.user_id, name: user.nickname, portrait: user.user_portrait };
+      }
+      return { isRemove: Boolean(is_del), key, value, timestamp, user: _user };
     });
     content = { conversationId, conversationType, messageId: msg_id, reactions };
   }

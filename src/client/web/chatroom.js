@@ -123,13 +123,22 @@ export default function(io, emitter, logger){
       let { code, timestamp } = result;
       logger.info({ tag: LOG_MODULE.CHATROOM_USER_JOIN, ...chatroom, code });
       if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
-        chatroomCacher.set(chatroom.id, { isJoined: true });
+        
+        let chatroomResult = chatroomCacher.get(chatroom.id);
+        let syncMsgTime = chatroomResult.syncMsgTime || 0;
         let isNotSync = utils.isEqual(0, count);
-        let _time = isNotSync ? timestamp : 0;
+
+        let _time = syncMsgTime;
+        if(isNotSync && utils.isEqual(syncMsgTime, 0)){
+          _time = timestamp;
+        }
+
         let syncers = [
           { name: SIGNAL_NAME.S_NTF, msg: { receiveTime: _time, isNotSync, count: count, type: NOTIFY_TYPE.CHATROOM, targetId: id } },
           { name: SIGNAL_NAME.S_NTF, msg: { receiveTime: 0, type: NOTIFY_TYPE.CHATROOM_ATTR, targetId: id } },
         ];
+
+        chatroomCacher.set(chatroom.id, { isJoined: true });
         io.sync(syncers);
         return callbacks.success();
       }

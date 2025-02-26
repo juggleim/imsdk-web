@@ -1007,13 +1007,10 @@ export default function(io, emitter, logger){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-      let { reactionId } = message;
-      reactionId = escape(reactionId)
       let { id: userId } = io.getCurrentUser();
       let data = {
         topic: COMMAND_TOPICS.ADD_MSG_REACTION,
         ...message,
-        reactionId,
         userId
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
@@ -1034,12 +1031,9 @@ export default function(io, emitter, logger){
         return reject(error);
       }
       let { id: userId } = io.getCurrentUser();
-      let { reactionId } = message;
-      reactionId = escape(reactionId)
       let data = {
         topic: COMMAND_TOPICS.REMOVE_MSG_REACTION,
         ...message,
-        reactionId,
         userId
       };
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {

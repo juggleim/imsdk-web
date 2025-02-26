@@ -75,7 +75,7 @@ function msgFormat(msg, { currentUser }) {
     msgExtSet = utils.map(msgExtSet, (item) => {
       let { key, value, timestamp, userInfo } = item;
       let user = common.formatUser(userInfo);
-      return { key: unescape(key), value, user, timestamp };
+      return { key, value, user, timestamp };
     });
     reactions = utils.groupBy(msgExtSet, ['key']);
   }

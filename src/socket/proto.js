@@ -1132,6 +1132,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           cleanMsgTime: {
             type: "int64",
             id: 3
+          },
+          cleanScope: {
+            type: "int32",
+            id: 4
           }
         }
       },
@@ -1508,6 +1512,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             rule: "repeated",
             type: "SimpleMsg",
             id: 4
+          },
+          delScope: {
+            type: "int32",
+            id: 5
           }
         }
       },
@@ -2169,6 +2177,47 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "int64",
             id: 2
           }
+        }
+      },
+      RegPushTokenReq: {
+        fields: {
+          deviceId: {
+            type: "string",
+            id: 1
+          },
+          platform: {
+            type: "Platform",
+            id: 2
+          },
+          pushChannel: {
+            type: "PushChannel",
+            id: 3
+          },
+          pushToken: {
+            type: "string",
+            id: 4
+          },
+          packageName: {
+            type: "string",
+            id: 5
+          }
+        }
+      },
+      Platform: {
+        values: {
+          DefaultPlatform: 0,
+          Android: 1,
+          iOS: 2,
+          Web: 3,
+          PC: 4
+        }
+      },
+      PushChannel: {
+        values: {
+          DefaultChannel: 0,
+          Apple: 1,
+          Huawei: 2,
+          Xiaomi: 3
         }
       }
     }

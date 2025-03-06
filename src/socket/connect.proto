@@ -371,6 +371,7 @@ message CleanHisMsgReq{
     string targetId = 1;
     ChannelType channelType = 2;
     int64 cleanMsgTime = 3;
+    int32 cleanScope = 4;
 }
 message QryHisMsgByIdsReq{
     string targetId = 1;
@@ -497,6 +498,7 @@ message DelHisMsgsReq{
     string targetId = 2;
     ChannelType channelType = 3;
     repeated SimpleMsg msgs = 4; 
+    int32 delScope = 5;
 }
 message QryConverReq{
   string targetId = 1;
@@ -742,4 +744,24 @@ message FavoriteMsgs{
 message FavoriteMsg{
   DownMsg msg = 1;
   int64 createdTime = 2;
+}
+message RegPushTokenReq{
+    string deviceId = 1;
+    Platform platform = 2;
+    PushChannel pushChannel = 3;
+    string pushToken = 4;
+    string packageName = 5;
+}
+enum Platform{
+    DefaultPlatform = 0;
+    Android = 1;
+    iOS = 2;
+    Web = 3;
+    PC = 4;
+}
+enum PushChannel{
+    DefaultChannel = 0;
+    Apple = 1;
+    Huawei = 2;
+    Xiaomi = 3;
 }

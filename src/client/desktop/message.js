@@ -55,7 +55,9 @@ export default function($message, { webAgent }){
   invokes.getFavoriteMessages = (params) => {
     return webAgent.getFavoriteMessages(params);
   };
-
+  invokes.getContextMessages = (params) => {
+    return webAgent.getContextMessages(params);
+  };
   invokes.getMessages = (conversation) => {
     return utils.deferred((resolve, reject) => {
       let { order = MESSAGE_ORDER.BACKWARD } = conversation;

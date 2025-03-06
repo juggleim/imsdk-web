@@ -437,7 +437,7 @@ export default function getQueryBody({ data, callback, index }){
     let message = codec.create({ 
       channelType,
       targetId: _targetId,
-      msgs: msgs
+      msgs: msgs,
     });
     
     targetId = _targetId;

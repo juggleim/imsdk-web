@@ -390,7 +390,6 @@ export default function(io, emitter, logger){
       });
       let item = list[0] || { sentTime: -10 };
       logger.info({ tag: LOG_MODULE.MSG_DELETE, time: item.sentTime });
-
       let user = io.getCurrentUser();
       let data = {
         topic: COMMAND_TOPICS.REMOVE_MESSAGE,
@@ -956,6 +955,34 @@ export default function(io, emitter, logger){
     });
   };
 
+  /* 
+    let conversation = {
+      conversationType: 1,
+      conversationId: '',
+      time: 19482938392,
+      count: 10,
+    };
+  */
+  function getContextMessages(conversation){
+    return utils.deferred(async (resolve, reject) => {
+      let error = common.check(io, conversation, FUNC_PARAM_CHECKER.GETMSGS);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { time, conversationId, conversationType } = conversation;
+      
+      // 默认从当前会话第一条未读消息开始获取
+      if(utils.isUndefined(time)){
+        let { message } = await getFirstUnreadMessage(conversation);
+        time = message.sentTime;
+      }
+      let frontResult = await getMessages({ conversationType, conversationId, time: time + 1, count });
+      let backResult = await getMessages({ conversationType, conversationId, time: count });
+      let messages = frontResult.messages.concat(backResult.messages);
+      resolve({ messages });
+    });
+  };
+
   let searchMessages = (params) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, params, FUNC_PARAM_CHECKER.SEARCH_MESSAGES);
@@ -1345,6 +1372,7 @@ export default function(io, emitter, logger){
     addFavoriteMessages,
     removeFavoriteMessages,
     getFavoriteMessages,
+    getContextMessages,
     _uploadFile,
   };
 }

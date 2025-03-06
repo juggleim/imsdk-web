@@ -969,15 +969,20 @@ export default function(io, emitter, logger){
       if(!utils.isEmpty(error)){
         return reject(error);
       }
-      let { time, conversationId, conversationType } = conversation;
+      let { time, conversationId, conversationType, count } = conversation;
       
+      count = count || 10;
       // 默认从当前会话第一条未读消息开始获取
       if(utils.isUndefined(time)){
         let { message } = await getFirstUnreadMessage(conversation);
-        time = message.sentTime;
+        time = message.sentTime || 0;
       }
-      let frontResult = await getMessages({ conversationType, conversationId, time: time + 1, count });
-      let backResult = await getMessages({ conversationType, conversationId, time: count });
+      
+      let frontResult = await getMessages({ conversationType, conversationId, time: time, count });
+      let backResult = { messages: [] };
+      if(time > 0){
+        backResult = await getMessages({ conversationType, conversationId, time: time - 1, count, order: MESSAGE_ORDER.FORWARD })
+      }
       let messages = frontResult.messages.concat(backResult.messages);
       resolve({ messages });
     });

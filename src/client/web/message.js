@@ -979,12 +979,16 @@ export default function(io, emitter, logger){
       }
       
       let frontResult = await getMessages({ conversationType, conversationId, time: time, count });
-      let backResult = { messages: [] };
+      let backResult = { messages: [], isFinished: true };
       if(time > 0){
         backResult = await getMessages({ conversationType, conversationId, time: time - 1, count, order: MESSAGE_ORDER.FORWARD })
       }
-      let messages = frontResult.messages.concat(backResult.messages);
-      resolve({ messages });
+      resolve({ 
+        frontMessages: frontResult.messages, 
+        isFrontFinished: frontResult.isFinished, 
+        isBackFinished: backResult.isFinished, 
+        backMessages: backResult.messages 
+      });
     });
   };
 

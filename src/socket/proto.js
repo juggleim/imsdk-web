@@ -2219,6 +2219,14 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           Huawei: 2,
           Xiaomi: 3
         }
+      },
+      PushSwitch: {
+        fields: {
+          "switch": {
+            type: "int32",
+            id: 1
+          }
+        }
       }
     }
   }

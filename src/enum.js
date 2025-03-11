@@ -11,6 +11,8 @@ export let STORAGE = {
   SYNC_CONVERSATION_TIME: 'sync_conversation_time',
   SYNC_RECEIVED_MSG_TIME: 'sync_received_msg_time',
   SYNC_SENT_MSG_TIME: 'sync_sent_msg_time',
+
+  APP_DEVICE: 'app_device'
 };
 
 export let HEART_TIMEOUT = 1 * 30 * 1000;
@@ -102,6 +104,8 @@ export let FUNC_PARAM_CHECKER = {
   SEARCH_MESSAGES: [{ name: 'keywords', type: 'Array' }],
   UPDATE_MESSAGE_ATTR: [{ name: 'tid' }, { name: 'attribute', type: 'String' }],
   SET_MESSAGE_SEARCH_CONTENT: [{ name: 'tid' }, { name: 'content', type: 'String' }],
+  UPLOAD_PUSH_TOKEN: [{ name: 'deviceId'}, { name: 'platform' }, { name: 'pushChannel' }, { name: 'pushToken' }, { name: 'packageName' }],
+  SWITCH_PUSH: [{ name: 'isOpen'}],
   GET_FILE_TOKEN: [{ name: 'type' }],
   
   SEND_FILE_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'content', type: 'Object' }],
@@ -327,7 +331,10 @@ export let COMMAND_TOPICS = {
   RTC_INVITE: 'rtc_invite',
   RTC_UPDATE_STATE: 'rtc_upd_state',
   RTC_INVITE_EVENT: 'rtc_invite_event',
-  RTC_ROOM_EVENT: 'rtc_room_event'
+  RTC_ROOM_EVENT: 'rtc_room_event',
+
+  UPLOAD_PUSH_TOKEN: 'reg_push_token',
+  SWITCH_PUSH: 'push_switch',
 };
 export let NOTIFY_TYPE = {
   DEFAULT: 0,
@@ -720,3 +727,15 @@ export let CONVERSATION_TOP_TYPE = {
   BY_TOP_TIME: 0,
   BY_MESSAGE_TIME: 1
 }
+export let PLATFORM_TYPE = {
+  ANDROID: 1,
+  IOS: 2,
+  WEB: 3,
+  PC: 4
+}
+export let PUSH_CHANNEL = {
+  NONE: 0,
+  APPLE: 1,
+  HUAWEI: 2,
+  XIAOMI: 3,
+};

@@ -9,7 +9,7 @@ import common from "../common/common";
 import { CONVERSATION_TOP_TYPE, USER_TYPE, STREAM_EVENT, MEDIA_TYPE, CONVERATION_TAG_TYPE, 
         MESSAGE_SENT_STATE, EVENT, CONNECT_STATE, UNDISTURB_TYPE, CONVERATION_TYPE, MESSAGE_TYPE, ErrorType, 
         CONVERSATION_ORDER, MESSAGE_ORDER, MENTION_TYPE, FILE_TYPE, MENTION_ORDER, 
-        SIGNAL_NAME, UNREAD_TAG } from "../enum";
+        SIGNAL_NAME, UNREAD_TAG, PLATFORM_TYPE, PUSH_CHANNEL } from "../enum";
 
 import * as ENUM from "../enum";
 import utils from "../utils";
@@ -100,6 +100,8 @@ let init = (config) => {
     UserType: USER_TYPE,
     StreamEvent: STREAM_EVENT,
     ConversationTopType: CONVERSATION_TOP_TYPE,
+    PlatformType: PLATFORM_TYPE,
+    PushChannel: PUSH_CHANNEL,
   };
 
   return  _export;
@@ -125,4 +127,6 @@ export default {
   UserType: USER_TYPE,
   StreamEvent: STREAM_EVENT,
   ConversationTopType: CONVERSATION_TOP_TYPE,
+  PlatformType: PLATFORM_TYPE,
+  PushChannel: PUSH_CHANNEL,
 }

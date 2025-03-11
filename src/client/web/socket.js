@@ -1,4 +1,4 @@
-import { SIGNAL_NAME, EVENT, CONNECT_STATE, ErrorType, FUNC_PARAM_CHECKER, LOG_MODULE, STORAGE } from "../../enum";
+import { SIGNAL_NAME, EVENT, CONNECT_STATE, ErrorType, FUNC_PARAM_CHECKER, LOG_MODULE, STORAGE, COMMAND_TOPICS, SIGNAL_CMD } from "../../enum";
 import utils from "../../utils";
 import Storage from "../../common/storage";
 import common from "../../common/common";
@@ -61,7 +61,13 @@ export default function(io, emitter, logger){
 
   let getDevice = () => {
     return utils.deferred((resolve, reject) => {
-      return reject(ErrorType.SDK_FUNC_NOT_DEFINED);
+      let device = Storage.get(STORAGE.APP_DEVICE);
+      let id = device.id || '';
+      if(utils.isEmpty(id)){
+        id = utils.getDeviceID();
+        Storage.set(STORAGE.APP_DEVICE, { id });
+      }
+      return resolve({ id });
     });
   };
 
@@ -72,6 +78,51 @@ export default function(io, emitter, logger){
     io.setServerUrlProider(callback);
   };
 
+  let uploadPushToken = (params) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, params, FUNC_PARAM_CHECKER.UPLOAD_PUSH_TOKEN);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { id: userId } = io.getCurrentUser();
+      let data = {
+        topic: COMMAND_TOPICS.UPLOAD_PUSH_TOKEN,
+        ...params,
+        userId
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code, msg } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
+        resolve();
+      });
+    });
+  }
+
+  let switchPush = (params) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, params, FUNC_PARAM_CHECKER.SWITCH_PUSH);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { id: userId } = io.getCurrentUser();
+      let data = {
+        topic: COMMAND_TOPICS.SWITCH_PUSH,
+        ...params,
+        userId
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code, msg } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
+        resolve();
+      });
+    });
+  }
+
+
   return {
     connect,
     disconnect,
@@ -79,6 +130,8 @@ export default function(io, emitter, logger){
     getDevice: getDevice,
     isNeedConnect: io.isNeedConnect,
     isConnected: io.isConnected,
-    getCurrentUser: io.getCurrentUser
+    getCurrentUser: io.getCurrentUser,
+    uploadPushToken: uploadPushToken,
+    switchPush: switchPush,
   }
 }

@@ -620,6 +620,20 @@ export default function getQueryBody({ data, callback, index }){
     targetId = userId;
     buffer = codec.encode(message).finish();
   }
+  if(utils.isEqual(COMMAND_TOPICS.UPLOAD_PUSH_TOKEN, topic)){
+    let { deviceId, pushToken, platform, packageName, pushChannel, userId } = data;
+    let codec = Proto.lookup('codec.RegPushTokenReq');
+    let message = codec.create({ deviceId, pushToken, platform, packageName, pushChannel });
+    targetId = userId;
+    buffer = codec.encode(message).finish();
+  }
+  if(utils.isEqual(COMMAND_TOPICS.SWITCH_PUSH, topic)){
+    let { isOpen } = data;
+    let codec = Proto.lookup('codec.PushSwitch');
+    let message = codec.create({ switch: isOpen });
+    targetId = userId;
+    buffer = codec.encode(message).finish();
+  }
   if(utils.isEqual(COMMAND_TOPICS.BATCH_TRANSLATE, topic)){
     let { userId, content, sourceLang, targetLang } = data;
     let codec = Proto.lookup('codec.TransReq');

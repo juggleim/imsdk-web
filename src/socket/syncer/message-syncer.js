@@ -3,7 +3,7 @@ import Storage from "../../common/storage";
 import Consumer from "../../common/consumer";
 import common from "../../common/common";
 
-import { SIGNAL_CMD, COMMAND_TOPICS, STORAGE, NOTIFY_TYPE, SIGNAL_NAME, ErrorType, LOG_MODULE } from "../../enum";
+import { SIGNAL_CMD, COMMAND_TOPICS, STORAGE, NOTIFY_TYPE, SIGNAL_NAME, ErrorType, LOG_MODULE, MESSAGE_TYPE } from "../../enum";
 export default function MessageSyncer(send, emitter, io, { logger }) {
  
   let consumer = Consumer();
@@ -26,7 +26,7 @@ export default function MessageSyncer(send, emitter, io, { logger }) {
     function publish(item, next) {
       let { msg } = item;
       let isNewMsg = common.updateSyncTime({...msg, io});
-      if (isNewMsg) {
+      if (isNewMsg || utils.isEqual(msg.name, MESSAGE_TYPE.STREAM_TEXT)) {
         let { msgIndex, ackIndex } = msg;
         let data = { msgIndex, ackIndex };
         send(SIGNAL_CMD.PUBLISH_ACK, data);

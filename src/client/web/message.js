@@ -126,7 +126,7 @@ export default function(io, emitter, logger){
       };
       return emitter.emit(EVENT.MESSAGE_READ, notify);
     }
-    if(!messageCacher.isInclude(message)){
+    if(!messageCacher.isInclude(message) || utils.isEqual(message.name, MESSAGE_TYPE.STREAM_TEXT)){
       emitter.emit(EVENT.MESSAGE_RECEIVED, [message, isPullFinished]);
       let { conversationId, conversationType } = message;
       messageCacher.add({ conversationId, conversationType }, message);

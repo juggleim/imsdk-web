@@ -12,7 +12,7 @@ export default function Logger(option = {}){
     LEVEL: 'level',
     T_L_GROUP: 'time_level'
   };
-  let { isConsole = true, appkey, sessionId, getCurrentUser, getVersion } = option;
+  let { isConsole = true, appkey, sessionId, getCurrentUser, getVersion, serverList } = option;
 
   let $db = DB({
     name: `_IMIIM_${appkey}`,
@@ -82,8 +82,10 @@ export default function Logger(option = {}){
     $db.search(params, (result) => {
       let user = getCurrentUser();
       let { token } = user;
-      let api = navi.url || '';
-      let url = `${api}/navigator/upload-log-plain`;
+      let api = serverList[0];
+      let { http } = utils.getProtocol(api);
+      let domain = api.replace(/http:\/\/|https:\/\/|file:\/\//g, '');
+      let url = `${http}//${api}/navigator/upload-log-plain`;
       jrequest.requestNormal(url, {
         method: 'POST',
         headers: {

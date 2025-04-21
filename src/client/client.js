@@ -18,11 +18,11 @@ import MessageCacher from "../common/msg-cacher";
 let init = (config) => {
   let emitter = Emitter();
   let provider = {};
-  let { upload, appkey = '', log = {} } = config;
+  let { upload, appkey = '', log = {}, serverList = [] } = config;
   let uploadType = common.checkUploadType(upload);
  
   let sessionId = common.getSessionId();
-  let logger = Logger({ ...log, appkey, sessionId, getCurrentUser: getCurrentUser, getVersion: getVersion });
+  let logger = Logger({ ...log, appkey, sessionId, getCurrentUser: getCurrentUser, getVersion: getVersion, serverList });
 
   // 移除 AppKey 前后空格
   appkey = appkey.trim();

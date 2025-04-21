@@ -23,13 +23,15 @@ export default function ChatroomSyncer(send, emitter, io, { logger }) {
       let { msg } = item;
       let _chatroomResult = chatroomCacher.get(msg.targetId);
       let { isJoined } = _chatroomResult;
-
-      if (utils.isEqual(msg.type, NOTIFY_TYPE.CHATROOM)) {
-        isJoined && queryChatroom(item, next);
-      }
-
-      if(utils.isEqual(msg.type, NOTIFY_TYPE.CHATROOM_DESTORY)){
-        isJoined && broadcastChatroomDestory(item, next);
+      if(isJoined){
+        if (utils.isEqual(msg.type, NOTIFY_TYPE.CHATROOM)) {
+          queryChatroom(item, next);
+        }
+        if (utils.isEqual(msg.type, NOTIFY_TYPE.CHATROOM_DESTORY)) {
+          broadcastChatroomDestory(item, next);
+        }
+      }else{
+        next();
       }
     }
 

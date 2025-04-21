@@ -32,8 +32,8 @@ export default function getPublishMsgBody(stream, { currentUser }){
       
       let payload = Proto.lookup('codec.ChrmEvent');
       let message = payload.decode(data);
-      let { chatId, eventTime, eventType } = message;
-      _msg = { chatroomId: chatId, time: eventTime, type: eventType };
+      let { chatId, eventTime, eventType, userId } = message;
+      _msg = { chatroomId: chatId, time: eventTime, type: eventType, userId };
       _name = SIGNAL_NAME.S_CHATROOM_USER_NTF;
 
     } else if(utils.isEqual(topic, COMMAND_TOPICS.RTC_INVITE_EVENT)){

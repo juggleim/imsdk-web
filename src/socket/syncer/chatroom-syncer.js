@@ -19,10 +19,10 @@ export default function ChatroomSyncer(send, emitter, io, { logger }) {
     });
 
     function query(item, next) {
-      logger.info({ tag: LOG_MODULE.MSG_SYNC, ...item });
       let { msg } = item;
       let _chatroomResult = chatroomCacher.get(msg.targetId);
       let { isJoined } = _chatroomResult;
+      logger.info({ tag: LOG_MODULE.MSG_SYNC, ...item, isJoined });
       if(isJoined){
         if (utils.isEqual(msg.type, NOTIFY_TYPE.CHATROOM)) {
           queryChatroom(item, next);

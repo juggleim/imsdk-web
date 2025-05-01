@@ -84,7 +84,7 @@ export default function Logger(option = {}){
       let { token } = user;
       let api = serverList[0];
       let { http } = utils.getProtocol(api);
-      let domain = api.replace(/http:\/\/|https:\/\/|file:\/\//g, '');
+      let domain = api.replace(/http:\/\/|https:\/\/|file:\/\/|wss:\/\/|ws:\/\//g, '');
       let url = `${http}//${api}/navigator/upload-log-plain`;
       jrequest.requestNormal(url, {
         method: 'POST',

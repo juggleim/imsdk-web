@@ -133,6 +133,10 @@ export default function(io, emitter, logger){
           _time = timestamp;
         }
 
+        // 模拟通知事件时间戳 +1 ，比本地时间戳大
+        if(_time > 0){
+          _time += 1;
+        }
         let syncers = [
           { name: SIGNAL_NAME.S_NTF, msg: { receiveTime: _time, isNotSync, count: count, type: NOTIFY_TYPE.CHATROOM, targetId: id } },
           { name: SIGNAL_NAME.S_NTF, msg: { receiveTime: 0, type: NOTIFY_TYPE.CHATROOM_ATTR, targetId: id } },

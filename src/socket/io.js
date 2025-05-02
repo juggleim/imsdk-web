@@ -32,6 +32,12 @@ export default function IO(config){
     navList = ['https://nav.fake.com'];
   }
   
+  /* 
+    pool = {
+
+    }
+  */
+  let wsPools = [];
   let ws = {};
   let io = {};
   
@@ -72,7 +78,14 @@ export default function IO(config){
 
   function forceReconnect(){
     let user = getCurrentUser({ ignores: [] });
-    clearHeart();
+    let index = utils.find(wsPools, (_ws) => {
+      return _ws === ws;
+    });
+    let currentWs = wsPools[index] || {};
+    disconnect();
+    currentWs.onmessage = utils.noop;
+    currentWs.onclose = utils.noop;
+    currentWs.onerror = utils.noop;
     cache.remove(CONNECT_TOOL.RECONNECT_COUNT);
     cache.remove(CONNECT_TOOL.RECONNECT_FREQUENCY);
     return reconnect(user, ({ next }) => {
@@ -83,9 +96,9 @@ export default function IO(config){
 
   let networkWatcher = NetworkWatcher({
     ononline: () => {
-      if(ws.readyState == 3){
+      // if(ws.readyState == 3){
         forceReconnect();
-      }
+      // }
     }
   });
   networkWatcher.watch();
@@ -154,8 +167,8 @@ export default function IO(config){
         let { ws: protocol } = utils.getProtocol();
         let url = `${protocol}//${domain}/im`;
         ws = new JWebSocket(url);
-
-        logger.info({ tag: LOG_MODULE.WS_CONNECT });
+        wsPools.push(ws);
+        logger.info({ tag: LOG_MODULE.WS_CONNECT});
 
         ws.onopen = function(){
           let platform = PLATFORM.WEB;
@@ -164,6 +177,9 @@ export default function IO(config){
           }
           let clientSession = common.getClientSession();
           sendCommand(SIGNAL_CMD.CONNECT, { appkey, token, deviceId, platform, clientSession, sdkVerion: VERSION });
+          wsPools = utils.filter(wsPools, (_ws) => {
+            return _ws.readyState != 3;
+          });
         };
         ws.onclose = (e) => {
           onDisconnect({ type: DISCONNECT_TYPE.CLOSE });

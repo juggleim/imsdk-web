@@ -43,6 +43,7 @@ export default function ChatroomAttSyncer(send, emitter, io, { logger }) {
       };
       send(SIGNAL_CMD.QUERY, data, (result) => {
         let { code, attrs, chatroomId: _chatroomId } = result;
+        attrs = attrs || [];
         logger.info({ tag: LOG_MODULE.MSG_SYNC, data, msg, code, count: attrs.length });
         if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
           return next();

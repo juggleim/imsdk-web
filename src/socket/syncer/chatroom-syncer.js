@@ -64,6 +64,7 @@ export default function ChatroomSyncer(send, emitter, io, { logger }) {
         topic: COMMAND_TOPICS.SYNC_CHATROOM_MESSAGES
       };
       send(SIGNAL_CMD.QUERY, data, ({ messages, code }) => {
+        messages = messages || [];
         logger.info({ tag: LOG_MODULE.MSG_SYNC, data, msg, code, count: messages.length });
         if(!utils.isEqual(code, ErrorType.COMMAND_SUCCESS.code)){
           return next();

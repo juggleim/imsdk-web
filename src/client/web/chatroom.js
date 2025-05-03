@@ -119,6 +119,9 @@ export default function(io, emitter, logger){
     if(utils.isUndefined(count)){
       count = 50;
     }
+    
+    chatroomCacher.set(chatroom.id, { isJoined: true });
+
     io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
       let { code, timestamp } = result;
       logger.info({ tag: LOG_MODULE.CHATROOM_USER_JOIN, ...chatroom, code });
@@ -142,7 +145,7 @@ export default function(io, emitter, logger){
           { name: SIGNAL_NAME.S_NTF, msg: { receiveTime: 0, type: NOTIFY_TYPE.CHATROOM_ATTR, targetId: id } },
         ];
 
-        chatroomCacher.set(chatroom.id, { isJoined: true });
+        
         io.sync(syncers);
         return callbacks.success();
       }

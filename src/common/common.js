@@ -428,6 +428,9 @@ function checkUploadType(upload){
   if(upload && upload.name == 'S3Client'){
     type = UPLOAD_TYPE.S3;
   }
+  if(upload && upload.name == 'minio'){
+    type = UPLOAD_TYPE.MINIO;
+  }
   return type;
 }
 

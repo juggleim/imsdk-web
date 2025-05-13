@@ -516,6 +516,7 @@ export let UPLOAD_TYPE = {
   QINIU: 1,
   ALI: 4,
   S3: 2,
+  MINIO: 3
 };
 
 export let UNDISTURB_TYPE = {

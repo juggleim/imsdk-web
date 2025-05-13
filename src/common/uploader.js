@@ -91,6 +91,9 @@ export default function (uploader, { type }) {
     if(utils.isEqual(type, UPLOAD_TYPE.S3)){
       return s3Exec(content, option, callbacks);
     }
+    if(utils.isEqual(type, UPLOAD_TYPE.MINIO)){
+      return s3Exec(content, option, callbacks);
+    }
     // ... other upload plugin
   };
 

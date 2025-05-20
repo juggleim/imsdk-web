@@ -176,7 +176,7 @@ export default function IO(config){
             platform = PLATFORM.DESKTOP;
           }
           let clientSession = common.getClientSession();
-          sendCommand(SIGNAL_CMD.CONNECT, { appkey, token, deviceId, platform, clientSession, sdkVerion: VERSION });
+          sendCommand(SIGNAL_CMD.CONNECT, { appkey, token, deviceId, platform, clientSession, sdkVersion: VERSION });
           wsPools = utils.filter(wsPools, (_ws) => {
             return _ws.readyState != 3;
           });

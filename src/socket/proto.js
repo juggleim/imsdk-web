@@ -1900,6 +1900,18 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "UserInfo",
             id: 3
           },
+          rtcChannel: {
+            type: "RtcChannel",
+            id: 4
+          },
+          rtcMediaType: {
+            type: "RtcMediaType",
+            id: 5
+          },
+          ext: {
+            type: "string",
+            id: 6
+          },
           members: {
             rule: "repeated",
             type: "RtcMember",
@@ -1929,6 +1941,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           rtcMediaType: {
             type: "RtcMediaType",
             id: 5
+          },
+          ext: {
+            type: "string",
+            id: 6
           }
         }
       },

@@ -543,14 +543,15 @@ export default function getQueryBody({ data, callback, index }){
     buffer = codec.encode(message).finish();
   }
   if(utils.isEqual(COMMAND_TOPICS.RTC_INVITE, topic)){
-    let { roomId, roomType, memberIds, channel, user, mediaType } = data;
+    let { roomId, roomType, memberIds, channel, user, mediaType, ext } = data;
     let codec = Proto.lookup('codec.RtcInviteReq');
     let message = codec.create({
       roomId: roomId,
       roomType: roomType,
       targetIds: memberIds,
       rtcChannel: channel,
-      rtcMediaType: mediaType
+      rtcMediaType: mediaType,
+      ext: ext || '',
     });
     targetId = roomId;
     buffer = codec.encode(message).finish();

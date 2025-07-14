@@ -154,7 +154,8 @@ export default function({ io, emitter, logger }){
     roomType: roomType,
     memberIds: memberIds,
     channel: 0,
-    rtcMediaType: 1
+    rtcMediaType: 1,
+    ext: ''
   */ 
   let inviteRTC = (options) => {
     return utils.deferred((resolve, reject) => {

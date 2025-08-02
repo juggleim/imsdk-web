@@ -903,6 +903,8 @@ export default function(io, emitter, logger){
         name: MESSAGE_TYPE.MERGE,
         mergeMsg: mergeMsg,
         content: {
+          conversationType: mergeMsg.channelType,
+          conversationId: mergeMsg.targetId,
           previewList,
           messageIdList,
           title

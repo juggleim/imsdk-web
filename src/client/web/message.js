@@ -727,7 +727,6 @@ export default function(io, emitter, logger){
       utils.extend(message, { tid, sentState: MESSAGE_SENT_STATE.SENDING });
 
       let { size = 0 } = message.content;
-      size = size / 1024;
       let msg = utils.clone(message);
       msg.content = { ...message.content, size };
       onbefore(msg);
@@ -740,6 +739,7 @@ export default function(io, emitter, logger){
         onprogress: callbacks.onprogress,
         oncompleted: (message) => {
           delete message.content.tempPath;
+          message.content.size = size;
           sendMessage(message).then(resolve, reject);
         },
         onerror: (error) => {

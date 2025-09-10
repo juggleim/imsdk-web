@@ -61,7 +61,7 @@ export default function (uploader, { type }) {
     jrequest.uploadFile(url, {
       ...option,
       method: 'PUT',
-      headers: { 
+      headers: {
         'Content-Type': '',
         'x-amz-acl': 'public-read'
       },
@@ -97,14 +97,24 @@ export default function (uploader, { type }) {
   /* 视频截取首帧 */
   let capture = (file, callback, option = {}) => {
     let { scale = 0.4 } = option;
+    let isDoneCaptureImage = false;
     let video = document.createElement('video');
-    video.src = URL.createObjectURL(file);
-    video.preload = 'auto';
-    video.onloadeddata = function () {
+    video.onloadeddata = () => {
       captureImage();
-    };
+    }
+    video.onplay = () => {
+      video.pause();
+      captureImage();
+    }
+    video.preload = 'auto';
+    video.autoplay = true;
+    video.setAttribute('muted', 'true');
+    video.src = URL.createObjectURL(file);
 
     var captureImage = function () {
+      if (isDoneCaptureImage) {return;}
+      isDoneCaptureImage = true;
+
       var canvas = document.createElement("canvas");
       let height = video.videoHeight;
       let width = video.videoWidth;
@@ -125,7 +135,7 @@ export default function (uploader, { type }) {
   let compress = (file, callback, option = {}) => {
     let { scale = 0.4, fileCompressLimit = 500 } = option;
     let size = file.size / 1000;
-    
+
     let img = new Image();
     img.src = URL.createObjectURL(file);
     img.onload = function () {

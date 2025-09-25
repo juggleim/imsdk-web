@@ -174,10 +174,11 @@ let _MSG_FLAG_NAMES = [
 ];
 
 let formatter = {
-  toFlag: ({ isCommand, isCount, isStorage, isMerge, isMass }) => {
+  toFlag: ({ isCommand, isCount, isStorage, isMerge, isMass, isStatus }) => {
     let flag = 0;
     isCommand && (flag |= (1 << 0));
     isCount && (flag |= (1 << 1));
+    isStatus && (flag |= (1 << 2));
     isStorage && (flag |= (1 << 3));
     isMerge && (flag |= (1 << 5));
     isMass && (flag |= (1 << 7));

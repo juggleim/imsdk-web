@@ -109,6 +109,7 @@ function msgFormat(msg, { currentUser }) {
     isUpdated: msgFlag.isUpdated,
     isMuted: msgFlag.isMute,
     isMass: msgFlag.isMass,
+    isStatus: msgFlag.isStatus,
     isStreamMsg: msgFlag.isStream,
     referMsg: newRefer,
     sentState: MESSAGE_SENT_STATE.SUCCESS,

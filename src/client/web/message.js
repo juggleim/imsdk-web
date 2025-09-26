@@ -51,8 +51,11 @@ export default function(io, emitter, logger){
     //   return emitter.emit(EVENT.RTC_FINISHED_1V1_EVENT, message);
     // }
 
-    // 收到非聊天室消息一定要更新会话列表
-    io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, utils.clone(message));
+    // 收到 非聊天室消息和状态消息 一定要更新会话列表
+    if(!message.isStatus){
+      io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, utils.clone(message));
+    }
+    
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_ADD)){
       return;
@@ -224,10 +227,11 @@ export default function(io, emitter, logger){
         msgType = msgType || message.name;
         msgContent = msgContent || message.content;
         
-        utils.extend(message, { name: msgType, content: msgContent, sentTime, messageId, messageIndex: msgIndex, sentState: MESSAGE_SENT_STATE.SUCCESS });
+        let flagMap = common.formatter.toMsg(flag);
+        utils.extend(message, { name: msgType, content: msgContent, sentTime, messageId, ...flagMap, messageIndex: msgIndex, sentState: MESSAGE_SENT_STATE.SUCCESS });
 
         let config = io.getConfig();
-        if(!config.isPC && !utils.isEqual(conversationType, CONVERATION_TYPE.CHATROOM)){
+        if(!config.isPC && !utils.isEqual(conversationType, CONVERATION_TYPE.CHATROOM) && !message.isStatus){
           io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);
         }
         let isChatroom = utils.isEqual(message.conversationType, CONVERATION_TYPE.CHATROOM)

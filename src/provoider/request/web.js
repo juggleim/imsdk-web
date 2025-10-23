@@ -38,7 +38,7 @@ export default function(){
       }
     };
     xhr.upload.onprogress = function(event) {
-      if (event.lengthComputable) {
+      if (event.lengthComputable && callback.progress) {
         callback.progress(event)
       }
     };

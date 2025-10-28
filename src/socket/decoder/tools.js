@@ -429,11 +429,6 @@ function formatConversations(conversations, options = {}) {
 
     let { conversationTitle, conversationPortrait, conversationExts, conversationUpdatedTime, conversationUserType } = latestMessage;
 
-    
-    if (utils.isEqual(COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS, topic)) {
-      _sortTime = topUpdatedTime;
-    }
-
     converTags = converTags || [];
     let tags = utils.map(converTags, (item) => {
       let { tag: id, tagName: name, tagType: type } = item;
@@ -444,6 +439,7 @@ function formatConversations(conversations, options = {}) {
       conversationId: targetId,
       unreadCount,
       sortTime: _sortTime,
+      topUpdatedTime: topUpdatedTime || 0,
       latestMessage,
       conversationTitle,
       conversationPortrait,

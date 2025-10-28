@@ -1,6 +1,6 @@
 {
   "name": "webim-sdk",
-  "version": "1.8.8",
+  "version": "1.8.9",
   "description": "MIT",
   "main": "index.js",
   "scripts": {

@@ -171,6 +171,13 @@ export default function(io, emitter, logger){
       if(!utils.isEmpty(error)){
         return reject({ error });
       }
+      let { lifeTime, lifeTimeAfterRead } = message;
+      if(utils.isNumber(lifeTime) && lifeTime <= 0){
+        return reject({ error: ErrorType.MESSAGE_LIFETIME_ERROR });  
+      }
+      if(utils.isNumber(lifeTimeAfterRead) && lifeTimeAfterRead <= 0){
+        return reject({ error: ErrorType.MESSAGE_LIFETIME_AFTER_READ_ERROR });  
+      }
       let { referMsg } = message;
       if(!utils.isUndefined(referMsg)){
         let { messageIndex, messageId } = referMsg;

@@ -9,7 +9,7 @@ export default function({ data, callback, index }){
   let buffer = [];
 
   if(utils.isInclude([COMMAND_TOPICS.SEND_GROUP, COMMAND_TOPICS.SEND_PRIVATE, COMMAND_TOPICS.SEND_CHATROOM], topic)){
-    let { name, content, mentionInfo, flag, mergeMsg, referMsg, push, clientMsgId } = data;
+    let { name, content, mentionInfo, flag, mergeMsg, referMsg, push, clientMsgId, lifeTime, lifeTimeAfterRead } = data;
     content  = utils.toJSON(content);
     let codec = Proto.lookup('codec.UpMsg');
     let mention = { };
@@ -62,6 +62,14 @@ export default function({ data, callback, index }){
       if(!utils.isEmpty(pushData)){
         _msg = utils.extend(_msg, { pushData });
       }
+    }
+
+    if(utils.isNumber(lifeTime)){
+      _msg.lifeTime = lifeTime;
+    }
+    
+    if(utils.isNumber(lifeTimeAfterRead)){
+      _msg.lifeTimeAfterRead = lifeTimeAfterRead;
     }
 
     let message = codec.create(_msg);

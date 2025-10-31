@@ -136,6 +136,11 @@ message UpMsg {
     DownMsg referMsg = 7;
     repeated string toUserIds = 8;
     MergedMsgs mergedMsgs = 9;
+    string SearchText = 10;
+    int64 lifeTime = 11;   // 消息默认生存周期，单位毫秒，例如：86400000，即该消息1天后会被自动删除
+    int64 lifeTimeAfterRead = 12; // 消息已读后的生存周期，通常小于lifeTime，例如60000，即消息已读1分钟后会被自动删除
+    string subChannel = 13;
+    int64 msgTime = 51; 
 }
 message MentionInfo {
     MentionType mentionType = 1;
@@ -177,6 +182,9 @@ message DownMsg{
     repeated ConverTag converTags = 27;
     string searchText = 29;
     GrpMemberInfo grpMemberInfo = 30;
+    int64 destroyTime = 31;  // 消息默认的销毁时间点，单位毫秒，如 1752551449037，为0时，表示消息不自动销毁
+    int64 lifeTimeAfterRead = 32; // 消息已读后生存周期，例如60000，即消息已读1分钟后会被自动删除
+    bool isDelete = 33;
 }
 message GrpMemberInfo{
     string grpDisplayName = 1;

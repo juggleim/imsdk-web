@@ -580,6 +580,8 @@ export let ErrorMessages = [
   { code: 25013, msg: '参数不可为空，请检查传入参数', name: 'ILLEGAL_PARAMS_EMPTY' },
   { code: 25014, msg: 'SDK 内部正在连接，无需重复调用 connect 方法', name: 'REPREAT_CONNECTION' },
   { code: 25015, msg: '消息重复发送，相同的 tid 且正在发送中，无需再次发送消息', name: 'MESSAGE_SEND_REPETITION' },
+  { code: 25016, msg: '阅读后销毁消息时间长度必须大于 0 ms', name: 'MESSAGE_LIFETIME_AFTER_READ_ERROR' },
+  { code: 25017, msg: '定时删除消息时间长度必须大于 0 ms', name: 'MESSAGE_LIFETIME_ERROR' },
 
   { code: 21200, msg: '消息撤回成功', name: 'MESSAGE_RECALL_SUCCESS' },
   

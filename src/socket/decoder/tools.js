@@ -10,7 +10,7 @@ function msgFormat(msg, { currentUser }) {
         senderId, unreadIndex, memberCount, referMsg, readCount, msgId, msgTime, 
         msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, 
         isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo,
-        grpMemberInfo 
+        grpMemberInfo, destroyTime, lifeTimeAfterRead
     } = msg;
   let content = '';
   if (msgContent && msgContent.length > 0) {
@@ -118,7 +118,12 @@ function msgFormat(msg, { currentUser }) {
     flags,
     reactions,
     tags,
+    destroyTime: destroyTime || 0,
   };
+
+  if(utils.isNumber(lifeTimeAfterRead)){
+    _message.lifeTimeAfterRead = lifeTimeAfterRead;
+  }
 
   if (_message.isSender) {
     utils.extend(_message.sender, user);

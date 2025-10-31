@@ -415,6 +415,26 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           mergedMsgs: {
             type: "MergedMsgs",
             id: 9
+          },
+          SearchText: {
+            type: "string",
+            id: 10
+          },
+          lifeTime: {
+            type: "int64",
+            id: 11
+          },
+          lifeTimeAfterRead: {
+            type: "int64",
+            id: 12
+          },
+          subChannel: {
+            type: "string",
+            id: 13
+          },
+          msgTime: {
+            type: "int64",
+            id: 51
           }
         }
       },
@@ -559,6 +579,18 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           grpMemberInfo: {
             type: "GrpMemberInfo",
             id: 30
+          },
+          destroyTime: {
+            type: "int64",
+            id: 31
+          },
+          lifeTimeAfterRead: {
+            type: "int64",
+            id: 32
+          },
+          isDelete: {
+            type: "bool",
+            id: 33
           }
         }
       },

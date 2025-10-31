@@ -121,11 +121,14 @@ export default function(io, emitter, logger){
     }
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.READ_MSG) || utils.isEqual(message.name, MESSAGE_TYPE.READ_GROUP_MSG)){
-      let { conversationType, conversationId, content: { msgs } } = message;
+      let { conversationType, conversationId, content: { msgs }, sender, isSender, sentTime } = message;
       let notify = {
         conversationType, 
         conversationId, 
-        messages: msgs
+        messages: msgs,
+        senderId: sender.id,
+        isSender,
+        readTime: sentTime
       };
       return emitter.emit(EVENT.MESSAGE_READ, notify);
     }
@@ -236,7 +239,12 @@ export default function(io, emitter, logger){
         
         let flagMap = common.formatter.toMsg(flag);
         utils.extend(message, { name: msgType, content: msgContent, sentTime, messageId, ...flagMap, messageIndex: msgIndex, sentState: MESSAGE_SENT_STATE.SUCCESS });
-
+        if(lifeTime > 0){
+          message.destroyTime = lifeTime + sentTime;
+        }
+        if(lifeTimeAfterRead > 0){
+          message.lifeTimeAfterRead = lifeTimeAfterRead;
+        }
         let config = io.getConfig();
         if(!config.isPC && !utils.isEqual(conversationType, CONVERATION_TYPE.CHATROOM) && !message.isStatus){
           io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, message);

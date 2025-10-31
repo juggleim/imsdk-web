@@ -893,7 +893,7 @@ export default function(io, emitter, logger){
         return reject({ error });
       }
       logger.info({ tag: LOG_MODULE.MSG_SEND_MERGE });
-      let { conversationType, conversationId, messages, previewList, title } = params;
+      let { conversationType, conversationId, messages, previewList, title, lifeTime, lifeTimeAfterRead } = params;
       if(messages.length > 20){
         return reject({ error: ErrorType.TRANSFER_MESSAGE_COUNT_EXCEED });
       }
@@ -921,6 +921,8 @@ export default function(io, emitter, logger){
         conversationType,
         name: MESSAGE_TYPE.MERGE,
         mergeMsg: mergeMsg,
+        lifeTime, 
+        lifeTimeAfterRead,
         content: {
           conversationType: mergeMsg.channelType,
           conversationId: mergeMsg.targetId,

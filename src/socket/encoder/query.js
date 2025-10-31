@@ -337,7 +337,7 @@ export default function getQueryBody({ data, callback, index }){
   }
 
   if(utils.isEqual(COMMAND_TOPICS.UPDATE_MESSAGE, topic)){
-    let { conversationId, conversationType: channelType, messageId: msgId, content, sentTime: msgTime } = data;
+    let { conversationId, conversationType: channelType, messageId: msgId, content, sentTime: msgTime, msgName } = data;
     let codec = Proto.lookup('codec.ModifyMsgReq');
     content = utils.toJSON(content);
     let message = codec.create({
@@ -345,6 +345,7 @@ export default function getQueryBody({ data, callback, index }){
       targetId: conversationId,
       msgId,
       msgTime,
+      msgType: msgName,
       msgContent: JTextEncoder.encoder(content)
     });
     targetId = conversationId;

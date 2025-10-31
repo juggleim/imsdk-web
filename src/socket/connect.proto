@@ -366,6 +366,7 @@ message ModifyMsgReq{
     int64 msgTime = 4; //可选
     int64 msgSeqNo = 5; //可选
     bytes msgContent = 6; //修改后的消息内容
+    string msgType = 7;
 }
 message CleanHisMsgReq{
     string targetId = 1;

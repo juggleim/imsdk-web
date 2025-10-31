@@ -1116,6 +1116,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           msgContent: {
             type: "bytes",
             id: 6
+          },
+          msgType: {
+            type: "string",
+            id: 7
           }
         }
       },

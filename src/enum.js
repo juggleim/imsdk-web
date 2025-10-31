@@ -99,7 +99,7 @@ export let FUNC_PARAM_CHECKER = {
   RECALLMSG: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }, { name: 'sentTime' }],
   READMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'sentTime', type: 'Number' }, { name: 'unreadIndex' }],
   GET_MESSAGE_READ_DETAILS: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }],
-  UPDATEMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'tid' }, { name: 'sentTime' }, { name: 'messageId' }, { name: 'content' }],
+  UPDATEMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'tid' }, { name: 'sentTime' }, { name: 'messageId' }, { name: 'content' }, { name: 'msgName' }],
   GET_MENTIOIN_MESSAGES: [{ name: 'conversationType' }, { name: 'conversationId' }],
   SEARCH_MESSAGES: [{ name: 'keywords', type: 'Array' }],
   UPDATE_MESSAGE_ATTR: [{ name: 'tid' }, { name: 'attribute', type: 'String' }],

@@ -10,7 +10,7 @@ function msgFormat(msg, { currentUser }) {
         senderId, unreadIndex, memberCount, referMsg, readCount, msgId, msgTime, 
         msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, 
         isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo,
-        grpMemberInfo, destroyTime, lifeTimeAfterRead
+        grpMemberInfo, destroyTime, lifeTimeAfterRead, readTime
     } = msg;
   let content = '';
   if (msgContent && msgContent.length > 0) {
@@ -106,6 +106,7 @@ function msgFormat(msg, { currentUser }) {
     messageIndex: msgIndex,
     mentionInfo,
     isRead: !!isRead,
+    readTime: readTime || 0,
     isUpdated: msgFlag.isUpdated,
     isMuted: msgFlag.isMute,
     isMass: msgFlag.isMass,

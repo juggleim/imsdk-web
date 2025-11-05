@@ -591,6 +591,19 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           isDelete: {
             type: "bool",
             id: 33
+          },
+          subChannel: {
+            type: "string",
+            id: 34
+          },
+          toUserIds: {
+            rule: "repeated",
+            type: "string",
+            id: 35
+          },
+          readTime: {
+            type: "int64",
+            id: 36
           }
         }
       },

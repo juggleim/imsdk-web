@@ -232,7 +232,8 @@ function ConversationUtils(){
     });
     return index > -1;
   };
-  let update = (list) => {
+  let update = (list, option) => {
+    option = option || { isAdd: false };
     list = utils.isArray(list) ? list : [list];
     utils.forEach(list, (item) => {
       let index = utils.find(conversations, ({ conversationType, conversationId }) => {
@@ -276,6 +277,13 @@ function ConversationUtils(){
           updatedTime,
           undisturbType,
         });
+      }else{
+        if(!option.isAdd){
+          // 如果本地没有会话，未读数默认为 1
+          var newUnreadIndex = latestMessage.unreadIndex || conversation.latestUnreadIndex;
+          conversation.latestUnreadIndex = newUnreadIndex;
+          conversation.latestReadIndex = newUnreadIndex - 1;
+        }
       }
 
       let { unreadCount = 0, latestReadIndex = 0, latestUnreadIndex = 0 } = conversation;
@@ -322,7 +330,7 @@ function ConversationUtils(){
     isSynced = true;
   };
   let add = (list) => {
-    update(list);
+    update(list, { isAdd: true });
   };
   let remove = (item) => {
     let _conver = item;

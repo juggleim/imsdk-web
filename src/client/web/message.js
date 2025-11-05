@@ -24,7 +24,7 @@ export default function(io, emitter, logger){
     }
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_LOG_REPORT)){
-      let { content, messageId } = message;
+      let { conncontent, messageId } = message;
       if(utils.isEqual('Web', content.platform)){
         return common.reportLogs({ logger, params: { ...content, messageId } });
       }
@@ -507,6 +507,7 @@ export default function(io, emitter, logger){
             name: MESSAGE_TYPE.READ_MSG,
             conversationType: conversation.conversationType,
             conversationId: conversation.conversationId,
+            sender: io.getCurrentUser(),
             content: {
               msgs: messages
             }

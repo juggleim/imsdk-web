@@ -205,7 +205,7 @@ export default function(io, emitter){
         return emitter.emit(EVENT.CONVERSATION_CHANGED, { conversations: utils.clone([updateConversation]) });
       }
 
-      conversationUtils.add([conversation]);
+      conversationUtils.update([conversation]);
       let newConversation = conversationUtils.getPer(conversation);
       emitter.emit(EVENT.CONVERSATION_ADDED, { conversations: utils.clone([newConversation]) });
     }

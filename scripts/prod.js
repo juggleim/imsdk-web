@@ -15,9 +15,11 @@ let pkg = `
 }
 `;
 let readme = `
+
 ### JuggleChat Web SDK
 
-Docs: [https://www.juggle.im/](https://www.juggle.im/)
+官网: [https://juggle.im/](https://juggle.im/)
+
 `;
 
 let dir = path.join(__dirname, '../', 'release');

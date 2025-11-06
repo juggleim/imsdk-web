@@ -444,6 +444,7 @@ declare class IMProvider {
 interface InitOptions {
   appkey: string;
   navList?: string[];
+  serverList?: string[];
   isSync?: boolean;
   upload?: Object;
 }

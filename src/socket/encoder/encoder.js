@@ -9,7 +9,7 @@ import getPublishAckBody from "./publish_ack";
 import getQueryBody from "./query";
 import getPingBody from "./ping";
 
-export default function Encoder(cache){
+export default function Encoder(cache, io){
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
   
   let encode = (cmd, data) => {
@@ -49,6 +49,12 @@ export default function Encoder(cache){
     if(body.buffer){
       let xors = cache.get(STORAGE.CRYPTO_RANDOM);
       let _buffer = common.encrypto(body.buffer, xors);
+
+      let { msgEncryptHook } = io.getConfig();
+      msgEncryptHook = msgEncryptHook || {};
+      if(utils.isFunction(msgEncryptHook.onEncrypt)){
+        _buffer = msgEncryptHook.onEncrypt(_buffer);
+      }
       utils.extend(payload, { payload: _buffer });
     }
     

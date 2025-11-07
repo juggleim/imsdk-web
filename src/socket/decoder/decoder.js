@@ -14,8 +14,15 @@ export default function Decoder(cache, io) {
     let msg = imsocket.decode(new Uint8Array(buffer));
     let result = {}, name = '';
     let { cmd, payload } = msg;
+
+    let { msgEncryptHook } = io.getConfig();
+    msgEncryptHook = msgEncryptHook || {};
+    if(utils.isFunction(msgEncryptHook.onDecrypt)){
+      payload = msgEncryptHook.onDecrypt(payload);
+    }
+
     let xors = cache.get(STORAGE.CRYPTO_RANDOM);
-    let stream = common.decrypto(msg.payload, xors);
+    let stream = common.decrypto(payload, xors);
     let codec = null;
     let currentUser = io.getCurrentUser();
     switch (cmd) {

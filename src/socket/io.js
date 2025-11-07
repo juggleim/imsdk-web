@@ -27,7 +27,8 @@ import NetworkWatcher from "../common/network-watcher";
 */
 export default function IO(config){
   let emitter = Emitter();
-  let { appkey, navList, serverList = [], isSync = true, reconnectCount = 100, logger } = config;
+  let { appkey, navList, serverList = [], isSync = true, reconnectCount = 100, logger, msgEncryptHook } = config;
+  msgEncryptHook = msgEncryptHook || {};
   if(!utils.isArray(navList)){
     navList = ['https://nav.fake.com'];
   }
@@ -46,7 +47,7 @@ export default function IO(config){
   let cache = Cache();
 
   let decoder = BufferDecoder(cache, io);
-  let encoder = BufferEncoder(cache);
+  let encoder = BufferEncoder(cache, io);
 
   let timer = Timer({ timeout: HEART_TIMEOUT });
   let syncTimer = Timer({ timeout: SYNC_MESSAGE_TIME });

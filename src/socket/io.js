@@ -41,7 +41,8 @@ export default function IO(config){
   let wsPools = [];
   let ws = {};
   let io = {};
-  
+  let currentDomain = '';
+
   let serverProviderCallback = utils.noop;
 
   let cache = Cache();
@@ -164,6 +165,7 @@ export default function IO(config){
           clearLocalServers(userId);
           return reconnect({ token, userId, deviceId }, callback);
         }
+        currentDomain = domain;
         domain = domain.replace(/http:\/\/|https:\/\/|file:\/\/|wss:\/\/|ws:\/\//g, '');
         let { ws: protocol } = utils.getProtocol();
         let url = `${protocol}//${domain}/im`;
@@ -541,6 +543,7 @@ export default function IO(config){
   };
 
   function getConfig(){
+    config.currentDomain = currentDomain;
     return config;
   };
   function setConfig(cfg){

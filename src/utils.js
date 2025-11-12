@@ -461,6 +461,17 @@ const getDeviceID = () => {
     return v.toString(16);
   });
 };
+function formatToQueryStr(obj) {
+  return Object.entries(obj)
+    .filter(([_, value]) => value !== undefined) // 过滤 undefined
+    .map(([key, value]) => {
+      // 对键和值进行 URL 编码，处理特殊字符
+      const encodedKey = encodeURIComponent(key);
+      const encodedValue = encodeURIComponent(value ?? ''); // null 转为空字符串
+      return `${encodedKey}=${encodedValue}`;
+    })
+    .join('&');
+}
 export default {
   Prosumer,
   Observer,
@@ -511,4 +522,5 @@ export default {
   groupBy,
   isNaN: _isNaN,
   getDeviceID,
+  formatToQueryStr,
 }

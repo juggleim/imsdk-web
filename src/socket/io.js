@@ -167,7 +167,7 @@ export default function IO(config){
         }
         currentDomain = domain;
         domain = domain.replace(/http:\/\/|https:\/\/|file:\/\/|wss:\/\/|ws:\/\//g, '');
-        let { ws: protocol } = utils.getProtocol();
+        let { ws: protocol } = utils.getProtocol(currentDomain);
         let url = `${protocol}//${domain}/im`;
         ws = new JWebSocket(url);
         wsPools.push(ws);

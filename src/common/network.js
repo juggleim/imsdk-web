@@ -8,7 +8,7 @@ let detect = (urls, callback, option = {}) => {
   let requests = [], superior = '', errors = []; 
 
   utils.forEach(urls, (domain) => {
-    let { http } = utils.getProtocol();
+    let { http } = utils.getProtocol(domain);
     
     domain = domain.replace(/http:\/\/|https:\/\/|file:\/\/|wss:\/\/|ws:\/\//g, '');
     let url = `${http}//${domain}/health`;
@@ -17,7 +17,7 @@ let detect = (urls, callback, option = {}) => {
       success: function(result, $xhr){
         if(utils.isEmpty(superior)){
           let { responseURL } = $xhr;
-          superior = responseURL.replace(/(https:\/\/|http:\/\/)|(\/health)/g, '');
+          superior = responseURL.replace(/(\/health)/g, '');
           callback(superior);
           abortAll();
         }

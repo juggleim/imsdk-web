@@ -290,7 +290,7 @@ const getProtocol = (url = '') => {
   if(isEqual(http, 'file:')){
     http = 'http:';
   }
-  if(isInclude(url, 'https://')){
+  if(isInclude(url, 'https://') || isInclude(url, 'wss://')){
     http = 'https:';
   }
   let wsMap = {

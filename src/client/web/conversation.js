@@ -13,6 +13,10 @@ export default function(io, emitter){
 
   io.on(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, (message) => {
 
+    let msgFlag = common.formatter.toMsg(message.flags) || {};
+    if(!msgFlag.isStorage){
+      return;
+    }
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_MSG_EXSET)){
       return;
     }

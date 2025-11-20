@@ -14,6 +14,9 @@ const isString = (str) => {
 const isBoolean = (str) => {
   return Object.prototype.toString.call(str) === '[object Boolean]';
 };
+const isFile = (str) => {
+  return Object.prototype.toString.call(str) === '[object File]';
+};
 const isUndefined = (str) => {
   return Object.prototype.toString.call(str) === '[object Undefined]';
 };
@@ -481,6 +484,7 @@ export default {
   isObject,
   isArray,
   isFunction,
+  isFile,
   stringify,
   parse,
   rename,

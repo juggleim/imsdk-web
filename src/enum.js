@@ -249,7 +249,7 @@ export let FUNC_PARAM_CHECKER = {
       ]
     }
   ],
-
+  ADD_MOMENT: []
 };
 export let COMMAND_TOPICS = {
   HISTORY_MESSAGES: 'qry_hismsgs',
@@ -584,6 +584,9 @@ export let ErrorMessages = [
   { code: 25017, msg: '定时删除消息时间长度必须大于 0 ms', name: 'MESSAGE_LIFETIME_ERROR' },
 
   { code: 21200, msg: '消息撤回成功', name: 'MESSAGE_RECALL_SUCCESS' },
+  
+  { code: 21300, msg: '发布朋友圈参数不正确，content 和 mediaList 必须二选一或都传如', name: 'MOMENT_ADD_PARAM_ERROR' },
+  { code: 21301, msg: '发布朋友圈参数不正确，mediaList 必须是数组', name: 'MOMENT_ADD_PARAM_MDL_ERROR' },
   
   { code: 0, msg: '内部业务调用成功', name: 'COMMAND_SUCCESS' },
 ];

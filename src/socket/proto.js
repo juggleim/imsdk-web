@@ -1381,6 +1381,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           signature: {
             type: "string",
             id: 7
+          },
+          downloadUrl: {
+            type: "string",
+            id: 8
           }
         }
       },

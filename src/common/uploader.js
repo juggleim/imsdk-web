@@ -4,7 +4,7 @@ import jrequest from "../provoider/request/index";
 
 export default function (uploader, { type }) {
   let qiniuExec = (content, option, callbacks) => {
-    let { token, domain } = option;
+    let { token, domain, downloadUrl } = option;
     let { file, name } = content;
     let key = `${utils.getUUID()}.${getSuffix(file.name)}`;
     name = name || key;
@@ -23,6 +23,7 @@ export default function (uploader, { type }) {
       complete: (res) => {
         let { key } = res;
         let url = `${domain}/${key}?attname=${name}`
+        url = downloadUrl || url;
         callbacks.oncompleted({ url });
       }
     })
@@ -33,7 +34,7 @@ export default function (uploader, { type }) {
     }
   };
   let aliExec = (content, option, callbacks) => {
-    let { url } = option;
+    let { url, downloadUrl } = option;
     let { file, name, tempPath } = content;
     jrequest.uploadFile(url, {
       ...option,
@@ -43,7 +44,8 @@ export default function (uploader, { type }) {
       body: file
     }, {
       success: (result) => {
-        url = result.url || url.split('?')[0]
+        url = result.url || url.split('?')[0];
+        url = downloadUrl || url;
         callbacks.oncompleted({ url });
       },
       progress: (event) => {
@@ -56,7 +58,7 @@ export default function (uploader, { type }) {
     });
   };
   let s3Exec = (content, option, callbacks) => {
-    let { url } = option;
+    let { url, downloadUrl } = option;
     let { file, name, tempPath } = content;
     jrequest.uploadFile(url, {
       ...option,
@@ -69,7 +71,8 @@ export default function (uploader, { type }) {
       body: file
     }, {
       success: () => {
-        url = url.split('?')[0]
+        url = url.split('?')[0];
+        url = downloadUrl || url;
         callbacks.oncompleted({ url });
       },
       progress: (event) => {

@@ -4,9 +4,19 @@ import utils from "../../utils";
 import Proto from "../proto";
 import JTextEncoder from "../../provoider/textencoder/index";
 
-export default function({ data, callback, index }){
+export default async function({ data, callback, index }, io){
   let { conversationId: targetId, conversationType, topic } = data;
   let buffer = [];
+  
+  let { msgEncryptHook } = io.getConfig();
+  msgEncryptHook = msgEncryptHook || {};
+  if(!utils.isAsyncFunction(msgEncryptHook.onEncrypt)){
+    msgEncryptHook = {
+      onEncrypt: async (data) => {
+        return data.buffer;
+      }
+    };
+  }
 
   if(utils.isInclude([COMMAND_TOPICS.SEND_GROUP, COMMAND_TOPICS.SEND_PRIVATE, COMMAND_TOPICS.SEND_CHATROOM], topic)){
     let { name, content, mentionInfo, flag, mergeMsg, referMsg, push, clientMsgId, lifeTime, lifeTimeAfterRead } = data;
@@ -33,11 +43,18 @@ export default function({ data, callback, index }){
       //   userPortrait: sender.portrait,
       //   extFields: common.toKVs(sender.exts)
       // };
+      var referBuffer = JTextEncoder.encoder(referContent);
+      var referMsgContent = await msgEncryptHook.onEncrypt({
+        buffer: referBuffer, 
+        name: referMsg.name,
+        conversationType: referMsg.conversationType,
+        conversationId: referMsg.conversationId,
+      });
       referMsg = {
         msgIndex: messageIndex,
         msgTime: sentTime,
         msgId: messageId,
-        msgContent: JTextEncoder.encoder(referContent),
+        msgContent: referMsgContent,
         msgType: referMsg.name,
         type: referMsg.conversationType,
         senderId: sender.id
@@ -45,6 +62,13 @@ export default function({ data, callback, index }){
       };
     }
 
+    var bufferContent = JTextEncoder.encoder(content);
+    bufferContent = await msgEncryptHook.onEncrypt({
+      buffer: bufferContent, 
+      name: name,
+      conversationType: conversationType,
+      conversationId: targetId,
+    });
     let _msg = {
       msgType: name,
       mentionInfo: mention,
@@ -52,7 +76,7 @@ export default function({ data, callback, index }){
       referMsg: referMsg,
       mergedMsgs: mergeMsg,
       clientUid: clientMsgId,
-      msgContent:JTextEncoder.encoder(content)
+      msgContent: bufferContent
     };
 
     if(push){

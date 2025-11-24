@@ -5,7 +5,7 @@ import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, E
 import common from "../../common/common";
 import tools from "./tools";
 
-export default function getPublishMsgBody(stream, { currentUser }){
+export default async function getPublishMsgBody(stream, { currentUser, io }){
   let codec = Proto.lookup('codec.PublishMsgBody');
     let publishMsgBody = codec.decode(stream);
     let { targetId, data, topic, timestamp, index } = publishMsgBody;
@@ -23,11 +23,9 @@ export default function getPublishMsgBody(stream, { currentUser }){
       _name = SIGNAL_NAME.S_NTF;
 
     } else if (utils.isEqual(topic, COMMAND_TOPICS.MSG)) {
-      
       let payload = Proto.lookup('codec.DownMsg');
       let message = payload.decode(data);
-      _msg = tools.msgFormat(message, { currentUser });
-
+      _msg = await tools.msgFormat(message, { currentUser, io });
     } else if (utils.isEqual(topic, COMMAND_TOPICS.CHATROOM_USER_NTF)) {
       
       let payload = Proto.lookup('codec.ChrmEvent');

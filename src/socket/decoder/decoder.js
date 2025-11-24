@@ -10,16 +10,10 @@ import getPublishMsgBody from "./publish_msg";
 
 export default function Decoder(cache, io) {
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
-  let decode = (buffer) => {
+  let decode = async (buffer) => {
     let msg = imsocket.decode(new Uint8Array(buffer));
     let result = {}, name = '';
     let { cmd, payload } = msg;
-
-    let { msgEncryptHook } = io.getConfig();
-    msgEncryptHook = msgEncryptHook || {};
-    if(utils.isFunction(msgEncryptHook.onDecrypt)){
-      payload = msgEncryptHook.onDecrypt(payload);
-    }
 
     let xors = cache.get(STORAGE.CRYPTO_RANDOM);
     let stream = common.decrypto(payload, xors);
@@ -49,13 +43,13 @@ export default function Decoder(cache, io) {
         break;
       case SIGNAL_CMD.PUBLISH:
         currentUser = io.getCurrentUser();
-        let { _msg, _name } = getPublishMsgBody(stream, { currentUser });
+        let { _msg, _name } = await getPublishMsgBody(stream, { currentUser, io });
         name = _name;
         result = _msg;
         break;
       case SIGNAL_CMD.QUERY_ACK:
         currentUser = io.getCurrentUser();
-        result = getQueryAckBody(stream, { cache, currentUser });
+        result = await getQueryAckBody(stream, { cache, currentUser, io });
         name = SIGNAL_NAME.S_QUERY_ACK;
         break;
       case SIGNAL_CMD.PONG:

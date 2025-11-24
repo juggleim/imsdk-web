@@ -3,10 +3,20 @@ import utils from "../../utils";
 import Proto from "../proto";
 import JTextEncoder from "../../provoider/textencoder/index";
 
-export default function getQueryBody({ data, callback, index }){
+export default async function getQueryBody({ data, callback, index }, io){
   let { targetId, userId, topic  } = data;
   let buffer = [];
   
+  let { msgEncryptHook } = io.getConfig();
+  msgEncryptHook = msgEncryptHook || {};
+  if(!utils.isAsyncFunction(msgEncryptHook.onEncrypt)){
+    msgEncryptHook = {
+      onEncrypt: async (data) => {
+        return data.buffer;
+      }
+    };
+  }
+
   if(utils.isEqual(topic, COMMAND_TOPICS.HISTORY_MESSAGES)){
     let { conversationType, time, count, order, names } = data;
     let codec = Proto.lookup('codec.QryHisMsgsReq');
@@ -340,13 +350,17 @@ export default function getQueryBody({ data, callback, index }){
     let { conversationId, conversationType: channelType, messageId: msgId, content, sentTime: msgTime, msgName } = data;
     let codec = Proto.lookup('codec.ModifyMsgReq');
     content = utils.toJSON(content);
+    
+    let modifyBuffer = JTextEncoder.encoder(content);
+    modifyBuffer = msgEncryptHook.onEncrypt(modifyBuffer);
+
     let message = codec.create({
       channelType,
       targetId: conversationId,
       msgId,
       msgTime,
       msgType: msgName,
-      msgContent: JTextEncoder.encoder(content)
+      msgContent: modifyBuffer
     });
     targetId = conversationId;
     buffer = codec.encode(message).finish();

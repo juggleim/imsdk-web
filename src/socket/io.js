@@ -27,8 +27,7 @@ import NetworkWatcher from "../common/network-watcher";
 */
 export default function IO(config){
   let emitter = Emitter();
-  let { appkey, navList, serverList = [], isSync = true, reconnectCount = 100, logger, msgEncryptHook } = config;
-  msgEncryptHook = msgEncryptHook || {};
+  let { appkey, navList, serverList = [], isSync = true, reconnectCount = 100, logger } = config;
   if(!utils.isArray(navList)){
     navList = ['https://nav.fake.com'];
   }
@@ -277,7 +276,7 @@ export default function IO(config){
     disconnect();
   };
 
-  let sendCommand = (cmd, data, callback) => {
+  let sendCommand = async (cmd, data, callback) => {
     callback = callback || utils.noop;
     let index = common.getNum();
     if(utils.isEqual(cmd, SIGNAL_CMD.CONNECT)){
@@ -287,7 +286,7 @@ export default function IO(config){
       index = PONG_INDEX;
     }
     let counter = Counter({ cmd });
-    let buffer = encoder.encode(cmd, { callback, data, index, counter });
+    let buffer = await encoder.encode(cmd, { callback, data, index, counter });
     if(ws.readyState != 1){
       disconnect();
       return callback(ErrorType.COMMAND_FAILED);
@@ -318,8 +317,8 @@ export default function IO(config){
   let chatroomAttrSyncer = ChatroomAttrSyncer(sendCommand, emitter, io, { logger });
   let tagSyncer = TagSyncer(sendCommand, emitter, io, { logger });
 
-  let bufferHandler = (buffer) => {
-    let { cmd, result, name } = decoder.decode(buffer);
+  let bufferHandler = async (buffer) => {
+    let { cmd, result, name } = await decoder.decode(buffer);
     
     logger.info({ tag: LOG_MODULE.WS_RECEIVE, cmd, code: result.code });
     

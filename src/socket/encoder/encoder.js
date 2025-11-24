@@ -11,8 +11,7 @@ import getPingBody from "./ping";
 
 export default function Encoder(cache, io){
   let imsocket = Proto.lookup('codec.ImWebsocketMsg');
-  
-  let encode = (cmd, data) => {
+  let encode = async (cmd, data) => {
     let body = {}, memory = {};
     let payload = {
       version: 1, 
@@ -26,7 +25,7 @@ export default function Encoder(cache, io){
         memory = { counter };
         break;
       case SIGNAL_CMD.PUBLISH:
-        body = getPublishBody(data);
+        body = await getPublishBody(data, io);
         memory = { callback, data: data.data, counter };
         break;
       case SIGNAL_CMD.PUBLISH_ACK:
@@ -34,7 +33,7 @@ export default function Encoder(cache, io){
         memory = { callback, data: data.data, counter };
         break;
       case SIGNAL_CMD.QUERY:
-        body = getQueryBody(data);
+        body = await getQueryBody(data, io);
         let { targetId, userId, topic } = data.data;
         memory = { callback, index, topic, targetId, counter }
         break;
@@ -49,12 +48,6 @@ export default function Encoder(cache, io){
     if(body.buffer){
       let xors = cache.get(STORAGE.CRYPTO_RANDOM);
       let _buffer = common.encrypto(body.buffer, xors);
-
-      let { msgEncryptHook } = io.getConfig();
-      msgEncryptHook = msgEncryptHook || {};
-      if(utils.isFunction(msgEncryptHook.onEncrypt)){
-        _buffer = msgEncryptHook.onEncrypt(_buffer);
-      }
       utils.extend(payload, { payload: _buffer });
     }
     

@@ -18,8 +18,8 @@ async function msgFormat(msg, { currentUser, io }) {
     msgEncryptHook = msgEncryptHook || {};
     if(!utils.isAsyncFunction(msgEncryptHook.onDecrypt)){
       msgEncryptHook = {
-        onDecrypt: async (buffer) => {
-          return buffer;
+        onDecrypt: async (data) => {
+          return data.buffer;
         }
       };
     }

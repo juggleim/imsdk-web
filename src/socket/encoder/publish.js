@@ -12,8 +12,8 @@ export default async function({ data, callback, index }, io){
   msgEncryptHook = msgEncryptHook || {};
   if(!utils.isAsyncFunction(msgEncryptHook.onEncrypt)){
     msgEncryptHook = {
-      onEncrypt: async (buffer) => {
-        return buffer;
+      onEncrypt: async (data) => {
+        return data.buffer;
       }
     };
   }

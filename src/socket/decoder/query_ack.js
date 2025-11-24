@@ -5,7 +5,7 @@ import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, E
 import common from "../../common/common";
 import tools from "./tools";
 
-export default function getQueryAckBody(stream, { cache, currentUser }){
+export default async function getQueryAckBody(stream, { cache, currentUser, io }){
   let codec = Proto.lookup('codec.QueryAckMsgBody');
   let qryAckMsgBody = codec.decode(stream);
   let { index, data, code, timestamp } = qryAckMsgBody;
@@ -14,11 +14,11 @@ export default function getQueryAckBody(stream, { cache, currentUser }){
 
   let result = {};
   if (utils.isInclude([COMMAND_TOPICS.HISTORY_MESSAGES, COMMAND_TOPICS.SYNC_MESSAGES, COMMAND_TOPICS.GET_MSG_BY_IDS, COMMAND_TOPICS.GET_MERGE_MSGS], topic)) {
-    result = getMessagesHandler(index, data, { currentUser });
+    result = await getMessagesHandler(index, data, { currentUser, io });
   }
 
   if (utils.isEqual(topic, COMMAND_TOPICS.SYNC_CHATROOM_MESSAGES)) {
-    result = getChatroomMsgsHandler(index, data, { currentUser });
+    result = await getChatroomMsgsHandler(index, data, { currentUser, io });
   }
 
   if (utils.isEqual(topic, COMMAND_TOPICS.SYNC_CHATROOM_ATTRS)) {
@@ -26,11 +26,11 @@ export default function getQueryAckBody(stream, { cache, currentUser }){
   }
 
   if (utils.isInclude([COMMAND_TOPICS.CONVERSATIONS, COMMAND_TOPICS.SYNC_CONVERSATIONS, COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS], topic)) {
-    result = getConversationsHandler(index, data, { topic, currentUser });
+    result = await getConversationsHandler(index, data, { topic, currentUser, io });
   }
 
   if (utils.isEqual(topic, COMMAND_TOPICS.GET_CONVERSATION)) {
-    result = getConversationHandler(index, data, { currentUser });
+    result = await getConversationHandler(index, data, { currentUser });
   }
 
   if (utils.isEqual(topic, COMMAND_TOPICS.GET_UNREAD_TOTLAL_CONVERSATION)) {
@@ -42,7 +42,7 @@ export default function getQueryAckBody(stream, { cache, currentUser }){
   }
 
   if (utils.isEqual(topic, COMMAND_TOPICS.GET_MENTION_MSGS)) {
-    result = getMentionMessages(index, data, { currentUser });
+    result = await getMentionMessages(index, data, { currentUser, io });
   }
 
   if (utils.isEqual(topic, COMMAND_TOPICS.GET_FILE_TOKEN)) {
@@ -62,7 +62,7 @@ export default function getQueryAckBody(stream, { cache, currentUser }){
   }
 
   if (utils.isEqual(topic, COMMAND_TOPICS.GET_FIRST_UNREAD_MSG)) {
-    result = getMessage(index, data, { currentUser });
+    result = await getMessage(index, data, { currentUser, io });
   }
 
   if(utils.isEqual(topic, COMMAND_TOPICS.CONVERSATION_TAG_QUERY)){
@@ -74,11 +74,11 @@ export default function getQueryAckBody(stream, { cache, currentUser }){
   }
 
   if(utils.isEqual(topic, COMMAND_TOPICS.GET_TOP_MSG)){
-    result = getTopMessage(index, data, { currentUser });
+    result = await getTopMessage(index, data, { currentUser, io });
   }
   
   if(utils.isEqual(topic, COMMAND_TOPICS.MSG_QRY_FAVORITE)){
-    result = getFavtoriteMsgs(index, data, { currentUser });
+    result = await getFavtoriteMsgs(index, data, { currentUser, io });
   }
 
   if(utils.isInclude([COMMAND_TOPICS.RTC_ACCEPT, COMMAND_TOPICS.RTC_INVITE], topic)){
@@ -93,30 +93,32 @@ export default function getQueryAckBody(stream, { cache, currentUser }){
   return result;
 };
 
-function getFavtoriteMsgs(index, data, { currentUser }){
+async function getFavtoriteMsgs(index, data, { currentUser, io }){
   let payload = Proto.lookup('codec.FavoriteMsgs');
   let result = payload.decode(data);
   let { items, offset } = result;
   if(!items){
     items = [];
   }
-  let list = utils.map(items, (item) => {
-    let { createdTime, msg } = item;
-    let message = tools.msgFormat(msg, { currentUser });
-    return { createdTime, message };
-  });
+  let list = await utils.Defer.all(
+    utils.map(items, async (item) => {
+      let { createdTime, msg } = item;
+      let message = await tools.msgFormat(msg, { currentUser, io });
+      return { createdTime, message };
+    })
+  );
   return {
     index, list, offset
   }
 }
 
-function getTopMessage(index, data, { currentUser }){
+async function getTopMessage(index, data, { currentUser, io }){
   let payload = Proto.lookup('codec.TopMsg');
   let result = payload.decode(data);
   let { msg, operator, createdTime = 0 } = result;
   let message = {};
   if(msg){
-    message = tools.msgFormat(result.msg, { currentUser });
+    message = await tools.msgFormat(result.msg, { currentUser, io });
     operator = common.formatUser(result.operator);
   }
   return {
@@ -159,14 +161,15 @@ function getChatroomSetAttrs(index, data) {
     index, success, fail
   }
 }
-function getMentionMessages(index, data, { currentUser }) {
+async function getMentionMessages(index, data, { currentUser, io }) {
   let payload = Proto.lookup('codec.QryMentionMsgsResp');
   let { mentionMsgs, isFinished } = payload.decode(data);
 
-  let msgs = utils.map(mentionMsgs, (msg) => {
-    return tools.msgFormat(msg, { currentUser });
-  });
-
+  let msgs = await utils.Defer.all(
+    utils.map(mentionMsgs, async (msg) => {
+      return await tools.msgFormat(msg, { currentUser, io });
+    })
+  );
   return {
     index, msgs, isFinished
   };
@@ -243,17 +246,17 @@ function getTotalUnread(index, data) {
 }
 
 
-function getConversationHandler(index, data, { currentUser }) {
+async function getConversationHandler(index, data, { currentUser }) {
   let payload = Proto.lookup('codec.Conversation');
   let item = payload.decode(data);
-  let conversations = tools.formatConversations([item], { currentUser});
+  let conversations = await tools.formatConversations([item], { currentUser});
   let conversation = conversations[0] || {};
   return { conversation, index };
 }
-function getConversationsHandler(index, data, options = {}) {
+async function getConversationsHandler(index, data, options = {}) {
   let payload = Proto.lookup('codec.QryConversationsResp');
   let { conversations, isFinished } = payload.decode(data);
-  conversations = tools.formatConversations(conversations, options);
+  conversations = await tools.formatConversations(conversations, options);
   return { conversations, isFinished, index };
 }
 function getChatroomAttrsHandler(index, data, { targetId }) {
@@ -276,40 +279,44 @@ function getConversationTags(index, data) {
   });
   return { tags, index };
 }
-function getChatroomMsgsHandler(index, data, { currentUser }) {
+async function getChatroomMsgsHandler(index, data, { currentUser, io }) {
   let payload = Proto.lookup('codec.SyncChatroomMsgResp');
   let result = payload.decode(data);
   let { msgs } = result;
-  let messages = utils.map(msgs, (msg) => {
-    return tools.msgFormat(msg, { currentUser });
-  });
+  let messages = await utils.Defer.all(
+    utils.map(msgs, async (msg) => {
+      return await tools.msgFormat(msg, { currentUser, io });
+    })
+  );
   return { messages, index };
 }
-function getMessage(index, data, { currentUser }) {
+async function getMessage(index, data, { currentUser, io }) {
   let payload = Proto.lookup('codec.DownMsg');
   let _msg = payload.decode(data);
   if (!_msg.msgId) {
     return { index, msg: {} };
   }
-  let msg = tools.msgFormat(_msg, { currentUser });
+  let msg = await tools.msgFormat(_msg, { currentUser, io });
   return { index, msg };
 }
-function getMessagesHandler(index, data, { currentUser }) {
+async function getMessagesHandler(index, data, { currentUser, io }) {
   let payload = Proto.lookup('codec.DownMsgSet');
   let result = payload.decode(data);
 
   let { isFinished, msgs, targetUserInfo, groupInfo } = result;
-  let messages = utils.map(msgs, (msg) => {
-
-    // sync_msgs 和 getHistoryMessages 共用此方法，但 sync_msgs 的用户信息携带在消息里，历史消息在 pb 结构外侧与 msgs 同级，此处做兼容处理
-    if (targetUserInfo) {
-      utils.extend(msg, { targetUserInfo });
-    }
-    if (groupInfo) {
-      utils.extend(msg, { groupInfo });
-    }
-    return tools.msgFormat(msg, { currentUser });
-  });
+  let messages = await utils.Defer.all(
+    utils.map(msgs, async (msg) => {
+      // sync_msgs 和 getHistoryMessages 共用此方法，但 sync_msgs 的用户信息携带在消息里，历史消息在 pb 结构外侧与 msgs 同级，此处做兼容处理
+      if (targetUserInfo) {
+        utils.extend(msg, { targetUserInfo });
+      }
+      if (groupInfo) {
+        utils.extend(msg, { groupInfo });
+      }
+      let _msg = await tools.msgFormat(msg, { currentUser, io });
+      return _msg;
+    })
+  );
   return { isFinished, messages, index };
 }
 

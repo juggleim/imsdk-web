@@ -5,7 +5,7 @@ import UserCacher from "../../common/user-cacher";
 import common from "../../common/common";
 import JTextEncoder from "../../provoider/textencoder/index";
 
-function msgFormat(msg, { currentUser }) {
+async function msgFormat(msg, { currentUser, io }) {
   let { msgItems, converTags, undisturbType, msgExtSet, 
         senderId, unreadIndex, memberCount, referMsg, readCount, msgId, msgTime, 
         msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, 
@@ -14,7 +14,36 @@ function msgFormat(msg, { currentUser }) {
     } = msg;
   let content = '';
   if (msgContent && msgContent.length > 0) {
-    content = JTextEncoder.decoder(msgContent);
+    let { msgEncryptHook } = io.getConfig();
+    msgEncryptHook = msgEncryptHook || {};
+    if(!utils.isAsyncFunction(msgEncryptHook.onDecrypt)){
+      msgEncryptHook = {
+        onDecrypt: async (buffer) => {
+          return buffer;
+        }
+      };
+    }
+    // 内部信令消息忽略调用解密方法
+    var fileIntenalMsgs = [
+      MESSAGE_TYPE.RECALL,
+      MESSAGE_TYPE.RECALL_INFO,
+      MESSAGE_TYPE.READ_MSG,
+      MESSAGE_TYPE.READ_GROUP_MSG,
+      // MESSAGE_TYPE.MODIFY,
+      MESSAGE_TYPE.CLEAR_MSG,
+      MESSAGE_TYPE.CLEAR_UNREAD,
+    ];
+    if(!utils.isInclude(fileIntenalMsgs, msgType)){
+      content = await msgEncryptHook.onDecrypt({
+        buffer: msgContent, 
+        name: msgType,
+        conversationType: conversationType,
+        conversationId: conversationId,
+      });
+    }else{
+      content = msgContent;
+    }
+    content = JTextEncoder.decoder(content);
     content = utils.parse(content);
   }
 
@@ -354,114 +383,116 @@ function msgFormat(msg, { currentUser }) {
   return _message;
 }
 
-function formatConversations(conversations, options = {}) {
-  return conversations.map((conversation) => {
-    let { msg,
-      targetId,
-      unreadCount,
-      sortTime: _sortTime,
-      topUpdatedTime,
-      targetUserInfo,
-      groupInfo,
-      syncTime,
-      undisturbType,
-      mentions,
-      channelType: conversationType,
-      latestReadIndex,
-      latestUnreadIndex,
-      isTop,
-      unreadTag,
-      converTags,
-    } = conversation;
-    if (!msg) {
-      msg = { msgContent: [] };
-    }
-    
-    let { topic, currentUser } = options;
+async function formatConversations(conversations, options = {}) {
+  return await utils.Defer.all(
+    conversations.map( async (conversation) => {
+      let { msg,
+        targetId,
+        unreadCount,
+        sortTime: _sortTime,
+        topUpdatedTime,
+        targetUserInfo,
+        groupInfo,
+        syncTime,
+        undisturbType,
+        mentions,
+        channelType: conversationType,
+        latestReadIndex,
+        latestUnreadIndex,
+        isTop,
+        unreadTag,
+        converTags,
+      } = conversation;
+      if (!msg) {
+        msg = { msgContent: [] };
+      }
+      
+      let { topic, currentUser, io } = options;
 
-    utils.extend(msg, { targetId });
-    unreadCount = unreadCount || 0;
-    unreadTag = unreadTag || 0;
-    mentions = mentions || {};
-    if (!utils.isEmpty(mentions)) {
-      let { isMentioned, senders, mentionMsgs } = mentions;
-      senders = utils.map(senders, (sender) => {
-        return common.formatUser(sender);
+      utils.extend(msg, { targetId });
+      unreadCount = unreadCount || 0;
+      unreadTag = unreadTag || 0;
+      mentions = mentions || {};
+      if (!utils.isEmpty(mentions)) {
+        let { isMentioned, senders, mentionMsgs } = mentions;
+        senders = utils.map(senders, (sender) => {
+          return common.formatUser(sender);
+        });
+        mentionMsgs = utils.map(mentionMsgs, (msg) => {
+          let { senderId, msgId, msgTime, mentionType } = msg;
+          return { senderId, messageId: msgId, sentTime: msgTime, mentionType };
+        });
+        mentions = {
+          isMentioned: isMentioned,
+          senders: senders,
+          msgs: mentionMsgs,
+          count: mentionMsgs.length,
+        };
+      }
+      let latestMessage = {}
+      if (!utils.isEqual(msg.msgContent.length, 0)) {
+        latestMessage = await msgFormat(msg, { currentUser, io });
+      }
+
+      if (utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)) {
+        groupInfo = groupInfo || { extFields: {} };
+        let { groupName, groupPortrait, extFields, groupId, updatedTime } = groupInfo;
+        extFields = utils.toObject(extFields);
+
+        utils.extend(latestMessage, {
+          conversationTitle: groupName || '',
+          conversationPortrait: groupPortrait || '',
+          conversationExts: extFields,
+          conversationUpdatedTime: updatedTime || 0,
+        });
+
+        GroupCacher.set(groupId, groupInfo);
+      }
+
+      if (utils.isEqual(conversationType, CONVERATION_TYPE.PRIVATE)) {
+        targetUserInfo = targetUserInfo || { extFields: {} };
+        let { userPortrait, nickname, extFields, userId, updatedTime, userType } = targetUserInfo;
+        extFields = utils.toObject(extFields);
+        utils.extend(latestMessage, {
+          conversationTitle: nickname || '',
+          conversationPortrait: userPortrait || '',
+          conversationExts: extFields,
+          conversationUpdatedTime: updatedTime || 0,
+          conversationUserType: userType || 0,
+        });
+        UserCacher.set(userId, targetUserInfo);
+      }
+
+      let { conversationTitle, conversationPortrait, conversationExts, conversationUpdatedTime, conversationUserType } = latestMessage;
+
+      converTags = converTags || [];
+      let tags = utils.map(converTags, (item) => {
+        let { tag: id, tagName: name, tagType: type } = item;
+        return { id, name, type };
       });
-      mentionMsgs = utils.map(mentionMsgs, (msg) => {
-        let { senderId, msgId, msgTime, mentionType } = msg;
-        return { senderId, messageId: msgId, sentTime: msgTime, mentionType };
-      });
-      mentions = {
-        isMentioned: isMentioned,
-        senders: senders,
-        msgs: mentionMsgs,
-        count: mentionMsgs.length,
+      return {
+        conversationType,
+        conversationId: targetId,
+        unreadCount,
+        sortTime: _sortTime,
+        topUpdatedTime: topUpdatedTime || 0,
+        latestMessage,
+        conversationTitle,
+        conversationPortrait,
+        conversationUpdatedTime,
+        conversationUserType,
+        conversationExts,
+        mentions,
+        syncTime,
+        undisturbType: undisturbType || 0,
+        latestReadIndex,
+        latestUnreadIndex,
+        unreadTag,
+        tags,
+        isTop: !!isTop,
       };
-    }
-    let latestMessage = {}
-    if (!utils.isEqual(msg.msgContent.length, 0)) {
-      latestMessage = msgFormat(msg, { currentUser });
-    }
-
-    if (utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)) {
-      groupInfo = groupInfo || { extFields: {} };
-      let { groupName, groupPortrait, extFields, groupId, updatedTime } = groupInfo;
-      extFields = utils.toObject(extFields);
-
-      utils.extend(latestMessage, {
-        conversationTitle: groupName || '',
-        conversationPortrait: groupPortrait || '',
-        conversationExts: extFields,
-        conversationUpdatedTime: updatedTime || 0,
-      });
-
-      GroupCacher.set(groupId, groupInfo);
-    }
-
-    if (utils.isEqual(conversationType, CONVERATION_TYPE.PRIVATE)) {
-      targetUserInfo = targetUserInfo || { extFields: {} };
-      let { userPortrait, nickname, extFields, userId, updatedTime, userType } = targetUserInfo;
-      extFields = utils.toObject(extFields);
-      utils.extend(latestMessage, {
-        conversationTitle: nickname || '',
-        conversationPortrait: userPortrait || '',
-        conversationExts: extFields,
-        conversationUpdatedTime: updatedTime || 0,
-        conversationUserType: userType || 0,
-      });
-      UserCacher.set(userId, targetUserInfo);
-    }
-
-    let { conversationTitle, conversationPortrait, conversationExts, conversationUpdatedTime, conversationUserType } = latestMessage;
-
-    converTags = converTags || [];
-    let tags = utils.map(converTags, (item) => {
-      let { tag: id, tagName: name, tagType: type } = item;
-      return { id, name, type };
-    });
-    return {
-      conversationType,
-      conversationId: targetId,
-      unreadCount,
-      sortTime: _sortTime,
-      topUpdatedTime: topUpdatedTime || 0,
-      latestMessage,
-      conversationTitle,
-      conversationPortrait,
-      conversationUpdatedTime,
-      conversationUserType,
-      conversationExts,
-      mentions,
-      syncTime,
-      undisturbType: undisturbType || 0,
-      latestReadIndex,
-      latestUnreadIndex,
-      unreadTag,
-      tags,
-      isTop: !!isTop,
-    };
-  });
+    })
+  );
 }
 
 function formatRTCRoom(result){

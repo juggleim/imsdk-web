@@ -8,6 +8,9 @@ const isArray = (arr) => {
 const isFunction = (arr) => {
   return Object.prototype.toString.call(arr) === '[object Function]';
 };
+const isAsyncFunction = (arr) => {
+  return Object.prototype.toString.call(arr) === '[object AsyncFunction]';
+};
 const isString = (str) => {
   return Object.prototype.toString.call(str) === '[object String]';
 };
@@ -523,4 +526,5 @@ export default {
   isNaN: _isNaN,
   getDeviceID,
   formatToQueryStr,
+  isAsyncFunction,
 }

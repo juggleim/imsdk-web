@@ -70,6 +70,7 @@ let init = (config) => {
     ...provider.message,
     ...provider.conversation,
     ...provider.chatroom,
+    ...provider.moment,
     ...emitter,
     registerMessage: common.registerMessage,
     isDesktop: common.isDesktop,

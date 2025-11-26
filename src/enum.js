@@ -239,7 +239,7 @@ export let FUNC_PARAM_CHECKER = {
     }
   ],
   REMOVE_CONVERSATION_FROM_TAG: [
-    {  name: 'id',  type: 'String'},
+    { name: 'id',  type: 'String'},
     { 
       name: 'conversations', 
       type: 'Array',
@@ -249,7 +249,36 @@ export let FUNC_PARAM_CHECKER = {
       ]
     }
   ],
-  ADD_MOMENT: []
+  ADD_MOMENT: [],
+  REMOVE_MOMENT: [
+    { name: 'momentIds',  type: 'Array'},
+  ],
+  GET_MOMENT_LIST: [],
+  GET_MOMENT_INFO: [
+    { name: 'momentId', type: 'String' }
+  ],
+  ADD_COMMENT: [
+    { name: 'momentId', type: 'String' },
+    { name: 'content', type: 'Object' },
+  ],
+  REMOVE_COMMENT: [
+    { name: 'momentId', type: 'String' },
+    { name: 'commentIds', type: 'Array' },
+  ],
+  GET_COMMENT_LIST: [
+    { name: 'momentId', type: 'String' },
+  ],
+  ADD_REACTION: [
+    { name: 'momentId', type: 'String' },
+    { name: 'reaction', type: 'Object' },
+  ],
+  DELETE_REACTION: [
+    { name: 'momentId', type: 'String' },
+    { name: 'reaction', type: 'Object' },
+  ],
+  GET_REACTION_LIST: [
+    { name: 'momentId', type: 'String' },
+  ],
 };
 export let COMMAND_TOPICS = {
   HISTORY_MESSAGES: 'qry_hismsgs',
@@ -745,3 +774,19 @@ export let PUSH_CHANNEL = {
   HUAWEI: 2,
   XIAOMI: 3,
 };
+
+export let MOMENT_ORDER = {
+  // 正序
+  ASC: 1,
+  // 倒序
+  DESC: 0
+};
+export let COMMENT_ORDER = {
+  // 正序
+  ASC: 1,
+  // 倒序
+  DESC: 0
+};
+export let RESPONSE_CODE = {
+  SUCCESS: 0
+}

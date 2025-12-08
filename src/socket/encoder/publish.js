@@ -10,7 +10,7 @@ export default async function({ data, callback, index }, io){
   
   let { msgEncryptHook } = io.getConfig();
   msgEncryptHook = msgEncryptHook || {};
-  if(!utils.isAsyncFunction(msgEncryptHook.onEncrypt)){
+  if(!utils.isAsyncFunction(msgEncryptHook.onEncrypt) && !utils.isFunction(msgEncryptHook.onEncrypt)){
     msgEncryptHook = {
       onEncrypt: async (data) => {
         return data.buffer;

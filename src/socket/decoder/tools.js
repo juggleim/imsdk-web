@@ -16,7 +16,7 @@ async function msgFormat(msg, { currentUser, io }) {
   if (msgContent && msgContent.length > 0) {
     let { msgEncryptHook } = io.getConfig();
     msgEncryptHook = msgEncryptHook || {};
-    if(!utils.isAsyncFunction(msgEncryptHook.onDecrypt)){
+    if(!utils.isAsyncFunction(msgEncryptHook.onDecrypt) && !utils.isFunction(msgEncryptHook.onDecrypt)){
       msgEncryptHook = {
         onDecrypt: async (data) => {
           return data.buffer;

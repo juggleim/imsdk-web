@@ -508,6 +508,8 @@ export default function(io, emitter, logger){
             conversationType: conversation.conversationType,
             conversationId: conversation.conversationId,
             sender: io.getCurrentUser(),
+            isSender: true,
+            sentTime: timestamp,
             content: {
               msgs: messages
             }

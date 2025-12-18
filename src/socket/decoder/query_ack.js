@@ -25,7 +25,7 @@ export default async function getQueryAckBody(stream, { cache, currentUser, io }
     result = getChatroomAttrsHandler(index, data, { targetId });
   }
 
-  if (utils.isInclude([COMMAND_TOPICS.CONVERSATIONS, COMMAND_TOPICS.SYNC_CONVERSATIONS, COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS], topic)) {
+  if (utils.isInclude([COMMAND_TOPICS.CONVERSATIONS, COMMAND_TOPICS.PUBLIC_CONVERSATIONS, COMMAND_TOPICS.SYNC_CONVERSATIONS, COMMAND_TOPICS.QUERY_TOP_CONVERSATIONS], topic)) {
     result = await getConversationsHandler(index, data, { topic, currentUser, io });
   }
 

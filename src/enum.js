@@ -283,6 +283,7 @@ export let FUNC_PARAM_CHECKER = {
 export let COMMAND_TOPICS = {
   HISTORY_MESSAGES: 'qry_hismsgs',
   CONVERSATIONS: 'qry_convers',
+  PUBLIC_CONVERSATIONS: 'qry_pc_convers',
   QUERY_TOP_CONVERSATIONS: 'qry_top_convers',
   SYNC_CONVERSATIONS: 'sync_convers',
   SYNC_MESSAGES: 'sync_msgs',

@@ -31,7 +31,7 @@ export default async function getQueryBody({ data, callback, index }, io){
     buffer = codec.encode(message).finish();
   }
 
-  if(utils.isEqual(topic, COMMAND_TOPICS.CONVERSATIONS)){
+  if(utils.isInclude([COMMAND_TOPICS.PUBLIC_CONVERSATIONS, COMMAND_TOPICS.CONVERSATIONS], topic)){
     let { count, time, order, conversationType, tag } = data;
     targetId = userId;
     let codec = Proto.lookup('codec.QryConversationsReq');
@@ -352,7 +352,12 @@ export default async function getQueryBody({ data, callback, index }, io){
     content = utils.toJSON(content);
     
     let modifyBuffer = JTextEncoder.encoder(content);
-    modifyBuffer = msgEncryptHook.onEncrypt(modifyBuffer);
+    modifyBuffer = await msgEncryptHook.onEncrypt({
+      buffer: modifyBuffer, 
+      name: msgName,
+      conversationType: channelType,
+      conversationId: conversationId,
+    });
 
     let message = codec.create({
       channelType,

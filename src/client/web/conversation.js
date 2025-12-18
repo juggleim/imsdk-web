@@ -259,6 +259,29 @@ export default function(io, emitter){
       });
     });
   };
+
+  let getPublicConversations = (params = {}) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, params, []);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let { count = 50, time = 0, conversationType, order = CONVERSATION_ORDER.FORWARD } = params;
+      order = utils.isEqual(order, CONVERSATION_ORDER.FORWARD) ? CONVERSATION_ORDER.FORWARD : CONVERSATION_ORDER.BACKWARD;
+      let user = io.getCurrentUser();
+      let _params = { topic: COMMAND_TOPICS.PUBLIC_CONVERSATIONS, time: 0, count, order, userId: user.id, conversationType };
+      utils.extend(_params, params);
+      io.sendCommand(SIGNAL_CMD.QUERY, _params, (result) => {
+        let { code, msg } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
+        let { conversations, isFinished } = result;
+        resolve({ conversations: utils.clone(conversations), isFinished: isFinished });
+      });
+    });
+  };
+
   let removeConversation = (conversations) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, conversations, FUNC_PARAM_CHECKER.REMOVECONVERSATION);
@@ -796,5 +819,6 @@ export default function(io, emitter){
     getConversationTags,
     addConversationsToTag,
     removeConversationsFromTag,
+    getPublicConversations
   };
 }

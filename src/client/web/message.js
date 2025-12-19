@@ -238,7 +238,7 @@ export default function(io, emitter, logger){
         msgContent = msgContent || message.content;
         
         let flagMap = common.formatter.toMsg(flag);
-        utils.extend(message, { name: msgType, content: msgContent, sentTime, messageId, ...flagMap, messageIndex: msgIndex, sentState: MESSAGE_SENT_STATE.SUCCESS });
+        utils.extend(message, { name: msgType, content: msgContent, sentTime, messageId, ...flagMap, flags: flag, messageIndex: msgIndex, sentState: MESSAGE_SENT_STATE.SUCCESS });
         if(lifeTime > 0){
           message.destroyTime = lifeTime + sentTime;
         }

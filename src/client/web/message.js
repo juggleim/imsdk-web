@@ -1373,6 +1373,82 @@ export default function(io, emitter, logger){
     });
   };
 
+  /* 
+    let options = {
+      // 必传
+      conversationId: '',
+
+      // 必传
+      conversationType: 1,
+
+      // 必传
+      keyword: '',
+
+      // 可选
+      count: 5
+    };
+  
+  */
+  let searchConversationMsgsFromCloud = (options) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, options, FUNC_PARAM_CHECKER.SEARCH_CONVERSATION_MSG);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let params = {
+        count: 5
+      };
+      params = utils.extend(params, options);
+      let user = io.getCurrentUser();
+      let data = {
+        ...params,
+        topic: COMMAND_TOPICS.MSG_CONVERSATION_SEARCH,
+        userId: user.id,
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code, searchResult, msg } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
+        resolve(searchResult);
+      });
+    });
+  };
+
+  /* 
+    let options = {
+      // 必传
+      keyword: '',
+      // 可选
+      count: 5
+    };
+  */
+  let searchGlobalMsgsFromCloud = (options) => {
+    return utils.deferred((resolve, reject) => {
+      let error = common.check(io, options, FUNC_PARAM_CHECKER.SEARCH_GLOBAL_MSG);
+      if(!utils.isEmpty(error)){
+        return reject(error);
+      }
+      let params = {
+        count: 5
+      };
+      params = utils.extend(params, options);
+      let user = io.getCurrentUser();
+      let data = {
+        ...params,
+        topic: COMMAND_TOPICS.MSG_GLOBAL_SEARCH,
+        userId: user.id
+      };
+      io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
+        let { code, searchResult, msg } = result;
+        if(!utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
+          return reject({code, msg});
+        }
+        resolve(searchResult);
+      });
+    });
+  };
+
   return {
     sendMessage,
     sendMassMessage,
@@ -1408,6 +1484,8 @@ export default function(io, emitter, logger){
     removeFavoriteMessages,
     getFavoriteMessages,
     getContextMessages,
+    searchConversationMsgsFromCloud,
+    searchGlobalMsgsFromCloud,
     _uploadFile,
   };
 }

@@ -671,6 +671,20 @@ export default async function getQueryBody({ data, callback, index }, io){
     targetId = userId;
     buffer = codec.encode(message).finish();
   }
+  if(utils.isEqual(COMMAND_TOPICS.MSG_CONVERSATION_SEARCH, topic)){
+    let { conversationId, conversationType: channelType, keyword, count } = data;
+    let codec = Proto.lookup('codec.SearchMsgsReq');
+    let message = codec.create({ keyword, count, channelType, targetId: conversationId });
+    targetId = conversationId;
+    buffer = codec.encode(message).finish();
+  }
+  if(utils.isEqual(COMMAND_TOPICS.MSG_GLOBAL_SEARCH, topic)){
+    let { keyword, count, userId } = data;
+    let codec = Proto.lookup('codec.SearchMsgsReq');
+    let message = codec.create({ keyword, count });
+    targetId = userId;
+    buffer = codec.encode(message).finish();
+  }
   let codec = Proto.lookup('codec.QueryMsgBody');
   let message = codec.create({ index, topic, targetId, data: buffer });
   let _buffer = codec.encode(message).finish();

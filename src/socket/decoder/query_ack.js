@@ -30,7 +30,7 @@ export default async function getQueryAckBody(stream, { cache, currentUser, io }
   }
 
   if (utils.isEqual(topic, COMMAND_TOPICS.GET_CONVERSATION)) {
-    result = await getConversationHandler(index, data, { currentUser });
+    result = await getConversationHandler(index, data, { currentUser, io });
   }
 
   if (utils.isEqual(topic, COMMAND_TOPICS.GET_UNREAD_TOTLAL_CONVERSATION)) {
@@ -88,7 +88,15 @@ export default async function getQueryAckBody(stream, { cache, currentUser, io }
   if(utils.isInclude([COMMAND_TOPICS.RTC_CREATE_ROOM, COMMAND_TOPICS.RTC_JOIN_ROOM, COMMAND_TOPICS.RTC_QRY_ROOM], topic)){
     result = getRTCRoom(index, data);
   }
-  
+
+  if(utils.isEqual(topic, COMMAND_TOPICS.MSG_CONVERSATION_SEARCH)){
+    result = await getConversationSearch(index, data, { currentUser, io });
+  }
+
+  if(utils.isEqual(topic, COMMAND_TOPICS.MSG_GLOBAL_SEARCH)){
+    result = await getGlobalSearch(index, data, { currentUser, io });
+  }
+
   result = utils.extend(result, { code, timestamp, index });
   return result;
 };
@@ -246,10 +254,10 @@ function getTotalUnread(index, data) {
 }
 
 
-async function getConversationHandler(index, data, { currentUser }) {
+async function getConversationHandler(index, data, options = {}) {
   let payload = Proto.lookup('codec.Conversation');
   let item = payload.decode(data);
-  let conversations = await tools.formatConversations([item], { currentUser});
+  let conversations = await tools.formatConversations([item], options);
   let conversation = conversations[0] || {};
   return { conversation, index };
 }
@@ -324,4 +332,27 @@ function getRTCRoom(index, data){
   let payload = Proto.lookup('codec.RtcRoom');
   let result = payload.decode(data);
   return { room: tools.formatRTCRoom(result) };
+}
+
+async function getConversationSearch(index, data, { currentUser, io }){
+  let payload = Proto.lookup('codec.SearchMsgsResp');
+  let result = payload.decode(data);
+  let searchResult = await tools.searchConversationFormat(result, { currentUser, io });
+  return { searchResult, index };
+}
+
+async function getGlobalSearch(index, data, { currentUser, io }){
+  let payload = Proto.lookup('codec.QryGlobalSearchResp');
+  let result = payload.decode(data);
+  let { maxScore, items } = result;
+  let list = await utils.Defer.all(
+    utils.map(items, async (item) => {
+      return await tools.searchConversationFormat(item, { currentUser, io });
+    })
+  );
+  let searchResult = {
+    matchCount: maxScore,
+    items: list,
+  };
+  return { searchResult, index };
 }

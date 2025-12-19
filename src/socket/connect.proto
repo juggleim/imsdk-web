@@ -785,3 +785,24 @@ enum PushChannel{
 message PushSwitch{
   int32 switch = 1;  //0：关闭；1：开启；
 }
+message SearchMsgsReq{
+  string targetId = 1;
+  ChannelType channelType = 2;
+  string keyword = 3;
+  int32 count = 4;
+}
+message BatchSearchMsgsResp{
+  repeated SearchMsgsResp items = 1;
+  double maxScore = 2;
+}
+message SearchMsgsResp{
+  string targetId = 1;
+  ChannelType channelType = 2;
+  repeated SearchMsgItem items = 3;
+  double maxScore = 4;
+}
+message SearchMsgItem{
+  string highlightText = 1;
+  DownMsg msg = 2;
+  double score = 3;
+}

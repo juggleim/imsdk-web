@@ -524,5 +524,26 @@ function formatStream(item){
   }
   return { event, seq: subSeq, content };
 }
-
-export default { msgFormat, formatConversations, formatRTCRoom, formatStreams }
+async function searchMsgsFormat(items, { currentUser, io }){
+  items = await utils.Defer.all(
+    utils.map(items, async (item) => {
+      let { highlightText, msg, score } = item;
+      return {
+        highlightText,
+        matchCount: score,
+        message: await msgFormat(item, { currentUser, io }),
+      };
+    })
+  );
+  return items;
+}
+async function searchConversationFormat(result, { currentUser, io }){
+  let { targetId, channelType, items, maxScore } = result;
+  return {
+    conversationId: targetId,
+    conversationType: channelType,
+    items: await searchMsgsFormat(items, { currentUser, io }),
+    matchCount: maxScore,
+  };
+}
+export default { msgFormat, formatConversations, formatRTCRoom, formatStreams, searchConversationFormat }

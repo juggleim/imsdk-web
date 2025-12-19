@@ -2296,6 +2296,76 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 1
           }
         }
+      },
+      SearchMsgsReq: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 2
+          },
+          keyword: {
+            type: "string",
+            id: 3
+          },
+          count: {
+            type: "int32",
+            id: 4
+          }
+        }
+      },
+      BatchSearchMsgsResp: {
+        fields: {
+          items: {
+            rule: "repeated",
+            type: "SearchMsgsResp",
+            id: 1
+          },
+          maxScore: {
+            type: "double",
+            id: 2
+          }
+        }
+      },
+      SearchMsgsResp: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 2
+          },
+          items: {
+            rule: "repeated",
+            type: "SearchMsgItem",
+            id: 3
+          },
+          maxScore: {
+            type: "double",
+            id: 4
+          }
+        }
+      },
+      SearchMsgItem: {
+        fields: {
+          highlightText: {
+            type: "string",
+            id: 1
+          },
+          msg: {
+            type: "DownMsg",
+            id: 2
+          },
+          score: {
+            type: "double",
+            id: 3
+          }
+        }
       }
     }
   }

@@ -101,7 +101,9 @@ export let FUNC_PARAM_CHECKER = {
   GET_MESSAGE_READ_DETAILS: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }],
   UPDATEMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'tid' }, { name: 'sentTime' }, { name: 'messageId' }, { name: 'content' }, { name: 'msgName' }],
   GET_MENTIOIN_MESSAGES: [{ name: 'conversationType' }, { name: 'conversationId' }],
-  SEARCH_MESSAGES: [{ name: 'keywords', type: 'Array' }],
+  SEARCH_MESSAGES: [{ name: 'keyword', type: 'Array' }],
+  SEARCH_CONVERSATION_MSG: [{ name: 'keyword', type: 'String' }, { name: 'conversationType' }, { name: 'conversationId' }],
+  SEARCH_GLOBAL_MSG: [{ name: 'keyword', type: 'String' }],
   UPDATE_MESSAGE_ATTR: [{ name: 'tid' }, { name: 'attribute', type: 'String' }],
   SET_MESSAGE_SEARCH_CONTENT: [{ name: 'tid' }, { name: 'content', type: 'String' }],
   UPLOAD_PUSH_TOKEN: [{ name: 'deviceId'}, { name: 'platform' }, { name: 'pushChannel' }, { name: 'pushToken' }, { name: 'packageName' }],
@@ -307,6 +309,8 @@ export let COMMAND_TOPICS = {
   MSG_ADD_FAVORITE: 'add_favorite_msgs',
   MSG_REMOVE_FAVORITE: 'del_favorite_msgs',
   MSG_QRY_FAVORITE: 'qry_favorite_msgs',
+  MSG_CONVERSATION_SEARCH: 'msg_search',
+  MSG_GLOBAL_SEARCH: 'msg_global_search',
   
   GET_FIRST_UNREAD_MSG: 'qry_first_unread_msg',
 

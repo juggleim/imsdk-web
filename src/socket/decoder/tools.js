@@ -164,7 +164,7 @@ async function msgFormat(msg, { currentUser, io }) {
   }
   utils.extend(_message, { streams });
 
-  if (utils.isEqual(conversationType, CONVERATION_TYPE.GROUP)) {
+  if (utils.isInclude([CONVERATION_TYPE.GROUP, CONVERATION_TYPE.PUBLICH], conversationType)) {
     let { groupName, groupPortrait, extFields, groupId, updatedTime } = groupInfo || {
       extFields: {}
     };

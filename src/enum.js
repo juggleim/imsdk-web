@@ -525,7 +525,8 @@ export let CONVERATION_TYPE = {
   PRIVATE: 1,
   GROUP: 2,
   CHATROOM: 3,
-  SYSTEM: 4
+  SYSTEM: 4,
+  PUBLICH: 7
 };
 
 export let MESSAGE_ORDER = {

@@ -101,7 +101,7 @@ export let FUNC_PARAM_CHECKER = {
   GET_MESSAGE_READ_DETAILS: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'messageId' }],
   UPDATEMESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'tid' }, { name: 'sentTime' }, { name: 'messageId' }, { name: 'content' }, { name: 'msgName' }],
   GET_MENTIOIN_MESSAGES: [{ name: 'conversationType' }, { name: 'conversationId' }],
-  SEARCH_MESSAGES: [{ name: 'keyword', type: 'Array' }],
+  SEARCH_MESSAGES: [{ name: 'keywords', type: 'Array' }],
   SEARCH_CONVERSATION_MSG: [{ name: 'keyword', type: 'String' }, { name: 'conversationType' }, { name: 'conversationId' }],
   SEARCH_GLOBAL_MSG: [{ name: 'keyword', type: 'String' }],
   UPDATE_MESSAGE_ATTR: [{ name: 'tid' }, { name: 'attribute', type: 'String' }],

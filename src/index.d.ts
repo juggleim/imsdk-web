@@ -205,6 +205,7 @@ declare class Message {
   conversationTitle?: string;
   conversationPortrait?: string;
   conversationExts?: string;
+  conversationAlias: string;
   tid?: string;
   messageId?: string;
   name: string;
@@ -337,6 +338,7 @@ interface SearchMatchMsg {
   conversationExts: string;
   conversationPortrait: string;
   conversationTitle: string;
+  conversationAlias: string;
   matchedCount: number;
   matchedList: Message[];
 }

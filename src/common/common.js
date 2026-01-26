@@ -1,5 +1,5 @@
 import utils from "../utils";
-import { ErrorType, STORAGE, ErrorMessages, MESSAGE_TYPE, UPLOAD_TYPE, UNREAD_TAG } from "../enum";
+import { ErrorType, STORAGE, ErrorMessages, MESSAGE_TYPE, UPLOAD_TYPE, UNREAD_TAG, CONVERATION_TYPE } from "../enum";
 import Storage from "./storage";
 import Uploader from "./uploader";
 import JSessionStorage from "../provoider/session/index";
@@ -251,9 +251,14 @@ function ConversationUtils(){
 
       if(!utils.isEqual(index, -1)){
         conversation = conversations.splice(index, 1)[0]; 
-        let { conversationTitle, conversationPortrait } = latestMessage;
+        let { conversationTitle, conversationPortrait, friendAlias } = latestMessage;
         conversationTitle = conversationTitle || item.conversationTitle;
         conversationPortrait = conversationPortrait || item.conversationPortrait;
+
+        let conversationAlias = conversation.conversationAlias;
+        if(utils.isEqual(CONVERATION_TYPE.PRIVATE, conversation.conversationType)){
+          conversationAlias = friendAlias;
+        }
 
         if(utils.isEmpty(conversationTitle)){
           conversationTitle = conversation.conversationTitle;
@@ -273,6 +278,7 @@ function ConversationUtils(){
           conversationTitle, 
           conversationPortrait,
           conversationExts,
+          conversationAlias,
           mentions,
           updatedTime,
           undisturbType,

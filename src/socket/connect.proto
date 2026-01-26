@@ -188,6 +188,12 @@ message DownMsg{
     string subChannel = 34;
     repeated string toUserIds = 35;
     int64 readTime = 36;
+    FriendInfo friendInfo = 37;
+}
+message FriendInfo{
+    bool isFriend = 1;
+    string friendDisplayName = 2;
+    int64 updatedTime = 3;
 }
 message GrpMemberInfo{
     string grpDisplayName = 1;
@@ -301,6 +307,8 @@ message Conversation{
     string latestReadMsgId = 18;
     int64 latestReadMsgTime = 19;
     repeated ConverTag converTags = 20;
+    GrpMemberInfo grpInfo = 21;
+    FriendInfo friendInfo = 22;
 }
 
 message Mentions{

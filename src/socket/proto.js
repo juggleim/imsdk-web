@@ -604,6 +604,26 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           readTime: {
             type: "int64",
             id: 36
+          },
+          friendInfo: {
+            type: "FriendInfo",
+            id: 37
+          }
+        }
+      },
+      FriendInfo: {
+        fields: {
+          isFriend: {
+            type: "bool",
+            id: 1
+          },
+          friendDisplayName: {
+            type: "string",
+            id: 2
+          },
+          updatedTime: {
+            type: "int64",
+            id: 3
           }
         }
       },
@@ -945,6 +965,14 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             rule: "repeated",
             type: "ConverTag",
             id: 20
+          },
+          grpInfo: {
+            type: "GrpMemberInfo",
+            id: 21
+          },
+          friendInfo: {
+            type: "FriendInfo",
+            id: 22
           }
         }
       },

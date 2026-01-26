@@ -10,7 +10,7 @@ async function msgFormat(msg, { currentUser, io }) {
         senderId, unreadIndex, memberCount, referMsg, readCount, msgId, msgTime, 
         msgType, msgContent, type: conversationType, targetId: conversationId, mentionInfo, 
         isSend, msgIndex, isRead, flags, targetUserInfo, groupInfo,
-        grpMemberInfo, destroyTime, lifeTimeAfterRead, readTime
+        grpMemberInfo, destroyTime, lifeTimeAfterRead, readTime, friendInfo
     } = msg;
   let content = '';
   if (msgContent && msgContent.length > 0) {
@@ -118,6 +118,10 @@ async function msgFormat(msg, { currentUser, io }) {
   if(utils.isEqual(CONVERATION_TYPE.GROUP, conversationType)){
     groupMember = common.formatGroupMember(grpMemberInfo);
   }
+  let _friendInfo = {};
+  if(utils.isEqual(CONVERATION_TYPE.PRIVATE, conversationType) && !utils.isNull(friendInfo)){
+    _friendInfo = friendInfo;
+  }
   
   let _message = {
     conversationType,
@@ -127,6 +131,7 @@ async function msgFormat(msg, { currentUser, io }) {
     conversationExts: {},
     sender: utils.clone(targetUser),
     groupMember: groupMember,
+    friendAlias: _friendInfo.friendDisplayName || '',
     messageId: msgId,
     tid: msgId,
     sentTime: msgTime,
@@ -402,6 +407,7 @@ async function formatConversations(conversations, options = {}) {
         isTop,
         unreadTag,
         converTags,
+        friendInfo
       } = conversation;
       if (!msg) {
         msg = { msgContent: [] };
@@ -470,6 +476,11 @@ async function formatConversations(conversations, options = {}) {
         let { tag: id, tagName: name, tagType: type } = item;
         return { id, name, type };
       });
+      if(utils.isNull(friendInfo)){
+        friendInfo = {
+          friendDisplayName: ''
+        };
+      }
       return {
         conversationType,
         conversationId: targetId,
@@ -482,6 +493,7 @@ async function formatConversations(conversations, options = {}) {
         conversationUpdatedTime,
         conversationUserType,
         conversationExts,
+        conversationAlias: friendInfo.friendDisplayName,
         mentions,
         syncTime,
         undisturbType: undisturbType || 0,
@@ -489,7 +501,7 @@ async function formatConversations(conversations, options = {}) {
         latestUnreadIndex,
         unreadTag,
         tags,
-        isTop: !!isTop,
+        isTop: !!isTop
       };
     })
   );

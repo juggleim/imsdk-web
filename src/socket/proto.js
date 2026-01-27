@@ -613,17 +613,21 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
       },
       FriendInfo: {
         fields: {
+          friendId: {
+            type: "string",
+            id: 1
+          },
           isFriend: {
             type: "bool",
-            id: 1
+            id: 2
           },
           friendDisplayName: {
             type: "string",
-            id: 2
+            id: 3
           },
           updatedTime: {
             type: "int64",
-            id: 3
+            id: 4
           }
         }
       },

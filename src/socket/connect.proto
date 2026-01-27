@@ -191,9 +191,10 @@ message DownMsg{
     FriendInfo friendInfo = 37;
 }
 message FriendInfo{
-    bool isFriend = 1;
-    string friendDisplayName = 2;
-    int64 updatedTime = 3;
+    string friendId = 1;
+    bool isFriend = 2;
+    string friendDisplayName = 3;
+    int64 updatedTime = 4;
 }
 message GrpMemberInfo{
     string grpDisplayName = 1;

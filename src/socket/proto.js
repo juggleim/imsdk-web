@@ -608,6 +608,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           friendInfo: {
             type: "FriendInfo",
             id: 37
+          },
+          senderInfo: {
+            type: "UserInfo",
+            id: 38
           }
         }
       },

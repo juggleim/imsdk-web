@@ -189,6 +189,7 @@ message DownMsg{
     repeated string toUserIds = 35;
     int64 readTime = 36;
     FriendInfo friendInfo = 37;
+    UserInfo senderInfo = 38;
 }
 message FriendInfo{
     string friendId = 1;

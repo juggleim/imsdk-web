@@ -9,6 +9,7 @@ import common from "../../common/common";
 import Uploder from "../../common/uploader";
 import MessageCacher from "../../common/msg-cacher";
 import chatroomCacher from "../../common/chatroom-cacher";
+import streamStorge from "../../common/stream-storge";
 
 export default function(io, emitter, logger){
   let messageCacher = MessageCacher();
@@ -132,7 +133,31 @@ export default function(io, emitter, logger){
       };
       return emitter.emit(EVENT.MESSAGE_READ, notify);
     }
-    if(!messageCacher.isInclude(message) || utils.isEqual(message.name, MESSAGE_TYPE.STREAM_TEXT)){
+    if(utils.isEqual(MESSAGE_TYPE.STREAM_TEXT, message.name)){
+      let { content, is_finished } = message.content;
+      streamStorge.add(message.messageId, { content, seq: 1 });
+    }
+    if(utils.isEqual(message.name, MESSAGE_TYPE.STREAM_APPEND)){
+      let { content, is_finished, seq, stream_id } = message.content;
+      if(is_finished){
+        emitter.emit(EVENT.STREAM_COMPLETED, {
+          messageId: stream_id,
+          content: content,
+        });
+        streamStorge.remove(stream_id);
+      }else{
+        emitter.emit(EVENT.STREAM_APPENDED, {
+          messageId: stream_id,
+          content: content,
+          seq: seq,
+        });
+        streamStorge.add(stream_id, {
+          content, seq
+        });
+      }
+      return;
+    }
+    if(!messageCacher.isInclude(message)){
       emitter.emit(EVENT.MESSAGE_RECEIVED, [message, isPullFinished]);
       let { conversationId, conversationType } = message;
       messageCacher.add({ conversationId, conversationType }, message);
@@ -335,6 +360,19 @@ export default function(io, emitter, logger){
           return reject({code, msg});
         }
         // messageCacher.add(conversation, messages);
+        result.messages = utils.map(messages, (message) => {
+          if(utils.isEqual(message.name, MESSAGE_TYPE.STREAM_TEXT)){
+            let { content: { content }, messageId } = message;
+            let contentList = streamStorge.get(messageId);
+            let contentStr = utils.map(contentList, (item) => {
+              return item.content
+            }).join('');
+            if(!utils.isEmpty(contentStr)){
+              message.content.content = contentStr;
+            }
+          }
+          return message;
+        });
         resolve(result);
       });
     });

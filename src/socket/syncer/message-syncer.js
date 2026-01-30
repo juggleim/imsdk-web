@@ -26,7 +26,7 @@ export default function MessageSyncer(send, emitter, io, { logger }) {
     function publish(item, next) {
       let { msg } = item;
       let isNewMsg = common.updateSyncTime({...msg, io});
-      if (isNewMsg || utils.isEqual(msg.name, MESSAGE_TYPE.STREAM_TEXT)) {
+      if (isNewMsg) {
         let { msgIndex, ackIndex } = msg;
         let data = { msgIndex, ackIndex };
         send(SIGNAL_CMD.PUBLISH_ACK, data);

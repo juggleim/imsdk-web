@@ -639,7 +639,8 @@ export let ErrorType = getErrorType();
 
 export let MESSAGE_TYPE = {
   TEXT: 'jg:text',
-  STREAM_TEXT: 'jgs:text',
+  STREAM_TEXT: 'jg:streamtext',
+  STREAM_APPEND: 'jg:streamappend',
   IMAGE: 'jg:img',
   VOICE: 'jg:voice',
   VIDEO: 'jg:video',

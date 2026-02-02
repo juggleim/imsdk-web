@@ -59,10 +59,11 @@ let formatMsgs = ({ messages, senders, groups }) => {
   return _messages;
 };
 
-let formatConversation = ({conversation, users, groups}) => {
+let formatConversation = ({conversation, users, groups, friends}) => {
   if(utils.isEmpty(conversation)){
     return conversation;
   }
+  friends = friends || [];
   let { 
     id,
     type,
@@ -107,6 +108,13 @@ let formatConversation = ({conversation, users, groups}) => {
       return utils.isEqual(user.id, id);
     })[0] || { id };
   }
+  let conversationAlias = target.name;
+  if(!isGroup(type)){
+    let friend = utils.filter(friends, (friend) => {
+      return utils.isEqual(friend.id, id);
+    })[0] || { display_name: target.name };
+    conversationAlias = friend.display_name;
+  }
   unreadCount = unreadCount > 0 ? unreadCount : 0;
   let _conversation = {
     conversationId: id,
@@ -114,6 +122,7 @@ let formatConversation = ({conversation, users, groups}) => {
     conversationPortrait: target.portrait,
     conversationTitle: target.name,
     conversationExts: target.exts,
+    conversationAlias: conversationAlias,
     draft: draft || "",
     isTop: Boolean(isTop),
     undisturbType: undisturbType,
@@ -151,9 +160,9 @@ let formatConversation = ({conversation, users, groups}) => {
   }
   return _conversation;
 };
-let formatConversations = ({ conversations, users, groups }) => {
+let formatConversations = ({ conversations, users, groups, friends }) => {
   let _converations = utils.map(conversations, (conversation) => {
-    let _converation = formatConversation({ conversation, users, groups });
+    let _converation = formatConversation({ conversation, users, groups, friends });
     return _converation;
   });
   return _converations;

@@ -29,8 +29,8 @@ export default function($conversation, { conversationUtils, webAgent }){
   let invokes = common.formatProvider(funcs, $conversation);
 
   invokes.getConversations = (params = {}) => {
-    return $conversation.getConversations(params).then(({ conversations, groups, users, isFinished }) => {
-      let _conversations = tools.formatConversations({ conversations, users, groups });
+    return $conversation.getConversations(params).then(({ conversations, groups, users, friends, isFinished }) => {
+      let _conversations = tools.formatConversations({ conversations, users, groups, friends});
       // 不指定会话类型时向内存中插入数据
       if(utils.isUndefined(params.conversationType)){
         conversationUtils.add(_conversations);

@@ -2402,6 +2402,27 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 3
           }
         }
+      },
+      SubStreamMsgsReq: {
+        fields: {
+          subStreamMsgs: {
+            rule: "repeated",
+            type: "SubStream",
+            id: 1
+          }
+        }
+      },
+      SubStream: {
+        fields: {
+          streamMsgId: {
+            type: "string",
+            id: 1
+          },
+          startSeq: {
+            type: "int64",
+            id: 2
+          }
+        }
       }
     }
   }

@@ -369,6 +369,8 @@ export let COMMAND_TOPICS = {
 
   UPLOAD_PUSH_TOKEN: 'reg_push_token',
   SWITCH_PUSH: 'push_switch',
+
+  SUB_STREAM_MSGS: 'sub_stream_msg'
 };
 export let NOTIFY_TYPE = {
   DEFAULT: 0,
@@ -641,6 +643,7 @@ export let MESSAGE_TYPE = {
   TEXT: 'jg:text',
   STREAM_TEXT: 'jg:streamtext',
   STREAM_APPEND: 'jg:streamappend',
+  STREAM_COMPLETE: 'jg:streamcomplete',
   IMAGE: 'jg:img',
   VOICE: 'jg:voice',
   VIDEO: 'jg:video',

@@ -478,6 +478,19 @@ function formatToQueryStr(obj) {
     })
     .join('&');
 }
+function max(arr, key) {
+  if (!isArray(arr) || arr.length === 0) {
+    return arr;
+  }
+  if (arr.length === 1) {
+    return arr[0];
+  }
+  return arr.reduce((maxItem, currentItem) => {
+    const maxVal = Number(maxItem[key]) || 0;
+    const currentVal = Number(currentItem[key]) || 0;
+    return currentVal > maxVal ? currentItem : maxItem;
+  }, arr[0]);
+}
 export default {
   Prosumer,
   Observer,
@@ -531,4 +544,5 @@ export default {
   getDeviceID,
   formatToQueryStr,
   isAsyncFunction,
+  max
 }

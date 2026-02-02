@@ -816,3 +816,10 @@ message SearchMsgItem{
   DownMsg msg = 2;
   double score = 3;
 }
+message SubStreamMsgsReq{
+    repeated SubStream subStreamMsgs = 1;
+}
+message SubStream{
+    string streamMsgId = 1;
+    int64 startSeq = 2;
+}

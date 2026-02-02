@@ -319,11 +319,11 @@ export default function IO(config){
 
   let bufferHandler = async (buffer) => {
     let { cmd, result, name } = await decoder.decode(buffer);
-    
-    logger.info({ tag: LOG_MODULE.WS_RECEIVE, cmd, code: result.code });
-    
     let { index } = result;
-    let { callback, data, counter } = cache.get(index);
+    let { callback, data, counter, topic } = cache.get(index);
+
+    logger.info({ tag: LOG_MODULE.WS_RECEIVE, cmd, code: result.code, topic });
+    
     // 清空计时器，与 counter.start 对应
     if(counter){
       counter.clear();

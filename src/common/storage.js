@@ -43,9 +43,13 @@ let remove = (key) => {
 let setPrefix = (str) => {
   _storage_private_prefix_ = str;
 };
+let getAll = () => {
+  return storageCacher.getAll();
+};
 export default {
   get,
   set,
   remove,
-  setPrefix
+  setPrefix,
+  getAll
 }

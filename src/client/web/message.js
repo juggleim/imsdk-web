@@ -138,31 +138,31 @@ export default function(io, emitter, logger){
       let { messageId } = message;
       if(!is_finished){
         streamStorge.add(messageId, { content, seq: 1 });
-        subStreamMessage([{
-          streamMsgId: messageId,
-          startSeq: 1
-        }]);
       }
-    }
-    if(utils.isEqual(message.name, MESSAGE_TYPE.STREAM_COMPLETE)){
-      let { content: { stream_id, content } } = message;
-      streamStorge.remove(stream_id);
-      emitter.emit(EVENT.STREAM_COMPLETED, {
-        messageId: stream_id,
-        content: content,
-      });
-      return;
+      message.content = utils.rename(message.content, { is_finished: 'isFinished', stream_id: 'streamId'})
     }
     if(utils.isEqual(message.name, MESSAGE_TYPE.STREAM_APPEND)){
-      let { content, seq, stream_id } = message.content;
-      emitter.emit(EVENT.STREAM_APPENDED, {
-        messageId: stream_id,
-        content: content,
-        seq: seq,
-      });
-      streamStorge.add(stream_id, {
-        content, seq
-      });
+      let { content, seq, stream_id, is_finished } = message.content;
+      let contentList = streamStorge.get(stream_id);
+      if(utils.isEmpty(contentList)){
+        return;
+      }
+      if(is_finished){
+        streamStorge.remove(stream_id);
+        emitter.emit(EVENT.STREAM_COMPLETED, {
+          messageId: stream_id,
+          content: content,
+        });
+      }else{
+        emitter.emit(EVENT.STREAM_APPENDED, {
+          messageId: stream_id,
+          content: content,
+          seq: seq,
+        });
+        streamStorge.add(stream_id, {
+          content, seq
+        });
+      }
       return;
     }
     if(!messageCacher.isInclude(message)){
@@ -368,7 +368,6 @@ export default function(io, emitter, logger){
           return reject({code, msg});
         }
         // messageCacher.add(conversation, messages);
-        let unFinishedStreamMsgs = [];
         result.messages = utils.map(messages, (message) => {
           if(utils.isEqual(message.name, MESSAGE_TYPE.STREAM_TEXT)){
             let { content: { content }, messageId } = message;
@@ -386,34 +385,15 @@ export default function(io, emitter, logger){
             }
             if(is_finished){
               streamStorge.remove(message.messageId);
-            }else{
-              // 本地如果没有，直接从头开始订阅
-              maxStream = utils.isEmpty(maxStream) ? { seq: 1 } : maxStream
-              unFinishedStreamMsgs.push({
-                streamMsgId: message.messageId,
-                startSeq: maxStream.seq
-              });
             }
             message.content = utils.rename(message.content, { is_finished: 'isFinished', stream_id: 'streamId'})
           }
           return message;
         });
-        if(!utils.isEmpty(unFinishedStreamMsgs)){
-          subStreamMessage(unFinishedStreamMsgs);
-        }
         resolve(result);
       });
     });
   };
-  function subStreamMessage(unFinishedStreamMsgs){
-    let { id: userId } = io.getCurrentUser();
-    let queryParams = {
-      userId: userId,
-      topic: COMMAND_TOPICS.SUB_STREAM_MSGS,
-      subMsgList: unFinishedStreamMsgs
-    };
-    io.sendCommand(SIGNAL_CMD.QUERY, queryParams, utils.noop);
-  }
   let getMessagesByIds = (params) => {
     return utils.deferred((resolve, reject) => {
       let error = common.check(io, params, FUNC_PARAM_CHECKER.GETMSG);

@@ -31,16 +31,6 @@ export default async function getQueryBody({ data, callback, index }, io){
     buffer = codec.encode(message).finish();
   }
 
-  if(utils.isEqual(topic, COMMAND_TOPICS.SUB_STREAM_MSGS)){
-    let { subMsgList } = data;
-    let codec = Proto.lookup('codec.SubStreamMsgsReq');
-    let message = codec.create({
-      subStreamMsgs: subMsgList
-    });
-    targetId = userId;
-    buffer = codec.encode(message).finish();
-  }
-
   if(utils.isInclude([COMMAND_TOPICS.PUBLIC_CONVERSATIONS, COMMAND_TOPICS.CONVERSATIONS], topic)){
     let { count, time, order, conversationType, tag } = data;
     targetId = userId;

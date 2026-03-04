@@ -129,10 +129,14 @@ export default function(io, emitter, logger) {
       params = params || {
         order: MOMENT_ORDER.DESC,
         start: 0,
-        limit: 20
+        limit: 20,
+        userId: ''
       };
       if(params.limit > 50){
         params.limit = 50;
+      }
+      if(!utils.isEmpty(params.userId)){
+        params = utils.rename(params, { userId: 'user_id' });
       }
       let queryStr = utils.formatToQueryStr(params);
       let url = getRequestUrl(`momentgateway/moments/list?${queryStr}`);

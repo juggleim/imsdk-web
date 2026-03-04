@@ -12,11 +12,6 @@ export default function(io, emitter){
   let conversationUtils = common.ConversationUtils();
 
   io.on(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, (message) => {
-
-    let msgFlag = common.formatter.toMsg(message.flags) || {};
-    if(!msgFlag.isStorage){
-      return;
-    }
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_MSG_EXSET)){
       return;
     }
@@ -199,6 +194,12 @@ export default function(io, emitter){
       }
       utils.extend(message, { name: latestMessage.name, isUpdated: true });
     }
+
+    let msgFlag = common.formatter.toMsg(message.flags) || {};
+    if(!msgFlag.isStorage){
+      return;
+    }
+
     next(message);
 
     function next(message){

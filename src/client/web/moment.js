@@ -435,7 +435,8 @@ export default function(io, emitter, logger) {
       },
       user: user,
       reactions: reactions,
-      topComments: topComments
+      topComments: topComments,
+      momentTime: moment_time,
     };
   };
 

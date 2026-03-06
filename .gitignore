@@ -6,3 +6,4 @@ release
 .vscode
 .nyc_output
 coverage
+.claude

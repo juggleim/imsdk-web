@@ -33,13 +33,13 @@ export default function(io, emitter, logger){
     }
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
-      let { conversationType, conversationId, content: { content, messageId, sentTime } } = message;
+      let { conversationType, conversationId, content: { content, messageId, sentTime, name } } = message;
       let newContent = content;
       if(utils.isBase64(content)){
         let str = utils.decodeBase64(content);
         newContent = utils.parse(str);
       }
-      return emitter.emit(EVENT.MESSAGE_UPDATED, { conversationType, conversationId, messageId, content: newContent });
+      return emitter.emit(EVENT.MESSAGE_UPDATED, { conversationType, conversationId, messageId, content: newContent, name });
     }
     
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_MSG_SET_TOP)){
@@ -632,7 +632,8 @@ export default function(io, emitter, logger){
           isUpdated: true,
           content: {
             messageId: message.messageId,
-            content: message.content
+            content: message.content,
+            name: message.msgName
           }
         });
         resolve();

@@ -12,8 +12,7 @@ let detect = (urls, callback, option = {}) => {
     
     domain = domain.replace(/http:\/\/|https:\/\/|file:\/\/|wss:\/\/|ws:\/\//g, '');
     let url = `${http}//${domain}/health`;
-    let options = {};
-    let xhr = jrequest.requestNormal(url, options, {
+    let xhr = jrequest.requestNormal(url, option, {
       success: function(result, $xhr){
         if(utils.isEmpty(superior)){
           let { responseURL } = $xhr;

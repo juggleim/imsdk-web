@@ -23,7 +23,7 @@ import JWebSocket from "../provoider/websocket/index"
 import NetworkWatcher from "../common/network-watcher";
 /* 
   fileCompressLimit: 图片缩略图压缩限制，小于设置数值将不执行压缩，单位 KB
-  config = { appkey, nav, isSync, upload, uploadType, fileCompressLimit }
+  config = { appkey, nav, isSync, upload, uploadType, fileCompressLimit, connectHeaders, signKey }
 */
 export default function IO(config){
   let emitter = Emitter();
@@ -31,7 +31,6 @@ export default function IO(config){
   if(!utils.isArray(navList)){
     navList = ['https://nav.fake.com'];
   }
-  
   /* 
     pool = {
 
@@ -144,14 +143,38 @@ export default function IO(config){
     cache.set(STORAGE.CRYPTO_RANDOM, utils.getRandoms(8));
     let _state = _isReconnect ?  CONNECT_STATE.RECONNECTING : CONNECT_STATE.CONNECTING;
     updateState({ state: _state });
-    function smack({ servers, userId }){
+    async function smack({ servers, userId }){
       setCurrentUser({ id: userId, token, deviceId });
 
       cache.set(SIGNAL_NAME.S_CONNECT_ACK, callback);
 
+      let noceNum = utils.getRandoms(5).join('');
+      let timestamp = Date.now();
+      let signKey = config.signKey || '';
+      let signature = '';
+      if(!utils.isEmpty(signKey)){
+        signature = await common.signatureWithNonce(noceNum, timestamp, signKey);
+      }
+      let headers = {
+        'x-appkey': appkey,
+        'x-token': token,
+        'x-platform': 'Web',
+        'x-version': VERSION,
+        'x-device': utils.getBrowserVersion(),
+        'x-device_id': deviceId,
+        'X-Nonce': noceNum,
+        'X-Timestamp': timestamp,
+        'X-Signature': signature
+      };
+      let customHeaders = config.connectHeaders || {};
+      customHeaders = utils.extend(customHeaders, headers);
+      let options = {
+        headers: customHeaders
+      };
+
       Network.detect(servers, (domain, error) => {
         // 如果嗅探失败，返回连接断开，同时清理已缓存的 CMP 地址
-        if(error){
+        if(error && utils.isEqual(error.status, 200)){
           serverProviderCallback((result) => {
             result = utils.isObject(result) ? result : {};
             let { serverUrls } = result;
@@ -163,6 +186,10 @@ export default function IO(config){
           });
           clearLocalServers(userId);
           return reconnect({ token, userId, deviceId }, callback);
+        }
+        if(error && utils.isEqual(403, error.status)){
+          updateState({ state: CONNECT_STATE.DISCONNECTED, code: ErrorType.CONNECT_FORBIDDEN });
+          return;
         }
         currentDomain = domain;
         domain = domain.replace(/http:\/\/|https:\/\/|file:\/\/|wss:\/\/|ws:\/\//g, '');
@@ -201,7 +228,7 @@ export default function IO(config){
             reader.readAsArrayBuffer(data);
           }
         };
-      });
+      }, options);
     }
     if(!utils.isEmpty(serverList)){
       return smack({ servers: serverList })
@@ -548,6 +575,14 @@ export default function IO(config){
   function setConfig(cfg){
     utils.extend(config, cfg);
   }
+  function setConnectParams(signKey, headers){
+    headers = headers || {};
+    if(!utils.isObject(headers)){
+      headers = {};
+    }
+    config.connectHeaders = headers;
+    config.signKey = signKey;
+  }
   function getUserInfo(user, callback){
     let data = {
       topic: COMMAND_TOPICS.GET_USER_INFO,
@@ -561,6 +596,7 @@ export default function IO(config){
   utils.extend(io, { 
     getConfig,
     setConfig,
+    setConnectParams,
     connect,
     disconnect: userDisconnect,
     sendCommand,

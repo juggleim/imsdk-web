@@ -13,15 +13,17 @@ export default function(io, emitter, logger){
   });
 
   let connect = (user) =>{
-    return utils.deferred((resolve, reject) => {
+    return utils.deferred( async (resolve, reject) => {
       let error = common.check(io, user, FUNC_PARAM_CHECKER.CONNECT, true);
       if(!utils.isEmpty(error)){
         return reject(error);
       }
      
+      let device = await getDevice();
+
       let { token = '' } = user;
       token = token.trim();
-      user = utils.extend(user, { token });
+      user = utils.extend(user, { token, deviceId: device.id });
 
       if(!io.isNeedConnect()){
         return reject(ErrorType.REPREAT_CONNECTION);
@@ -131,6 +133,7 @@ export default function(io, emitter, logger){
     isNeedConnect: io.isNeedConnect,
     isConnected: io.isConnected,
     getCurrentUser: io.getCurrentUser,
+    setConnectParams: io.setConnectParams,
     uploadPushToken: uploadPushToken,
     switchPush: switchPush,
   }

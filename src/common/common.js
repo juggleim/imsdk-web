@@ -692,6 +692,29 @@ function reportLogs({ logger, params }){
 function isUni(){
   return typeof uni != 'undefined';
 }
+async function signatureWithNonce(nonce, timestamp, signKey) {
+    nonce = nonce || '';
+    timestamp = timestamp || '';
+    signKey = signKey || '';
+
+    let raw = `${nonce}${timestamp}${signKey}`;
+    let rawData = new TextEncoder().encode(raw);
+    let keyData = new TextEncoder().encode(signKey);
+
+    let cryptoKey = await crypto.subtle.importKey(
+        'raw',
+        keyData,
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign']
+    );
+
+    let signatureBuffer = await crypto.subtle.sign('HMAC', cryptoKey, rawData);
+    let hashArray = Array.from(new Uint8Array(signatureBuffer));
+    let signature = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+    return signature;
+}
 
 export default {
   check,
@@ -721,4 +744,5 @@ export default {
   reportLogs,
   isUni,
   formatGroupMember,
+  signatureWithNonce
 }

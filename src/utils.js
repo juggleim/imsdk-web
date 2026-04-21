@@ -491,6 +491,9 @@ function max(arr, key) {
     return currentVal > maxVal ? currentItem : maxItem;
   }, arr[0]);
 }
+function getBrowserVersion(){
+  return navigator.appVersion;
+}
 export default {
   Prosumer,
   Observer,
@@ -544,5 +547,6 @@ export default {
   getDeviceID,
   formatToQueryStr,
   isAsyncFunction,
-  max
+  max,
+  getBrowserVersion
 }

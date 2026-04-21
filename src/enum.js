@@ -601,6 +601,7 @@ export let ErrorMessages = [
 
   { code: 13001, msg: '群组不存在', name: 'GROUP_NOT_EXISTS' },
 
+  { code: 21000, msg: '禁止连接', name: 'CONNECT_FORBIDDEN' },
   { code: 25000, msg: '参数缺失，请检查传入参数', name: 'ILLEGAL_PARAMS' },
   { code: 25001, msg: '连接已存在', name: 'CONNECTION_EXISTS' },
   { code: 25002, msg: '连接不存在', name: 'CONNECTION_NOT_READY' },

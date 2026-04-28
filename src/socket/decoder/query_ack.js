@@ -96,6 +96,10 @@ export default async function getQueryAckBody(stream, { cache, currentUser, io }
   if(utils.isEqual(topic, COMMAND_TOPICS.MSG_GLOBAL_SEARCH)){
     result = await getGlobalSearch(index, data, { currentUser, io });
   }
+  
+  if(utils.isEqual(topic, COMMAND_TOPICS.TAG_CREATE)){
+    result = await getCreateTagHandler(index, data, { currentUser, io });
+  }
 
   result = utils.extend(result, { code, timestamp, index });
   return result;
@@ -285,6 +289,12 @@ function getConversationTags(index, data) {
     let { tag: id, tagName, tagType, tagOrder } = tag;
     return { id, name: tagName, type: tagType, order: tagOrder || 0 };
   });
+  return { tags, index };
+}
+async function getCreateTagHandler(index, data, { currentUser, io }) {
+  let payload = Proto.lookup('codec.UserConverTags');
+  let result = payload.decode(data);
+  let { tags } = result;
   return { tags, index };
 }
 async function getChatroomMsgsHandler(index, data, { currentUser, io }) {

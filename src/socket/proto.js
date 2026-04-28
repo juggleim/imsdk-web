@@ -1910,6 +1910,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           tagOrder: {
             type: "int32",
             id: 4
+          },
+          isAdd: {
+            type: "bool",
+            id: 5
           }
         }
       },

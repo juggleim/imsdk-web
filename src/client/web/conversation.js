@@ -676,18 +676,28 @@ export default function(io, emitter){
         return reject(error);
       }
       let _tag = utils.clone(tag);
+      let _tags = utils.isArray(_tag) ? _tag : [_tag];
       let { id: userId } = io.getCurrentUser();
-      let data = { topic: COMMAND_TOPICS.TAG_CREATE, userId, tag: _tag };
+      let data = { topic: COMMAND_TOPICS.TAG_CREATE, userId, tag: _tags };
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
-        let { timestamp, code } = result;
+        let { timestamp, code, tags } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
+          let notifyTags = [];
+          utils.forEach(_tags, (_tag) => {
+            let index = utils.find(tags, (ackTag) => { return utils.isEqual(_tag.id, ackTag.tag)});
+            let isAdd = false;
+            if(index > -1){
+              isAdd = tags[index].isAdd;
+            }
+            notifyTags.push({ tag: _tag.id, tag_name: _tag.name, conversations: [], tag_order: _tag.order || 0, is_add: isAdd });
+          });
           let notify = {
             name: MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_CREATE,
-            content: { tags: [{ tag: tag.id, tag_name: tag.name, conversations: [], tag_order: tag.order || 0 }] },
+            content: { tags: notifyTags },
           };
           commandNotify(notify);
-          resolve();
+          resolve(result);
         }else{
           let errorInfo = common.getError(code);
           reject(errorInfo);

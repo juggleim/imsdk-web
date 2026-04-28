@@ -1906,6 +1906,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           tagType: {
             type: "ConverTagType",
             id: 3
+          },
+          tagOrder: {
+            type: "int32",
+            id: 4
           }
         }
       },

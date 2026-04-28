@@ -282,8 +282,8 @@ function getConversationTags(index, data) {
   let result = payload.decode(data);
   let { tags } = result;
   tags = utils.map(tags, (tag) => {
-    let { tag: id, tagName, tagType } = tag;
-    return { id, name: tagName, type: tagType };
+    let { tag: id, tagName, tagType, tagOrder } = tag;
+    return { id, name: tagName, type: tagType, order: tagOrder || 0 };
   });
   return { tags, index };
 }

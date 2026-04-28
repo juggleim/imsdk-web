@@ -622,7 +622,7 @@ function formatProvider(funcs, instance){
 }
 function clone(item){
   let loop = (obj) => {
-    let newObj = {};
+    let newObj = obj;
     utils.forEach(obj, (v, k) => {
       // 递归循环中包含 File 对象直接跳过，File 对象不能 clone
       if(utils.isObject(v)){

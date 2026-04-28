@@ -364,6 +364,7 @@ declare class IMProvider {
   connect: (user: IMUser) => Promise<any>;
   disconnect: () => Promise<any>;
   getDevice: () => Promise<any>;
+  setConnectParams: (params: any) => Promise<any>;
   isConnected: () => boolean;
   getCurrentUser: () => IMUser;
   joinChatroom: (chatroom: Chatroom) => Promise<any>;

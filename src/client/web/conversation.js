@@ -23,17 +23,7 @@ export default function(io, emitter){
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_ADD_CONVERSATION_TO_TAG)){
       let { content: { id, name, conversations } } = message;
-      if(conversations.length > 0){
-        return emitter.emit(EVENT.TAG_CONVERSATION_ADDED, { id, conversations });
-      }
-      if(!utils.isEmpty(name) && conversations.length == 0){
-        return emitter.emit(EVENT.TAG_CHANGED, {  
-          tags: [{ id, name }]
-        });
-      }
-      return emitter.emit(EVENT.TAG_ADDED, {  
-        tags: [{ id, name }]
-      });
+      return emitter.emit(EVENT.TAG_CONVERSATION_ADDED, { id, conversations });
     }
     
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_REMOVE)){

@@ -35,12 +35,26 @@ export default function(io, emitter){
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_CREATE)){
       let { content: { tags } } = message;
-      tags = utils.map(tags, (tag) => {
-        return { id: tag.tag, name: tag.tag_name || '', conversations: tag.conversations || [], order: tag.tag_order || 0 }
+      let addTagList = [];
+      let updateTagList =  [];
+      utils.forEach(tags, (tag) => {
+        let _tag = { id: tag.tag, name: tag.tag_name || '', conversations: tag.conversations || [], order: tag.tag_order || 0 };
+        if(tag.is_add){
+          addTagList.push(_tag);
+        }else{
+          updateTagList.push(_tag);
+        }
       });
-      return emitter.emit(EVENT.TAG_CREATED, {  
-        tags: tags
-      });
+      if(!utils.isEmpty(addTagList)){
+        return emitter.emit(EVENT.TAG_CREATED, {  
+          tags: addTagList
+        });
+      }
+      if(!utils.isEmpty(updateTagList)){
+        return emitter.emit(EVENT.TAG_CHANGED, {  
+          tags: updateTagList
+        });
+      }
     }
 
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_REMOVE_CONVERS_FROM_TAG)){
@@ -670,7 +684,7 @@ export default function(io, emitter){
           common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
           let notify = {
             name: MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_CREATE,
-            content: { tags: [{ tag: tag.id, tag_name: tag.name, conversations: [], order: tag.tag_order || 0 }] },
+            content: { tags: [{ tag: tag.id, tag_name: tag.name, conversations: [], tag_order: tag.order || 0 }] },
           };
           commandNotify(notify);
           resolve();

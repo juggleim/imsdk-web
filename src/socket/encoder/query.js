@@ -500,7 +500,7 @@ export default async function getQueryBody({ data, callback, index }, io){
     let { userId, tag } = data;
     let tags = utils.isArray(tag) ? tag : [tag];
     tags = utils.map(tags, (tag) => {
-      return { tag: tag.id, tagName: tag.name, order: tag.order };
+      return { tag: tag.id, tagName: tag.name, tagOrder: tag.order };
     });
     let codec = Proto.lookup('codec.UserConverTags');
     let message = codec.create({

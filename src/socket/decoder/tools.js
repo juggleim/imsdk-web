@@ -327,7 +327,7 @@ async function msgFormat(msg, { currentUser, io }) {
     };
   }
 
-  if (utils.isEqual(MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_ADD, msgType)) {
+  if (utils.isEqual(MESSAGE_TYPE.COMMAND_ADD_CONVERSATION_TO_TAG, msgType)) {
     let { tag, tag_name, convers } = content;
     convers = convers || [];
     convers = utils.map(convers, (item) => {

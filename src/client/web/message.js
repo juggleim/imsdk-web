@@ -58,11 +58,15 @@ export default function(io, emitter, logger){
     }
     
 
-    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_ADD)){
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_ADD_CONVERSATION_TO_TAG)){
       return;
     }
     
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_REMOVE)){
+      return;
+    }
+    
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_CREATE)){
       return;
     }
 

@@ -352,9 +352,10 @@ export let COMMAND_TOPICS = {
   
   CONVERSATION_TAG_ADD: 'tag_add_convers',
   CONVERSATION_TAG_REMOVE: 'tag_del_convers',
+  TAG_QUERY: 'qry_user_conver_tags',
   TAG_REMOVE: 'del_user_conver_tags',
-  CONVERSATION_TAG_QUERY: 'qry_user_conver_tags',
-
+  TAG_CREATE: 'create_user_conver_tags',
+  
   RTC_CREATE_ROOM: 'rtc_create',
   RTC_JOIN_ROOM: 'rtc_join',
   RTC_QUIT_ROOM: 'rtc_quit',
@@ -483,6 +484,7 @@ export let EVENT = {
   MESSAGE_CLEAN_SOMEONE: 'message_clean_someone',
   MESSAGE_REACTION_CHANGED: 'message_reaction_changed',
   
+  TAG_CREATED: 'tag_created',
   TAG_ADDED: 'tag_added',
   TAG_REMOVED: 'tag_removed',
   TAG_CHANGED: 'tag_changed',
@@ -667,16 +669,17 @@ export let MESSAGE_TYPE = {
   COMMAND_LOG_REPORT: 'jg:logcmd',
   COMMAND_MSG_EXSET: 'jg:msgexset',
   COMMAND_MSG_SET_TOP: 'jg:topmsg',
-  
-  COMMAND_CONVERSATION_TAG_ADD: 'jg:tagaddconvers',
-  
   COMMAND_RTC_1V1_FINISHED: 'jg:callfinishntf',
 
-  // 删除 TAG 下会话
-  COMMAND_REMOVE_CONVERS_FROM_TAG: 'jg:tagdelconvers',
-  
+  // 创建 Tag
+  COMMAND_CONVERSATION_TAG_CREATE: 'jg:createconvertags',
   // 删除 TAG 
   COMMAND_CONVERSATION_TAG_REMOVE: 'jg:delconvertags',
+
+
+  COMMAND_ADD_CONVERSATION_TO_TAG: 'jg:tagaddconvers',
+  // 删除 TAG 下会话
+  COMMAND_REMOVE_CONVERS_FROM_TAG: 'jg:tagdelconvers',
   
   // CLIENT_* 约定为客户端定义适用
   CLIENT_REMOVE_MSGS: 'jgc:removemsgs',
@@ -723,11 +726,11 @@ export let SET_SEARCH_CONTENT_TYPE = {
 };
 
 export let CONVERSATION_TAG = {
-  jg_all: { id: 'jg_all', type: 1, name: '消息' },
-  jg_unread: { id: 'jg_unread', type: 1, name: '未读' },
-  jg_mentionme: { id: 'jg_mentionme', type: 1, name: '@我' },
-  jg_private: { id: 'jg_private', type: 1, name: '单聊' },
-  jg_group: { id: 'jg_group', type: 1, name: '群聊' },
+  // jg_all: { id: 'jg_all', type: 1, name: '消息' },
+  // jg_unread: { id: 'jg_unread', type: 1, name: '未读' },
+  // jg_mentionme: { id: 'jg_mentionme', type: 1, name: '@我' },
+  // jg_private: { id: 'jg_private', type: 1, name: '单聊' },
+  // jg_group: { id: 'jg_group', type: 1, name: '群聊' },
 };
 
 export let CONVERATION_TAG_TYPE = {

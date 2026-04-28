@@ -65,7 +65,7 @@ export default async function getQueryAckBody(stream, { cache, currentUser, io }
     result = await getMessage(index, data, { currentUser, io });
   }
 
-  if(utils.isEqual(topic, COMMAND_TOPICS.CONVERSATION_TAG_QUERY)){
+  if(utils.isEqual(topic, COMMAND_TOPICS.TAG_QUERY)){
     result = getConversationTags(index, data);
   }
   

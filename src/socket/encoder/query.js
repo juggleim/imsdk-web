@@ -496,11 +496,11 @@ export default async function getQueryBody({ data, callback, index }, io){
     buffer = codec.encode(message).finish();
   }
 
-  if(utils.isEqual(COMMAND_TOPICS.TAG_REMOVE, topic)){
+  if(utils.isInclude([COMMAND_TOPICS.TAG_CREATE, COMMAND_TOPICS.TAG_REMOVE], topic)){
     let { userId, tag } = data;
     let tags = utils.isArray(tag) ? tag : [tag];
     tags = utils.map(tags, (tag) => {
-      return { tag: tag.id };
+      return { tag: tag.id, tagName: tag.name, order: tag.order };
     });
     let codec = Proto.lookup('codec.UserConverTags');
     let message = codec.create({
@@ -510,7 +510,7 @@ export default async function getQueryBody({ data, callback, index }, io){
     buffer = codec.encode(message).finish();
   }
 
-  if(utils.isEqual(COMMAND_TOPICS.CONVERSATION_TAG_QUERY, topic)){
+  if(utils.isEqual(COMMAND_TOPICS.TAG_QUERY, topic)){
     let { userId } = data;
     let codec = Proto.lookup('codec.Nil');
     let message = codec.create({});

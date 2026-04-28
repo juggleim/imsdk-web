@@ -21,7 +21,7 @@ export default function(io, emitter){
       return io.emit(SIGNAL_NAME.CMD_CONVERSATION_CHANGED, { ...message, name: MESSAGE_TYPE.CLIENT_REMOVE_MSGS });
     }
 
-    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_ADD)){
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_ADD_CONVERSATION_TO_TAG)){
       let { content: { id, name, conversations } } = message;
       if(conversations.length > 0){
         return emitter.emit(EVENT.TAG_CONVERSATION_ADDED, { id, conversations });
@@ -39,6 +39,16 @@ export default function(io, emitter){
     if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_REMOVE)){
       let { content: { tags } } = message;
       return emitter.emit(EVENT.TAG_REMOVED, {  
+        tags: tags
+      });
+    }
+
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_CREATE)){
+      let { content: { tags } } = message;
+      tags = utils.map(tags, (tag) => {
+        return { id: tag.tag, name: tag.tag_name || '', conversations: tag.conversations || [], order: tag.tag_order || 0 }
+      });
+      return emitter.emit(EVENT.TAG_CREATED, {  
         tags: tags
       });
     }
@@ -663,14 +673,14 @@ export default function(io, emitter){
       }
       let _tag = utils.clone(tag);
       let { id: userId } = io.getCurrentUser();
-      let data = { topic: COMMAND_TOPICS.CONVERSATION_TAG_ADD, userId, tag: _tag };
+      let data = { topic: COMMAND_TOPICS.TAG_CREATE, userId, tag: _tag };
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let { timestamp, code } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
           let notify = {
-            name: MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_ADD,
-            content: { id: tag.id, name: tag.name, conversations: [] },
+            name: MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_CREATE,
+            content: { tags: [{ tag: tag.id, tag_name: tag.name, conversations: [], order: tag.tag_order || 0 }] },
           };
           commandNotify(notify);
           resolve();
@@ -717,7 +727,7 @@ export default function(io, emitter){
         return reject(error);
       }
       let { id: userId } = io.getCurrentUser();
-      let data = { topic: COMMAND_TOPICS.CONVERSATION_TAG_QUERY, userId };
+      let data = { topic: COMMAND_TOPICS.TAG_QUERY, userId };
       io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
         let { timestamp, code, tags } = result;
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
@@ -753,7 +763,7 @@ export default function(io, emitter){
         if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){
           common.updateSyncTime({ isSender: true,  sentTime: timestamp, io });
           let notify = {
-            name: MESSAGE_TYPE.COMMAND_CONVERSATION_TAG_ADD,
+            name: MESSAGE_TYPE.COMMAND_ADD_CONVERSATION_TO_TAG,
             content: { id: tag.id, conversations: conversations },
           };
           commandNotify(notify);
@@ -818,6 +828,7 @@ export default function(io, emitter){
     createConversationTag,
     destroyConversationTag,
     getConversationTags,
+
     addConversationsToTag,
     removeConversationsFromTag,
     getPublicConversations

@@ -5,7 +5,7 @@ import { SIGNAL_CMD, COMMAND_TOPICS, SIGNAL_NAME, ErrorType, CONVERSATION_TAG } 
 export default function TagSyncer(send, emitter, io, { logger }) {
   let exec = ({ $conversation }) => {
     let { id: userId } = io.getCurrentUser();
-    let data = { topic: COMMAND_TOPICS.CONVERSATION_TAG_QUERY, userId };
+    let data = { topic: COMMAND_TOPICS.TAG_QUERY, userId };
     io.sendCommand(SIGNAL_CMD.QUERY, data, (result) => {
       let { code, tags } = result;
       if(utils.isEqual(ErrorType.COMMAND_SUCCESS.code, code)){

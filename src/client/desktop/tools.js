@@ -98,15 +98,19 @@ let formatConversation = ({conversation, users, groups, friends}) => {
     return utils.isEqual(user.id, latestMessageSenderId);
   })[0] || { id: latestMessageSenderId};
 
-  let target = {};
+  let target = {
+    name: '',
+    portrait: '',
+    exts: {}
+  };
   if(isGroup(type)){
     target = utils.filter(groups, (group) => {
       return utils.isEqual(group.id, id);
-    })[0] || { id };
+    })[0] || target;
   }else{
     target = utils.filter(users, (user) => {
       return utils.isEqual(user.id, id);
-    })[0] || { id };
+    })[0] || target;
   }
   let conversationAlias = target.name;
   if(!isGroup(type)){

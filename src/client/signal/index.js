@@ -155,7 +155,12 @@ export default function({ io, emitter, logger }){
     memberIds: memberIds,
     channel: 0,
     rtcMediaType: 1,
-    ext: ''
+    ext: '',
+    attachedConversation: {
+      conversationType: 1,
+      conversationId: '',
+      subChannel: ''
+    }
   */ 
   let inviteRTC = (options) => {
     return utils.deferred((resolve, reject) => {

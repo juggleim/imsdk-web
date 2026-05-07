@@ -670,6 +670,8 @@ message RtcRoom{
     RtcChannel rtcChannel = 4;
     RtcMediaType rtcMediaType = 5;
     string ext = 6;
+    RtcAuth auth= 7;
+    ConverIndex attachedConver = 8;
     repeated RtcMember members = 51;
 }
 message RtcInviteReq{
@@ -679,6 +681,12 @@ message RtcInviteReq{
     RtcChannel rtcChannel = 4;
     RtcMediaType rtcMediaType = 5;
     string ext = 6;
+    ConverIndex attachedConver = 7;
+}
+message ConverIndex {
+    string targetId = 1;
+    ChannelType channelType = 2;
+    string subChannel = 3;
 }
 
 enum RtcMediaType{

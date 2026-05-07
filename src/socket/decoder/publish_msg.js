@@ -42,8 +42,16 @@ export default async function getPublishMsgBody(stream, { currentUser, io }){
       let members = utils.map(targetUsers, (target) => {
         return common.formatUser(target);
       });
-      let { roomId, roomType, members: existsMembers, ext, rtcMediaType  } = room;
+      let { roomId, roomType, members: existsMembers, ext, rtcMediaType, attachedConver  } = room;
 
+      let _attachedConver = {};
+      if(attachedConver){
+        _attachedConver = {
+          conversationType: attachedConver.channelType,
+          conversationId: attachedConver.targetId,
+          subChannel: attachedConver.subChannel || ''
+        };
+      }
       existsMembers = existsMembers || [];
       existsMembers = utils.map(existsMembers, ({ member, rtcState }) => {
         member = common.formatUser(member);
@@ -51,7 +59,7 @@ export default async function getPublishMsgBody(stream, { currentUser, io }){
         return member;
       })
 
-      _msg = { roomId, roomType, eventType: inviteType, user, members, existsMembers, mediaType: rtcMediaType, ext: ext || '' };
+      _msg = { roomId, roomType, eventType: inviteType, user, members, existsMembers, mediaType: rtcMediaType, ext: ext || '', attachedConversation: _attachedConver };
       _name = SIGNAL_NAME.S_RTC_INVITE_NTF;
 
     } else if(utils.isEqual(topic, COMMAND_TOPICS.RTC_ROOM_EVENT)){

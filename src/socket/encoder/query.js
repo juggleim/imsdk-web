@@ -563,16 +563,25 @@ export default async function getQueryBody({ data, callback, index }, io){
     buffer = codec.encode(message).finish();
   }
   if(utils.isEqual(COMMAND_TOPICS.RTC_INVITE, topic)){
-    let { roomId, roomType, memberIds, channel, user, mediaType, ext } = data;
+    let { roomId, roomType, memberIds, channel, user, mediaType, ext, attachedConversation } = data;
     let codec = Proto.lookup('codec.RtcInviteReq');
-    let message = codec.create({
+    let _data = {
       roomId: roomId,
       roomType: roomType,
       targetIds: memberIds,
       rtcChannel: channel,
       rtcMediaType: mediaType,
-      ext: ext || '',
-    });
+      ext: ext || ''
+    };
+    if(!utils.isEmpty(attachedConversation)){
+      let { conversationType, conversationId, subChannel } = attachedConversation;
+      _data.attachedConver = {
+        channelType: conversationType,
+        targetId: conversationId,
+        subChannel: subChannel || ''
+      };
+    }
+    let message = codec.create(_data);
     targetId = roomId;
     buffer = codec.encode(message).finish();
   }

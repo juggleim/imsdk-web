@@ -2009,6 +2009,14 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "string",
             id: 6
           },
+          auth: {
+            type: "RtcAuth",
+            id: 7
+          },
+          attachedConver: {
+            type: "ConverIndex",
+            id: 8
+          },
           members: {
             rule: "repeated",
             type: "RtcMember",
@@ -2042,6 +2050,26 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           ext: {
             type: "string",
             id: 6
+          },
+          attachedConver: {
+            type: "ConverIndex",
+            id: 7
+          }
+        }
+      },
+      ConverIndex: {
+        fields: {
+          targetId: {
+            type: "string",
+            id: 1
+          },
+          channelType: {
+            type: "ChannelType",
+            id: 2
+          },
+          subChannel: {
+            type: "string",
+            id: 3
           }
         }
       },

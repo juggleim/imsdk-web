@@ -508,16 +508,25 @@ async function formatConversations(conversations, options = {}) {
 }
 
 function formatRTCRoom(result){
-  let { roomId, roomType, members } = result;
+  let { roomId, roomType, members, attachedConver } = result;
   members = utils.map(members, (item) => {
     let { member, rtcState: state, cameraEnable, micEnable, callTime, connectTime, hangupTime, inviter } = item;
     member = common.formatUser(member);
     inviter = common.formatUser(inviter);
     return { member, rtcState: state, cameraEnable, micEnable, callTime, connectTime, hangupTime, inviter };
   });
+  let attachedConversation = {};
+  if(attachedConver){
+    attachedConversation = {
+      conversationId: attachedConver.targetId,
+      conversationType: attachedConver.channelType,
+      subChannel: attachedConver.subChannel
+    }
+  }
   return {
     room: { id: roomId, type: roomType },
     members: members,
+    attachedConversation: attachedConversation
   };
 }
 

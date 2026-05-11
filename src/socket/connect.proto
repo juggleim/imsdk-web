@@ -833,3 +833,19 @@ message SubStream{
     string streamMsgId = 1;
     int64 startSeq = 2;
 }
+message UserIdsReq{
+  repeated string userIds = 1;
+}
+message UserStatusList{
+  repeated UserStatus items = 1;
+}
+
+message UserStatus{
+  string userId = 1;
+  UserOnlineItem onlineStatus = 2;
+}
+
+message UserOnlineItem {
+  string userId = 1;
+  bool isOnline = 2;
+}

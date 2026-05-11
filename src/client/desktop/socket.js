@@ -7,7 +7,9 @@ export default function($socket, { webAgent }){
     'isConnected',
     'isNeedConnect',
     'getCurrentUser',
-    'setConnectParams'
+    'setConnectParams',
+    'getUserStatus',
+    'subUserStatus',
   ];
   let invokes = common.formatProvider(funcs, $socket);
   invokes.setServerUrlProider = (callback) => {

@@ -2459,6 +2459,48 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 2
           }
         }
+      },
+      UserIdsReq: {
+        fields: {
+          userIds: {
+            rule: "repeated",
+            type: "string",
+            id: 1
+          }
+        }
+      },
+      UserStatusList: {
+        fields: {
+          items: {
+            rule: "repeated",
+            type: "UserStatus",
+            id: 1
+          }
+        }
+      },
+      UserStatus: {
+        fields: {
+          userId: {
+            type: "string",
+            id: 1
+          },
+          onlineStatus: {
+            type: "UserOnlineItem",
+            id: 2
+          }
+        }
+      },
+      UserOnlineItem: {
+        fields: {
+          userId: {
+            type: "string",
+            id: 1
+          },
+          isOnline: {
+            type: "bool",
+            id: 2
+          }
+        }
       }
     }
   }

@@ -108,6 +108,8 @@ export let FUNC_PARAM_CHECKER = {
   SET_MESSAGE_SEARCH_CONTENT: [{ name: 'tid' }, { name: 'content', type: 'String' }],
   UPLOAD_PUSH_TOKEN: [{ name: 'deviceId'}, { name: 'platform' }, { name: 'pushChannel' }, { name: 'pushToken' }, { name: 'packageName' }],
   SWITCH_PUSH: [{ name: 'isOpen'}],
+  SUB_USER_STATUS: [{ name: 'userIds', type: 'Array'}],
+  GET_USER_STATUS: [{ name: 'userIds', type: 'Array'}],
   GET_FILE_TOKEN: [{ name: 'type' }],
   
   SEND_FILE_MESSAGE: [{ name: 'conversationType' }, { name: 'conversationId' }, { name: 'content', type: 'Object' }],
@@ -337,6 +339,8 @@ export let COMMAND_TOPICS = {
   BATCH_TRANSLATE: 'batch_trans',
 
   GET_USER_INFO: 'qry_user_info',
+  SUB_USER_STATUS: 'sub_user_status',
+  GET_USER_STATUS: 'qry_user_status',
 
   JOIN_CHATROOM: 'c_join',
   QUIT_CHATROOM: 'c_quit',
@@ -514,6 +518,8 @@ export let EVENT = {
 
   STREAM_APPENDED: 'stream_appended',
   STREAM_COMPLETED: 'stream_completed',
+
+  USER_STATUS_CHANGED: 'user_status_changed',
 };
 export let CONNECT_STATE = {
   CONNECTED: 0,
@@ -530,7 +536,8 @@ export let CONVERATION_TYPE = {
   GROUP: 2,
   CHATROOM: 3,
   SYSTEM: 4,
-  PUBLICH: 7
+  PUBLICH: 7,
+  SUBSTATUS: 8
 };
 
 export let MESSAGE_ORDER = {
@@ -670,6 +677,7 @@ export let MESSAGE_TYPE = {
   COMMAND_MSG_EXSET: 'jg:msgexset',
   COMMAND_MSG_SET_TOP: 'jg:topmsg',
   COMMAND_RTC_1V1_FINISHED: 'jg:callfinishntf',
+  COMMAND_STATUS_CHANGED: 'jg:onlinechg',
 
   // 创建 Tag
   COMMAND_CONVERSATION_TAG_CREATE: 'jg:createconvertags',
@@ -803,3 +811,7 @@ export let COMMENT_ORDER = {
 export let RESPONSE_CODE = {
   SUCCESS: 0
 }
+export let USER_STATUS = {
+  ONLINE: 1,
+  OFFLINE: 2
+};

@@ -694,6 +694,13 @@ export default async function getQueryBody({ data, callback, index }, io){
     targetId = userId;
     buffer = codec.encode(message).finish();
   }
+  if(utils.isInclude([COMMAND_TOPICS.GET_USER_STATUS, COMMAND_TOPICS.SUB_USER_STATUS], topic)){
+    let { userIds, userId } = data;
+    let codec = Proto.lookup('codec.UserIdsReq');
+    let message = codec.create({ userIds });
+    targetId = userId;
+    buffer = codec.encode(message).finish();
+  }
   let codec = Proto.lookup('codec.QueryMsgBody');
   let message = codec.create({ index, topic, targetId, data: buffer });
   let _buffer = codec.encode(message).finish();

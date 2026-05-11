@@ -2,7 +2,8 @@ import {
   MESSAGE_SENT_STATE, SIGNAL_CMD, 
   EVENT, SIGNAL_NAME, FUNC_PARAM_CHECKER, MESSAGE_ORDER, COMMAND_TOPICS, CONVERATION_TYPE, 
   ErrorType, MENTION_ORDER, UPLOAD_TYPE, FILE_TYPE, MESSAGE_TYPE,
-  LOG_MODULE, MSG_TOP_ACTION_TYPE
+  LOG_MODULE, MSG_TOP_ACTION_TYPE,
+  USER_STATUS
 } from "../../enum";
 import utils from "../../utils";
 import common from "../../common/common";
@@ -32,6 +33,12 @@ export default function(io, emitter, logger){
       return;
     }
 
+    if(utils.isEqual(message.name, MESSAGE_TYPE.COMMAND_STATUS_CHANGED)){
+      let { content: { is_online }, sender } = message;
+      let userId = sender.id;
+      let status = is_online ? USER_STATUS.ONLINE : USER_STATUS.OFFLINE;
+      return emitter.emit(EVENT.USER_STATUS_CHANGED, { userId, status });
+    }
     if(utils.isEqual(message.name, MESSAGE_TYPE.MODIFY)){
       let { conversationType, conversationId, content: { content, messageId, sentTime, name } } = message;
       let newContent = content;

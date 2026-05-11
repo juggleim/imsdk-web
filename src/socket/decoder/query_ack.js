@@ -1,7 +1,7 @@
 import Emitter from "../../common/emmit";
 import utils from "../../utils";
 import Proto from "../proto";
-import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, CONNECT_ACK_INDEX, PONG_INDEX, UPLOAD_TYPE, CONVERATION_TYPE, MESSAGE_SENT_STATE, UNDISTURB_TYPE, STORAGE } from "../../enum";
+import { SIGNAL_NAME, SIGNAL_CMD, CONNECT_STATE, COMMAND_TOPICS, MESSAGE_TYPE, ErrorType, CONNECT_ACK_INDEX, PONG_INDEX, UPLOAD_TYPE, CONVERATION_TYPE, MESSAGE_SENT_STATE, UNDISTURB_TYPE, STORAGE, USER_STATUS } from "../../enum";
 import common from "../../common/common";
 import tools from "./tools";
 
@@ -99,6 +99,9 @@ export default async function getQueryAckBody(stream, { cache, currentUser, io }
   
   if(utils.isEqual(topic, COMMAND_TOPICS.TAG_CREATE)){
     result = await getCreateTagHandler(index, data, { currentUser, io });
+  }
+  if(utils.isInclude([COMMAND_TOPICS.GET_USER_STATUS, COMMAND_TOPICS.SUB_USER_STATUS], topic)){
+    result = await getUserStatus(index, data, { currentUser, io });
   }
 
   result = utils.extend(result, { code, timestamp, index });
@@ -365,4 +368,16 @@ async function getGlobalSearch(index, data, { currentUser, io }){
     items: list,
   };
   return { searchResult, index };
+}
+async function getUserStatus(index, data, { currentUser, io }) {
+  let payload = Proto.lookup('codec.UserStatusList');
+  let result = payload.decode(data);
+  let { items } = result;
+  items = items || [];
+  let users = utils.map(items, (item) => {
+    let { userId, onlineStatus } = item;
+    let status = onlineStatus.isOnline ? USER_STATUS.ONLINE : USER_STATUS.OFFLINE;
+    return { userId, status };
+  });
+  return { users, index };
 }

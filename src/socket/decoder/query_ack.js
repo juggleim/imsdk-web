@@ -376,6 +376,7 @@ async function getUserStatus(index, data, { currentUser, io }) {
   items = items || [];
   let users = utils.map(items, (item) => {
     let { userId, onlineStatus } = item;
+    onlineStatus = onlineStatus || {};
     let status = onlineStatus.isOnline ? USER_STATUS.ONLINE : USER_STATUS.OFFLINE;
     return { userId, status };
   });

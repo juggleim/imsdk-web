@@ -13,7 +13,7 @@ export default function($socket, { webAgent }){
   ];
   let invokes = common.formatProvider(funcs, $socket);
   invokes.setServerUrlProider = (callback) => {
-    webAgent.setServerUrlProider(callback)
+    return webAgent.setServerUrlProider(callback)
   };
   return invokes;
 }

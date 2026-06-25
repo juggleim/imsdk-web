@@ -11,7 +11,6 @@ export default function($message, { webAgent }){
     'sendMassMessage',
     'getMessagesByIds',
     'clearMessage',
-    'recallMessage',
     'readMessage',
     'getMessageReadDetails',
     'updateMessage',
@@ -31,6 +30,9 @@ export default function($message, { webAgent }){
   ];
   let invokes = common.formatProvider(funcs, $message);
 
+  invokes.recallMessage = (message) => {
+    return webAgent.recallMessage(message);
+  };
   invokes.subscribeMessage = (conversation) => {
     return webAgent.subscribeMessage(conversation);
   };

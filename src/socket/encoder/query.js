@@ -32,7 +32,7 @@ export default async function getQueryBody({ data, callback, index }, io){
   }
 
   if(utils.isInclude([COMMAND_TOPICS.PUBLIC_CONVERSATIONS, COMMAND_TOPICS.CONVERSATIONS], topic)){
-    let { count, time, order, conversationType, tag } = data;
+    let { count, time, order, conversationType, tag, exceptTag } = data;
     targetId = userId;
     let codec = Proto.lookup('codec.QryConversationsReq');
     let content = {
@@ -45,6 +45,9 @@ export default async function getQueryBody({ data, callback, index }, io){
     }
     if(tag){
       utils.extend(content, { tag });
+    }
+    if(exceptTag){
+      utils.extend(content, { exceptTag });
     }
     let message = codec.create(content);
     buffer = codec.encode(message).finish();

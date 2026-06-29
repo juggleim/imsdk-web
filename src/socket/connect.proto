@@ -273,6 +273,7 @@ message QryConversationsReq{
     string targetId = 5;
     ChannelType channelType = 6;
     string tag = 7;
+    string exceptTag = 8;
 }
 
 message QryConversationsResp{

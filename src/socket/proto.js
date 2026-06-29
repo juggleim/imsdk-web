@@ -848,6 +848,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           tag: {
             type: "string",
             id: 7
+          },
+          exceptTag: {
+            type: "string",
+            id: 8
           }
         }
       },

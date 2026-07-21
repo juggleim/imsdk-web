@@ -80,8 +80,8 @@ export default async function({ data, callback, index }, io){
     };
 
     if(push){
-      let { text, title } = push;
-      let pushData = { title, pushText: text };
+      let { text, title, jPushOptions } = push;
+      let pushData = { title, pushText: text, jPushOptions };
       pushData = utils.clone(pushData);
       if(!utils.isEmpty(pushData)){
         _msg = utils.extend(_msg, { pushData });

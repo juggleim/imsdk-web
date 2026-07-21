@@ -303,6 +303,13 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           System: 4
         }
       },
+      PushLevel: {
+        values: {
+          DefaultPuhsLevel: 0,
+          IgnoreSpeedControl: 1,
+          IgnoreUndisturb: 2
+        }
+      },
       PushData: {
         fields: {
           title: {
@@ -320,6 +327,18 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           pushExtraData: {
             type: "string",
             id: 4
+          },
+          pushLevel: {
+            type: "PushLevel",
+            id: 5
+          },
+          isVoip: {
+            type: "bool",
+            id: 6
+          },
+          jPushOptions: {
+            type: "string",
+            id: 7
           }
         }
       },

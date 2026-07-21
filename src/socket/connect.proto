@@ -102,11 +102,20 @@ enum ChannelType {
     System = 4;   // 系统消息
 }
 
+enum PushLevel{
+  DefaultPuhsLevel = 0;
+  IgnoreSpeedControl = 1;
+  IgnoreUndisturb = 2;
+}
+
 message PushData{
     string title = 1;
     string pushId = 2;
     string pushText = 3;
     string pushExtraData = 4;
+    PushLevel pushLevel = 5;
+    bool isVoip = 6;
+    string jPushOptions = 7;
 }
 
 message QryHisMsgsReq{

@@ -255,6 +255,8 @@ interface GetConversationOptions {
   order?: number;
   count?: number;
   time?: number;
+  tag?: string;
+  exceptTag?: string;
 }
 interface TotalUnreadResult {
   total: number;

@@ -1,6 +1,6 @@
 {
   "name": "webim-sdk",
-  "version": "1.9.13",
+  "version": "1.9.14",
   "description": "JuggleIM official Web SDK — high-performance, open-source real-time messaging. Chat, group, live chatroom, moments and RTC signaling over a custom Protobuf/WebSocket protocol. Auto-reconnect, offline messages, TypeScript-first.",
   "main": "index.js",
   "types": "index.d.ts",

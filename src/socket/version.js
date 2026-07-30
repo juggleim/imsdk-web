@@ -1,2 +1,2 @@
 
-export let VERSION = '1.9.14';
+export let VERSION = '1.9.15';

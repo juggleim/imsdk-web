@@ -219,10 +219,10 @@ export default function(io, emitter, logger){
         return reject({ error });
       }
       let { lifeTime, lifeTimeAfterRead } = message;
-      if(utils.isNumber(lifeTime) && lifeTime <= 0){
+      if(utils.isNumber(lifeTime) && lifeTime < 0){
         return reject({ error: ErrorType.MESSAGE_LIFETIME_ERROR });  
       }
-      if(utils.isNumber(lifeTimeAfterRead) && lifeTimeAfterRead <= 0){
+      if(utils.isNumber(lifeTimeAfterRead) && lifeTimeAfterRead < 0){
         return reject({ error: ErrorType.MESSAGE_LIFETIME_AFTER_READ_ERROR });  
       }
       let { referMsg } = message;

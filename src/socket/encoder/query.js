@@ -635,9 +635,15 @@ export default async function getQueryBody({ data, callback, index }, io){
     let codec = Proto.lookup('codec.FavoriteMsgIds');
     let items = utils.map(messages, (message) => {
       let { conversationId, conversationType, senderId, messageId } = message;
+      let receiverId = conversationId;
+      let isReceiveMsg = utils.isEqual(senderId, conversationId);
+      let isPrivate = utils.isEqual(conversationType, CONVERATION_TYPE.PRIVATE)
+      if(isReceiveMsg && isPrivate){
+        receiverId = userId;
+      }
       return {
         channelType: conversationType,
-        receiverId: conversationId,
+        receiverId: receiverId,
         senderId: senderId,
         msgId: messageId
       };

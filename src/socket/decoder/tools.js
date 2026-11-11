@@ -146,6 +146,8 @@ async function msgFormat(msg, { currentUser, io }) {
     isMass: msgFlag.isMass,
     isStatus: msgFlag.isStatus,
     isStreamMsg: msgFlag.isStream,
+    isCommand: msgFlag.isCommand,
+    isUserCommand: msgFlag.isUserCommand,
     referMsg: newRefer,
     sentState: MESSAGE_SENT_STATE.SUCCESS,
     undisturbType: undisturbType || 0,

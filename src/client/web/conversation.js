@@ -216,6 +216,11 @@ export default function(io, emitter){
       return;
     }
 
+    // 命令消息且不是用户自定义的命令消息，阻止向上抛消息
+    if(message.isCommand && !message.isUserCommand){
+      return;
+    }
+
     next(message);
 
     function next(message){

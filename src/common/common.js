@@ -174,7 +174,7 @@ let _MSG_FLAG_NAMES = [
 ];
 
 let formatter = {
-  toFlag: ({ isCommand, isCount, isStorage, isMerge, isMass, isStatus }) => {
+  toFlag: ({ isCommand, isCount, isStorage, isMerge, isMass, isStatus, isUserCommand }) => {
     let flag = 0;
     isCommand && (flag |= (1 << 0));
     isCount && (flag |= (1 << 1));
@@ -182,6 +182,7 @@ let formatter = {
     isStorage && (flag |= (1 << 3));
     isMerge && (flag |= (1 << 5));
     isMass && (flag |= (1 << 7));
+    isUserCommand && (flag |= (1 << 13));
     return flag;
   },
   toMsg: (flag) => {
@@ -194,7 +195,8 @@ let formatter = {
       6: { name: 'isMerge' },
       7: { name: 'isMute' },
       8: { name: 'isMass' },
-      11: { name: 'isStream' }
+      11: { name: 'isStream' },
+      4096: { name: 'isUserCommand' },
     };
     let result = {};
     for(let num in obj){

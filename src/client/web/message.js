@@ -176,6 +176,10 @@ export default function(io, emitter, logger){
       }
       return;
     }
+    // 命令消息且不是用户自定义的命令消息，阻止向上抛消息
+    if(message.isCommand && !message.isUserCommand){
+      return;
+    }
     if(!messageCacher.isInclude(message)){
       emitter.emit(EVENT.MESSAGE_RECEIVED, [message, isPullFinished]);
       let { conversationId, conversationType } = message;
